@@ -1,0 +1,58 @@
+# Tuples
+
+<!-- toc -->
+<!-- toc:max-level = 2 -->
+
+Tuples allow for the definition of a set of types, without having to define an explicit struct for it. These do not have any associated [ID](index.md#identifiers), meaning the order of declaration matters, and any modification to the type definition is generally incompatible.
+
+The maximum amount of types in a tuple are **12**.
+
+## Schema
+
+In the schema, tuples are declared with parenthesis `(` and `)`, each type separated by a comma `,`, forming a definition like `(T1, T2, TN...)`.
+
+```rust,ignore
+{{#include tuples/basic.stef}}
+```
+
+## Languages
+
+### Rust
+
+In Rust we have tuples and they look the same as in the schema, minus the ID.
+
+```rust
+{{#include tuples/basic.rs}}
+```
+
+### Go
+
+There is no native support for tuples. Thus, types for tuples should be provided as part of the encompassing library, for up to N types.
+
+```go
+{{#include tuples/basic.go:5:}}
+```
+
+### Kotlin
+
+Again, no native support for tuples. The `Map.Entry` interface exists, but seems not to be meant as tuple replacement. Therefore, generic types should be provided together with the library, for up to N types.
+
+```kotlin
+{{#include tuples/basic.kt:3:}}
+```
+
+### TypeScript
+
+Typescript has support for tuples, defined as `[T1, T2, TN...]`.
+
+```typescript
+{{#include tuples/basic.ts}}
+```
+
+### Python
+
+Python has support for tuples, defined as `tuple[T1, T2, TN...]`.
+
+```python
+{{#include tuples/basic.py}}
+```

@@ -1,0 +1,3 @@
+#[deprecated="don't use",compress]
+#[validate(in_range(min=100,max=200),non_empty)]
+struct Sample

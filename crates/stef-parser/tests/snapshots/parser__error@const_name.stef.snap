@@ -1,0 +1,27 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap_err()"
+input_file: crates/stef-parser/tests/inputs/invalid/const_name.stef
+---
+stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseConstError.html)
+
+  × Failed to parse const declaration
+  ╰─▶ Invalid const name
+   ╭────
+ 1 │ const vALUE: u32 = 1;
+   · ──────────┬──────────
+   ·           ╰── In this declaration
+   ╰────
+  help: Expected const declaration in the form `❬B❭const <NAME>: <type> = <literal>;❬B❭`
+
+Error: stef::parse::const_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseConstCause.html#variant.InvalidName)
+
+  × Invalid const name
+   ╭────
+ 1 │ const vALUE: u32 = 1;
+   ·       ▲
+   ·       ╰── Problematic character
+   ╰────
+  help: Const names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more uppercase alphanumeric
+        characters or underscores (❬Y❭A-Z, 0-9, _❬Y❭)
+

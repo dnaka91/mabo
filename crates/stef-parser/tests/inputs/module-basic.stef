@@ -1,0 +1,12 @@
+mod a {
+    /// Inner module
+    mod b {
+        enum Sample {
+            One @1,
+        }
+    }
+
+    struct Sample {
+        value: u32 @1,
+    }
+}

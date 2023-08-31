@@ -1,0 +1,3 @@
+struct Sample {
+    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,
+}

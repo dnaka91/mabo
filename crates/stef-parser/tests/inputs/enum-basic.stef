@@ -1,0 +1,11 @@
+/// Sample enum.
+enum Sample {
+    One @1,
+    /// Second variant
+    Two(u32 @1, u64 @2) @2,
+    Three {
+        field1: u32 @1,
+        /// Second field of third variant
+        field2: bool @2,
+    } @3,
+}

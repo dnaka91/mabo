@@ -1,0 +1,16 @@
+all-features = true
+
+[licenses]
+allow-osi-fsf-free = "both"
+exceptions = [
+    { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
+]
+
+[bans]
+skip = [
+    { name = "terminal_size", version = "0.1" },
+]
+skip-tree = [
+    { name = "rustix", version = "0.37", depth = 2 },
+    { name = "windows-sys", version = "0.45", depth = 3 },
+]

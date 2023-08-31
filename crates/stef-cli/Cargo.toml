@@ -1,0 +1,18 @@
+[package]
+name = "stef-cli"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+include = ["src/**/*"]
+
+[dependencies]
+clap = { version = "4.4.0", features = ["derive", "wrap_help"] }
+color-eyre.workspace = true
+miette = { workspace = true, features = ["fancy-no-backtrace"] }
+mimalloc = "0.1.38"
+stef-parser = { path = "../stef-parser" }

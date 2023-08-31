@@ -1,0 +1,67 @@
+check:
+  #!/usr/bin/env fish
+
+  echo src/**/*.stef | xargs -n 1 -P 8 -- just check-stef
+  echo src/**/*.rs   | xargs -n 1 -P 8 -- just check-rust
+  echo src/**/*.go   | xargs -n 1 -P 8 -- just check-go
+  echo src/**/*.kt   | xargs -n 1 -P 8 -- just check-kotlin
+  echo src/**/*.ts   | xargs -n 1 -P 8 -- just check-typescript
+  echo src/**/*.py   | xargs -n 1 -P 8 -- just check-python
+
+@check-stef file:
+  echo checking {{file}}
+  cargo run --quiet --package stef-cli -- check {{file}}
+
+@check-rust file:
+  echo checking {{file}}
+  rustc --crate-type lib --allow dead_code --out-dir $(mktemp -d) {{file}}
+
+@check-go file:
+  echo checking {{file}}
+  go build -o $(mktemp) {{file}}
+
+@check-kotlin file:
+  echo checking {{file}}
+  kotlinc -d $(mktemp -d) {{file}}
+
+@check-typescript file:
+  echo checking {{file}}
+  tsc --strict --target es2020 --outDir $(mktemp -d) {{file}}
+
+@check-python file:
+  echo checking {{file}}
+  mypy --strict --no-error-summary --cache-dir /tmp {{file}}
+
+format:
+  #!/usr/bin/env fish
+
+  just format-stef       src/**/*.stef
+  just format-rust       src/**/*.rs
+  just format-go         src/**/*.go
+  just format-kotlin     src/**/*.kt
+  just format-typescript src/**/*.ts
+  just format-python     src/**/*.py
+
+@format-stef +files:
+  cargo run --quiet --package stef-cli -- format {{files}}
+
+@format-rust +files:
+  rustup run nightly rustfmt --edition 2021 {{files}}
+
+@format-go +files:
+  gofmt -w {{files}}
+
+@format-kotlin +files:
+  ktlint -F --disabled_rules=filename {{files}}
+
+@format-typescript +files:
+  prettier --log-level warn -w {{files}}
+
+@format-python +files:
+  black -q {{files}}
+
+dev:
+  mdbook serve
+
+build:
+  mdbook build

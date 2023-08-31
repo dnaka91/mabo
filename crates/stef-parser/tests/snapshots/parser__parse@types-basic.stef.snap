@@ -1,0 +1,246 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types-basic.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f01",
+                            ty: Bool,
+                            id: Id(
+                                1,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f02",
+                            ty: U8,
+                            id: Id(
+                                2,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f03",
+                            ty: U16,
+                            id: Id(
+                                3,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f04",
+                            ty: U32,
+                            id: Id(
+                                4,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f05",
+                            ty: U64,
+                            id: Id(
+                                5,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f06",
+                            ty: U128,
+                            id: Id(
+                                6,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f07",
+                            ty: I8,
+                            id: Id(
+                                7,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f08",
+                            ty: I16,
+                            id: Id(
+                                8,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f09",
+                            ty: I32,
+                            id: Id(
+                                9,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f10",
+                            ty: I64,
+                            id: Id(
+                                10,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f11",
+                            ty: I128,
+                            id: Id(
+                                11,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f12",
+                            ty: F32,
+                            id: Id(
+                                12,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f13",
+                            ty: F64,
+                            id: Id(
+                                13,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f14",
+                            ty: String,
+                            id: Id(
+                                14,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f15",
+                            ty: StringRef,
+                            id: Id(
+                                15,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f16",
+                            ty: Bytes,
+                            id: Id(
+                                16,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f17",
+                            ty: BytesRef,
+                            id: Id(
+                                17,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f18",
+                            ty: BoxString,
+                            id: Id(
+                                18,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f19",
+                            ty: BoxBytes,
+                            id: Id(
+                                19,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f20",
+                            ty: Tuple(
+                                [
+                                    U32,
+                                    U32,
+                                    U32,
+                                ],
+                            ),
+                            id: Id(
+                                20,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f21",
+                            ty: Array(
+                                U32,
+                                12,
+                            ),
+                            id: Id(
+                                21,
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

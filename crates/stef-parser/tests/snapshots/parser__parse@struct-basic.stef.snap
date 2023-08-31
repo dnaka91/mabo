@@ -1,0 +1,51 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/struct-basic.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [
+                        "Basic struct.",
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "a",
+                            ty: U32,
+                            id: Id(
+                                1,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [
+                                    "Second field",
+                                ],
+                            ),
+                            name: "b",
+                            ty: Bool,
+                            id: Id(
+                                2,
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

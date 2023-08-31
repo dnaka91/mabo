@@ -1,0 +1,23 @@
+[package]
+name = "stef-build"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+miette.workspace = true
+proc-macro2 = { version = "1.0.66", default-features = false }
+quote = { version = "1.0.33", default-features = false }
+stef-parser = { path = "../stef-parser" }
+thiserror = "1.0.47"
+
+[dev-dependencies]
+indoc = "2.0.3"
+pretty_assertions = "1.4.0"
+prettyplease = "0.2.12"
+syn = "2.0.29"

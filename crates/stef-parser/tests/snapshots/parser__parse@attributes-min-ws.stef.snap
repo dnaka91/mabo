@@ -1,0 +1,71 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/attributes-min-ws.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [
+                        Attribute {
+                            name: "deprecated",
+                            value: Single(
+                                String(
+                                    "don't use",
+                                ),
+                            ),
+                        },
+                        Attribute {
+                            name: "compress",
+                            value: Unit,
+                        },
+                        Attribute {
+                            name: "validate",
+                            value: Multi(
+                                [
+                                    Attribute {
+                                        name: "in_range",
+                                        value: Multi(
+                                            [
+                                                Attribute {
+                                                    name: "min",
+                                                    value: Single(
+                                                        Int(
+                                                            100,
+                                                        ),
+                                                    ),
+                                                },
+                                                Attribute {
+                                                    name: "max",
+                                                    value: Single(
+                                                        Int(
+                                                            200,
+                                                        ),
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    },
+                                    Attribute {
+                                        name: "non_empty",
+                                        value: Unit,
+                                    },
+                                ],
+                            ),
+                        },
+                    ],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Unit,
+            },
+        ),
+    ],
+}

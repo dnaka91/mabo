@@ -1,0 +1,3 @@
+struct sample {
+    value: u32 @1,
+}

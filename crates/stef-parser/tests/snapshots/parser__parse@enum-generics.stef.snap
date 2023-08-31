@@ -1,0 +1,124 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/enum-generics.stef
+---
+Schema {
+    definitions: [
+        Enum(
+            Enum {
+                comment: Comment(
+                    [
+                        "Enum with generics.",
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                    ],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "One",
+                        fields: Unit,
+                        id: Id(
+                            1,
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Two",
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: External(
+                                        ExternalType {
+                                            path: [],
+                                            name: "A",
+                                            generics: [],
+                                        },
+                                    ),
+                                    id: Id(
+                                        1,
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: External(
+                                        ExternalType {
+                                            path: [],
+                                            name: "B",
+                                            generics: [],
+                                        },
+                                    ),
+                                    id: Id(
+                                        2,
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Id(
+                            2,
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Three",
+                        fields: Named(
+                            [
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field1",
+                                    ty: External(
+                                        ExternalType {
+                                            path: [],
+                                            name: "C",
+                                            generics: [],
+                                        },
+                                    ),
+                                    id: Id(
+                                        1,
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field2",
+                                    ty: External(
+                                        ExternalType {
+                                            path: [],
+                                            name: "D",
+                                            generics: [],
+                                        },
+                                    ),
+                                    id: Id(
+                                        2,
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Id(
+                            3,
+                        ),
+                    },
+                ],
+            },
+        ),
+    ],
+}

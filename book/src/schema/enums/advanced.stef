@@ -1,0 +1,7 @@
+enum Sample {
+    Variant1(u32 @1, u16 @2) @1,
+    Variant2 {
+        field1: i64 @1,
+        field2: bool @2,
+    } @2,
+}

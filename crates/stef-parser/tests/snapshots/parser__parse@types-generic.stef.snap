@@ -1,0 +1,90 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types-generic.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f1",
+                            ty: Vec(
+                                U32,
+                            ),
+                            id: Id(
+                                1,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f2",
+                            ty: HashMap(
+                                (
+                                    U32,
+                                    String,
+                                ),
+                            ),
+                            id: Id(
+                                2,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f3",
+                            ty: HashSet(
+                                U32,
+                            ),
+                            id: Id(
+                                3,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f4",
+                            ty: Option(
+                                U32,
+                            ),
+                            id: Id(
+                                4,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f5",
+                            ty: NonZero(
+                                U32,
+                            ),
+                            id: Id(
+                                5,
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

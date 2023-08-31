@@ -1,0 +1,7 @@
+struct Sample {
+    f1: vec<u32> @1,
+    f2: hash_map<u32, string> @2,
+    f3: hash_set<u32> @3,
+    f4: option<u32> @4,
+    f5: non_zero<u32> @5,
+}

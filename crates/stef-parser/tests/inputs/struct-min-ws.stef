@@ -1,0 +1,1 @@
+struct Sample<T>{a:u32@1,b:bool@2,c:T@3}

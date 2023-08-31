@@ -1,0 +1,85 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/module-basic.stef
+---
+Schema {
+    definitions: [
+        Module(
+            Module {
+                comment: Comment(
+                    [],
+                ),
+                name: "a",
+                definitions: [
+                    Module(
+                        Module {
+                            comment: Comment(
+                                [
+                                    "Inner module",
+                                ],
+                            ),
+                            name: "b",
+                            definitions: [
+                                Enum(
+                                    Enum {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        attributes: Attributes(
+                                            [],
+                                        ),
+                                        name: "Sample",
+                                        generics: Generics(
+                                            [],
+                                        ),
+                                        variants: [
+                                            Variant {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: "One",
+                                                fields: Unit,
+                                                id: Id(
+                                                    1,
+                                                ),
+                                            },
+                                        ],
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    Struct(
+                        Struct {
+                            comment: Comment(
+                                [],
+                            ),
+                            attributes: Attributes(
+                                [],
+                            ),
+                            name: "Sample",
+                            generics: Generics(
+                                [],
+                            ),
+                            fields: Named(
+                                [
+                                    NamedField {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        name: "value",
+                                        ty: U32,
+                                        id: Id(
+                                            1,
+                                        ),
+                                    },
+                                ],
+                            ),
+                        },
+                    ),
+                ],
+            },
+        ),
+    ],
+}

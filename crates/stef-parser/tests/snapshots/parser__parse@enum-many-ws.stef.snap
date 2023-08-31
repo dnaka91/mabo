@@ -1,0 +1,95 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/enum-many-ws.stef
+---
+Schema {
+    definitions: [
+        Enum(
+            Enum {
+                comment: Comment(
+                    [
+                        "Sample enum.",
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "One",
+                        fields: Unit,
+                        id: Id(
+                            1,
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Two",
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: U32,
+                                    id: Id(
+                                        1,
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: U64,
+                                    id: Id(
+                                        2,
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Id(
+                            2,
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Three",
+                        fields: Named(
+                            [
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field1",
+                                    ty: U32,
+                                    id: Id(
+                                        1,
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field2",
+                                    ty: Bool,
+                                    id: Id(
+                                        2,
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Id(
+                            3,
+                        ),
+                    },
+                ],
+            },
+        ),
+    ],
+}

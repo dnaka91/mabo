@@ -1,0 +1,65 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/struct-min-ws.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [
+                        "T",
+                    ],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "a",
+                            ty: U32,
+                            id: Id(
+                                1,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "b",
+                            ty: Bool,
+                            id: Id(
+                                2,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "c",
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "T",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id(
+                                3,
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

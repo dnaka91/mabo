@@ -1,0 +1,29 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap_err()"
+input_file: crates/stef-parser/tests/inputs/invalid/enum_name.stef
+---
+stef::parse::enum_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseEnumError.html)
+
+  × Failed to parse enum declaration
+  ╰─▶ Invalid enum name
+   ╭─[1:1]
+ 1 │ enum sample {
+   ·      ▲
+   ·      ╰── In this declaration
+ 2 │     One @1,
+   ╰────
+  help: Expected enum declaration in the form `❬B❭enum <Name> {...}❬B❭`
+
+Error: stef::parse::enum_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseEnumCause.html#variant.InvalidName)
+
+  × Invalid enum name
+   ╭─[1:1]
+ 1 │ enum sample {
+   ·      ▲
+   ·      ╰── Problematic character
+ 2 │     One @1,
+   ╰────
+  help: Enum names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric characters
+        (❬Y❭A-Z, a-z, 0-9❬Y❭)
+

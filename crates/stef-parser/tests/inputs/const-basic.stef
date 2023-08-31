@@ -1,0 +1,6 @@
+const BOOL_TRUE: bool = true;
+const BOOL_FALSE: bool = false;
+const INT: u32 = 100;
+const FLOAT: f64 = 5.5;
+const STRING: string = "value";
+const BYTES: bytes = [1, 2, 3];

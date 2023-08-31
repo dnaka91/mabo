@@ -1,0 +1,1 @@
+enum Sample<T>{One@1,Two(u32@1,u64@2,T@3)@2,Three{field1:u32@1,field2:bool@2,field3:T@3}@3}

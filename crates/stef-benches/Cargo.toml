@@ -1,0 +1,29 @@
+[package]
+name = "stef-benches"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+include = ["src/**/*"]
+publish = false
+
+[[bench]]
+name = "parser"
+harness = false
+
+[[bench]]
+name = "varint"
+harness = false
+
+[dependencies]
+mimalloc = "0.1.38"
+stef-parser = { path = "../stef-parser" }
+
+[dev-dependencies]
+criterion = "0.5.1"
+indoc = "2.0.3"
+serde = "1.0.188"

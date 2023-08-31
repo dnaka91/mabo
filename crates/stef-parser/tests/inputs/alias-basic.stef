@@ -1,0 +1,2 @@
+/// Sample type alias.
+type Sample = u32;

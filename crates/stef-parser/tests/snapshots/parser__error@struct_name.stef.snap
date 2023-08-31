@@ -1,0 +1,29 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap_err()"
+input_file: crates/stef-parser/tests/inputs/invalid/struct_name.stef
+---
+stef::parse::struct_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseStructError.html)
+
+  × Failed to parse struct declaration
+  ╰─▶ Invalid struct name
+   ╭─[1:1]
+ 1 │ ╭─▶ struct sample {
+ 2 │ │       value: u32 @1,
+ 3 │ ├─▶ }
+   · ╰──── In this declaration
+   ╰────
+  help: Expected struct declaration in the form `❬B❭struct <Name> {...}❬B❭`
+
+Error: stef::parse::struct_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseStructCause.html#variant.InvalidName)
+
+  × Invalid struct name
+   ╭─[1:1]
+ 1 │ struct sample {
+   ·        ▲
+   ·        ╰── Problematic character
+ 2 │     value: u32 @1,
+   ╰────
+  help: Struct names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric
+        characters (❬Y❭A-Z, a-z, 0-9❬Y❭)
+

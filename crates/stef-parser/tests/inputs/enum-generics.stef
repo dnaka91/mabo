@@ -1,0 +1,9 @@
+/// Enum with generics.
+enum Sample<A, B, C, D> {
+    One @1,
+    Two(A @1, B @2) @2,
+    Three {
+        field1: C @1,
+        field2: D @2,
+    } @3,
+}

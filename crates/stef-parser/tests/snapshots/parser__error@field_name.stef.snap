@@ -1,0 +1,44 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap_err()"
+input_file: crates/stef-parser/tests/inputs/invalid/field_name.stef
+---
+stef::parse::struct_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseStructError.html)
+
+  × Failed to parse struct declaration
+  ├─▶ Failed to parse fields declaration
+  ╰─▶ Invalid field name
+   ╭─[1:1]
+ 1 │ ╭─▶ struct Sample {
+ 2 │ │       1value: u32 @1,
+ 3 │ ├─▶ }
+   · ╰──── In this declaration
+   ╰────
+  help: Expected struct declaration in the form `❬B❭struct <Name> {...}❬B❭`
+
+Error: stef::parse::id (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseFieldsError.html)
+
+  × Failed to parse fields declaration
+  ╰─▶ Invalid field name
+   ╭─[1:1]
+ 1 │ ╭─▶ struct Sample {
+ 2 │ ├─▶     1value: u32 @1,
+   · ╰──── In this declaration
+ 3 │     }
+   ╰────
+  help: Expected fields declaration in the form `❬B❭{ <named>, <named>, ... }❬B❭`, `❬B❭( <unnamed>, <unnamed>, ... )
+        ❬B❭` or `❬B❭_nothing_❬B❭`
+
+Error: stef::parse::fields::named::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseFieldsCause.html#variant.InvalidName)
+
+  × Invalid field name
+   ╭─[1:1]
+ 1 │ struct Sample {
+ 2 │     1value: u32 @1,
+   ·     ▲
+   ·     ╰── Problematic character
+ 3 │ }
+   ╰────
+  help: Field names must start with a lowercase letter (❬Y❭a-z❬Y❭), followed by zero or more lowercase alphanumeric
+        characters or underscores (❬Y❭a-z, 0-9, _❬Y❭)
+

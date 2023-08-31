@@ -1,0 +1,123 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/enum-min-ws.stef
+---
+Schema {
+    definitions: [
+        Enum(
+            Enum {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [
+                        "T",
+                    ],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "One",
+                        fields: Unit,
+                        id: Id(
+                            1,
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Two",
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: U32,
+                                    id: Id(
+                                        1,
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: U64,
+                                    id: Id(
+                                        2,
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: External(
+                                        ExternalType {
+                                            path: [],
+                                            name: "T",
+                                            generics: [],
+                                        },
+                                    ),
+                                    id: Id(
+                                        3,
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Id(
+                            2,
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Three",
+                        fields: Named(
+                            [
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field1",
+                                    ty: U32,
+                                    id: Id(
+                                        1,
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field2",
+                                    ty: Bool,
+                                    id: Id(
+                                        2,
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: "field3",
+                                    ty: External(
+                                        ExternalType {
+                                            path: [],
+                                            name: "T",
+                                            generics: [],
+                                        },
+                                    ),
+                                    id: Id(
+                                        3,
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Id(
+                            3,
+                        ),
+                    },
+                ],
+            },
+        ),
+    ],
+}

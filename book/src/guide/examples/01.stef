@@ -1,0 +1,18 @@
+use other::schema::DateTime;
+
+struct User {
+    first_name: string @1,
+    last_name: string @2,
+    birthday: DateTime @3,
+    gender: option<user::Gender> @4,
+    /// Latitude and longitude.
+    current_location: (f64, f64) @5,
+}
+
+mod user {
+    enum Gender {
+        Male @1,
+        Female @2,
+        NonBinary(string @1) @3,
+    }
+}

@@ -1,0 +1,11 @@
+
+ /// Some comment
+       struct      Sample<
+            A,
+            B
+        >  {
+
+      a:    u32    @1,
+      b:    bool   @2,
+
+    }

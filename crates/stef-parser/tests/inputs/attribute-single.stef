@@ -1,0 +1,2 @@
+#[deprecated = "don't use"]
+struct Sample

@@ -1,0 +1,23 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Dominik Nakamura <dnaka91@gmail.com"]
+edition = "2021"
+rust-version = "1.71"
+readme = "README.md"
+homepage = "https://github.com/dnaka91/stef"
+repository = "https://github.com/dnaka91/stef"
+license = "MIT"
+
+[workspace.dependencies]
+color-eyre = { version = "0.6.2", default-features = false }
+eyre = "0.6.8"
+miette = "5.10.0"
+serde = { version = "1.0.188", features = ["derive"] }
+
+[profile.release]
+lto = true
+strip = true

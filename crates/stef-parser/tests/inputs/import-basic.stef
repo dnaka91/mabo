@@ -1,0 +1,2 @@
+use other::schema::Sample;
+use second::submodule;

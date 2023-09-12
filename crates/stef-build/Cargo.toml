@@ -14,10 +14,11 @@ miette.workspace = true
 proc-macro2 = { version = "1.0.66", default-features = false }
 quote = { version = "1.0.33", default-features = false }
 stef-parser = { path = "../stef-parser" }
-thiserror = "1.0.47"
+thiserror = "1.0.48"
 
 [dev-dependencies]
 indoc = "2.0.3"
 pretty_assertions = "1.4.0"
-prettyplease = "0.2.12"
-syn = "2.0.29"
+prettyplease = "0.2.15"
+stef = { path = "../stef" }
+syn = "2.0.31"

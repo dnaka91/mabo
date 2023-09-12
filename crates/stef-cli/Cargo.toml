@@ -11,7 +11,7 @@ license.workspace = true
 include = ["src/**/*"]
 
 [dependencies]
-clap = { version = "4.4.0", features = ["derive", "wrap_help"] }
+clap = { version = "4.4.2", features = ["derive", "wrap_help"] }
 color-eyre.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mimalloc = "0.1.38"

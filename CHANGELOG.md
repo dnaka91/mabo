@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### <!-- 2 -->📚 Documentation
 
 - Generate more stylish changelog ([5319fb3](https://github.com/dnaka91/wazzup/commit/5319fb3417a830042e7bc220fe283046923da349))
+- Add changelog ([5b2a15c](https://github.com/dnaka91/wazzup/commit/5b2a15cad70e53c6c39a93c395fbe8f80382ae56))
 
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 

@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use stef_parser::{
-    DataType, Definition, Enum, ExternalType, Fields, Module, NamedField, Schema, Struct,
+    DataType, Definition, Enum, Fields, Module, NamedField, Schema, Struct,
     UnnamedField, Variant,
 };
 

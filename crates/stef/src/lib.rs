@@ -6,7 +6,7 @@ use std::{
     },
 };
 
-use bytes::BufMut;
+pub use bytes::BufMut;
 
 pub mod varint;
 
@@ -21,6 +21,7 @@ pub fn encode_u8(w: &mut impl BufMut, value: u8) {
 pub fn encode_i8(w: &mut impl BufMut, value: i8) {
     w.put_i8(value);
 }
+
 macro_rules! encode_int {
     ($ty:ty) => {
         paste::paste! {
@@ -57,11 +58,11 @@ pub fn write_discr(w: &mut impl BufMut, discr: u32) {
     w.put(&buf[..len]);
 }
 
-pub fn write_string(w: &mut impl BufMut, value: &str) {
-    write_bytes(w, value.as_bytes());
+pub fn encode_string(w: &mut impl BufMut, value: &str) {
+    encode_bytes(w, value.as_bytes());
 }
 
-pub fn write_bytes(w: &mut impl BufMut, value: &[u8]) {
+pub fn encode_bytes(w: &mut impl BufMut, value: &[u8]) {
     let (buf, len) = varint::encode_u64(value.len() as u64);
 
     w.put(&buf[..len]);
@@ -72,7 +73,42 @@ pub trait Encode {
     fn encode(&self, w: &mut impl BufMut);
 }
 
-pub fn write_vec<T: Encode>(w: &mut impl BufMut, vec: &Vec<T>) {
+macro_rules! forward {
+    ($ty:ty) => {
+        paste::paste! {
+            impl Encode for $ty {
+                #[inline(always)]
+                fn encode(&self, w: &mut impl BufMut) {
+                    [<encode_ $ty>](w, *self)
+                }
+            }
+        }
+    };
+    ($($ty:ty),+ $(,)?) => {
+        $(forward!($ty);)+
+    }
+}
+
+forward!(bool);
+forward!(u8, u16, u32, u64, u128);
+forward!(i8, i16, i32, i64, i128);
+forward!(f32, f64);
+
+impl<'a> Encode for &'a str {
+    #[inline(always)]
+    fn encode(&self, w: &mut impl BufMut) {
+        encode_string(w, self)
+    }
+}
+
+impl<'a> Encode for &'a [u8] {
+    #[inline(always)]
+    fn encode(&self, w: &mut impl BufMut) {
+        encode_bytes(w, self)
+    }
+}
+
+pub fn encode_vec<T: Encode>(w: &mut impl BufMut, vec: &Vec<T>) {
     encode_u64(w, vec.len() as u64);
 
     for value in vec {
@@ -80,7 +116,7 @@ pub fn write_vec<T: Encode>(w: &mut impl BufMut, vec: &Vec<T>) {
     }
 }
 
-pub fn write_hash_map<K: Encode, V: Encode>(w: &mut impl BufMut, map: &HashMap<K, V>) {
+pub fn encode_hash_map<K: Encode, V: Encode>(w: &mut impl BufMut, map: &HashMap<K, V>) {
     encode_u64(w, map.len() as u64);
 
     for (key, value) in map {
@@ -89,7 +125,7 @@ pub fn write_hash_map<K: Encode, V: Encode>(w: &mut impl BufMut, map: &HashMap<K
     }
 }
 
-pub fn write_hash_set<T: Encode>(w: &mut impl BufMut, set: &HashSet<T>) {
+pub fn encode_hash_set<T: Encode>(w: &mut impl BufMut, set: &HashSet<T>) {
     encode_u64(w, set.len() as u64);
 
     for value in set {
@@ -97,7 +133,7 @@ pub fn write_hash_set<T: Encode>(w: &mut impl BufMut, set: &HashSet<T>) {
     }
 }
 
-pub fn write_option<T: Encode>(w: &mut impl BufMut, option: &Option<T>) {
+pub fn encode_option<T: Encode>(w: &mut impl BufMut, option: &Option<T>) {
     if let Some(value) = option {
         value.encode(w);
     }
@@ -105,7 +141,7 @@ pub fn write_option<T: Encode>(w: &mut impl BufMut, option: &Option<T>) {
 
 // TODO: NonZero
 
-pub fn write_array<const N: usize, T: Encode>(w: &mut impl BufMut, array: &[T; N]) {
+pub fn encode_array<const N: usize, T: Encode>(w: &mut impl BufMut, array: &[T; N]) {
     encode_u64(w, array.len() as u64);
 
     for value in array {
@@ -400,4 +436,14 @@ impl Encode for NonZeroI128 {
     fn encode(&self, w: &mut impl BufMut) {
         encode_i128(w, self.get());
     }
+}
+
+#[inline(always)]
+pub fn write_field<W, E>(w: &mut W, id: u32, encode: E)
+where
+    W: BufMut,
+    E: Fn(&mut W),
+{
+    write_id(w, id);
+    encode(w);
 }

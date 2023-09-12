@@ -1,45 +1,8 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
-use stef_parser::{
-    DataType, Definition, Enum, Fields, Module, NamedField, Schema, Struct,
-    UnnamedField, Variant,
-};
+use stef_parser::{DataType, Enum, Fields, NamedField, Struct, UnnamedField, Variant};
 
-pub(crate) fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream {
-    let definintions = definitions.iter().map(compile_definition);
-
-    quote! { #(#definintions)* }
-}
-
-fn compile_definition(definition: &Definition<'_>) -> TokenStream {
-    let definition = match definition {
-        Definition::Module(m) => compile_module(m),
-        Definition::Struct(s) => compile_struct(s),
-        Definition::Enum(e) => compile_enum(e),
-        Definition::TypeAlias(_) | Definition::Const(_) | Definition::Import(_) => quote! {},
-    };
-
-    quote! { #definition }
-}
-
-fn compile_module(
-    Module {
-        comment: _,
-        name,
-        definitions,
-    }: &Module<'_>,
-) -> TokenStream {
-    let name = Ident::new(name, Span::call_site());
-    let definitions = definitions.iter().map(compile_definition);
-
-    quote! {
-        pub mod #name {
-            #(#definitions)*
-        }
-    }
-}
-
-fn compile_struct(
+pub fn compile_struct(
     Struct {
         comment: _,
         attributes: _,
@@ -98,7 +61,7 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
     }
 }
 
-fn compile_enum(
+pub fn compile_enum(
     Enum {
         comment: _,
         attributes: _,
@@ -244,100 +207,5 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::NonZero(_) | DataType::External(_) => {
             quote! { #name.encode(w) }
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use indoc::indoc;
-    use pretty_assertions::assert_eq;
-
-    use super::*;
-
-    fn parse(input: &str, expect: &str) {
-        let parsed = Schema::parse(input).unwrap();
-        println!("==========\n{parsed}");
-
-        let compiled = compile_schema(&parsed);
-        println!("----------\n{compiled}");
-
-        let pretty = prettyplease::unparse(&syn::parse2(compiled.clone()).unwrap());
-        println!("----------\n{pretty}==========");
-
-        assert_eq!(expect, pretty);
-    }
-
-    #[test]
-    fn basic_module() {
-        let input = indoc! {r#"
-            /// Hello world!
-            mod sample {}
-        "#};
-        let expect = indoc! {r#"
-            pub mod sample {}
-        "#};
-
-        parse(input, expect);
-    }
-
-    #[test]
-    fn basic_struct() {
-        let input = indoc! {r#"
-            /// Hello world!
-            struct Sample {
-                field1: u32 @1,
-                field2: bytes @2,
-                field3: (bool, [i16; 4]) @3,
-            }
-        "#};
-        let expect = indoc! {r#"
-            impl ::stef::Encode for Sample {
-                fn encode(&self, w: &mut impl ::stef::BufMut) {
-                    ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, self.field1) });
-                    ::stef::write_field(w, 2, |w| { ::stef::encode_bytes(w, &self.field2) });
-                    ::stef::write_field(w, 3, |w| { ::stef::write_tuple2(w, &self.field3) });
-                }
-            }
-        "#};
-
-        parse(input, expect);
-    }
-
-    #[test]
-    fn basic_enum() {
-        let input = indoc! {r#"
-            /// Hello world!
-            enum Sample {
-                Variant1 @1,
-                Variant2(u32 @1, u8 @2) @2,
-                Variant3 {
-                    field1: string @1,
-                    field2: vec<bool> @2,
-                } @3,
-            }
-        "#};
-        let expect = indoc! {r#"
-            impl ::stef::Encode for Sample {
-                fn encode(&self, w: &mut impl ::stef::BufMut) {
-                    match self {
-                        Self::Variant1 => {
-                            ::stef::write_id(w, 1);
-                        }
-                        Self::Variant2(n0, n1) => {
-                            ::stef::write_id(w, 2);
-                            ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, n0) });
-                            ::stef::write_field(w, 2, |w| { ::stef::encode_u8(w, n1) });
-                        }
-                        Self::Variant3 { field1, field2 } => {
-                            ::stef::write_id(w, 3);
-                            ::stef::write_field(w, 1, |w| { ::stef::encode_string(w, &field1) });
-                            ::stef::write_field(w, 2, |w| { ::stef::encode_vec(w, &field2) });
-                        }
-                    }
-                }
-            }
-        "#};
-
-        parse(input, expect);
     }
 }

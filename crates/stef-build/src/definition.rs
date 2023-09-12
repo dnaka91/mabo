@@ -5,6 +5,8 @@ use stef_parser::{
     Module, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant,
 };
 
+use super::encode;
+
 pub(crate) fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream {
     let definitions = definitions.iter().map(compile_definition);
 
@@ -14,8 +16,24 @@ pub(crate) fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream
 fn compile_definition(definition: &Definition<'_>) -> TokenStream {
     let definition = match definition {
         Definition::Module(m) => compile_module(m),
-        Definition::Struct(s) => compile_struct(s),
-        Definition::Enum(e) => compile_enum(e),
+        Definition::Struct(s) => {
+            let def = compile_struct(s);
+            let encode = encode::compile_struct(s);
+
+            quote! {
+                #def
+                #encode
+            }
+        }
+        Definition::Enum(e) => {
+            let def = compile_enum(e);
+            let encode = encode::compile_enum(e);
+
+            quote! {
+                #def
+                #encode
+            }
+        }
         Definition::TypeAlias(a) => compile_alias(a),
         Definition::Const(c) => compile_const(c),
         Definition::Import(i) => compile_import(i),
@@ -362,6 +380,13 @@ mod tests {
                 pub field2: Vec<u8>,
                 pub field3: (bool, [i16; 4]),
             }
+            impl ::stef::Encode for Sample {
+                fn encode(&self, w: &mut impl ::stef::BufMut) {
+                    ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, self.field1) });
+                    ::stef::write_field(w, 2, |w| { ::stef::encode_bytes(w, &self.field2) });
+                    ::stef::write_field(w, 3, |w| { ::stef::write_tuple2(w, &self.field3) });
+                }
+            }
         "#};
 
         parse(input, expect);
@@ -386,6 +411,25 @@ mod tests {
                 Variant1,
                 Variant2(u32, u8),
                 Variant3 { field1: String, field2: Vec<bool> },
+            }
+            impl ::stef::Encode for Sample {
+                fn encode(&self, w: &mut impl ::stef::BufMut) {
+                    match self {
+                        Self::Variant1 => {
+                            ::stef::write_id(w, 1);
+                        }
+                        Self::Variant2(n0, n1) => {
+                            ::stef::write_id(w, 2);
+                            ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, n0) });
+                            ::stef::write_field(w, 2, |w| { ::stef::encode_u8(w, n1) });
+                        }
+                        Self::Variant3 { field1, field2 } => {
+                            ::stef::write_id(w, 3);
+                            ::stef::write_field(w, 1, |w| { ::stef::encode_string(w, &field1) });
+                            ::stef::write_field(w, 2, |w| { ::stef::encode_vec(w, &field2) });
+                        }
+                    }
+                }
             }
         "#};
 

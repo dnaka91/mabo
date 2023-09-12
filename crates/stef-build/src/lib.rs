@@ -3,7 +3,6 @@
 
 use std::path::{Path, PathBuf};
 
-use quote::quote;
 use stef_parser::Schema;
 use thiserror::Error;
 
@@ -30,16 +29,9 @@ pub fn compile(schemas: &[impl AsRef<Path>], _includes: &[impl AsRef<Path>]) -> 
         })?;
 
         let schema = Schema::parse(&input).unwrap();
-        let definition = definition::compile_schema(&schema);
-        let encode = encode::compile_schema(&schema);
+        let code = definition::compile_schema(&schema);
 
-        println!(
-            "{}",
-            quote! {
-                #definition
-                #encode
-            }
-        );
+        println!("{code}");
     }
 
     Ok(())

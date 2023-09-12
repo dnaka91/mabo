@@ -150,7 +150,7 @@ fn compile_variant(
             let field_names = unnamed
                 .iter()
                 .enumerate()
-                .map(|(idx, _)| Ident::new(&format!("unnamed_{idx}"), Span::call_site()));
+                .map(|(idx, _)| Ident::new(&format!("n{idx}"), Span::call_site()));
 
             quote! {
                 Self::#name(#(#field_names,)*) => {
@@ -194,7 +194,7 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                 .enumerate()
                 .map(|(idx, UnnamedField { ty, id })| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
-                    let name = Ident::new(&format!("unnamed_{idx}"), Span::call_site());
+                    let name = Ident::new(&format!("n{idx}"), Span::call_site());
                     let ty = compile_data_type(ty, name.to_token_stream());
 
                     quote! { ::stef::write_field(w, #id, |w| { #ty }); }
@@ -206,6 +206,7 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
     }
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
     match ty {
         DataType::Bool => quote! { ::stef::encode_bool(w, #name) },
@@ -227,36 +228,20 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::HashMap(_kv) => quote! { ::stef::encode_hash_map(w, #name) },
         DataType::HashSet(_ty) => quote! { ::stef::encode_hash_set(w, #name) },
         DataType::Option(_ty) => quote! { ::stef::encode_option(w, #name) },
-        DataType::NonZero(ty) => match **ty {
-            DataType::U8 => quote! { ::stef::encode_u8(w, #name.get()) },
-            DataType::U16 => quote! { ::stef::encode_u16(w, #name.get()) },
-            DataType::U32 => quote! { ::stef::encode_u32(w, #name.get()) },
-            DataType::U64 => quote! { ::stef::encode_u64(w, #name.get()) },
-            DataType::U128 => quote! { ::stef::encode_u128(w, #name.get()) },
-            DataType::I8 => quote! { ::stef::encode_i8(w, #name.get()) },
-            DataType::I16 => quote! { ::stef::encode_i16(w, #name.get()) },
-            DataType::I32 => quote! { ::stef::encode_i32(w, #name.get()) },
-            DataType::I64 => quote! { ::stef::encode_i64(w, #name.get()) },
-            DataType::I128 => quote! { ::stef::encode_i128(w, #name.get()) },
-            _ => compile_data_type(ty, name),
-        },
         DataType::BoxString => quote! { ::stef::encode_string(w, &*#name) },
         DataType::BoxBytes => quote! { ::stef::encode_bytes(w, &*#name) },
-        DataType::Tuple(types) => {
-            let calls = types.iter().enumerate().map(|(idx, ty)| {
-                let idx = proc_macro2::Literal::usize_unsuffixed(idx);
-                compile_data_type(ty, quote! { #name.#idx })
-            });
-            quote! { #(#calls;)* }
-        }
+        DataType::Tuple(types) => match types.len() {
+            size @ 1..=12 => {
+                let fn_name = Ident::new(&format!("write_tuple{size}"), Span::call_site());
+                quote! { ::stef::#fn_name(w, &#name) }
+            }
+            0 => panic!("tuple with zero elements"),
+            _ => panic!("tuple with more than 12 elements"),
+        },
         DataType::Array(_ty, _size) => {
             quote! { ::stef::encode_array(w, &#name) }
         }
-        DataType::External(ExternalType {
-            path: _,
-            name: _,
-            generics: _,
-        }) => {
+        DataType::NonZero(_) | DataType::External(_) => {
             quote! { #name.encode(w) }
         }
     }
@@ -310,14 +295,7 @@ mod tests {
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, self.field1) });
                     ::stef::write_field(w, 2, |w| { ::stef::encode_bytes(w, &self.field2) });
-                    ::stef::write_field(
-                        w,
-                        3,
-                        |w| {
-                            ::stef::encode_bool(w, self.field3.0);
-                            ::stef::encode_array(w, &self.field3.1);
-                        },
-                    );
+                    ::stef::write_field(w, 3, |w| { ::stef::write_tuple2(w, &self.field3) });
                 }
             }
         "#};
@@ -345,10 +323,10 @@ mod tests {
                         Self::Variant1 => {
                             ::stef::write_id(w, 1);
                         }
-                        Self::Variant2(unnamed_0, unnamed_1) => {
+                        Self::Variant2(n0, n1) => {
                             ::stef::write_id(w, 2);
-                            ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, unnamed_0) });
-                            ::stef::write_field(w, 2, |w| { ::stef::encode_u8(w, unnamed_1) });
+                            ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, n0) });
+                            ::stef::write_field(w, 2, |w| { ::stef::encode_u8(w, n1) });
                         }
                         Self::Variant3 { field1, field2 } => {
                             ::stef::write_id(w, 3);

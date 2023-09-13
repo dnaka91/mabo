@@ -32,7 +32,7 @@ impl ::stef::Decode for Sample {
         let mut f1: Option<Vec<u32>> = None;
         let mut f2: Option<HashMap<u32, String>> = None;
         let mut f3: Option<HashSet<u32>> = None;
-        let mut f4: Option<Option<u32>> = None;
+        let mut f4: Option<u32> = None;
         let mut f5: Option<NonZeroU32> = None;
         loop {
             match ::stef::buf::decode_id(r)? {

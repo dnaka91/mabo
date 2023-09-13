@@ -91,29 +91,29 @@ fn compile_variant(
 }
 
 fn compile_field_vars(fields: &Fields<'_>) -> TokenStream {
-    match fields {
-        Fields::Named(named) => {
-            let vars = named.iter().map(|named| {
-                let name = Ident::new(named.name, Span::call_site());
-                let ty = super::definition::compile_data_type(&named.ty);
+    let vars: Box<dyn Iterator<Item = _>> = match fields {
+        Fields::Named(named) => Box::new(named.iter().map(|named| {
+            let name = Ident::new(named.name, Span::call_site());
+            (name, &named.ty)
+        })),
+        Fields::Unnamed(unnamed) => Box::new(unnamed.iter().enumerate().map(|(idx, unnamed)| {
+            let name = Ident::new(&format!("n{idx}"), Span::call_site());
+            (name, &unnamed.ty)
+        })),
+        Fields::Unit => return quote! {},
+    };
 
-                quote! { let mut #name: Option<#ty> = None; }
-            });
+    let vars = vars.map(|(name, ty)| {
+        let ty_ident = super::definition::compile_data_type(ty);
 
-            quote! { #(#vars)* }
+        if matches!(ty, DataType::Option(_)) {
+            quote! { let mut #name: #ty_ident = None; }
+        } else {
+            quote! { let mut #name: Option<#ty_ident> = None; }
         }
-        Fields::Unnamed(unnamed) => {
-            let vars = unnamed.iter().enumerate().map(|(idx, unnamed)| {
-                let name = Ident::new(&format!("n{idx}"), Span::call_site());
-                let ty = super::definition::compile_data_type(&unnamed.ty);
+    });
 
-                quote! { let mut #name: Option<#ty> = None;}
-            });
-
-            quote! { #(#vars)* }
-        }
-        Fields::Unit => quote! {},
-    }
+    quote! { #(#vars)* }
 }
 
 fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {

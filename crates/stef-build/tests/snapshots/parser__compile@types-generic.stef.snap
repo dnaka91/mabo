@@ -1,0 +1,73 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}"
+input_file: crates/stef-parser/tests/inputs/types-generic.stef
+---
+pub struct Sample {
+    pub f1: Vec<u32>,
+    pub f2: HashMap<u32, String>,
+    pub f3: HashSet<u32>,
+    pub f4: Option<u32>,
+    pub f5: NonZeroU32,
+}
+impl ::stef::Encode for Sample {
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_vec(w, &self.f1) });
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| { ::stef::buf::encode_hash_map(w, self.f2) },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| { ::stef::buf::encode_hash_set(w, self.f3) },
+        );
+        ::stef::buf::encode_field(w, 4, |w| { ::stef::buf::encode_option(w, self.f4) });
+        ::stef::buf::encode_field(w, 5, |w| { self.f5.encode(w) });
+    }
+}
+impl ::stef::Decode for Sample {
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut f1: Option<Vec<u32>> = None;
+        let mut f2: Option<HashMap<u32, String>> = None;
+        let mut f3: Option<HashSet<u32>> = None;
+        let mut f4: Option<Option<u32>> = None;
+        let mut f5: Option<NonZeroU32> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => f1 = Some(::stef::buf::decode_vec(r)?),
+                2 => f2 = Some(::stef::buf::decode_hash_map(r)?),
+                3 => f3 = Some(::stef::buf::decode_hash_set(r)?),
+                4 => f4 = Some(::stef::buf::decode_u32(r)?),
+                5 => f5 = Some(NonZeroU32::decode(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            f1: f1
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("f1"),
+                }),
+            f2: f2
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("f2"),
+                }),
+            f3: f3
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("f3"),
+                }),
+            f4,
+            f5: f5
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 5,
+                    name: Some("f5"),
+                }),
+        })
+    }
+}
+

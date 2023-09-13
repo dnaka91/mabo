@@ -7,7 +7,7 @@ use stef_parser::{
 
 use super::{decode, encode};
 
-pub(crate) fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream {
+pub fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream {
     let definitions = definitions.iter().map(compile_definition);
 
     quote! { #(#definitions)* }

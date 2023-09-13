@@ -18,7 +18,8 @@ thiserror = "1.0.48"
 
 [dev-dependencies]
 indoc = "2.0.3"
+insta = { version = "1.31.0", features = ["glob"] }
 pretty_assertions = "1.4.0"
 prettyplease = "0.2.15"
 stef = { path = "../stef" }
-syn = "2.0.31"
+syn = "2.0.32"

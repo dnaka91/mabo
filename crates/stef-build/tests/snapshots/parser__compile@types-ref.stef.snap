@@ -1,0 +1,42 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "struct Sample {\n    basic: Test123 @1,\n    with_generics: KeyValue<u32, bool> @2,\n}"
+input_file: crates/stef-parser/tests/inputs/types-ref.stef
+---
+pub struct Sample {
+    pub basic: Test123,
+    pub with_generics: KeyValue<u32, bool>,
+}
+impl ::stef::Encode for Sample {
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(w, 1, |w| { self.basic.encode(w) });
+        ::stef::buf::encode_field(w, 2, |w| { self.with_generics.encode(w) });
+    }
+}
+impl ::stef::Decode for Sample {
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut basic: Option<Test123> = None;
+        let mut with_generics: Option<KeyValue<u32, bool>> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => basic = Some(Test123::decode(r)?),
+                2 => with_generics = Some(KeyValue::decode(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            basic: basic
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("basic"),
+                }),
+            with_generics: with_generics
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("with_generics"),
+                }),
+        })
+    }
+}
+

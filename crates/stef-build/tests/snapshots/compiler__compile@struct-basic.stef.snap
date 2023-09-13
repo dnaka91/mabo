@@ -1,28 +1,21 @@
 ---
-source: crates/stef-build/tests/parser.rs
-expression: "/// Some comment\n       struct      Sample<\n            A,\n            B\n        >  {\n\n      a:    u32    @1,\n      b:    bool   @2,\n\n    }"
-input_file: crates/stef-parser/tests/inputs/struct-many-ws.stef
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    /// Second field\n    b: bool @2,\n}"
+input_file: crates/stef-parser/tests/inputs/struct-basic.stef
 ---
-/// Some comment
-pub struct Sample<A, B> {
+/// Basic struct.
+pub struct Sample {
     pub a: u32,
+    /// Second field
     pub b: bool,
 }
-impl<A, B> ::stef::Encode for Sample<A, B>
-where
-    A: ::stef::buf::Encode,
-    B: ::stef::buf::Encode,
-{
+impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
         ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
     }
 }
-impl<A, B> ::stef::Decode for Sample<A, B>
-where
-    A: ::stef::buf::Decode,
-    B: ::stef::buf::Decode,
-{
+impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;

@@ -1,37 +1,36 @@
 ---
-source: crates/stef-build/tests/parser.rs
-expression: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}"
-input_file: crates/stef-parser/tests/inputs/struct-min-ws.stef
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Some comment\n       struct      Sample<\n            A,\n            B\n        >  {\n\n      a:    u32    @1,\n      b:    bool   @2,\n\n    }"
+input_file: crates/stef-parser/tests/inputs/struct-many-ws.stef
 ---
-pub struct Sample<T> {
+/// Some comment
+pub struct Sample<A, B> {
     pub a: u32,
     pub b: bool,
-    pub c: T,
 }
-impl<T> ::stef::Encode for Sample<T>
+impl<A, B> ::stef::Encode for Sample<A, B>
 where
-    T: ::stef::buf::Encode,
+    A: ::stef::buf::Encode,
+    B: ::stef::buf::Encode,
 {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
         ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
-        ::stef::buf::encode_field(w, 3, |w| { self.c.encode(w) });
     }
 }
-impl<T> ::stef::Decode for Sample<T>
+impl<A, B> ::stef::Decode for Sample<A, B>
 where
-    T: ::stef::buf::Decode,
+    A: ::stef::buf::Decode,
+    B: ::stef::buf::Decode,
 {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;
-        let mut c: Option<T> = None;
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
                 1 => a = Some(::stef::buf::decode_u32(r)?),
                 2 => b = Some(::stef::buf::decode_bool(r)?),
-                3 => c = Some(T::decode(r)?),
                 _ => continue,
             }
         }
@@ -45,11 +44,6 @@ where
                 .unwrap_or_else(|| ::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("b"),
-                }),
-            c: c
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
-                    id: 3,
-                    name: Some("c"),
                 }),
         })
     }

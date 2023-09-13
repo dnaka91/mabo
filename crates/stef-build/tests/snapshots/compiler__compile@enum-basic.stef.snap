@@ -1,21 +1,20 @@
 ---
-source: crates/stef-build/tests/parser.rs
-expression: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n    Two(A @1, B @2) @2,\n    Three {\n        field1: C @1,\n        field2: D @2,\n    } @3,\n}"
-input_file: crates/stef-parser/tests/inputs/enum-generics.stef
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/stef-parser/tests/inputs/enum-basic.stef
 ---
-/// Enum with generics.
-pub enum Sample<A, B, C, D> {
+/// Sample enum.
+pub enum Sample {
     One,
-    Two(A, B),
-    Three { field1: C, field2: D },
+    /// Second variant
+    Two(u32, u64),
+    Three {
+        field1: u32,
+        /// Second field of third variant
+        field2: bool,
+    },
 }
-impl<A, B, C, D> ::stef::Encode for Sample<A, B, C, D>
-where
-    A: ::stef::buf::Encode,
-    B: ::stef::buf::Encode,
-    C: ::stef::buf::Encode,
-    D: ::stef::buf::Encode,
-{
+impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::One => {
@@ -23,24 +22,26 @@ where
             }
             Self::Two(n0, n1) => {
                 ::stef::buf::encode_id(w, 2);
-                ::stef::buf::encode_field(w, 1, |w| { n0.encode(w) });
-                ::stef::buf::encode_field(w, 2, |w| { n1.encode(w) });
+                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, n0) });
+                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, n1) });
             }
             Self::Three { field1, field2 } => {
                 ::stef::buf::encode_id(w, 3);
-                ::stef::buf::encode_field(w, 1, |w| { field1.encode(w) });
-                ::stef::buf::encode_field(w, 2, |w| { field2.encode(w) });
+                ::stef::buf::encode_field(
+                    w,
+                    1,
+                    |w| { ::stef::buf::encode_u32(w, field1) },
+                );
+                ::stef::buf::encode_field(
+                    w,
+                    2,
+                    |w| { ::stef::buf::encode_bool(w, field2) },
+                );
             }
         }
     }
 }
-impl<A, B, C, D> ::stef::Decode for Sample<A, B, C, D>
-where
-    A: ::stef::buf::Decode,
-    B: ::stef::buf::Decode,
-    C: ::stef::buf::Decode,
-    D: ::stef::buf::Decode,
-{
+impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
             1 => {
@@ -53,13 +54,13 @@ where
                 Ok(Self::One)
             }
             2 => {
-                let mut n0: Option<A> = None;
-                let mut n1: Option<B> = None;
+                let mut n0: Option<u32> = None;
+                let mut n1: Option<u64> = None;
                 loop {
                     match ::stef::buf::decode_id(r)? {
                         ::stef::buf::END_MARKER => break,
-                        1 => n0 = Some(A::decode(r)?),
-                        2 => n1 = Some(B::decode(r)?),
+                        1 => n0 = Some(::stef::buf::decode_u32(r)?),
+                        2 => n1 = Some(::stef::buf::decode_u64(r)?),
                         _ => continue,
                     }
                 }
@@ -79,13 +80,13 @@ where
                 )
             }
             3 => {
-                let mut field1: Option<C> = None;
-                let mut field2: Option<D> = None;
+                let mut field1: Option<u32> = None;
+                let mut field2: Option<bool> = None;
                 loop {
                     match ::stef::buf::decode_id(r)? {
                         ::stef::buf::END_MARKER => break,
-                        1 => field1 = Some(C::decode(r)?),
-                        2 => field2 = Some(D::decode(r)?),
+                        1 => field1 = Some(::stef::buf::decode_u32(r)?),
+                        2 => field2 = Some(::stef::buf::decode_bool(r)?),
                         _ => continue,
                     }
                 }

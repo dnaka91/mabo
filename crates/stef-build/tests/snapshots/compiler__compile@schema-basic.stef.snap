@@ -1,8 +1,45 @@
 ---
-source: crates/stef-build/tests/parser.rs
-expression: "/// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n       Two  (   u32   @1,     u64     @2)    @2,\n\n            Three     {\n\n                    field1:    u32      @1,\n\n                    field2:    bool     @2,\n\n            }    @3,\n\n }"
-input_file: crates/stef-parser/tests/inputs/enum-many-ws.stef
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    b: bool @2,\n}\n\n/// Sample enum.\nenum Sample {\n    One @1,\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/stef-parser/tests/inputs/schema-basic.stef
 ---
+/// Basic struct.
+pub struct Sample {
+    pub a: u32,
+    pub b: bool,
+}
+impl ::stef::Encode for Sample {
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
+        ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
+    }
+}
+impl ::stef::Decode for Sample {
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut a: Option<u32> = None;
+        let mut b: Option<bool> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => a = Some(::stef::buf::decode_u32(r)?),
+                2 => b = Some(::stef::buf::decode_bool(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            a: a
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("a"),
+                }),
+            b: b
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("b"),
+                }),
+        })
+    }
+}
 /// Sample enum.
 pub enum Sample {
     One,

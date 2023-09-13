@@ -1,7 +1,7 @@
 ---
-source: crates/stef-build/tests/parser.rs
-expression: "#[validate(min = 1, max = 100)]\nstruct Sample"
-input_file: crates/stef-parser/tests/inputs/attribute-multi.stef
+source: crates/stef-build/tests/compiler.rs
+expression: "#[deprecated = \"don't use\", compress]\n#[validate(\n    in_range(min = 100, max = 200),\n    non_empty,\n)]\nstruct Sample"
+input_file: crates/stef-parser/tests/inputs/attributes.stef
 ---
 pub struct Sample;
 impl ::stef::Encode for Sample {

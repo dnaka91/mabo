@@ -1,5 +1,5 @@
 ---
-source: crates/stef-build/tests/parser.rs
+source: crates/stef-build/tests/compiler.rs
 expression: "#[deprecated = \"don't use\"]\nstruct Sample"
 input_file: crates/stef-parser/tests/inputs/attribute-single.stef
 ---

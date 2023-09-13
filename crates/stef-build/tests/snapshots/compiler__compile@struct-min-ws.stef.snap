@@ -1,29 +1,37 @@
 ---
-source: crates/stef-build/tests/parser.rs
-expression: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    /// Second field\n    b: bool @2,\n}"
-input_file: crates/stef-parser/tests/inputs/struct-basic.stef
+source: crates/stef-build/tests/compiler.rs
+expression: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}"
+input_file: crates/stef-parser/tests/inputs/struct-min-ws.stef
 ---
-/// Basic struct.
-pub struct Sample {
+pub struct Sample<T> {
     pub a: u32,
-    /// Second field
     pub b: bool,
+    pub c: T,
 }
-impl ::stef::Encode for Sample {
+impl<T> ::stef::Encode for Sample<T>
+where
+    T: ::stef::buf::Encode,
+{
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
         ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
+        ::stef::buf::encode_field(w, 3, |w| { self.c.encode(w) });
     }
 }
-impl ::stef::Decode for Sample {
+impl<T> ::stef::Decode for Sample<T>
+where
+    T: ::stef::buf::Decode,
+{
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;
+        let mut c: Option<T> = None;
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
                 1 => a = Some(::stef::buf::decode_u32(r)?),
                 2 => b = Some(::stef::buf::decode_bool(r)?),
+                3 => c = Some(T::decode(r)?),
                 _ => continue,
             }
         }
@@ -37,6 +45,11 @@ impl ::stef::Decode for Sample {
                 .unwrap_or_else(|| ::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("b"),
+                }),
+            c: c
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("c"),
                 }),
         })
     }

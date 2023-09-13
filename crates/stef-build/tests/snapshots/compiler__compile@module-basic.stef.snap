@@ -21,15 +21,7 @@ pub mod a {
         impl ::stef::Decode for Sample {
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 match ::stef::buf::decode_id(r)? {
-                    1 => {
-                        loop {
-                            match ::stef::buf::decode_id(r)? {
-                                ::stef::buf::END_MARKER => break,
-                                _ => continue,
-                            }
-                        }
-                        Ok(Self::One)
-                    }
+                    1 => Ok(Self::One),
                     id => Err(Error::UnknownVariant(id)),
                 }
             }

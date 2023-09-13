@@ -9,12 +9,6 @@ impl ::stef::Encode for Sample {
 }
 impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-        loop {
-            match ::stef::buf::decode_id(r)? {
-                ::stef::buf::END_MARKER => break,
-                _ => continue,
-            }
-        }
         Ok(Self)
     }
 }

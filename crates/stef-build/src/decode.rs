@@ -17,20 +17,28 @@ pub fn compile_struct(
     let field_matches = compile_field_matches(fields);
     let field_assigns = compile_field_assigns(fields);
 
+    let body = if matches!(fields, Fields::Unit) {
+        quote! { Ok(Self) }
+    } else {
+        quote! {
+            #field_vars
+
+            loop{
+                match ::stef::buf::decode_id(r)? {
+                    ::stef::buf::END_MARKER => break,
+                    #field_matches
+                    _ => continue,
+                }
+            }
+
+            Ok(Self #field_assigns)
+        }
+    };
+
     quote! {
         impl #generics ::stef::Decode for #name #generics #generics_where {
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-                #field_vars
-
-                loop{
-                    match ::stef::buf::decode_id(r)? {
-                        ::stef::buf::END_MARKER => break,
-                        #field_matches
-                        _ => continue,
-                    }
-                }
-
-                Ok(Self #field_assigns)
+                #body
             }
         }
     }
@@ -75,19 +83,23 @@ fn compile_variant(
     let field_matches = compile_field_matches(fields);
     let field_assigns = compile_field_assigns(fields);
 
-    quote! {
-        #id => {
-            #field_vars
+    if matches!(fields, Fields::Unit) {
+        quote! { #id => Ok(Self::#name) }
+    } else {
+        quote! {
+            #id => {
+                #field_vars
 
-            loop{
-                match ::stef::buf::decode_id(r)? {
-                    ::stef::buf::END_MARKER => break,
-                    #field_matches
-                    _ => continue,
+                loop{
+                    match ::stef::buf::decode_id(r)? {
+                        ::stef::buf::END_MARKER => break,
+                        #field_matches
+                        _ => continue,
+                    }
                 }
-            }
 
-            Ok(Self::#name #field_assigns)
+                Ok(Self::#name #field_assigns)
+            }
         }
     }
 }

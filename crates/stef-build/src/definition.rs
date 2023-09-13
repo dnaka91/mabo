@@ -5,7 +5,7 @@ use stef_parser::{
     Module, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant,
 };
 
-use super::encode;
+use super::{decode, encode};
 
 pub(crate) fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream {
     let definitions = definitions.iter().map(compile_definition);
@@ -19,19 +19,23 @@ fn compile_definition(definition: &Definition<'_>) -> TokenStream {
         Definition::Struct(s) => {
             let def = compile_struct(s);
             let encode = encode::compile_struct(s);
+            let decode = decode::compile_struct(s);
 
             quote! {
                 #def
                 #encode
+                #decode
             }
         }
         Definition::Enum(e) => {
             let def = compile_enum(e);
             let encode = encode::compile_enum(e);
+            let decode = decode::compile_enum(e);
 
             quote! {
                 #def
                 #encode
+                #decode
             }
         }
         Definition::TypeAlias(a) => compile_alias(a),
@@ -222,7 +226,7 @@ fn compile_fields(fields: &Fields<'_>, public: bool) -> TokenStream {
     }
 }
 
-fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
+pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
     match ty {
         DataType::Bool => quote! { bool },
         DataType::U8 => quote! { u8 },
@@ -331,6 +335,8 @@ fn compile_literal(literal: &Literal) -> TokenStream {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::too_many_lines)]
+
     use indoc::indoc;
     use pretty_assertions::assert_eq;
 
@@ -382,9 +388,50 @@ mod tests {
             }
             impl ::stef::Encode for Sample {
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
-                    ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, self.field1) });
-                    ::stef::write_field(w, 2, |w| { ::stef::encode_bytes(w, &self.field2) });
-                    ::stef::write_field(w, 3, |w| { ::stef::write_tuple2(w, &self.field3) });
+                    ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.field1) });
+                    ::stef::buf::encode_field(
+                        w,
+                        2,
+                        |w| { ::stef::buf::encode_bytes(w, &self.field2) },
+                    );
+                    ::stef::buf::encode_field(
+                        w,
+                        3,
+                        |w| { ::stef::buf::encode_tuple2(w, &self.field3) },
+                    );
+                }
+            }
+            impl ::stef::Decode for Sample {
+                fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+                    let mut field1: Option<u32> = None;
+                    let mut field2: Option<Vec<u8>> = None;
+                    let mut field3: Option<(bool, [i16; 4])> = None;
+                    loop {
+                        match ::stef::buf::decode_id(r)? {
+                            ::stef::buf::END_MARKER => break,
+                            1 => field1 = Some(::stef::buf::decode_u32(r)?),
+                            2 => field2 = Some(::stef::buf::decode_bytes(r)?),
+                            3 => field3 = Some(::stef::buf::decode_tuple2(r)?),
+                            _ => continue,
+                        }
+                    }
+                    Ok(Self {
+                        field1: field1
+                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                id: 1,
+                                name: Some("field1"),
+                            }),
+                        field2: field2
+                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                id: 2,
+                                name: Some("field2"),
+                            }),
+                        field3: field3
+                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                id: 3,
+                                name: Some("field3"),
+                            }),
+                    })
                 }
             }
         "#};
@@ -416,18 +463,92 @@ mod tests {
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     match self {
                         Self::Variant1 => {
-                            ::stef::write_id(w, 1);
+                            ::stef::buf::encode_id(w, 1);
                         }
                         Self::Variant2(n0, n1) => {
-                            ::stef::write_id(w, 2);
-                            ::stef::write_field(w, 1, |w| { ::stef::encode_u32(w, n0) });
-                            ::stef::write_field(w, 2, |w| { ::stef::encode_u8(w, n1) });
+                            ::stef::buf::encode_id(w, 2);
+                            ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, n0) });
+                            ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u8(w, n1) });
                         }
                         Self::Variant3 { field1, field2 } => {
-                            ::stef::write_id(w, 3);
-                            ::stef::write_field(w, 1, |w| { ::stef::encode_string(w, &field1) });
-                            ::stef::write_field(w, 2, |w| { ::stef::encode_vec(w, &field2) });
+                            ::stef::buf::encode_id(w, 3);
+                            ::stef::buf::encode_field(
+                                w,
+                                1,
+                                |w| { ::stef::buf::encode_string(w, &field1) },
+                            );
+                            ::stef::buf::encode_field(
+                                w,
+                                2,
+                                |w| { ::stef::buf::encode_vec(w, &field2) },
+                            );
                         }
+                    }
+                }
+            }
+            impl ::stef::Decode for Sample {
+                fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+                    match ::stef::buf::decode_id(r)? {
+                        1 => {
+                            loop {
+                                match ::stef::buf::decode_id(r)? {
+                                    ::stef::buf::END_MARKER => break,
+                                    _ => continue,
+                                }
+                            }
+                            Ok(Self::Variant1)
+                        }
+                        2 => {
+                            let mut n0: Option<u32> = None;
+                            let mut n1: Option<u8> = None;
+                            loop {
+                                match ::stef::buf::decode_id(r)? {
+                                    ::stef::buf::END_MARKER => break,
+                                    1 => n0 = Some(::stef::buf::decode_u32(r)?),
+                                    2 => n1 = Some(::stef::buf::decode_u8(r)?),
+                                    _ => continue,
+                                }
+                            }
+                            Ok(
+                                Self::Variant2(
+                                    n0
+                                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                            id: 1,
+                                            name: None,
+                                        }),
+                                    n1
+                                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                            id: 2,
+                                            name: None,
+                                        }),
+                                ),
+                            )
+                        }
+                        3 => {
+                            let mut field1: Option<String> = None;
+                            let mut field2: Option<Vec<bool>> = None;
+                            loop {
+                                match ::stef::buf::decode_id(r)? {
+                                    ::stef::buf::END_MARKER => break,
+                                    1 => field1 = Some(::stef::buf::decode_string(r)?),
+                                    2 => field2 = Some(::stef::buf::decode_vec(r)?),
+                                    _ => continue,
+                                }
+                            }
+                            Ok(Self::Variant3 {
+                                field1: field1
+                                    .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                        id: 1,
+                                        name: Some("field1"),
+                                    }),
+                                field2: field2
+                                    .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                        id: 2,
+                                        name: Some("field2"),
+                                    }),
+                            })
+                        }
+                        id => Err(Error::UnknownVariant(id)),
                     }
                 }
             }

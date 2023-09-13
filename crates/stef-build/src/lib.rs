@@ -6,6 +6,7 @@ use std::path::{Path, PathBuf};
 use stef_parser::Schema;
 use thiserror::Error;
 
+mod decode;
 mod definition;
 mod encode;
 

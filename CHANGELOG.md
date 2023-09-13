@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### <!-- 4 -->🚜 Refactor
 
-- Generate definitions and impls together ([e65b8cd](https://github.com/dnaka91/wazzup/commit/e65b8cdc8a3256eef36c4d5d0f42176506c9a90b))
+- Generate definitions and impls together ([b32bcfd](https://github.com/dnaka91/wazzup/commit/b32bcfd8630bc445421ce32b784de6601659aade))
 
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 

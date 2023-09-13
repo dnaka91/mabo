@@ -37,7 +37,7 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                     let name = proc_macro2::Ident::new(name, Span::call_site());
                     let ty = compile_data_type(ty, quote! { self.#name });
 
-                    quote! { ::stef::write_field(w, #id, |w| { #ty }); }
+                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 },
             );
 
@@ -52,7 +52,7 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                     let idx = proc_macro2::Literal::usize_unsuffixed(idx);
                     let ty = compile_data_type(ty, quote! { self.#idx });
 
-                    quote! { ::stef::write_field(w, #id, |w| { #ty }); }
+                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 });
 
             quote! { #(#calls)* }
@@ -104,7 +104,7 @@ fn compile_variant(
 
             quote! {
                 Self::#name{ #(#field_names,)* } => {
-                    ::stef::write_id(w, #id);
+                    ::stef::buf::encode_id(w, #id);
                     #fields_body
                 }
             }
@@ -117,14 +117,14 @@ fn compile_variant(
 
             quote! {
                 Self::#name(#(#field_names,)*) => {
-                    ::stef::write_id(w, #id);
+                    ::stef::buf::encode_id(w, #id);
                     #fields_body
                 }
             }
         }
         Fields::Unit => quote! {
             Self::#name => {
-                ::stef::write_id(w, #id);
+                ::stef::buf::encode_id(w, #id);
                 #fields_body
             }
         },
@@ -145,7 +145,7 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                     let name = proc_macro2::Ident::new(name, Span::call_site());
                     let ty = compile_data_type(ty, quote! { #name });
 
-                    quote! { ::stef::write_field(w, #id, |w| { #ty }); }
+                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 },
             );
 
@@ -160,7 +160,7 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
                     let ty = compile_data_type(ty, name.to_token_stream());
 
-                    quote! { ::stef::write_field(w, #id, |w| { #ty }); }
+                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 });
 
             quote! { #(#calls)* }
@@ -172,37 +172,38 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
 #[allow(clippy::needless_pass_by_value)]
 fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
     match ty {
-        DataType::Bool => quote! { ::stef::encode_bool(w, #name) },
-        DataType::U8 => quote! { ::stef::encode_u8(w, #name) },
-        DataType::U16 => quote! { ::stef::encode_u16(w, #name) },
-        DataType::U32 => quote! { ::stef::encode_u32(w, #name) },
-        DataType::U64 => quote! { ::stef::encode_u64(w, #name) },
-        DataType::U128 => quote! { ::stef::encode_u128(w, #name) },
-        DataType::I8 => quote! { ::stef::encode_i8(w, #name) },
-        DataType::I16 => quote! { ::stef::encode_i16(w, #name) },
-        DataType::I32 => quote! { ::stef::encode_i32(w, #name) },
-        DataType::I64 => quote! { ::stef::encode_i64(w, #name) },
-        DataType::I128 => quote! { ::stef::encode_i128(w, #name) },
-        DataType::F32 => quote! { ::stef::encode_f32(w, #name) },
-        DataType::F64 => quote! { ::stef::encode_f64(w, #name) },
-        DataType::String | DataType::StringRef => quote! { ::stef::encode_string(w, &#name) },
-        DataType::Bytes | DataType::BytesRef => quote! { ::stef::encode_bytes(w, &#name) },
-        DataType::Vec(_ty) => quote! { ::stef::encode_vec(w, &#name) },
-        DataType::HashMap(_kv) => quote! { ::stef::encode_hash_map(w, #name) },
-        DataType::HashSet(_ty) => quote! { ::stef::encode_hash_set(w, #name) },
-        DataType::Option(_ty) => quote! { ::stef::encode_option(w, #name) },
-        DataType::BoxString => quote! { ::stef::encode_string(w, &*#name) },
-        DataType::BoxBytes => quote! { ::stef::encode_bytes(w, &*#name) },
+        DataType::Bool => quote! { ::stef::buf::encode_bool(w, #name) },
+        DataType::U8 => quote! { ::stef::buf::encode_u8(w, #name) },
+        DataType::U16 => quote! { ::stef::buf::encode_u16(w, #name) },
+        DataType::U32 => quote! { ::stef::buf::encode_u32(w, #name) },
+        DataType::U64 => quote! { ::stef::buf::encode_u64(w, #name) },
+        DataType::U128 => quote! { ::stef::buf::encode_u128(w, #name) },
+        DataType::I8 => quote! { ::stef::buf::encode_i8(w, #name) },
+        DataType::I16 => quote! { ::stef::buf::encode_i16(w, #name) },
+        DataType::I32 => quote! { ::stef::buf::encode_i32(w, #name) },
+        DataType::I64 => quote! { ::stef::buf::encode_i64(w, #name) },
+        DataType::I128 => quote! { ::stef::buf::encode_i128(w, #name) },
+        DataType::F32 => quote! { ::stef::buf::encode_f32(w, #name) },
+        DataType::F64 => quote! { ::stef::buf::encode_f64(w, #name) },
+        DataType::String | DataType::StringRef => quote! { ::stef::buf::encode_string(w, &#name) },
+        DataType::Bytes | DataType::BytesRef => quote! { ::stef::buf::encode_bytes(w, &#name) },
+        DataType::Vec(_ty) => quote! { ::stef::buf::encode_vec(w, &#name) },
+        DataType::HashMap(_kv) => quote! { ::stef::buf::encode_hash_map(w, #name) },
+        DataType::HashSet(_ty) => quote! { ::stef::buf::encode_hash_set(w, #name) },
+        DataType::Option(_ty) => quote! { ::stef::buf::encode_option(w, #name) },
+        DataType::BoxString => quote! { ::stef::buf::encode_string(w, &*#name) },
+        DataType::BoxBytes => quote! { ::stef::buf::encode_bytes(w, &*#name) },
         DataType::Tuple(types) => match types.len() {
-            size @ 1..=12 => {
-                let fn_name = Ident::new(&format!("write_tuple{size}"), Span::call_site());
-                quote! { ::stef::#fn_name(w, &#name) }
+            size @ 2..=12 => {
+                let fn_name = Ident::new(&format!("encode_tuple{size}"), Span::call_site());
+                quote! { ::stef::buf::#fn_name(w, &#name) }
             }
             0 => panic!("tuple with zero elements"),
+            1 => panic!("tuple with single element"),
             _ => panic!("tuple with more than 12 elements"),
         },
         DataType::Array(_ty, _size) => {
-            quote! { ::stef::encode_array(w, &#name) }
+            quote! { ::stef::buf::encode_array(w, &#name) }
         }
         DataType::NonZero(_) | DataType::External(_) => {
             quote! { #name.encode(w) }

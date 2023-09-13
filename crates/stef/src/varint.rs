@@ -1,3 +1,5 @@
+//! Encoding and decoding for variable integers.
+
 use thiserror::Error;
 
 macro_rules! zigzag {
@@ -56,13 +58,13 @@ macro_rules! varint {
             }
 
             #[inline]
-            pub fn [<decode_ $ty>](buf: &[u8]) -> Result<($ty, &[u8]), DecodeIntError> {
+            pub fn [<decode_ $ty>](buf: &[u8]) -> Result<($ty, usize), DecodeIntError> {
                 let mut value = 0;
                 for (i, b) in buf.iter().copied().enumerate().take(max_size::<$ty>()) {
                     value |= ((b & 0x7f) as $ty) << (7 * i);
 
                     if b & 0x80 == 0 {
-                        return Ok((value, &buf[i + 1..]));
+                        return Ok((value, i + 1));
                     }
                 }
 
@@ -75,7 +77,7 @@ macro_rules! varint {
             }
 
             #[inline]
-            pub fn [<decode_ $signed>](buf: &[u8]) -> Result<($signed, &[u8]), DecodeIntError> {
+            pub fn [<decode_ $signed>](buf: &[u8]) -> Result<($signed, usize), DecodeIntError> {
                 [<decode_ $ty>](buf).map(|(v, b)| ([<zigzag_decode_ $signed>](v), b))
             }
         }

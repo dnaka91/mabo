@@ -1,23 +1,24 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
-use stef_parser::{DataType, Enum, Fields, NamedField, Struct, UnnamedField, Variant};
+use stef_parser::{DataType, Enum, Fields, Generics, NamedField, Struct, UnnamedField, Variant};
 
 pub fn compile_struct(
     Struct {
         comment: _,
         attributes: _,
         name,
-        generics: _,
+        generics,
         fields,
     }: &Struct<'_>,
 ) -> TokenStream {
     let name = Ident::new(name, Span::call_site());
+    let (generics, generics_where) = compile_generics(generics);
     let field_vars = compile_field_vars(fields);
     let field_matches = compile_field_matches(fields);
     let field_assigns = compile_field_assigns(fields);
 
     quote! {
-        impl ::stef::Decode for #name {
+        impl #generics ::stef::Decode for #name #generics #generics_where {
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 #field_vars
 
@@ -40,15 +41,16 @@ pub fn compile_enum(
         comment: _,
         attributes: _,
         name,
-        generics: _,
+        generics,
         variants,
     }: &Enum<'_>,
 ) -> TokenStream {
     let name = Ident::new(name, Span::call_site());
+    let (generics, generics_where) = compile_generics(generics);
     let variants = variants.iter().map(compile_variant);
 
     quote! {
-        impl ::stef::Decode for #name {
+        impl #generics ::stef::Decode for #name #generics #generics_where {
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 match ::stef::buf::decode_id(r)? {
                     #(#variants,)*
@@ -193,6 +195,20 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
         }
         Fields::Unit => quote! {},
     }
+}
+
+fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream) {
+    (!types.is_empty())
+        .then(|| {
+            let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
+            let types2 = types.clone();
+
+            (
+                quote! { <#(#types,)*> },
+                quote! { where #(#types2: ::stef::buf::Decode,)* },
+            )
+        })
+        .unwrap_or_default()
 }
 
 #[allow(clippy::needless_pass_by_value)]

@@ -1,0 +1,10 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+input_file: crates/stef-parser/tests/inputs/const-string.stef
+---
+const SIMPLE: &str = "value";
+const NEWLINE_ESCAPE: &str = "one two three";
+const ESCAPES: &str = "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ";
+const MULTILINE: &str = "a\n    b\n    c\n";
+

@@ -1,0 +1,51 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "/// Some comment\n       struct      Sample<\n            A,\n            B\n        >  {\n\n      a:    u32    @1,\n      b:    bool   @2,\n\n    }"
+input_file: crates/stef-parser/tests/inputs/struct-many-ws.stef
+---
+/// Some comment
+pub struct Sample<A, B> {
+    pub a: u32,
+    pub b: bool,
+}
+impl<A, B> ::stef::Encode for Sample<A, B>
+where
+    A: ::stef::buf::Encode,
+    B: ::stef::buf::Encode,
+{
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
+        ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
+    }
+}
+impl<A, B> ::stef::Decode for Sample<A, B>
+where
+    A: ::stef::buf::Decode,
+    B: ::stef::buf::Decode,
+{
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut a: Option<u32> = None;
+        let mut b: Option<bool> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => a = Some(::stef::buf::decode_u32(r)?),
+                2 => b = Some(::stef::buf::decode_bool(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            a: a
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("a"),
+                }),
+            b: b
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("b"),
+                }),
+        })
+    }
+}
+

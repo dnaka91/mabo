@@ -1,21 +1,22 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
-use stef_parser::{DataType, Enum, Fields, NamedField, Struct, UnnamedField, Variant};
+use stef_parser::{DataType, Enum, Fields, Generics, NamedField, Struct, UnnamedField, Variant};
 
 pub fn compile_struct(
     Struct {
         comment: _,
         attributes: _,
         name,
-        generics: _,
+        generics,
         fields,
     }: &Struct<'_>,
 ) -> TokenStream {
     let name = Ident::new(name, Span::call_site());
+    let (generics, generics_where) = compile_generics(generics);
     let fields = compile_struct_fields(fields);
 
     quote! {
-        impl ::stef::Encode for #name {
+        impl #generics ::stef::Encode for #name #generics #generics_where {
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 #fields
             }
@@ -66,15 +67,16 @@ pub fn compile_enum(
         comment: _,
         attributes: _,
         name,
-        generics: _,
+        generics,
         variants,
     }: &Enum<'_>,
 ) -> TokenStream {
     let name = Ident::new(name, Span::call_site());
+    let (generics, generics_where) = compile_generics(generics);
     let variants = variants.iter().map(compile_variant);
 
     quote! {
-        impl ::stef::Encode for #name {
+        impl #generics ::stef::Encode for #name #generics #generics_where {
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 match self {
                     #(#variants,)*
@@ -167,6 +169,20 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
         }
         Fields::Unit => quote! {},
     }
+}
+
+fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream) {
+    (!types.is_empty())
+        .then(|| {
+            let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
+            let types2 = types.clone();
+
+            (
+                quote! { <#(#types,)*> },
+                quote! { where #(#types2: ::stef::buf::Encode,)* },
+            )
+        })
+        .unwrap_or_default()
 }
 
 #[allow(clippy::needless_pass_by_value)]

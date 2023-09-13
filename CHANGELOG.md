@@ -11,6 +11,11 @@ All notable changes to this project will be documented in this file.
 
 - Implement encoding in the Rust codegen ([2787b51](https://github.com/dnaka91/wazzup/commit/2787b51c04803311bf5ca3160b37e7db31d5a8ea))
 - Simplify encoding logic ([e8205bc](https://github.com/dnaka91/wazzup/commit/e8205bcb6749fce6dd1f56ede38128076820bffd))
+- Implement basic decoding logic ([f67c572](https://github.com/dnaka91/wazzup/commit/f67c57220ac2c57961bf54f7f47bca467d3fb20b))
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- Don't double wrap optional types in decode ([a6d3d4b](https://github.com/dnaka91/wazzup/commit/a6d3d4bde28d28acb0afba123949ed7e5cbfeb98))
 
 ### <!-- 2 -->📚 Documentation
 
@@ -20,6 +25,11 @@ All notable changes to this project will be documented in this file.
 ### <!-- 4 -->🚜 Refactor
 
 - Generate definitions and impls together ([b32bcfd](https://github.com/dnaka91/wazzup/commit/b32bcfd8630bc445421ce32b784de6601659aade))
+
+### <!-- 6 -->🧪 Testing
+
+- Add snapshot tests to stef-build ([1313fe9](https://github.com/dnaka91/wazzup/commit/1313fe9f99cceee8a883791c99e318768e27f801))
+- Enable more snapshot tests and fix errors ([8ac6f73](https://github.com/dnaka91/wazzup/commit/8ac6f7369a3aa95b0708e9ad02b2e5ff3f496280))
 
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 

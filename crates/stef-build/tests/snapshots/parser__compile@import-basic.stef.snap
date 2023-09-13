@@ -1,0 +1,8 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "use other::schema::Sample;\nuse second::submodule;"
+input_file: crates/stef-parser/tests/inputs/import-basic.stef
+---
+use other::schema::Sample;
+use second::submodule;
+

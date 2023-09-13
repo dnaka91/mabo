@@ -1,0 +1,70 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n    }\n}"
+input_file: crates/stef-parser/tests/inputs/module-basic.stef
+---
+pub mod a {
+    /// Inner module
+    pub mod b {
+        pub enum Sample {
+            One,
+        }
+        impl ::stef::Encode for Sample {
+            fn encode(&self, w: &mut impl ::stef::BufMut) {
+                match self {
+                    Self::One => {
+                        ::stef::buf::encode_id(w, 1);
+                    }
+                }
+            }
+        }
+        impl ::stef::Decode for Sample {
+            fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+                match ::stef::buf::decode_id(r)? {
+                    1 => {
+                        loop {
+                            match ::stef::buf::decode_id(r)? {
+                                ::stef::buf::END_MARKER => break,
+                                _ => continue,
+                            }
+                        }
+                        Ok(Self::One)
+                    }
+                    id => Err(Error::UnknownVariant(id)),
+                }
+            }
+        }
+    }
+    pub struct Sample {
+        pub value: u32,
+    }
+    impl ::stef::Encode for Sample {
+        fn encode(&self, w: &mut impl ::stef::BufMut) {
+            ::stef::buf::encode_field(
+                w,
+                1,
+                |w| { ::stef::buf::encode_u32(w, self.value) },
+            );
+        }
+    }
+    impl ::stef::Decode for Sample {
+        fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+            let mut value: Option<u32> = None;
+            loop {
+                match ::stef::buf::decode_id(r)? {
+                    ::stef::buf::END_MARKER => break,
+                    1 => value = Some(::stef::buf::decode_u32(r)?),
+                    _ => continue,
+                }
+            }
+            Ok(Self {
+                value: value
+                    .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                        id: 1,
+                        name: Some("value"),
+                    }),
+            })
+        }
+    }
+}
+

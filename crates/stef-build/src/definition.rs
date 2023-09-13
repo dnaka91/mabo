@@ -186,10 +186,13 @@ fn compile_comment(Comment(lines): &Comment<'_>) -> TokenStream {
 }
 
 fn compile_generics(Generics(types): &Generics<'_>) -> Option<TokenStream> {
-    (!types.is_empty()).then(|| quote! { <#(#types,)*> })
+    (!types.is_empty()).then(|| {
+        let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
+        quote! { <#(#types,)*> }
+    })
 }
 
-fn compile_fields(fields: &Fields<'_>, public: bool) -> TokenStream {
+fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
     match fields {
         Fields::Named(named) => {
             let fields = named.iter().map(
@@ -200,7 +203,7 @@ fn compile_fields(fields: &Fields<'_>, public: bool) -> TokenStream {
                      id: _,
                  }| {
                     let comment = compile_comment(comment);
-                    let public = public.then(|| quote! { pub });
+                    let public = for_struct.then(|| quote! { pub });
                     let name = Ident::new(name, Span::call_site());
                     let ty = compile_data_type(ty);
                     quote! {
@@ -222,7 +225,13 @@ fn compile_fields(fields: &Fields<'_>, public: bool) -> TokenStream {
 
             quote! { (#(#fields,)*) }
         }
-        Fields::Unit => quote! {},
+        Fields::Unit => {
+            if for_struct {
+                quote! { ; }
+            } else {
+                quote! {}
+            }
+        }
     }
 }
 

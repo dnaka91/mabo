@@ -1,0 +1,142 @@
+---
+source: crates/stef-build/tests/parser.rs
+expression: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    b: bool @2,\n}\n\n/// Sample enum.\nenum Sample {\n    One @1,\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/stef-parser/tests/inputs/schema-basic.stef
+---
+/// Basic struct.
+pub struct Sample {
+    pub a: u32,
+    pub b: bool,
+}
+impl ::stef::Encode for Sample {
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
+        ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
+    }
+}
+impl ::stef::Decode for Sample {
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut a: Option<u32> = None;
+        let mut b: Option<bool> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => a = Some(::stef::buf::decode_u32(r)?),
+                2 => b = Some(::stef::buf::decode_bool(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            a: a
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("a"),
+                }),
+            b: b
+                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("b"),
+                }),
+        })
+    }
+}
+/// Sample enum.
+pub enum Sample {
+    One,
+    Two(u32, u64),
+    Three { field1: u32, field2: bool },
+}
+impl ::stef::Encode for Sample {
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        match self {
+            Self::One => {
+                ::stef::buf::encode_id(w, 1);
+            }
+            Self::Two(n0, n1) => {
+                ::stef::buf::encode_id(w, 2);
+                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, n0) });
+                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, n1) });
+            }
+            Self::Three { field1, field2 } => {
+                ::stef::buf::encode_id(w, 3);
+                ::stef::buf::encode_field(
+                    w,
+                    1,
+                    |w| { ::stef::buf::encode_u32(w, field1) },
+                );
+                ::stef::buf::encode_field(
+                    w,
+                    2,
+                    |w| { ::stef::buf::encode_bool(w, field2) },
+                );
+            }
+        }
+    }
+}
+impl ::stef::Decode for Sample {
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        match ::stef::buf::decode_id(r)? {
+            1 => {
+                loop {
+                    match ::stef::buf::decode_id(r)? {
+                        ::stef::buf::END_MARKER => break,
+                        _ => continue,
+                    }
+                }
+                Ok(Self::One)
+            }
+            2 => {
+                let mut n0: Option<u32> = None;
+                let mut n1: Option<u64> = None;
+                loop {
+                    match ::stef::buf::decode_id(r)? {
+                        ::stef::buf::END_MARKER => break,
+                        1 => n0 = Some(::stef::buf::decode_u32(r)?),
+                        2 => n1 = Some(::stef::buf::decode_u64(r)?),
+                        _ => continue,
+                    }
+                }
+                Ok(
+                    Self::Two(
+                        n0
+                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                id: 1,
+                                name: None,
+                            }),
+                        n1
+                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                id: 2,
+                                name: None,
+                            }),
+                    ),
+                )
+            }
+            3 => {
+                let mut field1: Option<u32> = None;
+                let mut field2: Option<bool> = None;
+                loop {
+                    match ::stef::buf::decode_id(r)? {
+                        ::stef::buf::END_MARKER => break,
+                        1 => field1 = Some(::stef::buf::decode_u32(r)?),
+                        2 => field2 = Some(::stef::buf::decode_bool(r)?),
+                        _ => continue,
+                    }
+                }
+                Ok(Self::Three {
+                    field1: field1
+                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            id: 1,
+                            name: Some("field1"),
+                        }),
+                    field2: field2
+                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            id: 2,
+                            name: Some("field2"),
+                        }),
+                })
+            }
+            id => Err(Error::UnknownVariant(id)),
+        }
+    }
+}
+

@@ -51,10 +51,10 @@ pub mod a {
             }
             Ok(Self {
                 value: value
-                    .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    .ok_or(::stef::buf::Error::MissingField {
                         id: 1,
                         name: Some("value"),
-                    }),
+                    })?,
             })
         }
     }

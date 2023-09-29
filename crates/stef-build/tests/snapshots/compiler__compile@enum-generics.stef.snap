@@ -58,15 +58,15 @@ where
                 Ok(
                     Self::Two(
                         n0
-                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            .ok_or(::stef::buf::Error::MissingField {
                                 id: 1,
                                 name: None,
-                            }),
+                            })?,
                         n1
-                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            .ok_or(::stef::buf::Error::MissingField {
                                 id: 2,
                                 name: None,
-                            }),
+                            })?,
                     ),
                 )
             }
@@ -83,15 +83,15 @@ where
                 }
                 Ok(Self::Three {
                     field1: field1
-                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                        .ok_or(::stef::buf::Error::MissingField {
                             id: 1,
                             name: Some("field1"),
-                        }),
+                        })?,
                     field2: field2
-                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                        .ok_or(::stef::buf::Error::MissingField {
                             id: 2,
                             name: Some("field2"),
-                        }),
+                        })?,
                 })
             }
             id => Err(Error::UnknownVariant(id)),

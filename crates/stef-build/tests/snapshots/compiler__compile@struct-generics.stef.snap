@@ -36,15 +36,15 @@ where
         }
         Ok(Self {
             key: key
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 1,
                     name: Some("key"),
-                }),
+                })?,
             value: value
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("value"),
-                }),
+                })?,
         })
     }
 }

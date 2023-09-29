@@ -135,110 +135,110 @@ impl ::stef::Decode for Sample {
         }
         Ok(Self {
             f01: f01
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 1,
                     name: Some("f01"),
-                }),
+                })?,
             f02: f02
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("f02"),
-                }),
+                })?,
             f03: f03
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 3,
                     name: Some("f03"),
-                }),
+                })?,
             f04: f04
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 4,
                     name: Some("f04"),
-                }),
+                })?,
             f05: f05
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 5,
                     name: Some("f05"),
-                }),
+                })?,
             f06: f06
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 6,
                     name: Some("f06"),
-                }),
+                })?,
             f07: f07
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 7,
                     name: Some("f07"),
-                }),
+                })?,
             f08: f08
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 8,
                     name: Some("f08"),
-                }),
+                })?,
             f09: f09
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 9,
                     name: Some("f09"),
-                }),
+                })?,
             f10: f10
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 10,
                     name: Some("f10"),
-                }),
+                })?,
             f11: f11
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 11,
                     name: Some("f11"),
-                }),
+                })?,
             f12: f12
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 12,
                     name: Some("f12"),
-                }),
+                })?,
             f13: f13
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 13,
                     name: Some("f13"),
-                }),
+                })?,
             f14: f14
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 14,
                     name: Some("f14"),
-                }),
+                })?,
             f15: f15
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 15,
                     name: Some("f15"),
-                }),
+                })?,
             f16: f16
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 16,
                     name: Some("f16"),
-                }),
+                })?,
             f17: f17
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 17,
                     name: Some("f17"),
-                }),
+                })?,
             f18: f18
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 18,
                     name: Some("f18"),
-                }),
+                })?,
             f19: f19
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 19,
                     name: Some("f19"),
-                }),
+                })?,
             f20: f20
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 20,
                     name: Some("f20"),
-                }),
+                })?,
             f21: f21
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 21,
                     name: Some("f21"),
-                }),
+                })?,
         })
     }
 }

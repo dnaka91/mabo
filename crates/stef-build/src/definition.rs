@@ -426,20 +426,20 @@ mod tests {
                     }
                     Ok(Self {
                         field1: field1
-                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            .ok_or(::stef::buf::Error::MissingField {
                                 id: 1,
                                 name: Some("field1"),
-                            }),
+                            })?,
                         field2: field2
-                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            .ok_or(::stef::buf::Error::MissingField {
                                 id: 2,
                                 name: Some("field2"),
-                            }),
+                            })?,
                         field3: field3
-                            .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                            .ok_or(::stef::buf::Error::MissingField {
                                 id: 3,
                                 name: Some("field3"),
-                            }),
+                            })?,
                     })
                 }
             }
@@ -498,15 +498,7 @@ mod tests {
             impl ::stef::Decode for Sample {
                 fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                     match ::stef::buf::decode_id(r)? {
-                        1 => {
-                            loop {
-                                match ::stef::buf::decode_id(r)? {
-                                    ::stef::buf::END_MARKER => break,
-                                    _ => continue,
-                                }
-                            }
-                            Ok(Self::Variant1)
-                        }
+                        1 => Ok(Self::Variant1),
                         2 => {
                             let mut n0: Option<u32> = None;
                             let mut n1: Option<u8> = None;
@@ -521,15 +513,15 @@ mod tests {
                             Ok(
                                 Self::Variant2(
                                     n0
-                                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                        .ok_or(::stef::buf::Error::MissingField {
                                             id: 1,
                                             name: None,
-                                        }),
+                                        })?,
                                     n1
-                                        .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                        .ok_or(::stef::buf::Error::MissingField {
                                             id: 2,
                                             name: None,
-                                        }),
+                                        })?,
                                 ),
                             )
                         }
@@ -546,15 +538,15 @@ mod tests {
                             }
                             Ok(Self::Variant3 {
                                 field1: field1
-                                    .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                    .ok_or(::stef::buf::Error::MissingField {
                                         id: 1,
                                         name: Some("field1"),
-                                    }),
+                                    })?,
                                 field2: field2
-                                    .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                                    .ok_or(::stef::buf::Error::MissingField {
                                         id: 2,
                                         name: Some("field2"),
-                                    }),
+                                    })?,
                             })
                         }
                         id => Err(Error::UnknownVariant(id)),

@@ -23,7 +23,7 @@ pub fn compile_struct(
         quote! {
             #field_vars
 
-            loop{
+            loop {
                 match ::stef::buf::decode_id(r)? {
                     ::stef::buf::END_MARKER => break,
                     #field_matches
@@ -90,7 +90,7 @@ fn compile_variant(
             #id => {
                 #field_vars
 
-                loop{
+                loop {
                     match ::stef::buf::decode_id(r)? {
                         ::stef::buf::END_MARKER => break,
                         #field_matches
@@ -179,10 +179,10 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
                 if matches!(named.ty, DataType::Option(_)) {
                     quote! { #name }
                 } else {
-                    quote! { #name: #name.unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    quote! { #name: #name.ok_or(::stef::buf::Error::MissingField {
                         id: #id,
                         name: Some(#name_lit),
-                    }) }
+                    })? }
                 }
             });
 
@@ -196,10 +196,10 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
                 if matches!(unnamed.ty, DataType::Option(_)) {
                     quote! { #name }
                 } else {
-                    quote! { #name.unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                    quote! { #name.ok_or(::stef::buf::Error::MissingField {
                         id: #id,
                         name: None,
-                    }) }
+                    })? }
                 }
             });
 

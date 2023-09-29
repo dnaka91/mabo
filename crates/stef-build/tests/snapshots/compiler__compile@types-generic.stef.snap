@@ -47,26 +47,26 @@ impl ::stef::Decode for Sample {
         }
         Ok(Self {
             f1: f1
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 1,
                     name: Some("f1"),
-                }),
+                })?,
             f2: f2
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("f2"),
-                }),
+                })?,
             f3: f3
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 3,
                     name: Some("f3"),
-                }),
+                })?,
             f4,
             f5: f5
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 5,
                     name: Some("f5"),
-                }),
+                })?,
         })
     }
 }

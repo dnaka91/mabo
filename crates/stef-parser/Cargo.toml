@@ -8,7 +8,6 @@ readme.workspace = true
 homepage.workspace = true
 repository.workspace = true
 license.workspace = true
-include = ["src/**/*", "tests/**/*.rs"]
 
 [package.metadata.docs.rs]
 rustc-args = ["--cfg", "docsrs"]
@@ -20,8 +19,8 @@ stef-derive = { path = "../stef-derive" }
 winnow = "0.5.15"
 
 [dev-dependencies]
-indoc = "2.0.3"
-insta = { version = "1.31.0", features = ["glob"] }
+indoc = "2.0.4"
+insta = { version = "1.33.0", features = ["glob"] }
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]

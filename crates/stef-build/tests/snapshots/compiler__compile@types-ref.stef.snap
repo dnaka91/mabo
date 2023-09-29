@@ -27,15 +27,15 @@ impl ::stef::Decode for Sample {
         }
         Ok(Self {
             basic: basic
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 1,
                     name: Some("basic"),
-                }),
+                })?,
             with_generics: with_generics
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("with_generics"),
-                }),
+                })?,
         })
     }
 }

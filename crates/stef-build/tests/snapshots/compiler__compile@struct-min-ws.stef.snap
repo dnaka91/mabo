@@ -37,20 +37,20 @@ where
         }
         Ok(Self {
             a: a
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 1,
                     name: Some("a"),
-                }),
+                })?,
             b: b
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 2,
                     name: Some("b"),
-                }),
+                })?,
             c: c
-                .unwrap_or_else(|| ::stef::buf::Error::MissingField {
+                .ok_or(::stef::buf::Error::MissingField {
                     id: 3,
                     name: Some("c"),
-                }),
+                })?,
         })
     }
 }

@@ -1,5 +1,8 @@
 all-features = true
 
+[advisories]
+ignore = ["RUSTSEC-2021-0145"]
+
 [licenses]
 allow-osi-fsf-free = "both"
 exceptions = [
@@ -8,9 +11,10 @@ exceptions = [
 
 [bans]
 skip = [
+    { name = "hermit-abi", version = "0.1" },
+    { name = "supports-color", version = "1" },
     { name = "terminal_size", version = "0.1" },
 ]
 skip-tree = [
-    { name = "rustix", version = "0.37", depth = 2 },
     { name = "windows-sys", version = "0.45", depth = 3 },
 ]

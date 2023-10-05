@@ -4,6 +4,7 @@ expression: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second varian
 input_file: crates/stef-parser/tests/inputs/enum-basic.stef
 ---
 /// Sample enum.
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub enum Sample {
     One,
     /// Second variant
@@ -14,7 +15,9 @@ pub enum Sample {
         field2: bool,
     },
 }
+#[automatically_derived]
 impl ::stef::Encode for Sample {
+    #[allow(clippy::borrow_deref_ref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::One => {
@@ -22,25 +25,28 @@ impl ::stef::Encode for Sample {
             }
             Self::Two(n0, n1) => {
                 ::stef::buf::encode_id(w, 2);
-                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, n0) });
-                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, n1) });
+                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, *n0) });
+                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, *n1) });
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
             Self::Three { field1, field2 } => {
                 ::stef::buf::encode_id(w, 3);
                 ::stef::buf::encode_field(
                     w,
                     1,
-                    |w| { ::stef::buf::encode_u32(w, field1) },
+                    |w| { ::stef::buf::encode_u32(w, *field1) },
                 );
                 ::stef::buf::encode_field(
                     w,
                     2,
-                    |w| { ::stef::buf::encode_bool(w, field2) },
+                    |w| { ::stef::buf::encode_bool(w, *field2) },
                 );
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
         }
     }
 }
+#[automatically_derived]
 impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
@@ -95,7 +101,7 @@ impl ::stef::Decode for Sample {
                         })?,
                 })
             }
-            id => Err(Error::UnknownVariant(id)),
+            id => Err(::stef::buf::Error::UnknownVariant(id)),
         }
     }
 }

@@ -3,10 +3,13 @@ source: crates/stef-build/tests/compiler.rs
 expression: "#[deprecated = \"don't use\", compress]\n#[validate(\n    in_range(min = 100, max = 200),\n    non_empty,\n)]\nstruct Sample"
 input_file: crates/stef-parser/tests/inputs/attributes.stef
 ---
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Sample;
+#[automatically_derived]
 impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {}
 }
+#[automatically_derived]
 impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         Ok(Self)

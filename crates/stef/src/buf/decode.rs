@@ -12,11 +12,13 @@ use crate::varint;
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
+#[derive(Debug)]
 pub enum Error {
     InsufficentData,
     DecodeInt(varint::DecodeIntError),
     NonUtf8(std::string::FromUtf8Error),
     MissingField { id: u32, name: Option<&'static str> },
+    UnknownVariant(u32),
 }
 
 impl From<varint::DecodeIntError> for Error {
@@ -399,6 +401,13 @@ forward!(bool);
 forward!(u8, u16, u32, u64, u128);
 forward!(i8, i16, i32, i64, i128);
 forward!(f32, f64);
+
+impl Decode for String {
+    #[inline(always)]
+    fn decode(r: &mut impl Buf) -> Result<Self> {
+        decode_string(r)
+    }
+}
 
 impl Decode for Box<str> {
     #[inline(always)]

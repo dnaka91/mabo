@@ -3,6 +3,7 @@ source: crates/stef-build/tests/compiler.rs
 expression: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}"
 input_file: crates/stef-parser/tests/inputs/types-generic.stef
 ---
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Sample {
     pub f1: Vec<u32>,
     pub f2: HashMap<u32, String>,
@@ -10,6 +11,7 @@ pub struct Sample {
     pub f4: Option<u32>,
     pub f5: NonZeroU32,
 }
+#[automatically_derived]
 impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_vec(w, &self.f1) });
@@ -24,9 +26,11 @@ impl ::stef::Encode for Sample {
             |w| { ::stef::buf::encode_hash_set(w, self.f3) },
         );
         ::stef::buf::encode_field(w, 4, |w| { ::stef::buf::encode_option(w, self.f4) });
-        ::stef::buf::encode_field(w, 5, |w| { self.f5.encode(w) });
+        ::stef::buf::encode_field(w, 5, |w| { (self.f5).encode(w) });
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }
+#[automatically_derived]
 impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut f1: Option<Vec<u32>> = None;

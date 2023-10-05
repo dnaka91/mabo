@@ -3,15 +3,18 @@ source: crates/stef-build/tests/compiler.rs
 expression: "enum Sample<T>{One@1,Two(u32@1,u64@2,T@3)@2,Three{field1:u32@1,field2:bool@2,field3:T@3}@3}"
 input_file: crates/stef-parser/tests/inputs/enum-min-ws.stef
 ---
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub enum Sample<T> {
     One,
     Two(u32, u64, T),
     Three { field1: u32, field2: bool, field3: T },
 }
+#[automatically_derived]
 impl<T> ::stef::Encode for Sample<T>
 where
     T: ::stef::buf::Encode,
 {
+    #[allow(clippy::borrow_deref_ref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::One => {
@@ -19,30 +22,33 @@ where
             }
             Self::Two(n0, n1, n2) => {
                 ::stef::buf::encode_id(w, 2);
-                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, n0) });
-                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, n1) });
-                ::stef::buf::encode_field(w, 3, |w| { n2.encode(w) });
+                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, *n0) });
+                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, *n1) });
+                ::stef::buf::encode_field(w, 3, |w| { (*n2).encode(w) });
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
             Self::Three { field1, field2, field3 } => {
                 ::stef::buf::encode_id(w, 3);
                 ::stef::buf::encode_field(
                     w,
                     1,
-                    |w| { ::stef::buf::encode_u32(w, field1) },
+                    |w| { ::stef::buf::encode_u32(w, *field1) },
                 );
                 ::stef::buf::encode_field(
                     w,
                     2,
-                    |w| { ::stef::buf::encode_bool(w, field2) },
+                    |w| { ::stef::buf::encode_bool(w, *field2) },
                 );
-                ::stef::buf::encode_field(w, 3, |w| { field3.encode(w) });
+                ::stef::buf::encode_field(w, 3, |w| { (*field3).encode(w) });
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
         }
     }
 }
+#[automatically_derived]
 impl<T> ::stef::Decode for Sample<T>
 where
-    T: ::stef::buf::Decode,
+    T: ::std::fmt::Debug + ::stef::buf::Decode,
 {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
@@ -111,7 +117,7 @@ where
                         })?,
                 })
             }
-            id => Err(Error::UnknownVariant(id)),
+            id => Err(::stef::buf::Error::UnknownVariant(id)),
         }
     }
 }

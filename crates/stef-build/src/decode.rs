@@ -36,6 +36,7 @@ pub fn compile_struct(
     };
 
     quote! {
+        #[automatically_derived]
         impl #generics ::stef::Decode for #name #generics #generics_where {
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 #body
@@ -58,11 +59,12 @@ pub fn compile_enum(
     let variants = variants.iter().map(compile_variant);
 
     quote! {
+        #[automatically_derived]
         impl #generics ::stef::Decode for #name #generics #generics_where {
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 match ::stef::buf::decode_id(r)? {
                     #(#variants,)*
-                    id => Err(Error::UnknownVariant(id)),
+                    id => Err(::stef::buf::Error::UnknownVariant(id)),
                 }
             }
         }
@@ -217,7 +219,7 @@ fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream
 
             (
                 quote! { <#(#types,)*> },
-                quote! { where #(#types2: ::stef::buf::Decode,)* },
+                quote! { where #(#types2: ::std::fmt::Debug + ::stef::buf::Decode,)* },
             )
         })
         .unwrap_or_default()

@@ -4,11 +4,13 @@ expression: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n  
 input_file: crates/stef-parser/tests/inputs/enum-generics.stef
 ---
 /// Enum with generics.
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub enum Sample<A, B, C, D> {
     One,
     Two(A, B),
     Three { field1: C, field2: D },
 }
+#[automatically_derived]
 impl<A, B, C, D> ::stef::Encode for Sample<A, B, C, D>
 where
     A: ::stef::buf::Encode,
@@ -16,6 +18,7 @@ where
     C: ::stef::buf::Encode,
     D: ::stef::buf::Encode,
 {
+    #[allow(clippy::borrow_deref_ref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::One => {
@@ -23,23 +26,26 @@ where
             }
             Self::Two(n0, n1) => {
                 ::stef::buf::encode_id(w, 2);
-                ::stef::buf::encode_field(w, 1, |w| { n0.encode(w) });
-                ::stef::buf::encode_field(w, 2, |w| { n1.encode(w) });
+                ::stef::buf::encode_field(w, 1, |w| { (*n0).encode(w) });
+                ::stef::buf::encode_field(w, 2, |w| { (*n1).encode(w) });
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
             Self::Three { field1, field2 } => {
                 ::stef::buf::encode_id(w, 3);
-                ::stef::buf::encode_field(w, 1, |w| { field1.encode(w) });
-                ::stef::buf::encode_field(w, 2, |w| { field2.encode(w) });
+                ::stef::buf::encode_field(w, 1, |w| { (*field1).encode(w) });
+                ::stef::buf::encode_field(w, 2, |w| { (*field2).encode(w) });
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
         }
     }
 }
+#[automatically_derived]
 impl<A, B, C, D> ::stef::Decode for Sample<A, B, C, D>
 where
-    A: ::stef::buf::Decode,
-    B: ::stef::buf::Decode,
-    C: ::stef::buf::Decode,
-    D: ::stef::buf::Decode,
+    A: ::std::fmt::Debug + ::stef::buf::Decode,
+    B: ::std::fmt::Debug + ::stef::buf::Decode,
+    C: ::std::fmt::Debug + ::stef::buf::Decode,
+    D: ::std::fmt::Debug + ::stef::buf::Decode,
 {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
@@ -94,7 +100,7 @@ where
                         })?,
                 })
             }
-            id => Err(Error::UnknownVariant(id)),
+            id => Err(::stef::buf::Error::UnknownVariant(id)),
         }
     }
 }

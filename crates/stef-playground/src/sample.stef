@@ -3,4 +3,29 @@ struct Sample {
     a: u32 @1,
     /// Second field
     b: bool @2,
+    c: (string, i16) @3,
+}
+
+enum Sample2 {
+    Unit @1,
+    Tuple(u32 @1, u32 @2) @2,
+    Fields {
+        name: string @1,
+        valid: bool @2,
+        dates: vec<(u16, u8, u8)> @3,
+    } @3,
+}
+
+const CHRISTMAS_MONTH: u8 = 12;
+const CHRISTMAS_DAY: u8 = 24;
+
+/// Using generics
+struct SampleGen<T> {
+    raw: bytes @1,
+    array: [T; 4] @2,
+    value: T @3,
+}
+
+enum SampleGen2<T> {
+    Value(T @1) @1,
 }

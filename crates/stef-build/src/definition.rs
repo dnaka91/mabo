@@ -81,6 +81,7 @@ fn compile_struct(
 
     quote! {
         #comment
+        #[derive(Clone, Debug, PartialEq, PartialOrd)]
         pub struct #name #generics #fields
     }
 }
@@ -101,6 +102,7 @@ fn compile_enum(
 
     quote! {
         #comment
+        #[derive(Clone, Debug, PartialEq, PartialOrd)]
         pub enum #name #generics {
             #(#variants,)*
         }
@@ -157,7 +159,8 @@ fn compile_const(
 
     quote! {
         #comment
-        const #name: #ty = #value;
+        #[allow(dead_code)]
+        pub const #name: #ty = #value;
     }
 }
 
@@ -390,11 +393,13 @@ mod tests {
         "#};
         let expect = indoc! {r#"
             /// Hello world!
+            #[derive(Clone, Debug, PartialEq, PartialOrd)]
             pub struct Sample {
                 pub field1: u32,
                 pub field2: Vec<u8>,
                 pub field3: (bool, [i16; 4]),
             }
+            #[automatically_derived]
             impl ::stef::Encode for Sample {
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.field1) });
@@ -408,8 +413,10 @@ mod tests {
                         3,
                         |w| { ::stef::buf::encode_tuple2(w, &self.field3) },
                     );
+                    ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                 }
             }
+            #[automatically_derived]
             impl ::stef::Decode for Sample {
                 fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                     let mut field1: Option<u32> = None;
@@ -463,12 +470,15 @@ mod tests {
         "#};
         let expect = indoc! {r#"
             /// Hello world!
+            #[derive(Clone, Debug, PartialEq, PartialOrd)]
             pub enum Sample {
                 Variant1,
                 Variant2(u32, u8),
                 Variant3 { field1: String, field2: Vec<bool> },
             }
+            #[automatically_derived]
             impl ::stef::Encode for Sample {
+                #[allow(clippy::borrow_deref_ref)]
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     match self {
                         Self::Variant1 => {
@@ -476,25 +486,28 @@ mod tests {
                         }
                         Self::Variant2(n0, n1) => {
                             ::stef::buf::encode_id(w, 2);
-                            ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, n0) });
-                            ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u8(w, n1) });
+                            ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, *n0) });
+                            ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u8(w, *n1) });
+                            ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                         }
                         Self::Variant3 { field1, field2 } => {
                             ::stef::buf::encode_id(w, 3);
                             ::stef::buf::encode_field(
                                 w,
                                 1,
-                                |w| { ::stef::buf::encode_string(w, &field1) },
+                                |w| { ::stef::buf::encode_string(w, &*field1) },
                             );
                             ::stef::buf::encode_field(
                                 w,
                                 2,
-                                |w| { ::stef::buf::encode_vec(w, &field2) },
+                                |w| { ::stef::buf::encode_vec(w, &*field2) },
                             );
+                            ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                         }
                     }
                 }
             }
+            #[automatically_derived]
             impl ::stef::Decode for Sample {
                 fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                     match ::stef::buf::decode_id(r)? {
@@ -549,7 +562,7 @@ mod tests {
                                     })?,
                             })
                         }
-                        id => Err(Error::UnknownVariant(id)),
+                        id => Err(::stef::buf::Error::UnknownVariant(id)),
                     }
                 }
             }
@@ -588,15 +601,20 @@ mod tests {
         "#};
         let expect = indoc! {r#"
             /// A bool.
-            const BOOL: bool = true;
+            #[allow(dead_code)]
+            pub const BOOL: bool = true;
             /// An integer.
-            const INT: u32 = 100;
+            #[allow(dead_code)]
+            pub const INT: u32 = 100;
             /// A float.
-            const FLOAT: f64 = 5.0;
+            #[allow(dead_code)]
+            pub const FLOAT: f64 = 5.0;
             /// A string.
-            const STRING: &str = "hello";
+            #[allow(dead_code)]
+            pub const STRING: &str = "hello";
             /// Some bytes.
-            const BYTES: &[u8] = b"\x01\x02\x03";
+            #[allow(dead_code)]
+            pub const BYTES: &[u8] = b"\x01\x02\x03";
         "#};
 
         parse(input, expect);

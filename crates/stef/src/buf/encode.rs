@@ -357,6 +357,13 @@ forward!(u8, u16, u32, u64, u128);
 forward!(i8, i16, i32, i64, i128);
 forward!(f32, f64);
 
+impl Encode for String {
+    #[inline(always)]
+    fn encode(&self, w: &mut impl BufMut) {
+        encode_string(w, self)
+    }
+}
+
 impl Encode for Box<str> {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {

@@ -3,11 +3,13 @@ source: crates/stef-build/tests/compiler.rs
 expression: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}"
 input_file: crates/stef-parser/tests/inputs/struct-min-ws.stef
 ---
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Sample<T> {
     pub a: u32,
     pub b: bool,
     pub c: T,
 }
+#[automatically_derived]
 impl<T> ::stef::Encode for Sample<T>
 where
     T: ::stef::buf::Encode,
@@ -15,12 +17,14 @@ where
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
         ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
-        ::stef::buf::encode_field(w, 3, |w| { self.c.encode(w) });
+        ::stef::buf::encode_field(w, 3, |w| { (self.c).encode(w) });
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }
+#[automatically_derived]
 impl<T> ::stef::Decode for Sample<T>
 where
-    T: ::stef::buf::Decode,
+    T: ::std::fmt::Debug + ::stef::buf::Decode,
 {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;

@@ -3,14 +3,18 @@ source: crates/stef-build/tests/compiler.rs
 expression: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}"
 input_file: crates/stef-parser/tests/inputs/types-nested.stef
 ---
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Sample {
     pub value: Vec<Option<HashMap<i64, Box<str>>>>,
 }
+#[automatically_derived]
 impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_vec(w, &self.value) });
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }
+#[automatically_derived]
 impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut value: Option<Vec<Option<HashMap<i64, Box<str>>>>> = None;

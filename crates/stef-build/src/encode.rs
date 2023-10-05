@@ -1,5 +1,5 @@
 use proc_macro2::{Ident, Span, TokenStream};
-use quote::{quote, ToTokens};
+use quote::quote;
 use stef_parser::{DataType, Enum, Fields, Generics, NamedField, Struct, UnnamedField, Variant};
 
 pub fn compile_struct(
@@ -16,6 +16,7 @@ pub fn compile_struct(
     let fields = compile_struct_fields(fields);
 
     quote! {
+        #[automatically_derived]
         impl #generics ::stef::Encode for #name #generics #generics_where {
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 #fields
@@ -42,7 +43,10 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                 },
             );
 
-            quote! { #(#calls)* }
+            quote! {
+               #(#calls)*
+               ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+            }
         }
         Fields::Unnamed(unnamed) => {
             let calls = unnamed
@@ -56,7 +60,10 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                     quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 });
 
-            quote! { #(#calls)* }
+            quote! {
+               #(#calls)*
+               ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+            }
         }
         Fields::Unit => quote! {},
     }
@@ -76,7 +83,9 @@ pub fn compile_enum(
     let variants = variants.iter().map(compile_variant);
 
     quote! {
+        #[automatically_derived]
         impl #generics ::stef::Encode for #name #generics #generics_where {
+            #[allow(clippy::borrow_deref_ref)]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 match self {
                     #(#variants,)*
@@ -145,13 +154,16 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                  }| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = proc_macro2::Ident::new(name, Span::call_site());
-                    let ty = compile_data_type(ty, quote! { #name });
+                    let ty = compile_data_type(ty, quote! { *#name });
 
                     quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 },
             );
 
-            quote! { #(#calls)* }
+            quote! {
+               #(#calls)*
+               ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+            }
         }
         Fields::Unnamed(unnamed) => {
             let calls = unnamed
@@ -160,12 +172,15 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                 .map(|(idx, UnnamedField { ty, id })| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
-                    let ty = compile_data_type(ty, name.to_token_stream());
+                    let ty = compile_data_type(ty, quote! { *#name });
 
                     quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 });
 
-            quote! { #(#calls)* }
+            quote! {
+                #(#calls)*
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+            }
         }
         Fields::Unit => quote! {},
     }
@@ -222,7 +237,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             quote! { ::stef::buf::encode_array(w, &#name) }
         }
         DataType::NonZero(_) | DataType::External(_) => {
-            quote! { #name.encode(w) }
+            quote! { (#name).encode(w) }
         }
     }
 }

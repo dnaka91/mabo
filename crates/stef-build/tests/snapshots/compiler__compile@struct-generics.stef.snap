@@ -4,24 +4,28 @@ expression: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @1
 input_file: crates/stef-parser/tests/inputs/struct-generics.stef
 ---
 /// Generic key-value pair.
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct KeyValue<K, V> {
     pub key: K,
     pub value: V,
 }
+#[automatically_derived]
 impl<K, V> ::stef::Encode for KeyValue<K, V>
 where
     K: ::stef::buf::Encode,
     V: ::stef::buf::Encode,
 {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { self.key.encode(w) });
-        ::stef::buf::encode_field(w, 2, |w| { self.value.encode(w) });
+        ::stef::buf::encode_field(w, 1, |w| { (self.key).encode(w) });
+        ::stef::buf::encode_field(w, 2, |w| { (self.value).encode(w) });
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }
+#[automatically_derived]
 impl<K, V> ::stef::Decode for KeyValue<K, V>
 where
-    K: ::stef::buf::Decode,
-    V: ::stef::buf::Decode,
+    K: ::std::fmt::Debug + ::stef::buf::Decode,
+    V: ::std::fmt::Debug + ::stef::buf::Decode,
 {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut key: Option<K> = None;

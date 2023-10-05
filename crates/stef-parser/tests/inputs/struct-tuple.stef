@@ -1,0 +1,2 @@
+/// Basic struct.
+struct Sample(u32 @1, bool @2)

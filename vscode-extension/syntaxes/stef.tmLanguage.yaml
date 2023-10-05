@@ -5,9 +5,13 @@ fileTypes: [stef]
 
 patterns:
   - include: "#comments"
+  - include: "#attributes"
   - include: "#mod"
   - include: "#struct"
   - include: "#enum"
+  - include: "#const"
+  - include: "#use"
+  - include: "#alias"
 
 repository:
   comments:
@@ -20,7 +24,7 @@ repository:
     patterns:
       - name: meta.preprocessor.stef
         begin: '#\['
-        end: $\]\n?
+        end: \]$\n?
 
   mod:
     begin: (mod)\s+([a-z][a-z0-9_]*)\s*(?=\{)
@@ -30,27 +34,45 @@ repository:
     end: (?<=\})
     patterns:
       - include: "#comments"
+      - include: "#attributes"
       - include: "$self"
       - include: "#struct"
       - include: "#enum"
+      - include: "#const"
+      - include: "#use"
+      - include: "#alias"
 
   struct:
-    begin: (struct)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\{)
-    beginCaptures:
-      "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
-      "2": { name: entity.name.class.struct.stef }
-      "3": { patterns: [include: "#generics"] }
-    end: (?<=\})
     patterns:
-      - include: "#comments"
-      - include: "#fieldsNamed"
-      - include: "#fieldsUnnamed"
+      - begin: (struct)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\{)
+        beginCaptures:
+          "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
+          "2": { name: entity.name.class.struct.named.stef }
+          "3": { patterns: [include: "#generics"] }
+        end: (?<=\})
+        patterns:
+          - include: "#comments"
+          - include: "#fieldsNamed"
+      - begin: (struct)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\()
+        beginCaptures:
+          "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
+          "2": { name: entity.name.class.struct.unnamed.stef }
+          "3": { patterns: [include: "#generics"] }
+        end: (?<=\))
+        patterns:
+          - include: "#comments"
+          - include: "#fieldsUnnamed"
+      - match: (struct)\s+([A-Z][A-Za-z0-9_]*)
+        captures:
+          "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
+          "2": { name: entity.name.class.struct.unit.stef }
 
   enum:
-    begin: (enum)\s+([A-Z][A-Za-z0-9_]*)\s*(?=\{)
+    begin: (enum)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\{)
     beginCaptures:
       "1": { name: keyword.declaration.enum.stef storage.type.enum.stef }
       "2": { name: entity.name.class.enum.stef }
+      "3": { patterns: [include: "#generics"] }
     end: (?<=\})
     patterns:
       - include: "#comments"
@@ -176,6 +198,37 @@ repository:
         match: non_zero(<.+>)
         captures:
           "1": { patterns: [include: "#generics"] }
+      - name: storage.type.external.stef
+        match: '[A-Za-z0-9_&<>\[\]\(\);, ]+'
+
+  const:
+    patterns:
+      - match: (const)\s+([A-Z][A-Z_]+)\s*(:)\s*(.+)\s*=\s*(.+)(;)
+        captures:
+          "1": { name: keyword.declaration.const.stef }
+          "2": { name: entity.name.class.const.stef }
+          "3": { name: punctuation.colon.stef }
+          "4": { patterns: [include: "#type"] }
+          "5": { name: constant.numeric.stef }
+          "6": { name: punctuation.semicolon.stef }
+
+  use:
+    patterns:
+      - match: (use)\s+([a-z][a-z0-9_]+(?:::[a-z][a-z0-9_]+))(.+)?(;)
+        captures:
+          "1": { name: keyword.declaration.use.stef }
+          "2": { name: entity.name.namespace.stef }
+          "3": { patterns: [include: "#type"] }
+          "4": { name: punctuation.semicolon.stef }
+
+  alias:
+    patterns:
+      - match: (type)\s+(.+)\s*=\s*(.+)(;)
+        captures:
+          "1": { name: keyword.declaration.alias.stef }
+          "2": { patterns: [include: "#type"] }
+          "3": { patterns: [include: "#type"] }
+          "4": { name: punctuation.semicolon.stef }
 
   id:
     patterns:

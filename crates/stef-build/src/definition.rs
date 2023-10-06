@@ -226,7 +226,11 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
                 quote! { #ty }
             });
 
-            quote! { (#(#fields,)*) }
+            if for_struct {
+                quote! { (#(#fields,)*); }
+            } else {
+                quote! { (#(#fields,)*) }
+            }
         }
         Fields::Unit => {
             if for_struct {

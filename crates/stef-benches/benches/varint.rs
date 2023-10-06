@@ -1,75 +1,78 @@
-use std::hint::black_box;
-
-use criterion::{
-    criterion_group, criterion_main, AxisScale, BenchmarkId, Criterion, PlotConfiguration,
-};
+use divan::black_box;
 use stef_benches::varint;
 
-fn varint(c: &mut Criterion) {
-    let mut g = c.benchmark_group("varint");
-    g.plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic));
+fn main() {
+    divan::main();
+}
 
-    for i in [
+trait Unsigned {
+    fn run(value: u128, buf: &mut [u8]) -> u128;
+}
+
+trait Signed {
+    fn run(value: i128, buf: &mut [u8]) -> i128;
+}
+
+struct Leb128;
+
+impl Unsigned for Leb128 {
+    fn run(value: u128, buf: &mut [u8]) -> u128 {
+        varint::postcard::encode(value, buf);
+        varint::postcard::decode(buf)
+    }
+}
+
+impl Signed for Leb128 {
+    fn run(value: i128, buf: &mut [u8]) -> i128 {
+        varint::postcard::encode_i128(value, buf);
+        varint::postcard::decode_i128(buf)
+    }
+}
+
+struct Bincode;
+
+impl Unsigned for Bincode {
+    fn run(value: u128, buf: &mut [u8]) -> u128 {
+        varint::bincode::encode_u128(value, buf);
+        varint::bincode::decode_u128(buf)
+    }
+}
+
+impl Signed for Bincode {
+    fn run(value: i128, buf: &mut [u8]) -> i128 {
+        varint::bincode::encode_i128(value, buf);
+        varint::bincode::decode_i128(buf)
+    }
+}
+
+#[divan::bench(
+    types = [Leb128, Bincode],
+    consts = [
         1,
-        u8::MAX.into(),
-        u16::MAX.into(),
-        u32::MAX.into(),
-        u64::MAX.into(),
+        u8::MAX as u128,
+        u16::MAX as u128,
+        u32::MAX as u128,
+        u64::MAX as u128,
         u128::MAX,
-    ] {
-        g.bench_with_input(BenchmarkId::new("leb128", i), &i, |b, i| {
-            let mut buf = [0; 19];
-            let value = *i;
-            b.iter(|| {
-                varint::postcard::encode(black_box(value), black_box(&mut buf));
-                varint::postcard::decode(black_box(&buf))
-            });
-        });
-        g.bench_with_input(BenchmarkId::new("bincode", i), &i, |b, i| {
-            let mut buf = [0; 19];
-            let value = *i;
-            b.iter(|| {
-                varint::bincode::encode_u128(black_box(value), black_box(&mut buf));
-                varint::bincode::decode_u128(black_box(&buf))
-            });
-        });
-    }
-    g.finish();
+    ],
+)]
+fn unsigned<const N: u128, T: Unsigned>() -> u128 {
+    let mut buf = [0; 19];
+    T::run(black_box(N), black_box(&mut buf))
+}
 
-    let mut g = c.benchmark_group("varint_signed");
-    g.plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic));
-
-    for i in [
+#[divan::bench(
+    types = [Leb128, Bincode],
+    consts = [
         -1,
-        i8::MIN.into(),
-        i16::MIN.into(),
-        i32::MIN.into(),
-        i64::MIN.into(),
+        i8::MIN as i128,
+        i16::MIN as i128,
+        i32::MIN as i128,
+        i64::MIN as i128,
         i128::MIN,
-    ] {
-        g.bench_with_input(BenchmarkId::new("leb128", i), &i, |b, i| {
-            let mut buf = [0; 19];
-            let value = *i;
-            b.iter(|| {
-                varint::postcard::encode_i128(black_box(value), black_box(&mut buf));
-                varint::postcard::decode_i128(black_box(&buf))
-            });
-        });
-        g.bench_with_input(BenchmarkId::new("bincode", i), &i, |b, i| {
-            let mut buf = [0; 19];
-            let value = *i;
-            b.iter(|| {
-                varint::bincode::encode_i128(black_box(value), black_box(&mut buf));
-                varint::bincode::decode_i128(black_box(&buf))
-            });
-        });
-    }
-    g.finish();
+    ],
+)]
+fn signed<const N: i128, T: Signed>() -> i128 {
+    let mut buf = [0; 19];
+    T::run(black_box(N), black_box(&mut buf))
 }
-
-criterion_group! {
-    name = benches;
-    config = Criterion::default().plotting_backend(criterion::PlottingBackend::Plotters);
-    targets = varint
-}
-criterion_main!(benches);

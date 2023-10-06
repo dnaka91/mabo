@@ -23,6 +23,5 @@ mimalloc = "0.1.39"
 stef-parser = { path = "../stef-parser" }
 
 [dev-dependencies]
-criterion = "0.5.1"
+divan = "0.1.0"
 indoc = "2.0.4"
-serde = "1.0.188"

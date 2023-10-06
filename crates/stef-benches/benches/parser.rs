@@ -1,14 +1,18 @@
-use std::{fmt::Write, hint::black_box};
+use std::fmt::Write;
 
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
+use divan::{black_box, Bencher};
 use indoc::indoc;
 
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-fn parser(c: &mut Criterion) {
-    c.bench_function("basic", |b| {
-        let input = indoc! {r#"
+fn main() {
+    divan::main();
+}
+
+#[divan::bench]
+fn basic(bencher: Bencher) {
+    let input = indoc! {r#"
             use other::one::Type1;
             use other::two;
 
@@ -39,28 +43,25 @@ fn parser(c: &mut Criterion) {
             type SampleTyped = SampleStruct<bool, string>;
         "#};
 
-        stef_parser::Schema::parse(input).unwrap();
+    stef_parser::Schema::parse(input).unwrap();
 
-        b.iter(|| stef_parser::Schema::parse(black_box(input)))
-    });
+    bencher.bench(|| stef_parser::Schema::parse(black_box(input)));
+}
 
-    for count in [1, 10, 100, 1000] {
-        let schema = generate_schema(count);
-        stef_parser::Schema::parse(&schema).unwrap();
+#[divan::bench(consts = [1, 10, 100, 1000])]
+fn large_schema<const N: usize>(bencher: Bencher) {
+    let schema = generate_schema(N);
+    stef_parser::Schema::parse(&schema).unwrap();
 
-        c.bench_with_input(BenchmarkId::new("large_schema", count), &count, |b, _| {
-            b.iter(|| stef_parser::Schema::parse(black_box(&schema)))
-        });
-    }
+    bencher.bench(|| stef_parser::Schema::parse(black_box(&schema)))
+}
 
-    for count in [1, 10, 100, 1000] {
-        let schema = generate_schema(count);
-        let schema = stef_parser::Schema::parse(&schema).unwrap();
+#[divan::bench(consts = [1, 10, 100, 1000])]
+fn print<const N: usize>(bencher: Bencher) {
+    let schema = generate_schema(N);
+    let schema = stef_parser::Schema::parse(&schema).unwrap();
 
-        c.bench_with_input(BenchmarkId::new("print", count), &count, |b, _| {
-            b.iter(|| black_box(&schema).to_string())
-        });
-    }
+    bencher.bench(|| black_box(&schema).to_string())
 }
 
 fn generate_schema(count: usize) -> String {
@@ -150,6 +151,3 @@ fn generate_schema(count: usize) -> String {
 
     input
 }
-
-criterion_group!(benches, parser);
-criterion_main!(benches);

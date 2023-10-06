@@ -20,7 +20,7 @@ Data format and schema, with a type system as strong as Rust's.
     </svg>
 </div>
 
-As the name suggests, STEF is a data encoding format, that borrows a lot from existing formats like [Protobuf](https://protobuf.dev), [Cap'n Proto](https://capnproto.org) and [Flatbuffers](https://flatbuffers.org), but in contrast vastly extends the type system to make it as strong as Rust's.
+As the name suggests, STEF is a data encoding format, that borrows a lot from existing formats like [Protobuf](https://protobuf.dev), [Cap'n Proto](https://capnproto.org) and [Flatbuffers](https://flatbuffers.dev), but in contrast vastly extends the type system to make it as strong as Rust's.
 
 ## Why a stronger type system?
 

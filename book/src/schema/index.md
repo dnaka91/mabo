@@ -37,7 +37,7 @@ Some of these are not natively supported in each language, turning into a common
 | &bytes  | &\[u8]   | []byte    | ByteArray    | Uint8Array | bytes  |
 
 [big.Int]: https://pkg.go.dev/math/big#Int
-[BigInteger]: https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/math/BigInteger.html
+[BigInteger]: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/math/BigInteger.html
 
 ### Generics
 

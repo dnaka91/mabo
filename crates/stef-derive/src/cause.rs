@@ -166,8 +166,10 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Toke
         }
     });
 
-    let froms = variants.iter().filter_map(|v| {
-        matches!(v.attr, VariantAttributes::Forward).then(|| {
+    let froms = variants
+        .iter()
+        .filter(|v| matches!(v.attr, VariantAttributes::Forward))
+        .map(|v| {
             let variant_ident = &v.variant.ident;
             let Fields::Unnamed(fields) = &v.variant.fields else {
                 panic!("expected unnamed fields")
@@ -212,8 +214,7 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Toke
 
                 #from_boxed
             }
-        })
-    });
+        });
 
     Ok(quote! {
         impl std::error::Error for #ident {
@@ -303,25 +304,24 @@ fn expand_miette(
                     .iter()
                     .enumerate()
                     .filter_map(|(i, (f, info))| info.as_ref().map(|info| (i, f, info)))
-                    .filter_map(|(i, field, info)| {
-                        info.label.0.then(|| {
-                            let idx = Index::from(i);
-                            let name = field
-                                .ident
-                                .clone()
-                                .unwrap_or_else(|| quote::format_ident!("_{i}"));
-                            let text = info.label.1.as_ref().map(|s| quote!{ Some(#s.to_owned()) });
-                            (
-                                if field.ident.is_some() {
-                                    quote! { #name }
-                                } else {
-                                    quote! { #idx: #name }
-                                },
-                                quote! {
-                                    miette::LabeledSpan::new_with_span(#text, #name.clone())
-                                },
-                            )
-                        })
+                    .filter(|(_, _, info)| info.label.0)
+                    .map(|(i, field, info)| {
+                        let idx = Index::from(i);
+                        let name = field
+                            .ident
+                            .clone()
+                            .unwrap_or_else(|| quote::format_ident!("_{i}"));
+                        let text = info.label.1.as_ref().map(|s| quote!{ Some(#s.to_owned()) });
+                        (
+                            if field.ident.is_some() {
+                                quote! { #name }
+                            } else {
+                                quote! { #idx: #name }
+                            },
+                            quote! {
+                                miette::LabeledSpan::new_with_span(#text, #name.clone())
+                            },
+                        )
                     })
                     .collect::<Vec<_>>();
 
@@ -428,42 +428,42 @@ fn expand_miette(
 }
 
 fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<TokenStream> {
-    let externals = variants.iter().filter_map(|v| {
-        (matches!(v.attr, VariantAttributes::External)).then(|| {
-            let variant_ident = &v.variant.ident;
+    let externals = variants.iter()
+    .filter(|v| matches!(v.attr, VariantAttributes::External))
+    .map(|v| {
+        let variant_ident = &v.variant.ident;
 
-            match v.fields.len() {
-                1 => {
-                    let ty = &v.fields[0].0.ty;
+        match v.fields.len() {
+            1 => {
+                let ty = &v.fields[0].0.ty;
 
-                    Ok(quote! {
-                        impl<I> winnow::error::FromExternalError<I, #ty> for #ident {
-                            fn from_external_error(_: &I, _: winnow::error::ErrorKind, e: #ty) -> Self {
-                                Self::#variant_ident(e)
-                            }
+                Ok(quote! {
+                    impl<I> winnow::error::FromExternalError<I, #ty> for #ident {
+                        fn from_external_error(_: &I, _: winnow::error::ErrorKind, e: #ty) -> Self {
+                            Self::#variant_ident(e)
                         }
-                    })
-                }
-                2 => {
-                    let ty = &v.fields[1].0.ty;
-
-                    Ok(quote! {
-                        impl<I> winnow::error::FromExternalError<I, #ty> for #ident
-                        where
-                            I: winnow::stream::Location,
-                        {
-                            fn from_external_error(input: &I, _: winnow::error::ErrorKind, e: #ty) -> Self {
-                                Self::#variant_ident {
-                                    at: input.location(),
-                                    cause: e,
-                                }
-                            }
-                        }
-                    })
-                }
-                _ => bail!(v.variant, "external variants must have 1 or 2 fields only"),
+                    }
+                })
             }
-        })
+            2 => {
+                let ty = &v.fields[1].0.ty;
+
+                Ok(quote! {
+                    impl<I> winnow::error::FromExternalError<I, #ty> for #ident
+                    where
+                        I: winnow::stream::Location,
+                    {
+                        fn from_external_error(input: &I, _: winnow::error::ErrorKind, e: #ty) -> Self {
+                            Self::#variant_ident {
+                                at: input.location(),
+                                cause: e,
+                            }
+                        }
+                    }
+                })
+            }
+            _ => bail!(v.variant, "external variants must have 1 or 2 fields only"),
+        }
     }).collect::<syn::Result<Vec<_>>>()?;
 
     Ok(quote! {

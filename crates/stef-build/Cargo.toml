@@ -12,14 +12,14 @@ license.workspace = true
 [dependencies]
 miette.workspace = true
 prettyplease = "0.2.15"
-proc-macro2 = { version = "1.0.67", default-features = false }
-quote = { version = "1.0.33", default-features = false }
+proc-macro2.workspace = true
+quote.workspace = true
 stef-parser = { path = "../stef-parser" }
-syn = "2.0.38"
-thiserror = "1.0.49"
+syn.workspace = true
+thiserror.workspace = true
 
 [dev-dependencies]
-indoc = "2.0.4"
-insta = { version = "1.33.0", features = ["glob"] }
+indoc.workspace = true
+insta.workspace = true
 pretty_assertions = "1.4.0"
 stef = { path = "../stef" }

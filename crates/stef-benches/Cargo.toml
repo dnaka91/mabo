@@ -19,9 +19,9 @@ name = "varint"
 harness = false
 
 [dependencies]
-mimalloc = "0.1.39"
+mimalloc.workspace = true
 stef-parser = { path = "../stef-parser" }
 
 [dev-dependencies]
 divan = "0.1.0"
-indoc = "2.0.4"
+indoc.workspace = true

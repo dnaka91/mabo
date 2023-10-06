@@ -13,5 +13,5 @@ license.workspace = true
 clap = { version = "4.4.6", features = ["derive", "wrap_help"] }
 color-eyre.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
-mimalloc = "0.1.39"
+mimalloc.workspace = true
 stef-parser = { path = "../stef-parser" }

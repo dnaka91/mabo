@@ -19,8 +19,8 @@ stef-derive = { path = "../stef-derive" }
 winnow = "0.5.16"
 
 [dev-dependencies]
-indoc = "2.0.4"
-insta = { version = "1.33.0", features = ["glob"] }
+indoc.workspace = true
+insta.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]

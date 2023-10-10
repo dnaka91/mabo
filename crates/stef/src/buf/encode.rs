@@ -83,7 +83,10 @@ pub fn encode_hash_set<T: Encode>(w: &mut impl BufMut, set: &HashSet<T>) {
 
 pub fn encode_option<T: Encode>(w: &mut impl BufMut, option: &Option<T>) {
     if let Some(value) = option {
+        w.put_u8(1);
         value.encode(w);
+    } else {
+        w.put_u8(0);
     }
 }
 
@@ -330,6 +333,18 @@ where
 {
     encode_id(w, id);
     encode(w);
+}
+
+#[inline(always)]
+pub fn encode_field_option<W, T>(w: &mut W, id: u32, option: &Option<T>)
+where
+    W: BufMut,
+    T: Encode,
+{
+    if let Some(value) = option {
+        encode_id(w, id);
+        value.encode(w);
+    }
 }
 
 pub trait Encode {

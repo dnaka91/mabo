@@ -15,6 +15,10 @@ bench:
 check:
   cargo hack clippy --workspace --feature-powerset --no-dev-deps
 
+# Format the code of all Rust crates
+fmt:
+  cargo +nightly fmt --all
+
 # Start up the local server for the book
 @book:
   cd book && just dev

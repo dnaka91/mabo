@@ -37,9 +37,13 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                  }| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = proc_macro2::Ident::new(name, Span::call_site());
-                    let ty = compile_data_type(ty, quote! { self.#name });
 
-                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
+                    if matches!(ty, DataType::Option(_)) {
+                        quote! { ::stef::buf::encode_field_option(w, #id, &self.#name); }
+                    } else {
+                        let ty = compile_data_type(ty, quote! { self.#name });
+                        quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
+                    }
                 },
             );
 
@@ -154,9 +158,13 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                  }| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = proc_macro2::Ident::new(name, Span::call_site());
-                    let ty = compile_data_type(ty, quote! { *#name });
 
-                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
+                    if matches!(ty, DataType::Option(_)) {
+                        quote! { ::stef::buf::encode_field_option(w, #id, &#name); }
+                    } else {
+                        let ty = compile_data_type(ty, quote! { *#name });
+                        quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
+                    }
                 },
             );
 
@@ -221,7 +229,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::Vec(_ty) => quote! { ::stef::buf::encode_vec(w, &#name) },
         DataType::HashMap(_kv) => quote! { ::stef::buf::encode_hash_map(w, #name) },
         DataType::HashSet(_ty) => quote! { ::stef::buf::encode_hash_set(w, #name) },
-        DataType::Option(_ty) => quote! { ::stef::buf::encode_option(w, #name) },
+        DataType::Option(_ty) => quote! { ::stef::buf::encode_option(w, &#name) },
         DataType::BoxString => quote! { ::stef::buf::encode_string(w, &*#name) },
         DataType::BoxBytes => quote! { ::stef::buf::encode_bytes(w, &*#name) },
         DataType::Tuple(types) => match types.len() {

@@ -19,13 +19,34 @@ enum Sample2 {
 const CHRISTMAS_MONTH: u8 = 12;
 const CHRISTMAS_DAY: u8 = 24;
 
-/// Using generics
-struct SampleGen<T> {
-    raw: bytes @1,
-    array: [T; 4] @2,
-    value: T @3,
+/// Data structures with generics.
+mod gens {
+    /// Using generics
+    struct SampleGen<T> {
+        raw: bytes @1,
+        array: [T; 4] @2,
+        value: T @3,
+    }
+
+    enum SampleGen2<T> {
+        Value(T @1) @1,
+    }
+
+    struct Nested<A, B> {
+        one: A @1,
+        two: SampleGen<B> @2,
+    }
 }
 
-enum SampleGen2<T> {
-    Value(T @1) @1,
+/// Alias for another type.
+type SampleAlias = Sample;
+
+mod specials {
+    struct SomeOptions {
+        maybe_int: option<u32> @1,
+        maybe_text: option<string> @2,
+        maybe_tuple: option<(u8, u8)> @3,
+        nested: option<option<u8>> @4,
+        vec_maybe: vec<option<bool>> @5,
+    }
 }

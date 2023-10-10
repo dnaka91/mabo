@@ -144,7 +144,11 @@ fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {
                  }| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = proc_macro2::Ident::new(name, Span::call_site());
-                    let ty = compile_data_type(ty);
+                    let ty = compile_data_type(if let DataType::Option(ty) = ty {
+                        ty
+                    } else {
+                        ty
+                    });
 
                     quote! { #id => #name = Some(#ty?) }
                 },
@@ -159,7 +163,11 @@ fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {
                 .map(|(idx, UnnamedField { ty, id })| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
-                    let ty = compile_data_type(ty);
+                    let ty = compile_data_type(if let DataType::Option(ty) = ty {
+                        ty
+                    } else {
+                        ty
+                    });
 
                     quote! { #id => #name = Some(#ty?) }
                 });
@@ -246,7 +254,7 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
         DataType::Vec(_ty) => quote! { ::stef::buf::decode_vec(r) },
         DataType::HashMap(_kv) => quote! { ::stef::buf::decode_hash_map(r) },
         DataType::HashSet(_ty) => quote! { ::stef::buf::decode_hash_set(r) },
-        DataType::Option(ty) => compile_data_type(ty),
+        DataType::Option(_ty) => quote! { ::stef::buf::decode_option(r) },
         DataType::NonZero(ty) => match **ty {
             DataType::U8 => quote! { NonZeroU8::decode(r) },
             DataType::U16 => quote! { NonZeroU16::decode(r) },

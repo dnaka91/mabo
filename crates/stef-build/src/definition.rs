@@ -140,6 +140,7 @@ fn compile_alias(
 
     quote! {
         #comment
+        #[allow(dead_code)]
         pub type #alias = #target;
     }
 }
@@ -583,6 +584,7 @@ mod tests {
         "#};
         let expect = indoc! {r#"
             /// Hello world!
+            #[allow(dead_code)]
             pub type Sample = String;
         "#};
 

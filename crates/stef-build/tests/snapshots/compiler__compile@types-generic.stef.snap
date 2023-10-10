@@ -25,7 +25,7 @@ impl ::stef::Encode for Sample {
             3,
             |w| { ::stef::buf::encode_hash_set(w, self.f3) },
         );
-        ::stef::buf::encode_field(w, 4, |w| { ::stef::buf::encode_option(w, self.f4) });
+        ::stef::buf::encode_field_option(w, 4, &self.f4);
         ::stef::buf::encode_field(w, 5, |w| { (self.f5).encode(w) });
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }

@@ -117,6 +117,15 @@ pub fn decode_hash_set<T: Hash + Eq + Decode>(r: &mut impl Buf) -> Result<HashSe
     (0..len).map(|_| T::decode(r)).collect()
 }
 
+pub fn decode_option<T: Decode>(r: &mut impl Buf) -> Result<Option<T>> {
+    let some = decode_u8(r)? == 1;
+    if some {
+        T::decode(r).map(Some)
+    } else {
+        Ok(None)
+    }
+}
+
 pub fn decode_array<const N: usize, T: Debug + Decode>(r: &mut impl Buf) -> Result<[T; N]> {
     let len = decode_u64(r)?;
     if (len as usize) < N {
@@ -451,6 +460,16 @@ where
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
         decode_hash_set(r)
+    }
+}
+
+impl<T> Decode for Option<T>
+where
+    T: Decode,
+{
+    #[inline(always)]
+    fn decode(r: &mut impl Buf) -> Result<Self> {
+        decode_option(r)
     }
 }
 

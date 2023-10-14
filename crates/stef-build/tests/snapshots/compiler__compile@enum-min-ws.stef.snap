@@ -3,7 +3,9 @@ source: crates/stef-build/tests/compiler.rs
 expression: "enum Sample<T>{One@1,Two(u32@1,u64@2,T@3)@2,Three{field1:u32@1,field2:bool@2,field3:T@3}@3}"
 input_file: crates/stef-parser/tests/inputs/enum-min-ws.stef
 ---
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
 pub enum Sample<T> {
     One,
     Two(u32, u64, T),

@@ -3,7 +3,9 @@ source: crates/stef-build/tests/compiler.rs
 expression: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}"
 input_file: crates/stef-parser/tests/inputs/struct-min-ws.stef
 ---
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
 pub struct Sample<T> {
     pub a: u32,
     pub b: bool,
@@ -14,7 +16,7 @@ impl<T> ::stef::Encode for Sample<T>
 where
     T: ::stef::buf::Encode,
 {
-    #[allow(clippy::needless_borrow)]
+    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
@@ -45,6 +47,7 @@ impl<T> ::stef::Decode for Sample<T>
 where
     T: ::std::fmt::Debug + ::stef::buf::Decode,
 {
+    #[allow(clippy::type_complexity)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;

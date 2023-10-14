@@ -58,5 +58,84 @@ Schema {
                 ),
             },
         ),
+        Enum(
+            Enum {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Test123",
+                generics: Generics(
+                    [],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: "Value",
+                        fields: Unit,
+                        id: Id(
+                            1,
+                        ),
+                    },
+                ],
+            },
+        ),
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "KeyValue",
+                generics: Generics(
+                    [
+                        "K",
+                        "V",
+                    ],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "key",
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "K",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id(
+                                1,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "value",
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "V",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id(
+                                2,
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
     ],
 }

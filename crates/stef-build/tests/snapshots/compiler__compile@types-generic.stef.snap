@@ -3,17 +3,19 @@ source: crates/stef-build/tests/compiler.rs
 expression: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}"
 input_file: crates/stef-parser/tests/inputs/types-generic.stef
 ---
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
 pub struct Sample {
     pub f1: Vec<u32>,
-    pub f2: HashMap<u32, String>,
-    pub f3: HashSet<u32>,
+    pub f2: ::std::collections::HashMap<u32, String>,
+    pub f3: ::std::collections::HashSet<u32>,
     pub f4: Option<u32>,
-    pub f5: NonZeroU32,
+    pub f5: ::std::num::NonZeroU32,
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
-    #[allow(clippy::needless_borrow)]
+    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
@@ -34,7 +36,7 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
-                    self.f2,
+                    &self.f2,
                     |w, k| {
                         ::stef::buf::encode_u32(w, *k);
                     },
@@ -50,7 +52,7 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
-                    self.f3,
+                    &self.f3,
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
                     },
@@ -77,12 +79,13 @@ impl ::stef::Encode for Sample {
 }
 #[automatically_derived]
 impl ::stef::Decode for Sample {
+    #[allow(clippy::type_complexity)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut f1: Option<Vec<u32>> = None;
-        let mut f2: Option<HashMap<u32, String>> = None;
-        let mut f3: Option<HashSet<u32>> = None;
+        let mut f2: Option<::std::collections::HashMap<u32, String>> = None;
+        let mut f3: Option<::std::collections::HashSet<u32>> = None;
         let mut f4: Option<u32> = None;
-        let mut f5: Option<NonZeroU32> = None;
+        let mut f5: Option<::std::num::NonZeroU32> = None;
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
@@ -109,7 +112,7 @@ impl ::stef::Decode for Sample {
                     );
                 }
                 4 => f4 = Some(::stef::buf::decode_u32(r)?),
-                5 => f5 = Some(NonZeroU32::decode(r)?),
+                5 => f5 = Some(::std::num::NonZeroU32::decode(r)?),
                 _ => continue,
             }
         }

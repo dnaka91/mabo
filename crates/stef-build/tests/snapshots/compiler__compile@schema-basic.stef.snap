@@ -1,17 +1,19 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    b: bool @2,\n}\n\n/// Sample enum.\nenum Sample {\n    One @1,\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        field2: bool @2,\n    } @3,\n}"
+expression: "/// Basic struct.\nstruct SampleStruct {\n    a: u32 @1,\n    b: bool @2,\n}\n\n/// Sample enum.\nenum SampleEnum {\n    One @1,\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        field2: bool @2,\n    } @3,\n}"
 input_file: crates/stef-parser/tests/inputs/schema-basic.stef
 ---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
 /// Basic struct.
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
-pub struct Sample {
+#[derive(Clone, Debug, PartialEq)]
+pub struct SampleStruct {
     pub a: u32,
     pub b: bool,
 }
 #[automatically_derived]
-impl ::stef::Encode for Sample {
-    #[allow(clippy::needless_borrow)]
+impl ::stef::Encode for SampleStruct {
+    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
@@ -31,7 +33,8 @@ impl ::stef::Encode for Sample {
     }
 }
 #[automatically_derived]
-impl ::stef::Decode for Sample {
+impl ::stef::Decode for SampleStruct {
+    #[allow(clippy::type_complexity)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;
@@ -58,14 +61,14 @@ impl ::stef::Decode for Sample {
     }
 }
 /// Sample enum.
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
-pub enum Sample {
+#[derive(Clone, Debug, PartialEq)]
+pub enum SampleEnum {
     One,
     Two(u32, u64),
     Three { field1: u32, field2: bool },
 }
 #[automatically_derived]
-impl ::stef::Encode for Sample {
+impl ::stef::Encode for SampleEnum {
     #[allow(clippy::borrow_deref_ref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
@@ -96,7 +99,7 @@ impl ::stef::Encode for Sample {
     }
 }
 #[automatically_derived]
-impl ::stef::Decode for Sample {
+impl ::stef::Decode for SampleEnum {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
             1 => Ok(Self::One),

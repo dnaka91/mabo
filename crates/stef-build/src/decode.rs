@@ -38,6 +38,7 @@ pub fn compile_struct(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Decode for #name #generics #generics_where {
+            #[allow(clippy::type_complexity)]
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 #body
             }
@@ -269,20 +270,23 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             quote! { ::stef::buf::decode_option(r, |r| { #ty }) }
         }
         DataType::NonZero(ty) => match **ty {
-            DataType::U8 => quote! { NonZeroU8::decode(r) },
-            DataType::U16 => quote! { NonZeroU16::decode(r) },
-            DataType::U32 => quote! { NonZeroU32::decode(r) },
-            DataType::U64 => quote! { NonZeroU64::decode(r) },
-            DataType::U128 => quote! { NonZeroU128::decode(r) },
-            DataType::I8 => quote! { NonZeroI8::decode(r) },
-            DataType::I16 => quote! { NonZeroI16::decode(r) },
-            DataType::I32 => quote! { NonZeroI32::decode(r) },
-            DataType::I64 => quote! { NonZeroI64::decode(r) },
-            DataType::I128 => quote! { NonZeroI128::decode(r) },
-            _ => quote! { todo!() },
+            DataType::U8 => quote! { ::std::num::NonZeroU8::decode(r) },
+            DataType::U16 => quote! { ::std::num::NonZeroU16::decode(r) },
+            DataType::U32 => quote! { ::std::num::NonZeroU32::decode(r) },
+            DataType::U64 => quote! { ::std::num::NonZeroU64::decode(r) },
+            DataType::U128 => quote! { ::std::num::NonZeroU128::decode(r) },
+            DataType::I8 => quote! { ::std::num::NonZeroI8::decode(r) },
+            DataType::I16 => quote! { ::std::num::NonZeroI16::decode(r) },
+            DataType::I32 => quote! { ::std::num::NonZeroI32::decode(r) },
+            DataType::I64 => quote! { ::std::num::NonZeroI64::decode(r) },
+            DataType::I128 => quote! { ::std::num::NonZeroI128::decode(r) },
+            _ => quote! {
+               let _r = r;
+               todo!();
+            },
         },
-        DataType::BoxString => quote! { Box<str>::decode(r) },
-        DataType::BoxBytes => quote! { Box<[u8]>::decode(r) },
+        DataType::BoxString => quote! { Box::<str>::decode(r) },
+        DataType::BoxBytes => quote! { Box::<[u8]>::decode(r) },
         DataType::Tuple(types) => match types.len() {
             2..=12 => {
                 let types = types.iter().map(|ty| compile_data_type(ty));

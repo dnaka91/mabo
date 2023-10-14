@@ -10,7 +10,12 @@ use super::{decode, encode};
 pub fn compile_schema(Schema { definitions }: &Schema<'_>) -> TokenStream {
     let definitions = definitions.iter().map(compile_definition);
 
-    quote! { #(#definitions)* }
+    quote! {
+        #[allow(unused_imports)]
+        use ::stef::buf::{Decode, Encode};
+
+        #(#definitions)*
+    }
 }
 
 fn compile_definition(definition: &Definition<'_>) -> TokenStream {
@@ -60,6 +65,9 @@ fn compile_module(
     quote! {
         #comment
         pub mod #name {
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
+
             #(#definitions)*
         }
     }
@@ -81,7 +89,7 @@ fn compile_struct(
 
     quote! {
         #comment
-        #[derive(Clone, Debug, PartialEq, PartialOrd)]
+        #[derive(Clone, Debug, PartialEq)]
         pub struct #name #generics #fields
     }
 }
@@ -102,7 +110,7 @@ fn compile_enum(
 
     quote! {
         #comment
-        #[derive(Clone, Debug, PartialEq, PartialOrd)]
+        #[derive(Clone, Debug, PartialEq)]
         pub enum #name #generics {
             #(#variants,)*
         }
@@ -267,27 +275,27 @@ pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
         DataType::HashMap(kv) => {
             let k = compile_data_type(&kv.0);
             let v = compile_data_type(&kv.1);
-            quote! { HashMap<#k, #v> }
+            quote! { ::std::collections::HashMap<#k, #v> }
         }
         DataType::HashSet(ty) => {
             let ty = compile_data_type(ty);
-            quote! { HashSet<#ty> }
+            quote! { ::std::collections::HashSet<#ty> }
         }
         DataType::Option(ty) => {
             let ty = compile_data_type(ty);
             quote! { Option<#ty> }
         }
         DataType::NonZero(ty) => match **ty {
-            DataType::U8 => quote! { NonZeroU8 },
-            DataType::U16 => quote! { NonZeroU16 },
-            DataType::U32 => quote! { NonZeroU32 },
-            DataType::U64 => quote! { NonZeroU64 },
-            DataType::U128 => quote! { NonZeroU128 },
-            DataType::I8 => quote! { NonZeroI8 },
-            DataType::I16 => quote! { NonZeroI16 },
-            DataType::I32 => quote! { NonZeroI32 },
-            DataType::I64 => quote! { NonZeroI64 },
-            DataType::I128 => quote! { NonZeroI128 },
+            DataType::U8 => quote! { ::std::num::NonZeroU8 },
+            DataType::U16 => quote! { ::std::num::NonZeroU16 },
+            DataType::U32 => quote! { ::std::num::NonZeroU32 },
+            DataType::U64 => quote! { ::std::num::NonZeroU64 },
+            DataType::U128 => quote! { ::std::num::NonZeroU128 },
+            DataType::I8 => quote! { ::std::num::NonZeroI8 },
+            DataType::I16 => quote! { ::std::num::NonZeroI16 },
+            DataType::I32 => quote! { ::std::num::NonZeroI32 },
+            DataType::I64 => quote! { ::std::num::NonZeroI64 },
+            DataType::I128 => quote! { ::std::num::NonZeroI128 },
             _ => compile_data_type(ty),
         },
         DataType::BoxString => quote! { Box<str> },
@@ -379,8 +387,13 @@ mod tests {
             mod sample {}
         "#};
         let expect = indoc! {r#"
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
             /// Hello world!
-            pub mod sample {}
+            pub mod sample {
+                #[allow(unused_imports)]
+                use ::stef::buf::{Decode, Encode};
+            }
         "#};
 
         parse(input, expect);
@@ -397,8 +410,10 @@ mod tests {
             }
         "#};
         let expect = indoc! {r#"
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
             /// Hello world!
-            #[derive(Clone, Debug, PartialEq, PartialOrd)]
+            #[derive(Clone, Debug, PartialEq)]
             pub struct Sample {
                 pub field1: u32,
                 pub field2: Vec<u8>,
@@ -406,7 +421,7 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Encode for Sample {
-                #[allow(clippy::needless_borrow)]
+                #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     ::stef::buf::encode_field(
                         w,
@@ -441,6 +456,7 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Decode for Sample {
+                #[allow(clippy::type_complexity)]
                 fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                     let mut field1: Option<u32> = None;
                     let mut field2: Option<Vec<u8>> = None;
@@ -507,8 +523,10 @@ mod tests {
             }
         "#};
         let expect = indoc! {r#"
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
             /// Hello world!
-            #[derive(Clone, Debug, PartialEq, PartialOrd)]
+            #[derive(Clone, Debug, PartialEq)]
             pub enum Sample {
                 Variant1,
                 Variant2(u32, u8),
@@ -631,6 +649,8 @@ mod tests {
             type Sample = String;
         "#};
         let expect = indoc! {r#"
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
             /// Hello world!
             #[allow(dead_code)]
             pub type Sample = String;
@@ -654,6 +674,8 @@ mod tests {
             const BYTES: bytes = [1, 2, 3];
         "#};
         let expect = indoc! {r#"
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
             /// A bool.
             #[allow(dead_code)]
             pub const BOOL: bool = true;
@@ -681,6 +703,8 @@ mod tests {
             use other::module::Type;
         "#};
         let expect = indoc! {r#"
+            #[allow(unused_imports)]
+            use ::stef::buf::{Decode, Encode};
             use other::module;
             use other::module::Type;
         "#};

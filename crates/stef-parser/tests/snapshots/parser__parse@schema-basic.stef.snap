@@ -15,7 +15,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
-                name: "Sample",
+                name: "SampleStruct",
                 generics: Generics(
                     [],
                 ),
@@ -55,7 +55,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
-                name: "Sample",
+                name: "SampleEnum",
                 generics: Generics(
                     [],
                 ),

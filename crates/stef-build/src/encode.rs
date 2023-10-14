@@ -18,7 +18,7 @@ pub fn compile_struct(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Encode for #name #generics #generics_where {
-            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 #fields
             }
@@ -279,7 +279,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
                     quote! { v }
                 },
             );
-            quote! { ::stef::buf::encode_hash_map(w, #name, |w, k| { #ty_k; }, |w, v| { #ty_v; }) }
+            quote! { ::stef::buf::encode_hash_map(w, &#name, |w, k| { #ty_k; }, |w, v| { #ty_v; }) }
         }
         DataType::HashSet(ty) => {
             let ty = compile_data_type(
@@ -290,7 +290,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
                     quote! { v }
                 },
             );
-            quote! { ::stef::buf::encode_hash_set(w, #name, |w, v| { #ty; }) }
+            quote! { ::stef::buf::encode_hash_set(w, &#name, |w, v| { #ty; }) }
         }
         DataType::Option(ty) => {
             let ty = compile_data_type(

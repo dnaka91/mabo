@@ -4,13 +4,13 @@ expression: "Schema :: parse(input.as_str()).unwrap()"
 input_file: crates/stef-parser/tests/inputs/schema-basic.stef
 ---
 /// Basic struct.
-struct Sample {
+struct SampleStruct {
     a: u32 @1,
     b: bool @2,
 }
 
 /// Sample enum.
-enum Sample {
+enum SampleEnum {
     One @1,
     Two(u32 @1, u64 @2) @2,
     Three {

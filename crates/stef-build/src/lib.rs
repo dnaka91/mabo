@@ -1,7 +1,10 @@
 #![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
 #![allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
 
-use std::{path::{Path, PathBuf}, convert::AsRef};
+use std::{
+    convert::AsRef,
+    path::{Path, PathBuf},
+};
 
 use stef_parser::Schema;
 use thiserror::Error;

@@ -3,13 +3,15 @@ source: crates/stef-build/tests/compiler.rs
 expression: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}"
 input_file: crates/stef-parser/tests/inputs/types-nested.stef
 ---
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
 pub struct Sample {
-    pub value: Vec<Option<HashMap<i64, Box<str>>>>,
+    pub value: Vec<Option<::std::collections::HashMap<i64, Box<str>>>>,
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
-    #[allow(clippy::needless_borrow)]
+    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
@@ -35,8 +37,9 @@ impl ::stef::Encode for Sample {
 }
 #[automatically_derived]
 impl ::stef::Decode for Sample {
+    #[allow(clippy::type_complexity)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-        let mut value: Option<Vec<Option<HashMap<i64, Box<str>>>>> = None;
+        let mut value: Option<Vec<Option<::std::collections::HashMap<i64, Box<str>>>>> = None;
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
@@ -44,7 +47,15 @@ impl ::stef::Decode for Sample {
                     value = Some(
                         ::stef::buf::decode_vec(
                             r,
-                            |r| { ::stef::buf::decode_option(r, |r| { todo!() }) },
+                            |r| {
+                                ::stef::buf::decode_option(
+                                    r,
+                                    |r| {
+                                        let _r = r;
+                                        todo!();
+                                    },
+                                )
+                            },
                         )?,
                     );
                 }

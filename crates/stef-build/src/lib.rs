@@ -1,7 +1,7 @@
 #![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
 #![allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
 
-use std::path::{Path, PathBuf};
+use std::{path::{Path, PathBuf}, convert::AsRef};
 
 use stef_parser::Schema;
 use thiserror::Error;
@@ -16,6 +16,17 @@ type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug, Error)]
 pub enum Error {
+    #[error("failed to parse the glob pattern {glob:?}")]
+    Pattern {
+        #[source]
+        source: glob::PatternError,
+        glob: String,
+    },
+    #[error("failed to read files of a glob pattern")]
+    Glob {
+        #[source]
+        source: glob::GlobError,
+    },
     #[error("failed reading schema file at {file:?}")]
     Read {
         #[source]
@@ -26,32 +37,37 @@ pub enum Error {
     Parse { message: String, file: PathBuf },
 }
 
-pub fn compile(schemas: &[impl AsRef<Path>], _includes: &[impl AsRef<Path>]) -> Result<()> {
+pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> Result<()> {
     let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
 
-    for schema in schemas {
-        let path = schema.as_ref();
-
-        let input = std::fs::read_to_string(path).map_err(|e| Error::Read {
+    for schema in schemas.iter().map(AsRef::as_ref) {
+        for schema in glob::glob(schema).map_err(|e| Error::Pattern {
             source: e,
-            file: path.to_owned(),
-        })?;
+            glob: schema.to_owned(),
+        })? {
+            let path = schema.map_err(|e| Error::Glob { source: e })?;
 
-        let schema = Schema::parse(&input).map_err(|e| Error::Parse {
-            message: e.to_string(),
-            file: path.to_owned(),
-        })?;
-        let code = definition::compile_schema(&schema);
-        let code = prettyplease::unparse(&syn::parse2(code).unwrap());
+            let input = std::fs::read_to_string(&path).map_err(|e| Error::Read {
+                source: e,
+                file: path.clone(),
+            })?;
 
-        println!("{code}");
+            let schema = Schema::parse(&input).map_err(|e| Error::Parse {
+                message: e.to_string(),
+                file: path.clone(),
+            })?;
+            let code = definition::compile_schema(&schema);
+            let code = prettyplease::unparse(&syn::parse2(code).unwrap());
 
-        let out_file = out_dir.join(format!(
-            "{}.rs",
-            path.file_stem().unwrap().to_str().unwrap()
-        ));
+            println!("{code}");
 
-        std::fs::write(out_file, code).unwrap();
+            let out_file = out_dir.join(format!(
+                "{}.rs",
+                path.file_stem().unwrap().to_str().unwrap()
+            ));
+
+            std::fs::write(out_file, code).unwrap();
+        }
     }
 
     Ok(())

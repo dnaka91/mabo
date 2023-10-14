@@ -19,6 +19,7 @@ pub enum Error {
     NonUtf8(std::string::FromUtf8Error),
     MissingField { id: u32, name: Option<&'static str> },
     UnknownVariant(u32),
+    Zero,
 }
 
 impl From<varint::DecodeIntError> for Error {
@@ -273,9 +274,24 @@ where
     }
 }
 
-// -----------------------------
-// TODO: NonZero
-// -----------------------------
+macro_rules! non_zero {
+    ($ty:ty) => {
+        paste::paste! {
+            impl Decode for std::num::[<NonZero $ty:upper>] {
+                #[inline(always)]
+                fn decode(r: &mut impl Buf) -> Result<Self> {
+                    Self::new([<decode_ $ty>](r)?).ok_or_else(|| Error::Zero)
+                }
+            }
+        }
+    };
+    ($($ty:ty),+ $(,)?) => {
+        $(non_zero!($ty);)+
+    };
+}
+
+non_zero!(u8, u16, u32, u64, u128);
+non_zero!(i8, i16, i32, i64, i128);
 
 impl<'a, T> Decode for std::borrow::Cow<'a, T>
 where

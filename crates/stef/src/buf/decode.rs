@@ -98,287 +98,77 @@ pub fn decode_bytes(r: &mut impl Buf) -> Result<Vec<u8>> {
     Ok(r.copy_to_bytes(len as usize).to_vec())
 }
 
-pub fn decode_vec<T: Decode>(r: &mut impl Buf) -> Result<Vec<T>> {
+pub fn decode_vec<R, T, D>(r: &mut R, decode: D) -> Result<Vec<T>>
+where
+    R: Buf,
+    D: Fn(&mut R) -> Result<T>,
+{
     let len = decode_u64(r)?;
-    (0..len).map(|_| T::decode(r)).collect()
+    (0..len).map(|_| decode(r)).collect()
 }
 
-pub fn decode_hash_map<K: Hash + Eq + Decode, V: Decode>(
-    r: &mut impl Buf,
-) -> Result<HashMap<K, V>> {
+pub fn decode_hash_map<R, K, V, DK, DV>(
+    r: &mut R,
+    decode_key: DK,
+    decode_value: DV,
+) -> Result<HashMap<K, V>>
+where
+    R: Buf,
+    K: Hash + Eq,
+    DK: Fn(&mut R) -> Result<K>,
+    DV: Fn(&mut R) -> Result<V>,
+{
     let len = decode_u64(r)?;
     (0..len)
-        .map(|_| Ok((K::decode(r)?, V::decode(r)?)))
+        .map(|_| Ok((decode_key(r)?, decode_value(r)?)))
         .collect()
 }
 
-pub fn decode_hash_set<T: Hash + Eq + Decode>(r: &mut impl Buf) -> Result<HashSet<T>> {
+pub fn decode_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<HashSet<T>>
+where
+    R: Buf,
+    T: Hash + Eq,
+    D: Fn(&mut R) -> Result<T>,
+{
     let len = decode_u64(r)?;
-    (0..len).map(|_| T::decode(r)).collect()
+    (0..len).map(|_| decode(r)).collect()
 }
 
-pub fn decode_option<T: Decode>(r: &mut impl Buf) -> Result<Option<T>> {
+pub fn decode_option<R, T, D>(r: &mut R, decode: D) -> Result<Option<T>>
+where
+    R: Buf,
+    D: Fn(&mut R) -> Result<T>,
+{
     let some = decode_u8(r)? == 1;
     if some {
-        T::decode(r).map(Some)
+        decode(r).map(Some)
     } else {
         Ok(None)
     }
 }
 
-pub fn decode_array<const N: usize, T: Debug + Decode>(r: &mut impl Buf) -> Result<[T; N]> {
+pub fn decode_array<const N: usize, R, T, D>(r: &mut R, decode: D) -> Result<[T; N]>
+where
+    R: Buf,
+    T: Debug,
+    D: Fn(&mut R) -> Result<T>,
+{
     let len = decode_u64(r)?;
     if (len as usize) < N {
         return Err(Error::InsufficentData);
     }
 
-    let buf = (0..N).map(|_| T::decode(r)).collect::<Result<Vec<_>>>()?;
+    let buf = (0..N).map(|_| decode(r)).collect::<Result<Vec<_>>>()?;
 
     // read any remaining values, in case the old array definition was larger.
     // still have to decode the values to advance the buffer accordingly.
     for _ in N..len as usize {
-        T::decode(r)?;
+        decode(r)?;
     }
 
     // SAFETY: we can unwrap here, because we ensured the Vec exactly matches
     // with the length of the array.
     Ok(buf.try_into().unwrap())
-}
-
-pub fn decode_tuple2<T0, T1>(r: &mut impl Buf) -> Result<(T0, T1)>
-where
-    T0: Decode,
-    T1: Decode,
-{
-    Ok((T0::decode(r)?, T1::decode(r)?))
-}
-
-pub fn decode_tuple3<T0, T1, T2>(r: &mut impl Buf) -> Result<(T0, T1, T2)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-{
-    Ok((T0::decode(r)?, T1::decode(r)?, T2::decode(r)?))
-}
-
-pub fn decode_tuple4<T0, T1, T2, T3>(r: &mut impl Buf) -> Result<(T0, T1, T2, T3)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple5<T0, T1, T2, T3, T4>(r: &mut impl Buf) -> Result<(T0, T1, T2, T3, T4)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple6<T0, T1, T2, T3, T4, T5>(r: &mut impl Buf) -> Result<(T0, T1, T2, T3, T4, T5)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple7<T0, T1, T2, T3, T4, T5, T6>(
-    r: &mut impl Buf,
-) -> Result<(T0, T1, T2, T3, T4, T5, T6)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-        T6::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple8<T0, T1, T2, T3, T4, T5, T6, T7>(
-    r: &mut impl Buf,
-) -> Result<(T0, T1, T2, T3, T4, T5, T6, T7)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-        T6::decode(r)?,
-        T7::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple9<T0, T1, T2, T3, T4, T5, T6, T7, T8>(
-    r: &mut impl Buf,
-) -> Result<(T0, T1, T2, T3, T4, T5, T6, T7, T8)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-        T6::decode(r)?,
-        T7::decode(r)?,
-        T8::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
-    r: &mut impl Buf,
-) -> Result<(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-    T9: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-        T6::decode(r)?,
-        T7::decode(r)?,
-        T8::decode(r)?,
-        T9::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
-    r: &mut impl Buf,
-) -> Result<(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-    T9: Decode,
-    T10: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-        T6::decode(r)?,
-        T7::decode(r)?,
-        T8::decode(r)?,
-        T9::decode(r)?,
-        T10::decode(r)?,
-    ))
-}
-
-pub fn decode_tuple12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(
-    r: &mut impl Buf,
-) -> Result<(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-    T9: Decode,
-    T10: Decode,
-    T11: Decode,
-{
-    Ok((
-        T0::decode(r)?,
-        T1::decode(r)?,
-        T2::decode(r)?,
-        T3::decode(r)?,
-        T4::decode(r)?,
-        T5::decode(r)?,
-        T6::decode(r)?,
-        T7::decode(r)?,
-        T8::decode(r)?,
-        T9::decode(r)?,
-        T10::decode(r)?,
-        T11::decode(r)?,
-    ))
 }
 
 #[inline(always)]
@@ -438,7 +228,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_vec(r)
+        decode_vec(r, T::decode)
     }
 }
 
@@ -449,7 +239,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_hash_map(r)
+        decode_hash_map(r, K::decode, V::decode)
     }
 }
 
@@ -459,7 +249,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_hash_set(r)
+        decode_hash_set(r, T::decode)
     }
 }
 
@@ -469,7 +259,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_option(r)
+        decode_option(r, T::decode)
     }
 }
 
@@ -479,185 +269,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_array(r)
-    }
-}
-
-impl<T0, T1> Decode for (T0, T1)
-where
-    T0: Decode,
-    T1: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple2(r)
-    }
-}
-
-impl<T0, T1, T2> Decode for (T0, T1, T2)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple3(r)
-    }
-}
-
-impl<T0, T1, T2, T3> Decode for (T0, T1, T2, T3)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple4(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4> Decode for (T0, T1, T2, T3, T4)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple5(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5> Decode for (T0, T1, T2, T3, T4, T5)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple6(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5, T6> Decode for (T0, T1, T2, T3, T4, T5, T6)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple7(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5, T6, T7> Decode for (T0, T1, T2, T3, T4, T5, T6, T7)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple8(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5, T6, T7, T8> Decode for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple9(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> Decode for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-    T9: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple10(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Decode
-    for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-    T9: Decode,
-    T10: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple11(r)
-    }
-}
-
-impl<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Decode
-    for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
-where
-    T0: Decode,
-    T1: Decode,
-    T2: Decode,
-    T3: Decode,
-    T4: Decode,
-    T5: Decode,
-    T6: Decode,
-    T7: Decode,
-    T8: Decode,
-    T9: Decode,
-    T10: Decode,
-    T11: Decode,
-{
-    #[inline(always)]
-    fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_tuple12(r)
+        decode_array(r, T::decode)
     }
 }
 

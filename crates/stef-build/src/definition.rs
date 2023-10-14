@@ -406,17 +406,35 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Encode for Sample {
+                #[allow(clippy::needless_borrow)]
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
-                    ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.field1) });
+                    ::stef::buf::encode_field(
+                        w,
+                        1,
+                        |w| {
+                            ::stef::buf::encode_u32(w, self.field1);
+                        },
+                    );
                     ::stef::buf::encode_field(
                         w,
                         2,
-                        |w| { ::stef::buf::encode_bytes(w, &self.field2) },
+                        |w| {
+                            ::stef::buf::encode_bytes(w, &self.field2);
+                        },
                     );
                     ::stef::buf::encode_field(
                         w,
                         3,
-                        |w| { ::stef::buf::encode_tuple2(w, &self.field3) },
+                        |w| {
+                            ::stef::buf::encode_bool(w, self.field3.0);
+                            ::stef::buf::encode_array(
+                                w,
+                                &&(self.field3.1),
+                                |w, v| {
+                                    ::stef::buf::encode_i16(w, *v);
+                                },
+                            );
+                        },
                     );
                     ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                 }
@@ -432,7 +450,22 @@ mod tests {
                             ::stef::buf::END_MARKER => break,
                             1 => field1 = Some(::stef::buf::decode_u32(r)?),
                             2 => field2 = Some(::stef::buf::decode_bytes(r)?),
-                            3 => field3 = Some(::stef::buf::decode_tuple2(r)?),
+                            3 => {
+                                field3 = Some(
+                                    {
+                                        Ok::<
+                                            _,
+                                            ::stef::buf::Error,
+                                        >((
+                                            ::stef::buf::decode_bool(r)?,
+                                            ::stef::buf::decode_array(
+                                                r,
+                                                |r| { ::stef::buf::decode_i16(r) },
+                                            )?,
+                                        ))
+                                    }?,
+                                );
+                            }
                             _ => continue,
                         }
                     }
@@ -505,7 +538,15 @@ mod tests {
                             ::stef::buf::encode_field(
                                 w,
                                 2,
-                                |w| { ::stef::buf::encode_vec(w, &*field2) },
+                                |w| {
+                                    ::stef::buf::encode_vec(
+                                        w,
+                                        &*field2,
+                                        |w, v| {
+                                            ::stef::buf::encode_bool(w, *v);
+                                        },
+                                    )
+                                },
                             );
                             ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                         }
@@ -550,7 +591,14 @@ mod tests {
                                 match ::stef::buf::decode_id(r)? {
                                     ::stef::buf::END_MARKER => break,
                                     1 => field1 = Some(::stef::buf::decode_string(r)?),
-                                    2 => field2 = Some(::stef::buf::decode_vec(r)?),
+                                    2 => {
+                                        field2 = Some(
+                                            ::stef::buf::decode_vec(
+                                                r,
+                                                |r| { ::stef::buf::decode_bool(r) },
+                                            )?,
+                                        );
+                                    }
                                     _ => continue,
                                 }
                             }

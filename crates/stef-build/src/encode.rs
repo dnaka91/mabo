@@ -18,6 +18,7 @@ pub fn compile_struct(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Encode for #name #generics #generics_where {
+            #[allow(clippy::needless_borrow)]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 #fields
             }
@@ -38,11 +39,16 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.0);
                     let name = proc_macro2::Ident::new(name, Span::call_site());
 
-                    if matches!(ty, DataType::Option(_)) {
-                        quote! { ::stef::buf::encode_field_option(w, #id, &self.#name); }
+                    if let DataType::Option(ty) = ty {
+                        let ty = compile_data_type(ty, if is_copy(ty) {
+                            quote! { *v }
+                        } else {
+                            quote! { v }
+                        });
+                        quote! { ::stef::buf::encode_field_option(w, #id, &self.#name, |w, v| { #ty; }); }
                     } else {
                         let ty = compile_data_type(ty, quote! { self.#name });
-                        quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
+                        quote! { ::stef::buf::encode_field(w, #id, |w| { #ty; }); }
                     }
                 },
             );
@@ -208,7 +214,26 @@ fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream
         .unwrap_or_default()
 }
 
-#[allow(clippy::needless_pass_by_value)]
+fn is_copy(ty: &DataType<'_>) -> bool {
+    matches!(
+        ty,
+        DataType::Bool
+            | DataType::U8
+            | DataType::U16
+            | DataType::U32
+            | DataType::U64
+            | DataType::U128
+            | DataType::I8
+            | DataType::I16
+            | DataType::I32
+            | DataType::I64
+            | DataType::I128
+            | DataType::F32
+            | DataType::F64
+    )
+}
+
+#[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
 fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
     match ty {
         DataType::Bool => quote! { ::stef::buf::encode_bool(w, #name) },
@@ -226,23 +251,89 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::F64 => quote! { ::stef::buf::encode_f64(w, #name) },
         DataType::String | DataType::StringRef => quote! { ::stef::buf::encode_string(w, &#name) },
         DataType::Bytes | DataType::BytesRef => quote! { ::stef::buf::encode_bytes(w, &#name) },
-        DataType::Vec(_ty) => quote! { ::stef::buf::encode_vec(w, &#name) },
-        DataType::HashMap(_kv) => quote! { ::stef::buf::encode_hash_map(w, #name) },
-        DataType::HashSet(_ty) => quote! { ::stef::buf::encode_hash_set(w, #name) },
-        DataType::Option(_ty) => quote! { ::stef::buf::encode_option(w, &#name) },
+        DataType::Vec(ty) => {
+            let ty = compile_data_type(
+                ty,
+                if is_copy(ty) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+            );
+            quote! { ::stef::buf::encode_vec(w, &#name, |w, v| { #ty; }) }
+        }
+        DataType::HashMap(kv) => {
+            let ty_k = compile_data_type(
+                &kv.0,
+                if is_copy(&kv.0) {
+                    quote! { *k }
+                } else {
+                    quote! { k }
+                },
+            );
+            let ty_v = compile_data_type(
+                &kv.1,
+                if is_copy(&kv.1) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+            );
+            quote! { ::stef::buf::encode_hash_map(w, #name, |w, k| { #ty_k; }, |w, v| { #ty_v; }) }
+        }
+        DataType::HashSet(ty) => {
+            let ty = compile_data_type(
+                ty,
+                if is_copy(ty) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+            );
+            quote! { ::stef::buf::encode_hash_set(w, #name, |w, v| { #ty; }) }
+        }
+        DataType::Option(ty) => {
+            let ty = compile_data_type(
+                ty,
+                if is_copy(ty) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+            );
+            quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #ty; }) }
+        }
         DataType::BoxString => quote! { ::stef::buf::encode_string(w, &*#name) },
         DataType::BoxBytes => quote! { ::stef::buf::encode_bytes(w, &*#name) },
         DataType::Tuple(types) => match types.len() {
-            size @ 2..=12 => {
-                let fn_name = Ident::new(&format!("encode_tuple{size}"), Span::call_site());
-                quote! { ::stef::buf::#fn_name(w, &#name) }
+            2..=12 => {
+                let types = types.iter().enumerate().map(|(idx, ty)| {
+                    let idx = proc_macro2::Literal::usize_unsuffixed(idx);
+                    compile_data_type(
+                        ty,
+                        if is_copy(ty) {
+                            quote! { #name.#idx }
+                        } else {
+                            quote! { &(#name.#idx) }
+                        },
+                    )
+                });
+                quote! { #(#types;)* }
             }
             0 => panic!("tuple with zero elements"),
             1 => panic!("tuple with single element"),
             _ => panic!("tuple with more than 12 elements"),
         },
-        DataType::Array(_ty, _size) => {
-            quote! { ::stef::buf::encode_array(w, &#name) }
+        DataType::Array(ty, _size) => {
+            let ty = compile_data_type(
+                ty,
+                if is_copy(ty) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+            );
+            quote! { ::stef::buf::encode_array(w, &#name, |w, v| { #ty; }) }
         }
         DataType::NonZero(_) | DataType::External(_) => {
             quote! { (#name).encode(w) }

@@ -13,20 +13,65 @@ pub struct Sample {
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
+    #[allow(clippy::needless_borrow)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_vec(w, &self.f1) });
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_vec(
+                    w,
+                    &self.f1,
+                    |w, v| {
+                        ::stef::buf::encode_u32(w, *v);
+                    },
+                );
+            },
+        );
         ::stef::buf::encode_field(
             w,
             2,
-            |w| { ::stef::buf::encode_hash_map(w, self.f2) },
+            |w| {
+                ::stef::buf::encode_hash_map(
+                    w,
+                    self.f2,
+                    |w, k| {
+                        ::stef::buf::encode_u32(w, *k);
+                    },
+                    |w, v| {
+                        ::stef::buf::encode_string(w, &v);
+                    },
+                );
+            },
         );
         ::stef::buf::encode_field(
             w,
             3,
-            |w| { ::stef::buf::encode_hash_set(w, self.f3) },
+            |w| {
+                ::stef::buf::encode_hash_set(
+                    w,
+                    self.f3,
+                    |w, v| {
+                        ::stef::buf::encode_u32(w, *v);
+                    },
+                );
+            },
         );
-        ::stef::buf::encode_field_option(w, 4, &self.f4);
-        ::stef::buf::encode_field(w, 5, |w| { (self.f5).encode(w) });
+        ::stef::buf::encode_field_option(
+            w,
+            4,
+            &self.f4,
+            |w, v| {
+                ::stef::buf::encode_u32(w, *v);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            5,
+            |w| {
+                (self.f5).encode(w);
+            },
+        );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }
@@ -41,9 +86,28 @@ impl ::stef::Decode for Sample {
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
-                1 => f1 = Some(::stef::buf::decode_vec(r)?),
-                2 => f2 = Some(::stef::buf::decode_hash_map(r)?),
-                3 => f3 = Some(::stef::buf::decode_hash_set(r)?),
+                1 => {
+                    f1 = Some(
+                        ::stef::buf::decode_vec(r, |r| { ::stef::buf::decode_u32(r) })?,
+                    );
+                }
+                2 => {
+                    f2 = Some(
+                        ::stef::buf::decode_hash_map(
+                            r,
+                            |r| { ::stef::buf::decode_u32(r) },
+                            |r| { ::stef::buf::decode_string(r) },
+                        )?,
+                    );
+                }
+                3 => {
+                    f3 = Some(
+                        ::stef::buf::decode_hash_set(
+                            r,
+                            |r| { ::stef::buf::decode_u32(r) },
+                        )?,
+                    );
+                }
                 4 => f4 = Some(::stef::buf::decode_u32(r)?),
                 5 => f5 = Some(NonZeroU32::decode(r)?),
                 _ => continue,

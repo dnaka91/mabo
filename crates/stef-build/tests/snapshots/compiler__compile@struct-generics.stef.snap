@@ -15,9 +15,22 @@ where
     K: ::stef::buf::Encode,
     V: ::stef::buf::Encode,
 {
+    #[allow(clippy::needless_borrow)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { (self.key).encode(w) });
-        ::stef::buf::encode_field(w, 2, |w| { (self.value).encode(w) });
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                (self.key).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                (self.value).encode(w);
+            },
+        );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }

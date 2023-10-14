@@ -251,10 +251,23 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
         DataType::F64 => quote! { ::stef::buf::decode_f64(r) },
         DataType::String | DataType::StringRef => quote! { ::stef::buf::decode_string(r) },
         DataType::Bytes | DataType::BytesRef => quote! { ::stef::buf::decode_bytes(r) },
-        DataType::Vec(_ty) => quote! { ::stef::buf::decode_vec(r) },
-        DataType::HashMap(_kv) => quote! { ::stef::buf::decode_hash_map(r) },
-        DataType::HashSet(_ty) => quote! { ::stef::buf::decode_hash_set(r) },
-        DataType::Option(_ty) => quote! { ::stef::buf::decode_option(r) },
+        DataType::Vec(ty) => {
+            let ty = compile_data_type(ty);
+            quote! { ::stef::buf::decode_vec(r, |r| { #ty }) }
+        }
+        DataType::HashMap(kv) => {
+            let ty_k = compile_data_type(&kv.0);
+            let ty_v = compile_data_type(&kv.1);
+            quote! { ::stef::buf::decode_hash_map(r, |r| { #ty_k }, |r| { #ty_v }) }
+        }
+        DataType::HashSet(ty) => {
+            let ty = compile_data_type(ty);
+            quote! { ::stef::buf::decode_hash_set(r, |r| { #ty }) }
+        }
+        DataType::Option(ty) => {
+            let ty = compile_data_type(ty);
+            quote! { ::stef::buf::decode_option(r, |r| { #ty }) }
+        }
         DataType::NonZero(ty) => match **ty {
             DataType::U8 => quote! { NonZeroU8::decode(r) },
             DataType::U16 => quote! { NonZeroU16::decode(r) },
@@ -266,21 +279,22 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             DataType::I32 => quote! { NonZeroI32::decode(r) },
             DataType::I64 => quote! { NonZeroI64::decode(r) },
             DataType::I128 => quote! { NonZeroI128::decode(r) },
-            _ => todo!(),
+            _ => quote! { todo!() },
         },
         DataType::BoxString => quote! { Box<str>::decode(r) },
         DataType::BoxBytes => quote! { Box<[u8]>::decode(r) },
         DataType::Tuple(types) => match types.len() {
-            size @ 2..=12 => {
-                let fn_name = Ident::new(&format!("decode_tuple{size}"), Span::call_site());
-                quote! { ::stef::buf::#fn_name(r) }
+            2..=12 => {
+                let types = types.iter().map(|ty| compile_data_type(ty));
+                quote! { { Ok::<_, ::stef::buf::Error>((#(#types?,)*)) } }
             }
             0 => panic!("tuple with zero elements"),
             1 => panic!("tuple with single element"),
             _ => panic!("tuple with more than 12 elements"),
         },
-        DataType::Array(_ty, _size) => {
-            quote! { ::stef::buf::decode_array(r) }
+        DataType::Array(ty, _size) => {
+            let ty = compile_data_type(ty);
+            quote! { ::stef::buf::decode_array(r, |r| { #ty }) }
         }
         DataType::External(ty) => {
             let ty = Ident::new(ty.name, Span::call_site());

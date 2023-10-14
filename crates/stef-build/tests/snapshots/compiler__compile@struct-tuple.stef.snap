@@ -8,6 +8,7 @@ input_file: crates/stef-parser/tests/inputs/struct-tuple.stef
 pub struct Sample(u32, bool);
 #[automatically_derived]
 impl ::stef::Encode for Sample {
+    #[allow(clippy::needless_borrow)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.0) });
         ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.1) });

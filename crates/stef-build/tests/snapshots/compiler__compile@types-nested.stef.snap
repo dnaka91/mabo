@@ -9,8 +9,27 @@ pub struct Sample {
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
+    #[allow(clippy::needless_borrow)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_vec(w, &self.value) });
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_vec(
+                    w,
+                    &self.value,
+                    |w, v| {
+                        ::stef::buf::encode_option(
+                            w,
+                            &v,
+                            |w, v| {
+                                (v).encode(w);
+                            },
+                        );
+                    },
+                );
+            },
+        );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }
@@ -21,7 +40,14 @@ impl ::stef::Decode for Sample {
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
-                1 => value = Some(::stef::buf::decode_vec(r)?),
+                1 => {
+                    value = Some(
+                        ::stef::buf::decode_vec(
+                            r,
+                            |r| { ::stef::buf::decode_option(r, |r| { todo!() }) },
+                        )?,
+                    );
+                }
                 _ => continue,
             }
         }

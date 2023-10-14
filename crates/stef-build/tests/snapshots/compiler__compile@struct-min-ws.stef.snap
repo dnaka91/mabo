@@ -14,10 +14,29 @@ impl<T> ::stef::Encode for Sample<T>
 where
     T: ::stef::buf::Encode,
 {
+    #[allow(clippy::needless_borrow)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.a) });
-        ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.b) });
-        ::stef::buf::encode_field(w, 3, |w| { (self.c).encode(w) });
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_u32(w, self.a);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                ::stef::buf::encode_bool(w, self.b);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                (self.c).encode(w);
+            },
+        );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }

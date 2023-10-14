@@ -29,59 +29,162 @@ pub struct Sample {
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
+    #[allow(clippy::needless_borrow)]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_bool(w, self.f01) });
-        ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u8(w, self.f02) });
-        ::stef::buf::encode_field(w, 3, |w| { ::stef::buf::encode_u16(w, self.f03) });
-        ::stef::buf::encode_field(w, 4, |w| { ::stef::buf::encode_u32(w, self.f04) });
-        ::stef::buf::encode_field(w, 5, |w| { ::stef::buf::encode_u64(w, self.f05) });
-        ::stef::buf::encode_field(w, 6, |w| { ::stef::buf::encode_u128(w, self.f06) });
-        ::stef::buf::encode_field(w, 7, |w| { ::stef::buf::encode_i8(w, self.f07) });
-        ::stef::buf::encode_field(w, 8, |w| { ::stef::buf::encode_i16(w, self.f08) });
-        ::stef::buf::encode_field(w, 9, |w| { ::stef::buf::encode_i32(w, self.f09) });
-        ::stef::buf::encode_field(w, 10, |w| { ::stef::buf::encode_i64(w, self.f10) });
-        ::stef::buf::encode_field(w, 11, |w| { ::stef::buf::encode_i128(w, self.f11) });
-        ::stef::buf::encode_field(w, 12, |w| { ::stef::buf::encode_f32(w, self.f12) });
-        ::stef::buf::encode_field(w, 13, |w| { ::stef::buf::encode_f64(w, self.f13) });
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_bool(w, self.f01);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                ::stef::buf::encode_u8(w, self.f02);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                ::stef::buf::encode_u16(w, self.f03);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            4,
+            |w| {
+                ::stef::buf::encode_u32(w, self.f04);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            5,
+            |w| {
+                ::stef::buf::encode_u64(w, self.f05);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            6,
+            |w| {
+                ::stef::buf::encode_u128(w, self.f06);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            7,
+            |w| {
+                ::stef::buf::encode_i8(w, self.f07);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            8,
+            |w| {
+                ::stef::buf::encode_i16(w, self.f08);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            9,
+            |w| {
+                ::stef::buf::encode_i32(w, self.f09);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            10,
+            |w| {
+                ::stef::buf::encode_i64(w, self.f10);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            11,
+            |w| {
+                ::stef::buf::encode_i128(w, self.f11);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            12,
+            |w| {
+                ::stef::buf::encode_f32(w, self.f12);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            13,
+            |w| {
+                ::stef::buf::encode_f64(w, self.f13);
+            },
+        );
         ::stef::buf::encode_field(
             w,
             14,
-            |w| { ::stef::buf::encode_string(w, &self.f14) },
+            |w| {
+                ::stef::buf::encode_string(w, &self.f14);
+            },
         );
         ::stef::buf::encode_field(
             w,
             15,
-            |w| { ::stef::buf::encode_string(w, &self.f15) },
+            |w| {
+                ::stef::buf::encode_string(w, &self.f15);
+            },
         );
         ::stef::buf::encode_field(
             w,
             16,
-            |w| { ::stef::buf::encode_bytes(w, &self.f16) },
+            |w| {
+                ::stef::buf::encode_bytes(w, &self.f16);
+            },
         );
         ::stef::buf::encode_field(
             w,
             17,
-            |w| { ::stef::buf::encode_bytes(w, &self.f17) },
+            |w| {
+                ::stef::buf::encode_bytes(w, &self.f17);
+            },
         );
         ::stef::buf::encode_field(
             w,
             18,
-            |w| { ::stef::buf::encode_string(w, &*self.f18) },
+            |w| {
+                ::stef::buf::encode_string(w, &*self.f18);
+            },
         );
         ::stef::buf::encode_field(
             w,
             19,
-            |w| { ::stef::buf::encode_bytes(w, &*self.f19) },
+            |w| {
+                ::stef::buf::encode_bytes(w, &*self.f19);
+            },
         );
         ::stef::buf::encode_field(
             w,
             20,
-            |w| { ::stef::buf::encode_tuple3(w, &self.f20) },
+            |w| {
+                ::stef::buf::encode_u32(w, self.f20.0);
+                ::stef::buf::encode_u32(w, self.f20.1);
+                ::stef::buf::encode_u32(w, self.f20.2);
+            },
         );
         ::stef::buf::encode_field(
             w,
             21,
-            |w| { ::stef::buf::encode_array(w, &self.f21) },
+            |w| {
+                ::stef::buf::encode_array(
+                    w,
+                    &self.f21,
+                    |w, v| {
+                        ::stef::buf::encode_u32(w, *v);
+                    },
+                );
+            },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
@@ -132,8 +235,25 @@ impl ::stef::Decode for Sample {
                 17 => f17 = Some(::stef::buf::decode_bytes(r)?),
                 18 => f18 = Some(Box < str > ::decode(r)?),
                 19 => f19 = Some(Box < [u8] > ::decode(r)?),
-                20 => f20 = Some(::stef::buf::decode_tuple3(r)?),
-                21 => f21 = Some(::stef::buf::decode_array(r)?),
+                20 => {
+                    f20 = Some(
+                        {
+                            Ok::<
+                                _,
+                                ::stef::buf::Error,
+                            >((
+                                ::stef::buf::decode_u32(r)?,
+                                ::stef::buf::decode_u32(r)?,
+                                ::stef::buf::decode_u32(r)?,
+                            ))
+                        }?,
+                    );
+                }
+                21 => {
+                    f21 = Some(
+                        ::stef::buf::decode_array(r, |r| { ::stef::buf::decode_u32(r) })?,
+                    );
+                }
                 _ => continue,
             }
         }

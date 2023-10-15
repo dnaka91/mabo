@@ -25,7 +25,16 @@ impl ::stef::Encode for Sample {
                             w,
                             &v,
                             |w, v| {
-                                (v).encode(w);
+                                ::stef::buf::encode_hash_map(
+                                    w,
+                                    &v,
+                                    |w, k| {
+                                        ::stef::buf::encode_i64(w, *k);
+                                    },
+                                    |w, v| {
+                                        ::stef::buf::encode_string(w, &*v);
+                                    },
+                                );
                             },
                         );
                     },

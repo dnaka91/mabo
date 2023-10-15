@@ -303,6 +303,26 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             );
             quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #ty; }) }
         }
+        DataType::NonZero(ty) => {
+            if matches!(
+                **ty,
+                DataType::U8
+                    | DataType::U16
+                    | DataType::U32
+                    | DataType::U64
+                    | DataType::U128
+                    | DataType::I8
+                    | DataType::I16
+                    | DataType::I32
+                    | DataType::I64
+                    | DataType::I128
+            ) {
+                quote! { (#name).encode(w) }
+            } else {
+                compile_data_type(ty, name)
+            }
+        }
+
         DataType::BoxString => quote! { ::stef::buf::encode_string(w, &*#name) },
         DataType::BoxBytes => quote! { ::stef::buf::encode_bytes(w, &*#name) },
         DataType::Tuple(types) => match types.len() {
@@ -335,7 +355,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             );
             quote! { ::stef::buf::encode_array(w, &#name, |w, v| { #ty; }) }
         }
-        DataType::NonZero(_) | DataType::External(_) => {
+        DataType::External(_) => {
             quote! { (#name).encode(w) }
         }
     }

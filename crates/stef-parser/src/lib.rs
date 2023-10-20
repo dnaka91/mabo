@@ -763,7 +763,7 @@ impl<'a> Display for Generics<'a> {
 /// ```txt
 /// @1
 /// ```
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct Id(pub u32);
 
 impl Display for Id {

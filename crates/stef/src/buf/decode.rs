@@ -14,7 +14,7 @@ pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug)]
 pub enum Error {
-    InsufficentData,
+    InsufficientData,
     DecodeInt(varint::DecodeIntError),
     NonUtf8(std::string::FromUtf8Error),
     MissingField { id: u32, name: Option<&'static str> },
@@ -39,7 +39,7 @@ pub const END_MARKER: u32 = 0;
 macro_rules! ensure_size {
     ($r:ident, $size:expr) => {
         if $r.remaining() < $size {
-            return Err(Error::InsufficentData);
+            return Err(Error::InsufficientData);
         }
     };
 }
@@ -155,7 +155,7 @@ where
 {
     let len = decode_u64(r)?;
     if (len as usize) < N {
-        return Err(Error::InsufficentData);
+        return Err(Error::InsufficientData);
     }
 
     let buf = (0..N).map(|_| decode(r)).collect::<Result<Vec<_>>>()?;

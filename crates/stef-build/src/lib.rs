@@ -38,27 +38,39 @@ pub enum Error {
     },
     #[error("failed parsing schema from {file:?}: {message}")]
     Parse { message: String, file: PathBuf },
+    #[error("failed compiling schema from {file:?}")]
+    Compile {
+        #[source]
+        source: stef_compiler::Error,
+        file: PathBuf,
+    },
 }
 
 pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> Result<()> {
     let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
 
     for schema in schemas.iter().map(AsRef::as_ref) {
-        for schema in glob::glob(schema).map_err(|e| Error::Pattern {
-            source: e,
+        for schema in glob::glob(schema).map_err(|source| Error::Pattern {
+            source,
             glob: schema.to_owned(),
         })? {
             let path = schema.map_err(|e| Error::Glob { source: e })?;
 
-            let input = std::fs::read_to_string(&path).map_err(|e| Error::Read {
-                source: e,
+            let input = std::fs::read_to_string(&path).map_err(|source| Error::Read {
+                source,
                 file: path.clone(),
             })?;
 
             let schema = Schema::parse(&input).map_err(|e| Error::Parse {
-                message: e.to_string(),
+                message: format!("{e:?}"),
                 file: path.clone(),
             })?;
+
+            stef_compiler::validate_schema(&schema).map_err(|source| Error::Compile {
+                source,
+                file: path.clone(),
+            })?;
+
             let code = definition::compile_schema(&schema);
             let code = prettyplease::unparse(&syn::parse2(code).unwrap());
 

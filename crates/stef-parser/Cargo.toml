@@ -16,7 +16,7 @@ rustc-args = ["--cfg", "docsrs"]
 miette.workspace = true
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 stef-derive = { path = "../stef-derive" }
-winnow = "0.5.16"
+winnow = "0.5.17"
 
 [dev-dependencies]
 indoc.workspace = true

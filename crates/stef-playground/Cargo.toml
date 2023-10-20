@@ -14,4 +14,5 @@ publish = false
 stef = { path = "../stef" }
 
 [build-dependencies]
+anyhow = "1.0.75"
 stef-build = { path = "../stef-build" }

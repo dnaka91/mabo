@@ -18,7 +18,11 @@ pub fn compile_struct(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Encode for #name #generics #generics_where {
-            #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
+            #[allow(
+                clippy::borrow_deref_ref,
+                clippy::explicit_auto_deref,
+                clippy::needless_borrow,
+            )]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 #fields
             }

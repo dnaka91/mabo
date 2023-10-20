@@ -8,7 +8,7 @@ use std::{
 
 pub use bytes::BufMut;
 
-use crate::varint;
+use crate::{varint, NonZero};
 
 pub fn encode_bool(w: &mut impl BufMut, value: bool) {
     w.put_u8(value.into());
@@ -314,6 +314,16 @@ impl Encode for NonZeroI64 {
 impl Encode for NonZeroI128 {
     fn encode(&self, w: &mut impl BufMut) {
         encode_i128(w, self.get());
+    }
+}
+
+impl<T> Encode for NonZero<T>
+where
+    T: Encode,
+{
+    #[inline(always)]
+    fn encode(&self, w: &mut impl BufMut) {
+        self.0.encode(w)
     }
 }
 

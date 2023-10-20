@@ -1,0 +1,216 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types-non-zero.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f01",
+                            ty: NonZero(
+                                U8,
+                            ),
+                            id: Id(
+                                1,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f02",
+                            ty: NonZero(
+                                U16,
+                            ),
+                            id: Id(
+                                2,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f03",
+                            ty: NonZero(
+                                U32,
+                            ),
+                            id: Id(
+                                3,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f04",
+                            ty: NonZero(
+                                U64,
+                            ),
+                            id: Id(
+                                4,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f05",
+                            ty: NonZero(
+                                U128,
+                            ),
+                            id: Id(
+                                5,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f06",
+                            ty: NonZero(
+                                I8,
+                            ),
+                            id: Id(
+                                6,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f07",
+                            ty: NonZero(
+                                I16,
+                            ),
+                            id: Id(
+                                7,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f08",
+                            ty: NonZero(
+                                I32,
+                            ),
+                            id: Id(
+                                8,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f09",
+                            ty: NonZero(
+                                I64,
+                            ),
+                            id: Id(
+                                9,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f10",
+                            ty: NonZero(
+                                I128,
+                            ),
+                            id: Id(
+                                10,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f11",
+                            ty: NonZero(
+                                String,
+                            ),
+                            id: Id(
+                                11,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f12",
+                            ty: NonZero(
+                                Bytes,
+                            ),
+                            id: Id(
+                                12,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f13",
+                            ty: NonZero(
+                                Vec(
+                                    String,
+                                ),
+                            ),
+                            id: Id(
+                                13,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f14",
+                            ty: NonZero(
+                                HashMap(
+                                    (
+                                        String,
+                                        Bytes,
+                                    ),
+                                ),
+                            ),
+                            id: Id(
+                                14,
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: "f15",
+                            ty: NonZero(
+                                HashSet(
+                                    String,
+                                ),
+                            ),
+                            id: Id(
+                                15,
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

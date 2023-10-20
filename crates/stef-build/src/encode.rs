@@ -307,25 +307,26 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             );
             quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #ty; }) }
         }
-        DataType::NonZero(ty) => {
-            if matches!(
-                **ty,
-                DataType::U8
-                    | DataType::U16
-                    | DataType::U32
-                    | DataType::U64
-                    | DataType::U128
-                    | DataType::I8
-                    | DataType::I16
-                    | DataType::I32
-                    | DataType::I64
-                    | DataType::I128
-            ) {
-                quote! { (#name).encode(w) }
-            } else {
-                compile_data_type(ty, name)
-            }
-        }
+        DataType::NonZero(ty) => match &**ty {
+            DataType::U8
+            | DataType::U16
+            | DataType::U32
+            | DataType::U64
+            | DataType::U128
+            | DataType::I8
+            | DataType::I16
+            | DataType::I32
+            | DataType::I64
+            | DataType::I128 => quote! { (#name).encode(w) },
+            DataType::String
+            | DataType::StringRef
+            | DataType::Bytes
+            | DataType::BytesRef
+            | DataType::Vec(_)
+            | DataType::HashMap(_)
+            | DataType::HashSet(_) => compile_data_type(ty, quote! { #name.get() }),
+            ty => todo!("compiler should catch invalid {ty:?} type"),
+        },
 
         DataType::BoxString => quote! { ::stef::buf::encode_string(w, &*#name) },
         DataType::BoxBytes => quote! { ::stef::buf::encode_bytes(w, &*#name) },

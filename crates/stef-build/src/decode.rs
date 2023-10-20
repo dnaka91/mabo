@@ -269,7 +269,7 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             let ty = compile_data_type(ty);
             quote! { ::stef::buf::decode_option(r, |r| { #ty }) }
         }
-        DataType::NonZero(ty) => match **ty {
+        DataType::NonZero(ty) => match &**ty {
             DataType::U8 => quote! { ::std::num::NonZeroU8::decode(r) },
             DataType::U16 => quote! { ::std::num::NonZeroU16::decode(r) },
             DataType::U32 => quote! { ::std::num::NonZeroU32::decode(r) },
@@ -280,10 +280,26 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             DataType::I32 => quote! { ::std::num::NonZeroI32::decode(r) },
             DataType::I64 => quote! { ::std::num::NonZeroI64::decode(r) },
             DataType::I128 => quote! { ::std::num::NonZeroI128::decode(r) },
-            _ => quote! {
-               let _r = r;
-               todo!();
-            },
+            DataType::String | DataType::StringRef => {
+                quote! { ::stef::buf::decode_non_zero_string(r) }
+            }
+            DataType::Bytes | DataType::BytesRef => {
+                quote! { ::stef::buf::decode_non_zero_bytes(r) }
+            }
+            DataType::Vec(ty) => {
+                let ty = compile_data_type(ty);
+                quote! { ::stef::buf::decode_non_zero_vec(r, |r| { #ty }) }
+            }
+            DataType::HashMap(kv) => {
+                let ty_k = compile_data_type(&kv.0);
+                let ty_v = compile_data_type(&kv.1);
+                quote! { ::stef::buf::decode_non_zero_hash_map(r, |r| { #ty_k }, |r| { #ty_v }) }
+            }
+            DataType::HashSet(ty) => {
+                let ty = compile_data_type(ty);
+                quote! { ::stef::buf::decode_non_zero_hash_set(r, |r| { #ty }) }
+            }
+            ty => todo!("compiler should catch invalid {ty:?} type"),
         },
         DataType::BoxString => quote! { Box::<str>::decode(r) },
         DataType::BoxBytes => quote! { Box::<[u8]>::decode(r) },

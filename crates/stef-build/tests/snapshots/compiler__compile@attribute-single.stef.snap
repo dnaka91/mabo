@@ -9,7 +9,11 @@ use ::stef::buf::{Decode, Encode};
 pub struct Sample;
 #[automatically_derived]
 impl ::stef::Encode for Sample {
-    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+    )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {}
 }
 #[automatically_derived]

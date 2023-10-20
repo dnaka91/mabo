@@ -285,7 +285,7 @@ pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             let ty = compile_data_type(ty);
             quote! { Option<#ty> }
         }
-        DataType::NonZero(ty) => match **ty {
+        DataType::NonZero(ty) => match &**ty {
             DataType::U8 => quote! { ::std::num::NonZeroU8 },
             DataType::U16 => quote! { ::std::num::NonZeroU16 },
             DataType::U32 => quote! { ::std::num::NonZeroU32 },
@@ -296,7 +296,22 @@ pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             DataType::I32 => quote! { ::std::num::NonZeroI32 },
             DataType::I64 => quote! { ::std::num::NonZeroI64 },
             DataType::I128 => quote! { ::std::num::NonZeroI128 },
-            _ => compile_data_type(ty),
+            DataType::String | DataType::StringRef => quote! { ::stef::NonZeroString },
+            DataType::Bytes | DataType::BytesRef => quote! { ::stef::NonZeroBytes },
+            DataType::Vec(ty) => {
+                let ty = compile_data_type(ty);
+                quote! { ::stef::NonZeroVec<#ty> }
+            }
+            DataType::HashMap(kv) => {
+                let k = compile_data_type(&kv.0);
+                let v = compile_data_type(&kv.1);
+                quote! { ::stef::NonZeroHashMap<#k, #v> }
+            }
+            DataType::HashSet(ty) => {
+                let ty = compile_data_type(ty);
+                quote! { ::stef::NonZeroHashSet<#ty> }
+            }
+            ty => todo!("compiler should catch invalid {ty:?} type"),
         },
         DataType::BoxString => quote! { Box<str> },
         DataType::BoxBytes => quote! { Box<[u8]> },
@@ -421,7 +436,11 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Encode for Sample {
-                #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
+                #[allow(
+                    clippy::borrow_deref_ref,
+                    clippy::explicit_auto_deref,
+                    clippy::needless_borrow,
+                )]
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     ::stef::buf::encode_field(
                         w,

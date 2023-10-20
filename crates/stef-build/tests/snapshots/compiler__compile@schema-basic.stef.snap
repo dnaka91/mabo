@@ -13,7 +13,11 @@ pub struct SampleStruct {
 }
 #[automatically_derived]
 impl ::stef::Encode for SampleStruct {
-    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+    )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,

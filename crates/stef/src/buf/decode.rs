@@ -8,7 +8,7 @@ use std::{
 
 pub use bytes::Buf;
 
-use crate::varint;
+use crate::{varint, NonZero};
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
@@ -92,10 +92,9 @@ pub fn decode_string(r: &mut impl Buf) -> Result<String> {
 }
 
 pub fn decode_bytes(r: &mut impl Buf) -> Result<Vec<u8>> {
-    let (len, consumed) = varint::decode_u64(r.chunk())?;
-    r.advance(consumed);
-
+    let len = decode_u64(r)?;
     ensure_size!(r, len as usize);
+
     Ok(r.copy_to_bytes(len as usize).to_vec())
 }
 
@@ -170,6 +169,77 @@ where
     // SAFETY: we can unwrap here, because we ensured the Vec exactly matches
     // with the length of the array.
     Ok(buf.try_into().unwrap())
+}
+
+macro_rules! ensure_not_empty {
+    ($size:ident) => {
+        if $size == 0 {
+            return Err(Error::Zero);
+        }
+    };
+}
+
+pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZero<String>> {
+    String::from_utf8(decode_non_zero_bytes(r)?.into_inner())
+        .map(|v| NonZero::<String>::new(v).unwrap())
+        .map_err(Into::into)
+}
+
+pub fn decode_non_zero_bytes(r: &mut impl Buf) -> Result<NonZero<Vec<u8>>> {
+    let len = decode_u64(r)?;
+    ensure_not_empty!(len);
+    ensure_size!(r, len as usize);
+
+    Ok(NonZero::<Vec<_>>::new(r.copy_to_bytes(len as usize).to_vec()).unwrap())
+}
+
+pub fn decode_non_zero_vec<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<Vec<T>>>
+where
+    R: Buf,
+    D: Fn(&mut R) -> Result<T>,
+{
+    let len = decode_u64(r)?;
+    ensure_not_empty!(len);
+
+    (0..len)
+        .map(|_| decode(r))
+        .collect::<Result<_>>()
+        .map(|v| NonZero::<Vec<_>>::new(v).unwrap())
+}
+
+pub fn decode_non_zero_hash_map<R, K, V, DK, DV>(
+    r: &mut R,
+    decode_key: DK,
+    decode_value: DV,
+) -> Result<NonZero<HashMap<K, V>>>
+where
+    R: Buf,
+    K: Hash + Eq,
+    DK: Fn(&mut R) -> Result<K>,
+    DV: Fn(&mut R) -> Result<V>,
+{
+    let len = decode_u64(r)?;
+    ensure_not_empty!(len);
+
+    (0..len)
+        .map(|_| Ok((decode_key(r)?, decode_value(r)?)))
+        .collect::<Result<_>>()
+        .map(|v| NonZero::<HashMap<_, _>>::new(v).unwrap())
+}
+
+pub fn decode_non_zero_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<HashSet<T>>>
+where
+    R: Buf,
+    T: Hash + Eq,
+    D: Fn(&mut R) -> Result<T>,
+{
+    let len = decode_u64(r)?;
+    ensure_not_empty!(len);
+
+    (0..len)
+        .map(|_| decode(r))
+        .collect::<Result<_>>()
+        .map(|v| NonZero::<HashSet<_>>::new(v).unwrap())
 }
 
 #[inline(always)]

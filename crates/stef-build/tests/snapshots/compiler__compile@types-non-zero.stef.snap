@@ -1,0 +1,304 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "struct Sample {\n    f01: non_zero<u8> @1,\n    f02: non_zero<u16> @2,\n    f03: non_zero<u32> @3,\n    f04: non_zero<u64> @4,\n    f05: non_zero<u128> @5,\n    f06: non_zero<i8> @6,\n    f07: non_zero<i16> @7,\n    f08: non_zero<i32> @8,\n    f09: non_zero<i64> @9,\n    f10: non_zero<i128> @10,\n    f11: non_zero<string> @11,\n    f12: non_zero<bytes> @12,\n    f13: non_zero<vec<string>> @13,\n    f14: non_zero<hash_map<string, bytes>> @14,\n    f15: non_zero<hash_set<string>> @15,\n}"
+input_file: crates/stef-parser/tests/inputs/types-non-zero.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
+pub struct Sample {
+    pub f01: ::std::num::NonZeroU8,
+    pub f02: ::std::num::NonZeroU16,
+    pub f03: ::std::num::NonZeroU32,
+    pub f04: ::std::num::NonZeroU64,
+    pub f05: ::std::num::NonZeroU128,
+    pub f06: ::std::num::NonZeroI8,
+    pub f07: ::std::num::NonZeroI16,
+    pub f08: ::std::num::NonZeroI32,
+    pub f09: ::std::num::NonZeroI64,
+    pub f10: ::std::num::NonZeroI128,
+    pub f11: ::stef::NonZeroString,
+    pub f12: ::stef::NonZeroBytes,
+    pub f13: ::stef::NonZeroVec<String>,
+    pub f14: ::stef::NonZeroHashMap<String, Vec<u8>>,
+    pub f15: ::stef::NonZeroHashSet<String>,
+}
+#[automatically_derived]
+impl ::stef::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                (self.f01).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                (self.f02).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                (self.f03).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            4,
+            |w| {
+                (self.f04).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            5,
+            |w| {
+                (self.f05).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            6,
+            |w| {
+                (self.f06).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            7,
+            |w| {
+                (self.f07).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            8,
+            |w| {
+                (self.f08).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            9,
+            |w| {
+                (self.f09).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            10,
+            |w| {
+                (self.f10).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            11,
+            |w| {
+                ::stef::buf::encode_string(w, &self.f11.get());
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            12,
+            |w| {
+                ::stef::buf::encode_bytes(w, &self.f12.get());
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            13,
+            |w| {
+                ::stef::buf::encode_vec(
+                    w,
+                    &self.f13.get(),
+                    |w, v| {
+                        ::stef::buf::encode_string(w, &v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            14,
+            |w| {
+                ::stef::buf::encode_hash_map(
+                    w,
+                    &self.f14.get(),
+                    |w, k| {
+                        ::stef::buf::encode_string(w, &k);
+                    },
+                    |w, v| {
+                        ::stef::buf::encode_bytes(w, &v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            15,
+            |w| {
+                ::stef::buf::encode_hash_set(
+                    w,
+                    &self.f15.get(),
+                    |w, v| {
+                        ::stef::buf::encode_string(w, &v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for Sample {
+    #[allow(clippy::type_complexity)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut f01: Option<::std::num::NonZeroU8> = None;
+        let mut f02: Option<::std::num::NonZeroU16> = None;
+        let mut f03: Option<::std::num::NonZeroU32> = None;
+        let mut f04: Option<::std::num::NonZeroU64> = None;
+        let mut f05: Option<::std::num::NonZeroU128> = None;
+        let mut f06: Option<::std::num::NonZeroI8> = None;
+        let mut f07: Option<::std::num::NonZeroI16> = None;
+        let mut f08: Option<::std::num::NonZeroI32> = None;
+        let mut f09: Option<::std::num::NonZeroI64> = None;
+        let mut f10: Option<::std::num::NonZeroI128> = None;
+        let mut f11: Option<::stef::NonZeroString> = None;
+        let mut f12: Option<::stef::NonZeroBytes> = None;
+        let mut f13: Option<::stef::NonZeroVec<String>> = None;
+        let mut f14: Option<::stef::NonZeroHashMap<String, Vec<u8>>> = None;
+        let mut f15: Option<::stef::NonZeroHashSet<String>> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => f01 = Some(::std::num::NonZeroU8::decode(r)?),
+                2 => f02 = Some(::std::num::NonZeroU16::decode(r)?),
+                3 => f03 = Some(::std::num::NonZeroU32::decode(r)?),
+                4 => f04 = Some(::std::num::NonZeroU64::decode(r)?),
+                5 => f05 = Some(::std::num::NonZeroU128::decode(r)?),
+                6 => f06 = Some(::std::num::NonZeroI8::decode(r)?),
+                7 => f07 = Some(::std::num::NonZeroI16::decode(r)?),
+                8 => f08 = Some(::std::num::NonZeroI32::decode(r)?),
+                9 => f09 = Some(::std::num::NonZeroI64::decode(r)?),
+                10 => f10 = Some(::std::num::NonZeroI128::decode(r)?),
+                11 => f11 = Some(::stef::buf::decode_non_zero_string(r)?),
+                12 => f12 = Some(::stef::buf::decode_non_zero_bytes(r)?),
+                13 => {
+                    f13 = Some(
+                        ::stef::buf::decode_non_zero_vec(
+                            r,
+                            |r| { ::stef::buf::decode_string(r) },
+                        )?,
+                    );
+                }
+                14 => {
+                    f14 = Some(
+                        ::stef::buf::decode_non_zero_hash_map(
+                            r,
+                            |r| { ::stef::buf::decode_string(r) },
+                            |r| { ::stef::buf::decode_bytes(r) },
+                        )?,
+                    );
+                }
+                15 => {
+                    f15 = Some(
+                        ::stef::buf::decode_non_zero_hash_set(
+                            r,
+                            |r| { ::stef::buf::decode_string(r) },
+                        )?,
+                    );
+                }
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            f01: f01
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("f01"),
+                })?,
+            f02: f02
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("f02"),
+                })?,
+            f03: f03
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("f03"),
+                })?,
+            f04: f04
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 4,
+                    name: Some("f04"),
+                })?,
+            f05: f05
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 5,
+                    name: Some("f05"),
+                })?,
+            f06: f06
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 6,
+                    name: Some("f06"),
+                })?,
+            f07: f07
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 7,
+                    name: Some("f07"),
+                })?,
+            f08: f08
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 8,
+                    name: Some("f08"),
+                })?,
+            f09: f09
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 9,
+                    name: Some("f09"),
+                })?,
+            f10: f10
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 10,
+                    name: Some("f10"),
+                })?,
+            f11: f11
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 11,
+                    name: Some("f11"),
+                })?,
+            f12: f12
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 12,
+                    name: Some("f12"),
+                })?,
+            f13: f13
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 13,
+                    name: Some("f13"),
+                })?,
+            f14: f14
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 14,
+                    name: Some("f14"),
+                })?,
+            f15: f15
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 15,
+                    name: Some("f15"),
+                })?,
+        })
+    }
+}
+

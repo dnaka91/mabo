@@ -97,6 +97,10 @@ mod schemas {
         include!(concat!(env!("OUT_DIR"), "/types-nested.rs"));
     }
 
+    mod types_non_zero {
+        include!(concat!(env!("OUT_DIR"), "/types-non-zero.rs"));
+    }
+
     mod types_ref {
         include!(concat!(env!("OUT_DIR"), "/types-ref.rs"));
     }

@@ -7,11 +7,15 @@ input_file: crates/stef-parser/tests/inputs/types-nested.stef
 use ::stef::buf::{Decode, Encode};
 #[derive(Clone, Debug, PartialEq)]
 pub struct Sample {
-    pub value: Vec<Option<::std::collections::HashMap<i64, Box<str>>>>,
+    pub value: Vec<Option<::stef::NonZeroHashMap<i64, Box<str>>>>,
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
-    #[allow(clippy::needless_borrow, clippy::explicit_auto_deref)]
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+    )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
@@ -27,7 +31,7 @@ impl ::stef::Encode for Sample {
                             |w, v| {
                                 ::stef::buf::encode_hash_map(
                                     w,
-                                    &v,
+                                    &v.get(),
                                     |w, k| {
                                         ::stef::buf::encode_i64(w, *k);
                                     },
@@ -48,7 +52,7 @@ impl ::stef::Encode for Sample {
 impl ::stef::Decode for Sample {
     #[allow(clippy::type_complexity)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-        let mut value: Option<Vec<Option<::std::collections::HashMap<i64, Box<str>>>>> = None;
+        let mut value: Option<Vec<Option<::stef::NonZeroHashMap<i64, Box<str>>>>> = None;
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
@@ -60,8 +64,11 @@ impl ::stef::Decode for Sample {
                                 ::stef::buf::decode_option(
                                     r,
                                     |r| {
-                                        let _r = r;
-                                        todo!();
+                                        ::stef::buf::decode_non_zero_hash_map(
+                                            r,
+                                            |r| { ::stef::buf::decode_i64(r) },
+                                            |r| { Box::<str>::decode(r) },
+                                        )
                                     },
                                 )
                             },

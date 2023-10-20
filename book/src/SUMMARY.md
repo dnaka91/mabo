@@ -10,17 +10,17 @@
 
 # User Guide
 
-- [Installation]()
-- [Creating schemas]()
-- [Generating code]()
+- [Installation](guide/installation.md)
+- [Creating schemas](guide/creating.md)
+- [Generating code](guide/generating.md)
 - [Examples](guide/examples.md)
 
 # Reference Guide
 
 - [Command Line Interface]()
-  - [init]()
-  - [check]()
-  - [format]()
+  - [stef init]()
+  - [stef check]()
+  - [stef format]()
 - [Schema](schema/index.md)
   - [Structs](schema/structs.md)
   - [Enums](schema/enums.md)

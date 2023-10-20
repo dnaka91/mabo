@@ -27,6 +27,7 @@ fmt:
 linkcheck:
   cd book && just build
   lychee --cache --max-cache-age 7d \
+    --exclude https://github\.com/dnaka91/stef \
     'book/src/**/*.md' \
     'book/book/**/*.html' \
     'crates/**/*.rs'

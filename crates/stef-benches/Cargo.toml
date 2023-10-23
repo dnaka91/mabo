@@ -11,6 +11,10 @@ license.workspace = true
 publish = false
 
 [[bench]]
+name = "compiler"
+harness = false
+
+[[bench]]
 name = "parser"
 harness = false
 
@@ -20,6 +24,7 @@ harness = false
 
 [dependencies]
 mimalloc.workspace = true
+stef-compiler = { path = "../stef-compiler" }
 stef-parser = { path = "../stef-parser" }
 
 [dev-dependencies]

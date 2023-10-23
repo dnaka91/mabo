@@ -1,0 +1,6 @@
+/// Hello world!
+struct Sample {
+    field1: u32 @1,
+    field2: bytes @2,
+    field3: (bool, [i16; 4]) @3,
+}

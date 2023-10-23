@@ -1,0 +1,2 @@
+use other::module;
+use other::module::Type;

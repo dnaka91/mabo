@@ -1,0 +1,106 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Hello world!\nstruct Sample {\n    field1: u32 @1,\n    field2: bytes @2,\n    field3: (bool, [i16; 4]) @3,\n}"
+input_file: crates/stef-build/tests/inputs-extra/struct.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+/// Hello world!
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample {
+    pub field1: u32,
+    pub field2: Vec<u8>,
+    pub field3: (bool, [i16; 4]),
+}
+#[automatically_derived]
+impl ::stef::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_u32(w, self.field1);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                ::stef::buf::encode_bytes(w, &self.field2);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                ::stef::buf::encode_bool(w, self.field3.0);
+                ::stef::buf::encode_array(
+                    w,
+                    &&(self.field3.1),
+                    |w, v| {
+                        ::stef::buf::encode_i16(w, *v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for Sample {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut field1: Option<u32> = None;
+        let mut field2: Option<Vec<u8>> = None;
+        let mut field3: Option<(bool, [i16; 4])> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => field1 = Some(::stef::buf::decode_u32(r)?),
+                2 => field2 = Some(::stef::buf::decode_bytes(r)?),
+                3 => {
+                    field3 = Some(
+                        {
+                            Ok::<
+                                _,
+                                ::stef::buf::Error,
+                            >((
+                                ::stef::buf::decode_bool(r)?,
+                                ::stef::buf::decode_array(
+                                    r,
+                                    |r| { ::stef::buf::decode_i16(r) },
+                                )?,
+                            ))
+                        }?,
+                    );
+                }
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            field1: field1
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("field1"),
+                })?,
+            field2: field2
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("field2"),
+                })?,
+            field3: field3
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("field3"),
+                })?,
+        })
+    }
+}
+

@@ -1,0 +1,9 @@
+/// Hello world!
+enum Sample {
+    Variant1 @1,
+    Variant2(u32 @1, u8 @2) @2,
+    Variant3 {
+        field1: string @1,
+        field2: vec<bool> @2,
+    } @3,
+}

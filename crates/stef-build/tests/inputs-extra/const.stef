@@ -1,0 +1,10 @@
+/// A bool.
+const BOOL: bool = true;
+/// An integer.
+const INT: u32 = 100;
+/// A float.
+const FLOAT: f64 = 5.0;
+/// A string.
+const STRING: string = "hello";
+/// Some bytes.
+const BYTES: bytes = [1, 2, 3];

@@ -7,6 +7,7 @@ input_file: crates/stef-parser/tests/inputs/struct-basic.stef
 use ::stef::buf::{Decode, Encode};
 /// Basic struct.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample {
     pub a: u32,
     /// Second field
@@ -18,6 +19,7 @@ impl ::stef::Encode for Sample {
         clippy::borrow_deref_ref,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
+        clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
@@ -39,7 +41,7 @@ impl ::stef::Encode for Sample {
 }
 #[automatically_derived]
 impl ::stef::Decode for Sample {
-    #[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;

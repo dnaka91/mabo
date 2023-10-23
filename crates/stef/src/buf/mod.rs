@@ -94,7 +94,7 @@ mod tests {
     fn non_zero_hash_set_valid() {
         let mut buf = Vec::new();
         encode_hash_set(&mut buf, &HashSet::from_iter([1, 2, 3]), |w, v| {
-            encode_u32(w, *v)
+            encode_u32(w, *v);
         });
         assert!(decode_non_zero_hash_set(&mut &*buf, decode_u32).is_ok());
     }

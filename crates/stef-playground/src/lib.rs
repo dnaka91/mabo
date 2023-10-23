@@ -1,3 +1,8 @@
+#![forbid(unsafe_code)]
+#![deny(rust_2018_idioms, clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(clippy::missing_errors_doc)]
+
 mod sample {
     include!(concat!(env!("OUT_DIR"), "/sample.rs"));
 }
@@ -114,18 +119,18 @@ mod tests {
 
     use super::sample;
 
-    fn roundtrip<T: Debug + PartialEq + Decode + Encode>(value: T) {
+    fn roundtrip<T: Debug + PartialEq + Decode + Encode>(value: &T) {
         let mut buf = Vec::new();
         value.encode(&mut buf);
         println!("{}: {buf:?}", std::any::type_name::<T>());
 
         let value2 = T::decode(&mut &*buf).unwrap();
-        assert_eq!(value, value2);
+        assert_eq!(*value, value2);
     }
 
     #[test]
     fn sample() {
-        roundtrip(sample::Sample {
+        roundtrip(&sample::Sample {
             a: 5,
             b: true,
             c: ("Test".into(), -2),
@@ -134,17 +139,17 @@ mod tests {
 
     #[test]
     fn sample2_unit() {
-        roundtrip(sample::Sample2::Unit);
+        roundtrip(&sample::Sample2::Unit);
     }
 
     #[test]
     fn sample2_tuple() {
-        roundtrip(sample::Sample2::Tuple(7, 8));
+        roundtrip(&sample::Sample2::Tuple(7, 8));
     }
 
     #[test]
     fn sample2_fields() {
-        roundtrip(sample::Sample2::Fields {
+        roundtrip(&sample::Sample2::Fields {
             name: "this".into(),
             valid: true,
             dates: vec![
@@ -157,7 +162,7 @@ mod tests {
 
     #[test]
     fn sample_gen() {
-        roundtrip(sample::gens::SampleGen {
+        roundtrip(&sample::gens::SampleGen {
             raw: vec![5, 6, 7, 8],
             array: [9_i16; 4],
             value: 9,
@@ -166,7 +171,7 @@ mod tests {
 
     #[test]
     fn sample_gen2() {
-        roundtrip(sample::gens::SampleGen2::Value(sample::SampleAlias {
+        roundtrip(&sample::gens::SampleGen2::Value(sample::SampleAlias {
             a: 50,
             b: false,
             c: (String::new(), -10),
@@ -175,7 +180,7 @@ mod tests {
 
     #[test]
     fn specials_options_some() {
-        roundtrip(sample::specials::SomeOptions {
+        roundtrip(&sample::specials::SomeOptions {
             maybe_int: Some(5),
             maybe_text: Some("hi".into()),
             maybe_tuple: Some((20, 30)),
@@ -186,7 +191,7 @@ mod tests {
 
     #[test]
     fn specials_options_none() {
-        roundtrip(sample::specials::SomeOptions {
+        roundtrip(&sample::specials::SomeOptions {
             maybe_int: None,
             maybe_text: None,
             maybe_tuple: None,

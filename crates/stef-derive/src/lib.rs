@@ -1,3 +1,12 @@
+#![forbid(unsafe_code)]
+#![deny(rust_2018_idioms, clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::missing_errors_doc,
+    clippy::module_name_repetitions,
+    clippy::too_many_lines
+)]
+
 use syn::{parse_macro_input, DeriveInput};
 
 mod attributes;

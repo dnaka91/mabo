@@ -1,4 +1,6 @@
-#![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
+#![forbid(unsafe_code)]
+#![deny(rust_2018_idioms, clippy::all)]
+#![warn(clippy::pedantic)]
 #![allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
 
 use std::{

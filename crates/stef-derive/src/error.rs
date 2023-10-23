@@ -24,12 +24,10 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
         bail!(data.fields, "only named structs supported")
     };
 
-    let Some(_cause_field) = fields.iter().find(|f| {
-        f.ident
-            .as_ref()
-            .map(|ident| ident == "cause")
-            .unwrap_or(false)
-    }) else {
+    let Some(_cause_field) = fields
+        .iter()
+        .find(|f| f.ident.as_ref().is_some_and(|ident| ident == "cause"))
+    else {
         bail!(fields, "struct musn't be empty");
     };
 
@@ -41,8 +39,8 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
             .collect::<syn::Result<Vec<_>>>()?,
     };
 
-    let error_impl = expand_error(ident, &info)?;
-    let miette_impl = expand_miette(ident, &info)?;
+    let error_impl = expand_error(ident, &info);
+    let miette_impl = expand_miette(ident, &info);
 
     Ok(quote! {
         #error_impl
@@ -68,10 +66,10 @@ struct StructInfo<'a> {
     fields: Vec<(&'a Field, Option<FieldAttributes>)>,
 }
 
-fn expand_error(ident: &Ident, info: &StructInfo<'_>) -> syn::Result<TokenStream> {
+fn expand_error(ident: &Ident, info: &StructInfo<'_>) -> TokenStream {
     let StructAttributes { msg, .. } = &info.attr;
 
-    Ok(quote! {
+    quote! {
         impl std::error::Error for #ident {
             fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
                 Some(&self.cause as &(dyn std::error::Error + 'static))
@@ -83,10 +81,10 @@ fn expand_error(ident: &Ident, info: &StructInfo<'_>) -> syn::Result<TokenStream
                 f.write_str(#msg)
             }
         }
-    })
+    }
 }
 
-fn expand_miette(ident: &Ident, info: &StructInfo<'_>) -> syn::Result<TokenStream> {
+fn expand_miette(ident: &Ident, info: &StructInfo<'_>) -> TokenStream {
     let StructAttributes { code, help, .. } = &info.attr;
 
     let code = code.segments.iter().fold(String::new(), |mut acc, seg| {
@@ -148,7 +146,7 @@ fn expand_miette(ident: &Ident, info: &StructInfo<'_>) -> syn::Result<TokenStrea
     let labels_names = labels.iter().map(|v| &v.0);
     let labels_contents = labels.iter().map(|v| &v.1);
 
-    Ok(quote! {
+    quote! {
         impl miette::Diagnostic for #ident {
             fn code(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                Some(Box::new(#code))
@@ -171,5 +169,5 @@ fn expand_miette(ident: &Ident, info: &StructInfo<'_>) -> syn::Result<TokenStrea
                 #url
             }
         }
-    })
+    }
 }

@@ -90,6 +90,7 @@ fn compile_struct(
     quote! {
         #comment
         #[derive(Clone, Debug, PartialEq)]
+        #[allow(clippy::module_name_repetitions, clippy::option_option)]
         pub struct #name #generics #fields
     }
 }
@@ -111,6 +112,7 @@ fn compile_enum(
     quote! {
         #comment
         #[derive(Clone, Debug, PartialEq)]
+        #[allow(clippy::module_name_repetitions, clippy::option_option)]
         pub enum #name #generics {
             #(#variants,)*
         }
@@ -148,7 +150,7 @@ fn compile_alias(
 
     quote! {
         #comment
-        #[allow(dead_code)]
+        #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
         pub type #alias = #target;
     }
 }
@@ -429,6 +431,7 @@ mod tests {
             use ::stef::buf::{Decode, Encode};
             /// Hello world!
             #[derive(Clone, Debug, PartialEq)]
+            #[allow(clippy::module_name_repetitions, clippy::option_option)]
             pub struct Sample {
                 pub field1: u32,
                 pub field2: Vec<u8>,
@@ -440,6 +443,7 @@ mod tests {
                     clippy::borrow_deref_ref,
                     clippy::explicit_auto_deref,
                     clippy::needless_borrow,
+                    clippy::too_many_lines,
                 )]
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     ::stef::buf::encode_field(
@@ -475,7 +479,7 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Decode for Sample {
-                #[allow(clippy::type_complexity)]
+                #[allow(clippy::type_complexity, clippy::too_many_lines)]
                 fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                     let mut field1: Option<u32> = None;
                     let mut field2: Option<Vec<u8>> = None;
@@ -546,6 +550,7 @@ mod tests {
             use ::stef::buf::{Decode, Encode};
             /// Hello world!
             #[derive(Clone, Debug, PartialEq)]
+            #[allow(clippy::module_name_repetitions, clippy::option_option)]
             pub enum Sample {
                 Variant1,
                 Variant2(u32, u8),
@@ -553,7 +558,11 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Encode for Sample {
-                #[allow(clippy::borrow_deref_ref)]
+                #[allow(
+                    clippy::borrow_deref_ref,
+                    clippy::semicolon_if_nothing_returned,
+                    clippy::too_many_lines,
+                )]
                 fn encode(&self, w: &mut impl ::stef::BufMut) {
                     match self {
                         Self::Variant1 => {
@@ -592,6 +601,7 @@ mod tests {
             }
             #[automatically_derived]
             impl ::stef::Decode for Sample {
+                #[allow(clippy::too_many_lines)]
                 fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                     match ::stef::buf::decode_id(r)? {
                         1 => Ok(Self::Variant1),
@@ -671,7 +681,7 @@ mod tests {
             #[allow(unused_imports)]
             use ::stef::buf::{Decode, Encode};
             /// Hello world!
-            #[allow(dead_code)]
+            #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
             pub type Sample = String;
         "#};
 

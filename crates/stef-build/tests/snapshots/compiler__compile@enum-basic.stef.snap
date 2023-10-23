@@ -7,6 +7,7 @@ input_file: crates/stef-parser/tests/inputs/enum-basic.stef
 use ::stef::buf::{Decode, Encode};
 /// Sample enum.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub enum Sample {
     One,
     /// Second variant
@@ -19,7 +20,11 @@ pub enum Sample {
 }
 #[automatically_derived]
 impl ::stef::Encode for Sample {
-    #[allow(clippy::borrow_deref_ref)]
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::One => {
@@ -50,6 +55,7 @@ impl ::stef::Encode for Sample {
 }
 #[automatically_derived]
 impl ::stef::Decode for Sample {
+    #[allow(clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
             1 => Ok(Self::One),

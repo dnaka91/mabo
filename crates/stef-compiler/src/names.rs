@@ -53,7 +53,7 @@ pub(crate) fn validate_enum_names(value: &Enum<'_>) -> Result<(), DuplicateName>
 }
 
 /// Ensure all field names of a struct or enum are unique.
-fn validate_field_names(value: &Fields) -> Result<(), DuplicateFieldName> {
+fn validate_field_names(value: &Fields<'_>) -> Result<(), DuplicateFieldName> {
     match value {
         Fields::Named(named) => {
             let mut visited = HashSet::with_capacity(named.len());

@@ -1,7 +1,19 @@
+#![forbid(unsafe_code)]
+#![deny(rust_2018_idioms, clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss,
+    clippy::missing_errors_doc,
+    clippy::missing_panics_doc
+)]
+
 use std::fmt::Write;
 
 pub mod varint;
 
+#[must_use]
 pub fn generate_schema(count: usize) -> String {
     let mut input = String::new();
 

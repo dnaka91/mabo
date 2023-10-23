@@ -22,6 +22,7 @@ pub fn compile_struct(
                 clippy::borrow_deref_ref,
                 clippy::explicit_auto_deref,
                 clippy::needless_borrow,
+                clippy::too_many_lines,
             )]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 #fields
@@ -99,7 +100,11 @@ pub fn compile_enum(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Encode for #name #generics #generics_where {
-            #[allow(clippy::borrow_deref_ref)]
+            #[allow(
+                clippy::borrow_deref_ref,
+                clippy::semicolon_if_nothing_returned,
+                clippy::too_many_lines,
+            )]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 match self {
                     #(#variants,)*

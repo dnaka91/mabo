@@ -40,6 +40,7 @@ macro_rules! varint {
     ($ty:ty, $signed:ty) => {
         paste::paste! {
             #[inline]
+            #[must_use]
             pub fn [<encode_ $ty>](mut value: $ty) -> ([u8; max_size::<$ty>()], usize) {
                 let mut buf = [0; max_size::<$ty>()];
 
@@ -72,6 +73,7 @@ macro_rules! varint {
             }
 
             #[inline]
+            #[must_use]
             pub fn [<encode_ $signed>](value: $signed) -> ([u8; max_size::<$ty>()], usize) {
                 [<encode_ $ty>]([<zigzag_encode_ $signed>](value))
             }

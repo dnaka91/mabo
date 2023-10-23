@@ -177,13 +177,13 @@ impl FieldAttributesParser {
         let mut value = Self::default();
 
         for attr in attrs.iter().filter(|attr| attr.path().is_ident("err")) {
-            attr.parse_nested_meta(|meta| value.parse(meta))?;
+            attr.parse_nested_meta(|meta| value.parse(&meta))?;
         }
 
         Ok(value)
     }
 
-    fn parse(&mut self, meta: ParseNestedMeta<'_>) -> syn::Result<()> {
+    fn parse(&mut self, meta: &ParseNestedMeta<'_>) -> syn::Result<()> {
         if meta.path.is_ident("label") {
             let content;
             parenthesized!(content in meta.input);

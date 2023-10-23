@@ -7,6 +7,7 @@ input_file: crates/stef-parser/tests/inputs/struct-many-ws.stef
 use ::stef::buf::{Decode, Encode};
 /// Some comment
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample<A, B> {
     pub a: u32,
     pub b: bool,
@@ -21,6 +22,7 @@ where
         clippy::borrow_deref_ref,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
+        clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
@@ -46,7 +48,7 @@ where
     A: ::std::fmt::Debug + ::stef::buf::Decode,
     B: ::std::fmt::Debug + ::stef::buf::Decode,
 {
-    #[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut a: Option<u32> = None;
         let mut b: Option<bool> = None;

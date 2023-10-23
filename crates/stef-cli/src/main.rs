@@ -1,4 +1,7 @@
-mod cli;
+#![forbid(unsafe_code)]
+#![deny(rust_2018_idioms, clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(clippy::missing_errors_doc)]
 
 use std::{fs, path::PathBuf, process::ExitCode};
 
@@ -6,6 +9,8 @@ use miette::{Context, IntoDiagnostic, Result};
 use stef_parser::Schema;
 
 use self::cli::Cli;
+
+mod cli;
 
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;

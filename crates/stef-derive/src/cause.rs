@@ -38,8 +38,8 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
         .map(VariantInfo::parse)
         .collect::<syn::Result<Vec<_>>>()?;
 
-    let error_impl = expand_error(ident, &variants)?;
-    let miette_impl = expand_miette(ident, &attrs, &variants)?;
+    let error_impl = expand_error(ident, &variants);
+    let miette_impl = expand_miette(ident, &attrs, &variants);
     let winnow_impl = expand_winnow(ident, &variants)?;
 
     Ok(quote! {
@@ -111,13 +111,13 @@ impl<'a> VariantInfo<'a> {
                     .iter()
                     .map(|f| Ok((f, FieldAttributes::parse(&f.attrs)?)))
                     .collect::<syn::Result<Vec<_>>>()?,
-                _ => Vec::new(),
+                Fields::Unit => Vec::new(),
             },
         })
     }
 }
 
-fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<TokenStream> {
+fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> TokenStream {
     let sources = variants.iter().map(|v| {
         let ident = &v.variant.ident;
 
@@ -216,7 +216,7 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Toke
             }
         });
 
-    Ok(quote! {
+    quote! {
         impl std::error::Error for #ident {
             fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
                 match self {
@@ -236,14 +236,14 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Toke
         }
 
         #(#froms)*
-    })
+    }
 }
 
 fn expand_miette(
     ident: &Ident,
     attrs: &EnumAttributes,
     variants: &[VariantInfo<'_>],
-) -> syn::Result<TokenStream> {
+) -> TokenStream {
     let codes = variants.iter().map(|v| {
         let ident = &v.variant.ident;
 
@@ -387,7 +387,7 @@ fn expand_miette(
         }
     });
 
-    Ok(quote! {
+    quote! {
         impl miette::Diagnostic for #ident {
             fn code(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
@@ -424,7 +424,7 @@ fn expand_miette(
                 }
             }
         }
-    })
+    }
 }
 
 fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<TokenStream> {

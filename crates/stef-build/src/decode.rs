@@ -38,7 +38,7 @@ pub fn compile_struct(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Decode for #name #generics #generics_where {
-            #[allow(clippy::type_complexity)]
+            #[allow(clippy::type_complexity, clippy::too_many_lines)]
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 #body
             }
@@ -62,6 +62,7 @@ pub fn compile_enum(
     quote! {
         #[automatically_derived]
         impl #generics ::stef::Decode for #name #generics #generics_where {
+            #[allow(clippy::too_many_lines)]
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 match ::stef::buf::decode_id(r)? {
                     #(#variants,)*

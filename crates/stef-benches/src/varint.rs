@@ -23,15 +23,17 @@ pub mod postcard {
     }
 
     #[inline]
+    #[must_use]
     pub fn encode_zigzag(value: i128) -> u128 {
         ((value << 1) ^ (value >> 127)) as u128
     }
 
     #[inline]
+    #[must_use]
     pub fn decode(buf: &[u8]) -> u128 {
         let mut value = 0;
         for (i, b) in buf.iter().copied().enumerate().take(max_size::<u128>()) {
-            value |= ((b & 0x7f) as u128) << (7 * i);
+            value |= u128::from(b & 0x7f) << (7 * i);
 
             if b & 0x80 == 0 {
                 return value;
@@ -42,11 +44,13 @@ pub mod postcard {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_i128(buf: &[u8]) -> i128 {
         decode_zigzag(decode(buf))
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_zigzag(value: u128) -> i128 {
         ((value >> 1) as i128) ^ (-((value & 0b1) as i128))
     }
@@ -191,6 +195,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_u16(buf: &[u8]) -> u16 {
         match buf[0] {
             byte @ 0..=250 => byte.into(),
@@ -204,6 +209,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_i16(buf: &[u8]) -> i16 {
         let value = decode_u16(buf);
         if value % 2 == 0 {
@@ -214,6 +220,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_u32(buf: &[u8]) -> u32 {
         match buf[0] {
             byte @ 0..=250 => byte.into(),
@@ -232,6 +239,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_i32(buf: &[u8]) -> i32 {
         let value = decode_u32(buf);
         if value % 2 == 0 {
@@ -242,6 +250,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_u64(buf: &[u8]) -> u64 {
         match buf[0] {
             byte @ 0..=250 => byte.into(),
@@ -265,6 +274,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_i64(buf: &[u8]) -> i64 {
         let value = decode_u64(buf);
         if value % 2 == 0 {
@@ -275,6 +285,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_u128(buf: &[u8]) -> u128 {
         match buf[0] {
             byte @ 0..=250 => byte.into(),
@@ -303,6 +314,7 @@ pub mod bincode {
     }
 
     #[inline]
+    #[must_use]
     pub fn decode_i128(buf: &[u8]) -> i128 {
         let value = decode_u128(buf);
         if value % 2 == 0 {

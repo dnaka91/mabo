@@ -53,7 +53,7 @@ pub fn encode_string(w: &mut impl BufMut, value: &str) {
 
 pub fn encode_bytes(w: &mut impl BufMut, value: &[u8]) {
     encode_u64(w, value.len() as u64);
-    w.put(value)
+    w.put(value);
 }
 
 pub fn encode_vec<W, T, E>(w: &mut W, vec: &[T], encode: E)
@@ -125,7 +125,7 @@ where
 
 #[inline(always)]
 pub fn encode_id(w: &mut impl BufMut, id: u32) {
-    encode_u32(w, id)
+    encode_u32(w, id);
 }
 
 #[inline(always)]
@@ -323,7 +323,7 @@ where
 {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        self.0.encode(w)
+        self.0.encode(w);
     }
 }
 

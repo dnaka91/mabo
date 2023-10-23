@@ -13,12 +13,17 @@ pub mod a {
         #[allow(unused_imports)]
         use ::stef::buf::{Decode, Encode};
         #[derive(Clone, Debug, PartialEq)]
+        #[allow(clippy::module_name_repetitions, clippy::option_option)]
         pub enum Sample {
             One,
         }
         #[automatically_derived]
         impl ::stef::Encode for Sample {
-            #[allow(clippy::borrow_deref_ref)]
+            #[allow(
+                clippy::borrow_deref_ref,
+                clippy::semicolon_if_nothing_returned,
+                clippy::too_many_lines,
+            )]
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 match self {
                     Self::One => {
@@ -29,6 +34,7 @@ pub mod a {
         }
         #[automatically_derived]
         impl ::stef::Decode for Sample {
+            #[allow(clippy::too_many_lines)]
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
                 match ::stef::buf::decode_id(r)? {
                     1 => Ok(Self::One),
@@ -38,6 +44,7 @@ pub mod a {
         }
     }
     #[derive(Clone, Debug, PartialEq)]
+    #[allow(clippy::module_name_repetitions, clippy::option_option)]
     pub struct Sample {
         pub value: u32,
     }
@@ -47,6 +54,7 @@ pub mod a {
             clippy::borrow_deref_ref,
             clippy::explicit_auto_deref,
             clippy::needless_borrow,
+            clippy::too_many_lines,
         )]
         fn encode(&self, w: &mut impl ::stef::BufMut) {
             ::stef::buf::encode_field(
@@ -61,7 +69,7 @@ pub mod a {
     }
     #[automatically_derived]
     impl ::stef::Decode for Sample {
-        #[allow(clippy::type_complexity)]
+        #[allow(clippy::type_complexity, clippy::too_many_lines)]
         fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
             let mut value: Option<u32> = None;
             loop {

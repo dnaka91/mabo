@@ -1,3 +1,15 @@
+#![forbid(unsafe_code)]
+#![deny(rust_2018_idioms, clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::implicit_hasher,
+    clippy::inline_always,
+    clippy::missing_errors_doc,
+    clippy::missing_panics_doc,
+    clippy::module_name_repetitions
+)]
+
 use std::{
     collections::{HashMap, HashSet},
     ops::Deref,
@@ -38,6 +50,7 @@ macro_rules! non_zero_collection {
         impl $(< $($gens),+ >)? NonZero<$name $(< $($gens),+ >)?> {
             /// Try to create a new non-zero instance, which will succeed if the given collection
             /// contains in fact some elements. Otherwise `None` is returned.
+            #[must_use]
             pub fn new(value: $name $(< $($gens),+ >)?) -> Option<Self> {
                 (!value.is_empty()).then_some(Self(value))
             }

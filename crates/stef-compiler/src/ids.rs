@@ -68,7 +68,7 @@ pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
 }
 
 /// Ensure all field IDs of a struct or enum are unique.
-fn validate_field_ids(value: &Fields) -> Result<(), DuplicateFieldId> {
+fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
     match value {
         Fields::Named(named) => {
             let mut visited = HashMap::with_capacity(named.len());

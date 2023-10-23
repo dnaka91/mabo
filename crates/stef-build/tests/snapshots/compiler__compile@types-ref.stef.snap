@@ -6,6 +6,7 @@ input_file: crates/stef-parser/tests/inputs/types-ref.stef
 #[allow(unused_imports)]
 use ::stef::buf::{Decode, Encode};
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample {
     pub basic: Test123,
     pub with_generics: KeyValue<u32, bool>,
@@ -16,6 +17,7 @@ impl ::stef::Encode for Sample {
         clippy::borrow_deref_ref,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
+        clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
@@ -37,7 +39,7 @@ impl ::stef::Encode for Sample {
 }
 #[automatically_derived]
 impl ::stef::Decode for Sample {
-    #[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut basic: Option<Test123> = None;
         let mut with_generics: Option<KeyValue<u32, bool>> = None;
@@ -64,12 +66,17 @@ impl ::stef::Decode for Sample {
     }
 }
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub enum Test123 {
     Value,
 }
 #[automatically_derived]
 impl ::stef::Encode for Test123 {
-    #[allow(clippy::borrow_deref_ref)]
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::Value => {
@@ -80,6 +87,7 @@ impl ::stef::Encode for Test123 {
 }
 #[automatically_derived]
 impl ::stef::Decode for Test123 {
+    #[allow(clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         match ::stef::buf::decode_id(r)? {
             1 => Ok(Self::Value),
@@ -88,6 +96,7 @@ impl ::stef::Decode for Test123 {
     }
 }
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub struct KeyValue<K, V> {
     pub key: K,
     pub value: V,
@@ -102,6 +111,7 @@ where
         clippy::borrow_deref_ref,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
+        clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
@@ -127,7 +137,7 @@ where
     K: ::std::fmt::Debug + ::stef::buf::Decode,
     V: ::std::fmt::Debug + ::stef::buf::Decode,
 {
-    #[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut key: Option<K> = None;
         let mut value: Option<V> = None;

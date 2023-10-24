@@ -5,6 +5,7 @@
 
 use std::{
     convert::AsRef,
+    fmt::Debug,
     path::{Path, PathBuf},
 };
 
@@ -20,7 +21,7 @@ mod encode;
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
-#[derive(Debug, Error)]
+#[derive(Error)]
 pub enum Error {
     #[error("failed to parse the glob pattern {glob:?}")]
     Pattern {
@@ -43,6 +44,12 @@ pub enum Error {
     Parse { report: Report, file: PathBuf },
     #[error("failed compiling schema from {file:?}:\n{report:?}")]
     Compile { report: Report, file: PathBuf },
+}
+
+impl Debug for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self}")
+    }
 }
 
 pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> Result<()> {

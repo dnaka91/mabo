@@ -45,7 +45,7 @@
     "package": "vsce package"
   },
   "devDependencies": {
-    "@vscode/vsce": "^2.21.0",
+    "@vscode/vsce": "^2.21.1",
     "js-yaml": "^4.1.0"
   }
 }

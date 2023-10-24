@@ -16,11 +16,11 @@ pub enum Command {
     },
     Check {
         #[arg(num_args(1..))]
-        files: Vec<PathBuf>,
+        files: Vec<String>,
     },
     Format {
         #[arg(num_args(1..))]
-        files: Vec<PathBuf>,
+        files: Vec<String>,
     },
 }
 

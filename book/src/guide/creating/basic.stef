@@ -5,3 +5,4 @@ struct User {
     /// Current age in years.
     age: u16 @2,
 }
+

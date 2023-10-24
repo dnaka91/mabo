@@ -2,3 +2,4 @@ struct Sample {
     field1: u32 @1,
     field2: u16 @2,
 }
+

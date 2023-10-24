@@ -1,5 +1,4 @@
 use other::schema::DateTime;
-
 struct User {
     first_name: string @1,
     last_name: string @2,
@@ -16,3 +15,4 @@ mod user {
         NonBinary(string @1) @3,
     }
 }
+

@@ -3,7 +3,7 @@
 #![warn(clippy::pedantic)]
 #![allow(clippy::missing_errors_doc)]
 
-use std::{fs, path::PathBuf, process::ExitCode};
+use std::{fs, process::ExitCode};
 
 use miette::{Context, IntoDiagnostic, Result};
 use stef_parser::Schema;
@@ -40,35 +40,47 @@ fn main() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn check(files: Vec<PathBuf>) -> Result<()> {
-    for file in files {
-        let buf = fs::read_to_string(&file)
+fn check(patterns: Vec<String>) -> Result<()> {
+    for pattern in patterns {
+        for entry in glob::glob(&pattern)
             .into_diagnostic()
-            .wrap_err_with(|| format!("Failed reading {file:?}"))?;
+            .wrap_err("Failed parsing glob pattern")?
+        {
+            let entry = entry.into_diagnostic().wrap_err("Failed reading entry")?;
+            let buf = fs::read_to_string(&entry)
+                .into_diagnostic()
+                .wrap_err_with(|| format!("Failed reading {entry:?}"))?;
 
-        if let Err(e) = Schema::parse(&buf).wrap_err("Failed parsing schema file") {
-            eprintln!("{e:?}");
+            if let Err(e) = Schema::parse(&buf).wrap_err("Failed parsing schema file") {
+                eprintln!("{e:?}");
+            }
         }
     }
 
     Ok(())
 }
 
-fn format(files: Vec<PathBuf>) -> Result<()> {
-    for file in files {
-        let buf = fs::read_to_string(&file).into_diagnostic()?;
-        let schema = match Schema::parse(&buf).wrap_err("Failed parsing schema file") {
-            Ok(schema) => schema,
-            Err(e) => {
-                eprintln!("{e:?}");
-                continue;
+fn format(patterns: Vec<String>) -> Result<()> {
+    for pattern in patterns {
+        for entry in glob::glob(&pattern)
+            .into_diagnostic()
+            .wrap_err("Failed parsing glob pattern")?
+        {
+            let entry = entry.into_diagnostic().wrap_err("Failed reading entry")?;
+            let buf = fs::read_to_string(&entry).into_diagnostic()?;
+            let schema = match Schema::parse(&buf).wrap_err("Failed parsing schema file") {
+                Ok(schema) => schema,
+                Err(e) => {
+                    eprintln!("{e:?}");
+                    continue;
+                }
+            };
+
+            let formatted = schema.to_string();
+
+            if buf != formatted {
+                fs::write(entry, &formatted).into_diagnostic()?;
             }
-        };
-
-        let formatted = schema.to_string();
-
-        if buf != formatted {
-            fs::write(file, &buf).into_diagnostic()?;
         }
     }
 

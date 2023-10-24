@@ -24,30 +24,66 @@ Schema {
                         comment: Comment(
                             [],
                         ),
-                        name: "One",
+                        name: Name {
+                            value: "One",
+                            span: Span {
+                                start: 15,
+                                end: 18,
+                            },
+                        },
                         fields: Unit,
-                        id: Id(
-                            1,
-                        ),
+                        id: Id {
+                            value: 1,
+                            span: Span {
+                                start: 18,
+                                end: 20,
+                            },
+                        },
+                        span: Span {
+                            start: 15,
+                            end: 20,
+                        },
                     },
                     Variant {
                         comment: Comment(
                             [],
                         ),
-                        name: "Two",
+                        name: Name {
+                            value: "Two",
+                            span: Span {
+                                start: 21,
+                                end: 24,
+                            },
+                        },
                         fields: Unnamed(
                             [
                                 UnnamedField {
                                     ty: U32,
-                                    id: Id(
-                                        1,
-                                    ),
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 28,
+                                            end: 30,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 25,
+                                        end: 30,
+                                    },
                                 },
                                 UnnamedField {
                                     ty: U64,
-                                    id: Id(
-                                        2,
-                                    ),
+                                    id: Id {
+                                        value: 2,
+                                        span: Span {
+                                            start: 34,
+                                            end: 36,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 31,
+                                        end: 36,
+                                    },
                                 },
                                 UnnamedField {
                                     ty: External(
@@ -57,48 +93,104 @@ Schema {
                                             generics: [],
                                         },
                                     ),
-                                    id: Id(
-                                        3,
-                                    ),
+                                    id: Id {
+                                        value: 3,
+                                        span: Span {
+                                            start: 38,
+                                            end: 40,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 37,
+                                        end: 40,
+                                    },
                                 },
                             ],
                         ),
-                        id: Id(
-                            2,
-                        ),
+                        id: Id {
+                            value: 2,
+                            span: Span {
+                                start: 41,
+                                end: 43,
+                            },
+                        },
+                        span: Span {
+                            start: 21,
+                            end: 43,
+                        },
                     },
                     Variant {
                         comment: Comment(
                             [],
                         ),
-                        name: "Three",
+                        name: Name {
+                            value: "Three",
+                            span: Span {
+                                start: 44,
+                                end: 49,
+                            },
+                        },
                         fields: Named(
                             [
                                 NamedField {
                                     comment: Comment(
                                         [],
                                     ),
-                                    name: "field1",
+                                    name: Name {
+                                        value: "field1",
+                                        span: Span {
+                                            start: 50,
+                                            end: 56,
+                                        },
+                                    },
                                     ty: U32,
-                                    id: Id(
-                                        1,
-                                    ),
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 60,
+                                            end: 62,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 50,
+                                        end: 62,
+                                    },
                                 },
                                 NamedField {
                                     comment: Comment(
                                         [],
                                     ),
-                                    name: "field2",
+                                    name: Name {
+                                        value: "field2",
+                                        span: Span {
+                                            start: 63,
+                                            end: 69,
+                                        },
+                                    },
                                     ty: Bool,
-                                    id: Id(
-                                        2,
-                                    ),
+                                    id: Id {
+                                        value: 2,
+                                        span: Span {
+                                            start: 74,
+                                            end: 76,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 63,
+                                        end: 76,
+                                    },
                                 },
                                 NamedField {
                                     comment: Comment(
                                         [],
                                     ),
-                                    name: "field3",
+                                    name: Name {
+                                        value: "field3",
+                                        span: Span {
+                                            start: 77,
+                                            end: 83,
+                                        },
+                                    },
                                     ty: External(
                                         ExternalType {
                                             path: [],
@@ -106,15 +198,31 @@ Schema {
                                             generics: [],
                                         },
                                     ),
-                                    id: Id(
-                                        3,
-                                    ),
+                                    id: Id {
+                                        value: 3,
+                                        span: Span {
+                                            start: 85,
+                                            end: 87,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 77,
+                                        end: 87,
+                                    },
                                 },
                             ],
                         ),
-                        id: Id(
-                            3,
-                        ),
+                        id: Id {
+                            value: 3,
+                            span: Span {
+                                start: 88,
+                                end: 90,
+                            },
+                        },
+                        span: Span {
+                            start: 44,
+                            end: 90,
+                        },
                     },
                 ],
             },

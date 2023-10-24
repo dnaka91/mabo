@@ -20,7 +20,10 @@
 #![deny(rust_2018_idioms, clippy::all)]
 #![warn(missing_docs, clippy::pedantic)]
 
-use std::fmt::{self, Display};
+use std::{
+    fmt::{self, Display},
+    ops::Range,
+};
 
 pub use miette::{Diagnostic, LabeledSpan};
 use miette::{IntoDiagnostic, Report, Result};
@@ -48,6 +51,35 @@ trait Print {
 
         Ok(())
     }
+}
+
+/// Source code span that marks the location of any element in the schema that it was parsed from.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub struct Span {
+    start: usize,
+    end: usize,
+}
+
+impl From<Range<usize>> for Span {
+    fn from(value: Range<usize>) -> Self {
+        Self {
+            start: value.start,
+            end: value.end,
+        }
+    }
+}
+
+impl From<Span> for Range<usize> {
+    fn from(value: Span) -> Self {
+        value.start..value.end
+    }
+}
+
+/// Implemented by any parsed schema element that can report the source code span that it originated
+/// from. This helps during error reporting to visualize the exact location of a problem.
+pub trait Spanned {
+    /// Get the source code span of this schema element.
+    fn span(&self) -> Span;
 }
 
 /// Shorthand for calling [`Schema::parse`].
@@ -331,11 +363,13 @@ pub struct Variant<'a> {
     /// Optional variant-level comment.
     pub comment: Comment<'a>,
     /// Unique for this variant, within the enum it belongs to.
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// Fields of this variant, if any.
     pub fields: Fields<'a>,
     /// Identifier for this variant, that must be unique within the current enum.
     pub id: Id,
+    /// Source code location.
+    span: Span,
 }
 
 impl<'a> Print for Variant<'a> {
@@ -345,15 +379,22 @@ impl<'a> Print for Variant<'a> {
             name,
             fields,
             id,
+            span: _,
         } = self;
 
         comment.print(f, level)?;
 
         Self::indent(f, level)?;
-        f.write_str(name)?;
+        f.write_str(name.get())?;
 
         fields.print(f, level)?;
         write!(f, " {id},")
+    }
+}
+
+impl<'a> Spanned for Variant<'a> {
+    fn span(&self) -> Span {
+        self.span
     }
 }
 
@@ -464,11 +505,13 @@ pub struct NamedField<'a> {
     /// Optional field-level comment.
     pub comment: Comment<'a>,
     /// Unique name for this field, within the current element.
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// Data type that defines the shape of the contained data.
     pub ty: DataType<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Id,
+    /// Source code location.
+    span: Span,
 }
 
 impl<'a> Print for NamedField<'a> {
@@ -478,12 +521,19 @@ impl<'a> Print for NamedField<'a> {
             name,
             ty,
             id,
+            span: _,
         } = self;
 
         comment.print(f, level)?;
 
         Self::indent(f, level)?;
         write!(f, "{name}: {ty} {id}")
+    }
+}
+
+impl<'a> Spanned for NamedField<'a> {
+    fn span(&self) -> Span {
+        self.span
     }
 }
 
@@ -507,11 +557,19 @@ pub struct UnnamedField<'a> {
     pub ty: DataType<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Id,
+    /// Source code location.
+    span: Span,
+}
+
+impl<'a> Spanned for UnnamedField<'a> {
+    fn span(&self) -> Span {
+        self.span
+    }
 }
 
 impl<'a> Display for UnnamedField<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let Self { ty, id } = self;
+        let Self { ty, id, span: _ } = self;
         write!(f, "{ty} {id}")
     }
 }
@@ -763,13 +821,71 @@ impl<'a> Display for Generics<'a> {
 /// ```txt
 /// @1
 /// ```
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub struct Id(pub u32);
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct Id {
+    /// Raw integer value.
+    value: u32,
+    /// Source code location.
+    span: Span,
+}
+
+impl Id {
+    /// Retrieve the raw integer value of this identifier.
+    #[must_use]
+    pub const fn get(&self) -> u32 {
+        self.value
+    }
+}
+
+impl Spanned for Id {
+    fn span(&self) -> Span {
+        self.span
+    }
+}
 
 impl Display for Id {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let Self(id) = *self;
-        write!(f, "@{id}")
+        let Self { value, span: _ } = *self;
+        write!(f, "@{value}")
+    }
+}
+
+/// An arbitrary name of any element, which additionally carries a span into the schema to mark its
+/// location.
+#[derive(Debug, Eq, PartialEq)]
+pub struct Name<'a> {
+    /// Raw string value.
+    value: &'a str,
+    /// Source code location.
+    span: Span,
+}
+
+impl<'a> Name<'a> {
+    /// Retrieve the raw string value of this name.
+    #[must_use]
+    pub const fn get(&self) -> &str {
+        self.value
+    }
+}
+
+impl<'a> Spanned for Name<'a> {
+    fn span(&self) -> Span {
+        self.span
+    }
+}
+
+impl<'a> Display for Name<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.value.fmt(f)
+    }
+}
+
+impl<'a> From<(&'a str, Range<usize>)> for Name<'a> {
+    fn from((value, span): (&'a str, Range<usize>)) -> Self {
+        Self {
+            value,
+            span: span.into(),
+        }
     }
 }
 

@@ -4,6 +4,7 @@
 #![allow(clippy::missing_errors_doc)]
 
 pub use ids::{DuplicateFieldId, DuplicateId, DuplicateVariantId};
+use miette::Diagnostic;
 use stef_parser::{Definition, Schema};
 use thiserror::Error;
 
@@ -12,11 +13,13 @@ use self::names::{DuplicateFieldName, DuplicateName};
 mod ids;
 mod names;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Diagnostic, Error)]
 pub enum Error {
     #[error("duplicate ID found")]
+    #[diagnostic(transparent)]
     DuplicateId(#[from] DuplicateId),
     #[error("duplicate name found")]
+    #[diagnostic(transparent)]
     DuplicateName(#[from] DuplicateName),
 }
 

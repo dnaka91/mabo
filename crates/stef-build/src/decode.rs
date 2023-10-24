@@ -79,10 +79,11 @@ fn compile_variant(
         name,
         fields,
         id,
+        ..
     }: &Variant<'_>,
 ) -> TokenStream {
-    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
-    let name = Ident::new(name, Span::call_site());
+    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
+    let name = Ident::new(name.get(), Span::call_site());
     let field_vars = compile_field_vars(fields);
     let field_matches = compile_field_matches(fields);
     let field_assigns = compile_field_assigns(fields);
@@ -111,7 +112,7 @@ fn compile_variant(
 fn compile_field_vars(fields: &Fields<'_>) -> TokenStream {
     let vars: Box<dyn Iterator<Item = _>> = match fields {
         Fields::Named(named) => Box::new(named.iter().map(|named| {
-            let name = Ident::new(named.name, Span::call_site());
+            let name = Ident::new(named.name.get(), Span::call_site());
             (name, &named.ty)
         })),
         Fields::Unnamed(unnamed) => Box::new(unnamed.iter().enumerate().map(|(idx, unnamed)| {
@@ -143,9 +144,10 @@ fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {
                      name,
                      ty,
                      id,
+                     ..
                  }| {
-                    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
-                    let name = proc_macro2::Ident::new(name, Span::call_site());
+                    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
+                    let name = proc_macro2::Ident::new(name.get(), Span::call_site());
                     let ty = compile_data_type(if let DataType::Option(ty) = ty {
                         ty
                     } else {
@@ -162,8 +164,8 @@ fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {
             let calls = unnamed
                 .iter()
                 .enumerate()
-                .map(|(idx, UnnamedField { ty, id })| {
-                    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
+                .map(|(idx, UnnamedField { ty, id, .. })| {
+                    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
                     let ty = compile_data_type(if let DataType::Option(ty) = ty {
                         ty
@@ -184,9 +186,9 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
     match fields {
         Fields::Named(named) => {
             let assigns = named.iter().map(|named| {
-                let name = Ident::new(named.name, Span::call_site());
-                let name_lit = proc_macro2::Literal::string(named.name);
-                let id = proc_macro2::Literal::u32_unsuffixed(named.id.0);
+                let name = Ident::new(named.name.get(), Span::call_site());
+                let name_lit = proc_macro2::Literal::string(named.name.get());
+                let id = proc_macro2::Literal::u32_unsuffixed(named.id.get());
 
                 if matches!(named.ty, DataType::Option(_)) {
                     quote! { #name }
@@ -203,7 +205,7 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
         Fields::Unnamed(unnamed) => {
             let assigns = unnamed.iter().enumerate().map(|(idx, unnamed)| {
                 let name = Ident::new(&format!("n{idx}"), Span::call_site());
-                let id = proc_macro2::Literal::u32_unsuffixed(unnamed.id.0);
+                let id = proc_macro2::Literal::u32_unsuffixed(unnamed.id.get());
 
                 if matches!(unnamed.ty, DataType::Option(_)) {
                     quote! { #name }

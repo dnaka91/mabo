@@ -40,9 +40,10 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                      name,
                      ty,
                      id,
+                     ..
                  }| {
-                    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
-                    let name = proc_macro2::Ident::new(name, Span::call_site());
+                    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
+                    let name = proc_macro2::Ident::new(name.get(), Span::call_site());
 
                     if let DataType::Option(ty) = ty {
                         let ty = compile_data_type(ty, if is_copy(ty) {
@@ -67,8 +68,8 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
             let calls = unnamed
                 .iter()
                 .enumerate()
-                .map(|(idx, UnnamedField { ty, id })| {
-                    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
+                .map(|(idx, UnnamedField { ty, id, .. })| {
+                    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let idx = proc_macro2::Literal::usize_unsuffixed(idx);
                     let ty = compile_data_type(ty, quote! { self.#idx });
 
@@ -120,17 +121,18 @@ fn compile_variant(
         name,
         fields,
         id,
+        ..
     }: &Variant<'_>,
 ) -> TokenStream {
-    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
-    let name = Ident::new(name, Span::call_site());
+    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
+    let name = Ident::new(name.get(), Span::call_site());
     let fields_body = compile_variant_fields(fields);
 
     match fields {
         Fields::Named(named) => {
             let field_names = named
                 .iter()
-                .map(|NamedField { name, .. }| Ident::new(name, Span::call_site()));
+                .map(|NamedField { name, .. }| Ident::new(name.get(), Span::call_site()));
 
             quote! {
                 Self::#name{ #(#field_names,)* } => {
@@ -170,9 +172,10 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                      name,
                      ty,
                      id,
+                     ..
                  }| {
-                    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
-                    let name = proc_macro2::Ident::new(name, Span::call_site());
+                    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
+                    let name = proc_macro2::Ident::new(name.get(), Span::call_site());
 
                     if matches!(ty, DataType::Option(_)) {
                         quote! { ::stef::buf::encode_field_option(w, #id, &#name); }
@@ -192,8 +195,8 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
             let calls = unnamed
                 .iter()
                 .enumerate()
-                .map(|(idx, UnnamedField { ty, id })| {
-                    let id = proc_macro2::Literal::u32_unsuffixed(id.0);
+                .map(|(idx, UnnamedField { ty, id, .. })| {
+                    let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
                     let ty = compile_data_type(ty, quote! { *#name });
 

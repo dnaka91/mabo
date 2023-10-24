@@ -1,37 +1,55 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::Range};
 
-use stef_parser::{Enum, Fields, Id, Struct};
+use miette::Diagnostic;
+use stef_parser::{Enum, Fields, Id, Spanned, Struct};
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Diagnostic, Error)]
 pub enum DuplicateId {
     #[error("duplicate ID in an enum variant")]
+    #[diagnostic(transparent)]
     EnumVariant(#[from] DuplicateVariantId),
     #[error("duplicate ID in a field")]
+    #[diagnostic(transparent)]
     Field(#[from] DuplicateFieldId),
 }
 
-#[derive(Debug, Error)]
-#[error("duplicate ID {} in enum variant `{name}`, already used in `{other_name}`", id.0)]
+#[derive(Debug, Diagnostic, Error)]
+#[error("duplicate ID {} in enum variant `{name}`, already used in `{other_name}`", id.get())]
+#[diagnostic(help("the IDs for each variant of an enum must be unique"))]
 pub struct DuplicateVariantId {
     pub id: Id,
     pub name: String,
     pub other_name: String,
+    #[label("first declared here")]
+    pub first: Range<usize>,
+    #[label("used here again")]
+    pub second: Range<usize>,
 }
 
-#[derive(Debug, Error)]
+#[derive(Debug, Diagnostic, Error)]
 pub enum DuplicateFieldId {
-    #[error("duplicate ID {} in field `{name}`, already used in `{other_name}`", id.0)]
+    #[error("duplicate ID {} in field `{name}`, already used in `{other_name}`", id.get())]
+    #[diagnostic(help("the IDs for each field must be unique"))]
     Named {
         id: Id,
         name: String,
         other_name: String,
+        #[label("first declared here")]
+        first: Range<usize>,
+        #[label("used here again")]
+        second: Range<usize>,
     },
-    #[error("duplicate ID {} in field {position}, already used in {other_position}", id.0)]
+    #[error("duplicate ID {} in field {position}, already used in {other_position}", id.get())]
+    #[diagnostic(help("the IDs for each field must be unique"))]
     Unnamed {
         id: Id,
         position: usize,
         other_position: usize,
+        #[label("first declared here")]
+        first: Range<usize>,
+        #[label("used here again")]
+        second: Range<usize>,
     },
 }
 
@@ -49,12 +67,14 @@ pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
         .iter()
         .find_map(|variant| {
             visited
-                .insert(variant.id, variant.name)
-                .map(|other_name| {
+                .insert(variant.id.get(), (variant.name.get(), variant.id.span()))
+                .map(|(other_name, other_span)| {
                     DuplicateVariantId {
-                        id: variant.id,
-                        name: variant.name.to_owned(),
+                        id: variant.id.clone(),
+                        name: variant.name.get().to_owned(),
                         other_name: other_name.to_owned(),
+                        first: other_span.into(),
+                        second: variant.id.span().into(),
                     }
                     .into()
                 })
@@ -75,13 +95,15 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
             named
                 .iter()
                 .find_map(|field| {
-                    visited.insert(field.id, field.name).map(|other_field| {
-                        DuplicateFieldId::Named {
-                            id: field.id,
-                            name: field.name.to_owned(),
+                    visited
+                        .insert(field.id.get(), (field.name.get(), field.id.span()))
+                        .map(|(other_field, other_span)| DuplicateFieldId::Named {
+                            id: field.id.clone(),
+                            name: field.name.get().to_owned(),
                             other_name: other_field.to_owned(),
-                        }
-                    })
+                            first: other_span.into(),
+                            second: field.id.span().into(),
+                        })
                 })
                 .map_or(Ok(()), Err)?;
         }
@@ -91,13 +113,15 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
                 .iter()
                 .enumerate()
                 .find_map(|(pos, field)| {
-                    visited
-                        .insert(field.id, pos)
-                        .map(|other_position| DuplicateFieldId::Unnamed {
-                            id: field.id,
+                    visited.insert(field.id.get(), (pos, field.id.span())).map(
+                        |(other_position, other_span)| DuplicateFieldId::Unnamed {
+                            id: field.id.clone(),
                             position: pos,
                             other_position,
-                        })
+                            first: other_span.into(),
+                            second: field.id.span().into(),
+                        },
+                    )
                 })
                 .map_or(Ok(()), Err)?;
         }

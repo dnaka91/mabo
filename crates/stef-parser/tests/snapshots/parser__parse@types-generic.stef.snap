@@ -23,64 +23,134 @@ Schema {
                             comment: Comment(
                                 [],
                             ),
-                            name: "f1",
+                            name: Name {
+                                value: "f1",
+                                span: Span {
+                                    start: 20,
+                                    end: 22,
+                                },
+                            },
                             ty: Vec(
                                 U32,
                             ),
-                            id: Id(
-                                1,
-                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 33,
+                                    end: 35,
+                                },
+                            },
+                            span: Span {
+                                start: 20,
+                                end: 35,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "f2",
+                            name: Name {
+                                value: "f2",
+                                span: Span {
+                                    start: 41,
+                                    end: 43,
+                                },
+                            },
                             ty: HashMap(
                                 (
                                     U32,
                                     String,
                                 ),
                             ),
-                            id: Id(
-                                2,
-                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 67,
+                                    end: 69,
+                                },
+                            },
+                            span: Span {
+                                start: 41,
+                                end: 69,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "f3",
+                            name: Name {
+                                value: "f3",
+                                span: Span {
+                                    start: 75,
+                                    end: 77,
+                                },
+                            },
                             ty: HashSet(
                                 U32,
                             ),
-                            id: Id(
-                                3,
-                            ),
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 93,
+                                    end: 95,
+                                },
+                            },
+                            span: Span {
+                                start: 75,
+                                end: 95,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "f4",
+                            name: Name {
+                                value: "f4",
+                                span: Span {
+                                    start: 101,
+                                    end: 103,
+                                },
+                            },
                             ty: Option(
                                 U32,
                             ),
-                            id: Id(
-                                4,
-                            ),
+                            id: Id {
+                                value: 4,
+                                span: Span {
+                                    start: 117,
+                                    end: 119,
+                                },
+                            },
+                            span: Span {
+                                start: 101,
+                                end: 119,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "f5",
+                            name: Name {
+                                value: "f5",
+                                span: Span {
+                                    start: 125,
+                                    end: 127,
+                                },
+                            },
                             ty: NonZero(
                                 U32,
                             ),
-                            id: Id(
-                                5,
-                            ),
+                            id: Id {
+                                value: 5,
+                                span: Span {
+                                    start: 143,
+                                    end: 145,
+                                },
+                            },
+                            span: Span {
+                                start: 125,
+                                end: 145,
+                            },
                         },
                     ],
                 ),

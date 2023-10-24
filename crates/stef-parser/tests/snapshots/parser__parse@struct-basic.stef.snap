@@ -25,11 +25,25 @@ Schema {
                             comment: Comment(
                                 [],
                             ),
-                            name: "a",
+                            name: Name {
+                                value: "a",
+                                span: Span {
+                                    start: 38,
+                                    end: 39,
+                                },
+                            },
                             ty: U32,
-                            id: Id(
-                                1,
-                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 45,
+                                    end: 47,
+                                },
+                            },
+                            span: Span {
+                                start: 38,
+                                end: 47,
+                            },
                         },
                         NamedField {
                             comment: Comment(
@@ -37,11 +51,25 @@ Schema {
                                     "Second field",
                                 ],
                             ),
-                            name: "b",
+                            name: Name {
+                                value: "b",
+                                span: Span {
+                                    start: 74,
+                                    end: 75,
+                                },
+                            },
                             ty: Bool,
-                            id: Id(
-                                2,
-                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 82,
+                                    end: 84,
+                                },
+                            },
+                            span: Span {
+                                start: 70,
+                                end: 84,
+                            },
                         },
                     ],
                 ),

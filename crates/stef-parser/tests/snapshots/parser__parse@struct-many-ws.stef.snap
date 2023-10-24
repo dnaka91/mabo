@@ -28,21 +28,49 @@ Schema {
                             comment: Comment(
                                 [],
                             ),
-                            name: "a",
+                            name: Name {
+                                value: "a",
+                                span: Span {
+                                    start: 95,
+                                    end: 96,
+                                },
+                            },
                             ty: U32,
-                            id: Id(
-                                1,
-                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 108,
+                                    end: 110,
+                                },
+                            },
+                            span: Span {
+                                start: 95,
+                                end: 110,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "b",
+                            name: Name {
+                                value: "b",
+                                span: Span {
+                                    start: 118,
+                                    end: 119,
+                                },
+                            },
                             ty: Bool,
-                            id: Id(
-                                2,
-                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 131,
+                                    end: 133,
+                                },
+                            },
+                            span: Span {
+                                start: 118,
+                                end: 133,
+                            },
                         },
                     ],
                 ),

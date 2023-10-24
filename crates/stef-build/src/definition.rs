@@ -125,10 +125,11 @@ fn compile_variant(
         name,
         fields,
         id: _,
+        ..
     }: &Variant<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let fields = compile_fields(fields, false);
 
     quote! {
@@ -215,10 +216,11 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
                      name,
                      ty,
                      id: _,
+                     ..
                  }| {
                     let comment = compile_comment(comment);
                     let public = for_struct.then(|| quote! { pub });
-                    let name = Ident::new(name, Span::call_site());
+                    let name = Ident::new(name.get(), Span::call_site());
                     let ty = compile_data_type(ty);
                     quote! {
                         #comment
@@ -232,7 +234,7 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
             } }
         }
         Fields::Unnamed(unnamed) => {
-            let fields = unnamed.iter().map(|UnnamedField { ty, id: _ }| {
+            let fields = unnamed.iter().map(|UnnamedField { ty, id: _, .. }| {
                 let ty = compile_data_type(ty);
                 quote! { #ty }
             });

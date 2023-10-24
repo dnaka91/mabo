@@ -8,6 +8,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use miette::{NamedSource, Report};
 use stef_parser::Schema;
 use thiserror::Error;
 
@@ -17,7 +18,7 @@ mod decode;
 mod definition;
 mod encode;
 
-type Result<T, E = Error> = std::result::Result<T, E>;
+pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -38,17 +39,25 @@ pub enum Error {
         source: std::io::Error,
         file: PathBuf,
     },
-    #[error("failed parsing schema from {file:?}: {message}")]
-    Parse { message: String, file: PathBuf },
-    #[error("failed compiling schema from {file:?}")]
-    Compile {
-        #[source]
-        source: stef_compiler::Error,
-        file: PathBuf,
-    },
+    #[error("failed parsing schema from {file:?}:\n{report:?}")]
+    Parse { report: Report, file: PathBuf },
+    #[error("failed compiling schema from {file:?}:\n{report:?}")]
+    Compile { report: Report, file: PathBuf },
 }
 
 pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> Result<()> {
+    miette::set_hook(Box::new(|_| {
+        Box::new(
+            miette::MietteHandlerOpts::new()
+                .color(true)
+                .context_lines(3)
+                .force_graphical(true)
+                .terminal_links(true)
+                .build(),
+        )
+    }))
+    .ok();
+
     let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
 
     for schema in schemas.iter().map(AsRef::as_ref) {
@@ -64,12 +73,14 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
             })?;
 
             let schema = Schema::parse(&input).map_err(|e| Error::Parse {
-                message: format!("{e:?}"),
+                report: e
+                    .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
                 file: path.clone(),
             })?;
 
-            stef_compiler::validate_schema(&schema).map_err(|source| Error::Compile {
-                source,
+            stef_compiler::validate_schema(&schema).map_err(|e| Error::Compile {
+                report: Report::new(e)
+                    .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
                 file: path.clone(),
             })?;
 

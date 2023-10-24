@@ -23,7 +23,13 @@ Schema {
                             comment: Comment(
                                 [],
                             ),
-                            name: "basic",
+                            name: Name {
+                                value: "basic",
+                                span: Span {
+                                    start: 20,
+                                    end: 25,
+                                },
+                            },
                             ty: External(
                                 ExternalType {
                                     path: [],
@@ -31,15 +37,29 @@ Schema {
                                     generics: [],
                                 },
                             ),
-                            id: Id(
-                                1,
-                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 35,
+                                    end: 37,
+                                },
+                            },
+                            span: Span {
+                                start: 20,
+                                end: 37,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "with_generics",
+                            name: Name {
+                                value: "with_generics",
+                                span: Span {
+                                    start: 43,
+                                    end: 56,
+                                },
+                            },
                             ty: External(
                                 ExternalType {
                                     path: [],
@@ -50,9 +70,17 @@ Schema {
                                     ],
                                 },
                             ),
-                            id: Id(
-                                2,
-                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 78,
+                                    end: 80,
+                                },
+                            },
+                            span: Span {
+                                start: 43,
+                                end: 80,
+                            },
                         },
                     ],
                 ),
@@ -75,11 +103,25 @@ Schema {
                         comment: Comment(
                             [],
                         ),
-                        name: "Value",
+                        name: Name {
+                            value: "Value",
+                            span: Span {
+                                start: 104,
+                                end: 109,
+                            },
+                        },
                         fields: Unit,
-                        id: Id(
-                            1,
-                        ),
+                        id: Id {
+                            value: 1,
+                            span: Span {
+                                start: 110,
+                                end: 112,
+                            },
+                        },
+                        span: Span {
+                            start: 104,
+                            end: 112,
+                        },
                     },
                 ],
             },
@@ -105,7 +147,13 @@ Schema {
                             comment: Comment(
                                 [],
                             ),
-                            name: "key",
+                            name: Name {
+                                value: "key",
+                                span: Span {
+                                    start: 145,
+                                    end: 148,
+                                },
+                            },
                             ty: External(
                                 ExternalType {
                                     path: [],
@@ -113,15 +161,29 @@ Schema {
                                     generics: [],
                                 },
                             ),
-                            id: Id(
-                                1,
-                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 152,
+                                    end: 154,
+                                },
+                            },
+                            span: Span {
+                                start: 145,
+                                end: 154,
+                            },
                         },
                         NamedField {
                             comment: Comment(
                                 [],
                             ),
-                            name: "value",
+                            name: Name {
+                                value: "value",
+                                span: Span {
+                                    start: 160,
+                                    end: 165,
+                                },
+                            },
                             ty: External(
                                 ExternalType {
                                     path: [],
@@ -129,9 +191,17 @@ Schema {
                                     generics: [],
                                 },
                             ),
-                            id: Id(
-                                2,
-                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 169,
+                                    end: 171,
+                                },
+                            },
+                            span: Span {
+                                start: 160,
+                                end: 171,
+                            },
                         },
                     ],
                 ),

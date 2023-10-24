@@ -115,25 +115,34 @@ fn parse_unit(input: &mut Input<'_>) -> Result<(), Cause> {
 fn parse_unnamed_field<'i>(input: &mut Input<'i>) -> Result<UnnamedField<'i>, Cause> {
     (
         ws(types::parse.map_err(Cause::from)),
-        ws(cut_err(ids::parse.map_err(Cause::from))),
+        preceded(space0, cut_err(ids::parse.map_err(Cause::from))),
     )
+        .with_span()
         .parse_next(input)
-        .map(|(ty, id)| UnnamedField { ty, id })
+        .map(|((ty, id), span)| UnnamedField {
+            ty,
+            id,
+            span: span.into(),
+        })
 }
 
 fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause> {
     (
         ws(comments::parse.map_err(Cause::from)),
-        delimited(space0, parse_field_name, ':'),
-        preceded(space0, types::parse.map_err(Cause::from)),
-        preceded(space0, ids::parse.map_err(Cause::from)),
+        (
+            delimited(space0, parse_field_name.with_span(), ':'),
+            preceded(space0, types::parse.map_err(Cause::from)),
+            preceded(space0, ids::parse.map_err(Cause::from)),
+        )
+            .with_span(),
     )
         .parse_next(input)
-        .map(|(comment, name, ty, id)| NamedField {
+        .map(|(comment, ((name, ty, id), span))| NamedField {
             comment,
-            name,
+            name: name.into(),
             ty,
             id,
+            span: span.into(),
         })
 }
 

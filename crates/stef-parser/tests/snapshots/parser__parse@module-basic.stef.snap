@@ -38,11 +38,25 @@ Schema {
                                                 comment: Comment(
                                                     [],
                                                 ),
-                                                name: "One",
+                                                name: Name {
+                                                    value: "One",
+                                                    span: Span {
+                                                        start: 75,
+                                                        end: 78,
+                                                    },
+                                                },
                                                 fields: Unit,
-                                                id: Id(
-                                                    1,
-                                                ),
+                                                id: Id {
+                                                    value: 1,
+                                                    span: Span {
+                                                        start: 79,
+                                                        end: 81,
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: 75,
+                                                    end: 81,
+                                                },
                                             },
                                         ],
                                     },
@@ -68,11 +82,25 @@ Schema {
                                         comment: Comment(
                                             [],
                                         ),
-                                        name: "value",
+                                        name: Name {
+                                            value: "value",
+                                            span: Span {
+                                                start: 128,
+                                                end: 133,
+                                            },
+                                        },
                                         ty: U32,
-                                        id: Id(
-                                            1,
-                                        ),
+                                        id: Id {
+                                            value: 1,
+                                            span: Span {
+                                                start: 139,
+                                                end: 141,
+                                            },
+                                        },
+                                        span: Span {
+                                            start: 128,
+                                            end: 141,
+                                        },
                                     },
                                 ],
                             ),

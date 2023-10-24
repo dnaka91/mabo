@@ -124,7 +124,7 @@ fn parse_variants<'i>(input: &mut Input<'i>) -> Result<Vec<Variant<'i>>, Cause> 
     preceded(
         '{',
         cut_err(terminated(
-            terminated(separated1(ws(parse_variant), ws(',')), opt(ws(','))),
+            terminated(separated1(parse_variant, ws(',')), opt(ws(','))),
             ws('}'),
         )),
     )
@@ -133,17 +133,21 @@ fn parse_variants<'i>(input: &mut Input<'i>) -> Result<Vec<Variant<'i>>, Cause> 
 
 fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {
     (
-        comments::parse.map_err(Cause::from),
-        preceded(space0, parse_variant_name),
-        preceded(space0, fields::parse.map_err(Cause::from)),
-        preceded(space0, ids::parse.map_err(Cause::from)),
+        ws(comments::parse.map_err(Cause::from)),
+        (
+            preceded(space0, parse_variant_name.with_span()),
+            preceded(space0, fields::parse.map_err(Cause::from)),
+            preceded(space0, ids::parse.map_err(Cause::from)),
+        )
+            .with_span(),
     )
         .parse_next(input)
-        .map(|(comment, name, fields, id)| Variant {
+        .map(|(comment, ((name, fields, id), span))| Variant {
             comment,
-            name,
+            name: name.into(),
             fields,
             id,
+            span: span.into(),
         })
 }
 

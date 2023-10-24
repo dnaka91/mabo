@@ -115,8 +115,12 @@ mod ids {
 
     pub(super) fn parse(input: &mut Input<'_>) -> Result<Id, ParseError> {
         preceded('@', dec_uint)
+            .with_span()
             .parse_next(input)
-            .map(Id)
+            .map(|(value, span)| Id {
+                value,
+                span: span.into(),
+            })
             .map_err(|e| {
                 e.map(|e: ErrorKind| ParseError {
                     at: input.location()..input.location(),

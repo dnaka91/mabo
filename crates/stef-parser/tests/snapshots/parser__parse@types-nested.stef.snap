@@ -23,7 +23,13 @@ Schema {
                             comment: Comment(
                                 [],
                             ),
-                            name: "value",
+                            name: Name {
+                                value: "value",
+                                span: Span {
+                                    start: 20,
+                                    end: 25,
+                                },
+                            },
                             ty: Vec(
                                 Option(
                                     NonZero(
@@ -36,9 +42,17 @@ Schema {
                                     ),
                                 ),
                             ),
-                            id: Id(
-                                1,
-                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 77,
+                                    end: 79,
+                                },
+                            },
+                            span: Span {
+                                start: 20,
+                                end: 79,
+                            },
                         },
                     ],
                 ),

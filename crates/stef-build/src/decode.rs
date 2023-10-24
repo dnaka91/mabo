@@ -226,7 +226,9 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
 fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream) {
     (!types.is_empty())
         .then(|| {
-            let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
+            let types = types
+                .iter()
+                .map(|ty| Ident::new(ty.get(), Span::call_site()));
             let types2 = types.clone();
 
             (

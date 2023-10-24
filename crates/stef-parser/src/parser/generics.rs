@@ -11,7 +11,7 @@ use winnow::{
 };
 
 use super::{ws, Input, Result};
-use crate::{highlight, Generics};
+use crate::{highlight, Generics, Name};
 
 /// Encountered an invalid `<...>` generics declaration.
 #[derive(Debug, ParserError)]
@@ -62,10 +62,15 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Generics<'i>, ParseErro
     })
 }
 
-fn parse_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (one_of('A'..='Z'), alphanumeric0)
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(|(name, span)| Name {
+            value: name,
+            span: span.into(),
+        })
         .map_err(|e| {
             e.map(|()| Cause::InvalidName {
                 at: input.location(),

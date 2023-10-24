@@ -18,8 +18,20 @@ Schema {
                 name: "KeyValue",
                 generics: Generics(
                     [
-                        "K",
-                        "V",
+                        Name {
+                            value: "K",
+                            span: Span {
+                                start: 44,
+                                end: 45,
+                            },
+                        },
+                        Name {
+                            value: "V",
+                            span: Span {
+                                start: 47,
+                                end: 48,
+                            },
+                        },
                     ],
                 ),
                 fields: Named(

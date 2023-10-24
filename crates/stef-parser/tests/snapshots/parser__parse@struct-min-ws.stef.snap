@@ -16,7 +16,13 @@ Schema {
                 name: "Sample",
                 generics: Generics(
                     [
-                        "T",
+                        Name {
+                            value: "T",
+                            span: Span {
+                                start: 14,
+                                end: 15,
+                            },
+                        },
                     ],
                 ),
                 fields: Named(

@@ -202,7 +202,9 @@ fn compile_comment(Comment(lines): &Comment<'_>) -> TokenStream {
 
 fn compile_generics(Generics(types): &Generics<'_>) -> Option<TokenStream> {
     (!types.is_empty()).then(|| {
-        let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
+        let types = types
+            .iter()
+            .map(|ty| Ident::new(ty.get(), Span::call_site()));
         quote! { <#(#types,)*> }
     })
 }

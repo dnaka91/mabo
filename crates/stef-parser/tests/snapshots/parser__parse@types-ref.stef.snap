@@ -137,8 +137,20 @@ Schema {
                 name: "KeyValue",
                 generics: Generics(
                     [
-                        "K",
-                        "V",
+                        Name {
+                            value: "K",
+                            span: Span {
+                                start: 133,
+                                end: 134,
+                            },
+                        },
+                        Name {
+                            value: "V",
+                            span: Span {
+                                start: 136,
+                                end: 137,
+                            },
+                        },
                     ],
                 ),
                 fields: Named(

@@ -1,15 +1,19 @@
 #![forbid(unsafe_code)]
 #![deny(rust_2018_idioms, clippy::all)]
 #![warn(clippy::pedantic)]
-#![allow(clippy::missing_errors_doc)]
+#![allow(clippy::missing_errors_doc, clippy::module_name_repetitions)]
 
 pub use ids::{DuplicateFieldId, DuplicateId, DuplicateVariantId};
 use miette::Diagnostic;
 use stef_parser::{Definition, Schema};
 use thiserror::Error;
 
-use self::names::{DuplicateFieldName, DuplicateName};
+use self::{
+    generics::InvalidGenericType,
+    names::{DuplicateFieldName, DuplicateName},
+};
 
+mod generics;
 mod ids;
 mod names;
 
@@ -21,6 +25,9 @@ pub enum Error {
     #[error("duplicate name found")]
     #[diagnostic(transparent)]
     DuplicateName(#[from] DuplicateName),
+    #[error("invalid generic type found")]
+    #[diagnostic(transparent)]
+    InvalidGeneric(#[from] InvalidGenericType),
 }
 
 impl From<DuplicateFieldId> for Error {
@@ -47,10 +54,12 @@ fn validate_definition(value: &Definition<'_>) -> Result<(), Error> {
         Definition::Struct(s) => {
             ids::validate_struct_ids(s)?;
             names::validate_struct_names(s)?;
+            generics::validate_struct_generics(s)?;
         }
         Definition::Enum(e) => {
             ids::validate_enum_ids(e)?;
             names::validate_enum_names(e)?;
+            generics::validate_enum_generics(e)?;
         }
         Definition::TypeAlias(_) | Definition::Const(_) | Definition::Import(_) => {}
     }

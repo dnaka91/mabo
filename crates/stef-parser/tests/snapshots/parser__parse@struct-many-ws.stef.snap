@@ -18,8 +18,13 @@ Schema {
                 name: "Sample",
                 generics: Generics(
                     [
-                        "A",
-                        "B",
+                        Name {
+                            value: "T",
+                            span: Span {
+                                start: 58,
+                                end: 59,
+                            },
+                        },
                     ],
                 ),
                 fields: Named(
@@ -31,21 +36,21 @@ Schema {
                             name: Name {
                                 value: "a",
                                 span: Span {
-                                    start: 95,
-                                    end: 96,
+                                    start: 80,
+                                    end: 81,
                                 },
                             },
                             ty: U32,
                             id: Id {
                                 value: 1,
                                 span: Span {
-                                    start: 108,
-                                    end: 110,
+                                    start: 93,
+                                    end: 95,
                                 },
                             },
                             span: Span {
-                                start: 95,
-                                end: 110,
+                                start: 80,
+                                end: 95,
                             },
                         },
                         NamedField {
@@ -55,21 +60,51 @@ Schema {
                             name: Name {
                                 value: "b",
                                 span: Span {
-                                    start: 118,
-                                    end: 119,
+                                    start: 103,
+                                    end: 104,
                                 },
                             },
                             ty: Bool,
                             id: Id {
                                 value: 2,
                                 span: Span {
-                                    start: 131,
-                                    end: 133,
+                                    start: 116,
+                                    end: 118,
                                 },
                             },
                             span: Span {
-                                start: 118,
-                                end: 133,
+                                start: 103,
+                                end: 118,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "c",
+                                span: Span {
+                                    start: 126,
+                                    end: 127,
+                                },
+                            },
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "T",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 139,
+                                    end: 141,
+                                },
+                            },
+                            span: Span {
+                                start: 126,
+                                end: 141,
                             },
                         },
                     ],

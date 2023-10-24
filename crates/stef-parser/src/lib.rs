@@ -808,7 +808,7 @@ impl<'a> Display for ExternalType<'a> {
 /// <A, B, ...>
 /// ```
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct Generics<'a>(pub Vec<&'a str>);
+pub struct Generics<'a>(pub Vec<Name<'a>>);
 
 impl<'a> Display for Generics<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -852,7 +852,7 @@ impl Display for Id {
 
 /// An arbitrary name of any element, which additionally carries a span into the schema to mark its
 /// location.
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Name<'a> {
     /// Raw string value.
     value: &'a str,

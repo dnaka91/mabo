@@ -1,11 +1,10 @@
 
  /// Some comment
        struct      Sample<
-            A,
-            B
+            T
         >  {
 
       a:    u32    @1,
       b:    bool   @2,
-
+      c:    T      @3,
     }

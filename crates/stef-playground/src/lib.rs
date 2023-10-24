@@ -77,10 +77,9 @@ mod schemas {
         include!(concat!(env!("OUT_DIR"), "/struct-generics.rs"));
     }
 
-    // TODO: fix unused generic parameters
-    // mod struct_many_ws {
-    //     include!(concat!(env!("OUT_DIR"), "/struct-many-ws.rs"));
-    // }
+    mod struct_many_ws {
+        include!(concat!(env!("OUT_DIR"), "/struct-many-ws.rs"));
+    }
 
     mod struct_min_ws {
         include!(concat!(env!("OUT_DIR"), "/struct-min-ws.rs"));

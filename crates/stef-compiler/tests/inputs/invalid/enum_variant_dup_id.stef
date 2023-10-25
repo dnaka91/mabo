@@ -1,0 +1,4 @@
+enum Sample {
+    One @1,
+    Two @1,
+}

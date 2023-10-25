@@ -1,0 +1,4 @@
+enum Sample<T, T> {
+    One @1,
+    Two { value: T @1 } @2,
+}

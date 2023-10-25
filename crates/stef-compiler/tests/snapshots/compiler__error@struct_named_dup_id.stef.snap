@@ -1,0 +1,20 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+input_file: crates/stef-compiler/tests/inputs/invalid/struct_named_dup_id.stef
+---
+  × duplicate ID found
+  ├─▶ duplicate ID in a field
+  ╰─▶ duplicate ID 1 in field `field2`, already used in `field1`
+   ╭─[struct_named_dup_id.stef:1:1]
+ 1 │ struct Sample {
+ 2 │     field1: string @1,
+   ·                    ─┬
+   ·                     ╰── first declared here
+ 3 │     field2: string @1,
+   ·                    ─┬
+   ·                     ╰── used here again
+ 4 │ }
+   ╰────
+  help: the IDs for each field must be unique
+

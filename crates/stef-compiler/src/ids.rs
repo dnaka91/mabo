@@ -40,7 +40,7 @@ pub enum DuplicateFieldId {
         #[label("used here again")]
         second: Range<usize>,
     },
-    #[error("duplicate ID {} in field {position}, already used in {other_position}", id.get())]
+    #[error("duplicate ID {} in position {position}, already used at {other_position}", id.get())]
     #[diagnostic(help("the IDs for each field must be unique"))]
     Unnamed {
         id: Id,
@@ -116,8 +116,8 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
                     visited.insert(field.id.get(), (pos, field.id.span())).map(
                         |(other_position, other_span)| DuplicateFieldId::Unnamed {
                             id: field.id.clone(),
-                            position: pos,
-                            other_position,
+                            position: pos + 1,
+                            other_position: other_position + 1,
                             first: other_span.into(),
                             second: field.id.span().into(),
                         },

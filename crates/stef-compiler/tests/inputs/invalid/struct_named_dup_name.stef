@@ -1,0 +1,4 @@
+struct Sample {
+    field: string @1,
+    field: string @2,
+}

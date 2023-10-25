@@ -19,6 +19,13 @@ check:
 fmt:
   cargo +nightly fmt --all
 
+# Run snapshot tests and review any updates
+snapshots:
+  cargo insta test --workspace --all-features \
+    --test-runner nextest \
+    --unreferenced delete \
+    --review
+
 # Start up the local server for the book
 @book:
   cd book && just dev

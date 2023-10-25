@@ -1,0 +1,20 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+input_file: crates/stef-compiler/tests/inputs/invalid/struct_named_dup_name.stef
+---
+  × duplicate name found
+  ├─▶ duplicate name in a field
+  ╰─▶ duplicate field name `field`
+   ╭─[struct_named_dup_name.stef:1:1]
+ 1 │ struct Sample {
+ 2 │     field: string @1,
+   ·     ──┬──
+   ·       ╰── first declared here
+ 3 │     field: string @2,
+   ·     ──┬──
+   ·       ╰── used here again
+ 4 │ }
+   ╰────
+  help: the names of each field must be unique
+

@@ -1,0 +1,3 @@
+struct Sample<T> {
+    value: string @1,
+}

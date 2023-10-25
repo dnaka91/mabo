@@ -1,0 +1,17 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+input_file: crates/stef-compiler/tests/inputs/invalid/struct_gen_unused.stef
+---
+  × invalid generic type found
+  ├─▶ unused generic type argument found
+  ╰─▶ unused generic type argument `T`
+   ╭─[struct_gen_unused.stef:1:1]
+ 1 │ struct Sample<T> {
+   ·               ┬
+   ·               ╰── declared here
+ 2 │     value: string @1,
+ 3 │ }
+   ╰────
+  help: each declared generic must be used in some way
+

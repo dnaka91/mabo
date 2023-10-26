@@ -275,16 +275,16 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             quote! { ::stef::buf::decode_option(r, |r| { #ty }) }
         }
         DataType::NonZero(ty) => match &**ty {
-            DataType::U8 => quote! { ::std::num::NonZeroU8::decode(r) },
-            DataType::U16 => quote! { ::std::num::NonZeroU16::decode(r) },
-            DataType::U32 => quote! { ::std::num::NonZeroU32::decode(r) },
-            DataType::U64 => quote! { ::std::num::NonZeroU64::decode(r) },
-            DataType::U128 => quote! { ::std::num::NonZeroU128::decode(r) },
-            DataType::I8 => quote! { ::std::num::NonZeroI8::decode(r) },
-            DataType::I16 => quote! { ::std::num::NonZeroI16::decode(r) },
-            DataType::I32 => quote! { ::std::num::NonZeroI32::decode(r) },
-            DataType::I64 => quote! { ::std::num::NonZeroI64::decode(r) },
-            DataType::I128 => quote! { ::std::num::NonZeroI128::decode(r) },
+            DataType::U8 => quote! { ::stef::buf::decode_non_zero_u8(r) },
+            DataType::U16 => quote! { ::stef::buf::decode_non_zero_u16(r) },
+            DataType::U32 => quote! { ::stef::buf::decode_non_zero_u32(r) },
+            DataType::U64 => quote! { ::stef::buf::decode_non_zero_u64(r) },
+            DataType::U128 => quote! { ::stef::buf::decode_non_zero_u128(r) },
+            DataType::I8 => quote! { ::stef::buf::decode_non_zero_i8(r) },
+            DataType::I16 => quote! { ::stef::buf::decode_non_zero_i16(r) },
+            DataType::I32 => quote! { ::stef::buf::decode_non_zero_i32(r) },
+            DataType::I64 => quote! { ::stef::buf::decode_non_zero_i64(r) },
+            DataType::I128 => quote! { ::stef::buf::decode_non_zero_i128(r) },
             DataType::String | DataType::StringRef => {
                 quote! { ::stef::buf::decode_non_zero_string(r) }
             }

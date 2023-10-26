@@ -1,10 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    num::{
-        NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroU128, NonZeroU16,
-        NonZeroU32, NonZeroU64, NonZeroU8,
-    },
-};
+use std::collections::{HashMap, HashSet};
 
 pub use bytes::BufMut;
 
@@ -254,66 +248,6 @@ where
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
         encode_array(w, self, |w, v| v.encode(w));
-    }
-}
-
-impl Encode for NonZeroU8 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_u8(w, self.get());
-    }
-}
-
-impl Encode for NonZeroU16 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_u16(w, self.get());
-    }
-}
-
-impl Encode for NonZeroU32 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_u32(w, self.get());
-    }
-}
-
-impl Encode for NonZeroU64 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_u64(w, self.get());
-    }
-}
-
-impl Encode for NonZeroU128 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_u128(w, self.get());
-    }
-}
-
-impl Encode for NonZeroI8 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_i8(w, self.get());
-    }
-}
-
-impl Encode for NonZeroI16 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_i16(w, self.get());
-    }
-}
-
-impl Encode for NonZeroI32 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_i32(w, self.get());
-    }
-}
-
-impl Encode for NonZeroI64 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_i64(w, self.get());
-    }
-}
-
-impl Encode for NonZeroI128 {
-    fn encode(&self, w: &mut impl BufMut) {
-        encode_i128(w, self.get());
     }
 }
 

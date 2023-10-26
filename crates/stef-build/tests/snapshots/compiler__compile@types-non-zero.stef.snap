@@ -37,70 +37,70 @@ impl ::stef::Encode for Sample {
             w,
             1,
             |w| {
-                (self.f01).encode(w);
+                ::stef::buf::encode_u8(w, self.f01.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             2,
             |w| {
-                (self.f02).encode(w);
+                ::stef::buf::encode_u16(w, self.f02.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             3,
             |w| {
-                (self.f03).encode(w);
+                ::stef::buf::encode_u32(w, self.f03.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             4,
             |w| {
-                (self.f04).encode(w);
+                ::stef::buf::encode_u64(w, self.f04.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             5,
             |w| {
-                (self.f05).encode(w);
+                ::stef::buf::encode_u128(w, self.f05.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             6,
             |w| {
-                (self.f06).encode(w);
+                ::stef::buf::encode_i8(w, self.f06.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             7,
             |w| {
-                (self.f07).encode(w);
+                ::stef::buf::encode_i16(w, self.f07.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             8,
             |w| {
-                (self.f08).encode(w);
+                ::stef::buf::encode_i32(w, self.f08.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             9,
             |w| {
-                (self.f09).encode(w);
+                ::stef::buf::encode_i64(w, self.f09.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             10,
             |w| {
-                (self.f10).encode(w);
+                ::stef::buf::encode_i128(w, self.f10.get());
             },
         );
         ::stef::buf::encode_field(
@@ -184,16 +184,16 @@ impl ::stef::Decode for Sample {
         loop {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
-                1 => f01 = Some(::std::num::NonZeroU8::decode(r)?),
-                2 => f02 = Some(::std::num::NonZeroU16::decode(r)?),
-                3 => f03 = Some(::std::num::NonZeroU32::decode(r)?),
-                4 => f04 = Some(::std::num::NonZeroU64::decode(r)?),
-                5 => f05 = Some(::std::num::NonZeroU128::decode(r)?),
-                6 => f06 = Some(::std::num::NonZeroI8::decode(r)?),
-                7 => f07 = Some(::std::num::NonZeroI16::decode(r)?),
-                8 => f08 = Some(::std::num::NonZeroI32::decode(r)?),
-                9 => f09 = Some(::std::num::NonZeroI64::decode(r)?),
-                10 => f10 = Some(::std::num::NonZeroI128::decode(r)?),
+                1 => f01 = Some(::stef::buf::decode_non_zero_u8(r)?),
+                2 => f02 = Some(::stef::buf::decode_non_zero_u16(r)?),
+                3 => f03 = Some(::stef::buf::decode_non_zero_u32(r)?),
+                4 => f04 = Some(::stef::buf::decode_non_zero_u64(r)?),
+                5 => f05 = Some(::stef::buf::decode_non_zero_u128(r)?),
+                6 => f06 = Some(::stef::buf::decode_non_zero_i8(r)?),
+                7 => f07 = Some(::stef::buf::decode_non_zero_i16(r)?),
+                8 => f08 = Some(::stef::buf::decode_non_zero_i32(r)?),
+                9 => f09 = Some(::stef::buf::decode_non_zero_i64(r)?),
+                10 => f10 = Some(::stef::buf::decode_non_zero_i128(r)?),
                 11 => f11 = Some(::stef::buf::decode_non_zero_string(r)?),
                 12 => f12 = Some(::stef::buf::decode_non_zero_bytes(r)?),
                 13 => {

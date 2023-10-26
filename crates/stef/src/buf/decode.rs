@@ -179,6 +179,25 @@ macro_rules! ensure_not_empty {
     };
 }
 
+macro_rules! decode_non_zero_int {
+    ($ty:ty) => {
+        paste::paste! {
+            pub fn [<decode_non_zero_ $ty>](
+                r: &mut impl Buf,
+            ) -> Result<std::num::[<NonZero $ty:upper>]> {
+                std::num::[<NonZero $ty:upper>]::new([<decode_ $ty>](r)?)
+                    .ok_or_else(|| Error::Zero)
+            }
+        }
+    };
+    ($($ty:ty),+ $(,)?) => {
+        $(decode_non_zero_int!($ty);)+
+    };
+}
+
+decode_non_zero_int!(u8, u16, u32, u64, u128);
+decode_non_zero_int!(i8, i16, i32, i64, i128);
+
 pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZero<String>> {
     String::from_utf8(decode_non_zero_bytes(r)?.into_inner())
         .map(|v| NonZero::<String>::new(v).unwrap())
@@ -343,25 +362,6 @@ where
         decode_array(r, T::decode)
     }
 }
-
-macro_rules! non_zero {
-    ($ty:ty) => {
-        paste::paste! {
-            impl Decode for std::num::[<NonZero $ty:upper>] {
-                #[inline(always)]
-                fn decode(r: &mut impl Buf) -> Result<Self> {
-                    Self::new([<decode_ $ty>](r)?).ok_or_else(|| Error::Zero)
-                }
-            }
-        }
-    };
-    ($($ty:ty),+ $(,)?) => {
-        $(non_zero!($ty);)+
-    };
-}
-
-non_zero!(u8, u16, u32, u64, u128);
-non_zero!(i8, i16, i32, i64, i128);
 
 impl<'a, T> Decode for std::borrow::Cow<'a, T>
 where

@@ -318,16 +318,16 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #ty; }) }
         }
         DataType::NonZero(ty) => match &**ty {
-            DataType::U8
-            | DataType::U16
-            | DataType::U32
-            | DataType::U64
-            | DataType::U128
-            | DataType::I8
-            | DataType::I16
-            | DataType::I32
-            | DataType::I64
-            | DataType::I128 => quote! { (#name).encode(w) },
+            DataType::U8 => quote! { ::stef::buf::encode_u8(w, #name.get()) },
+            DataType::U16 => quote! { ::stef::buf::encode_u16(w, #name.get()) },
+            DataType::U32 => quote! { ::stef::buf::encode_u32(w, #name.get()) },
+            DataType::U64 => quote! { ::stef::buf::encode_u64(w, #name.get()) },
+            DataType::U128 => quote! { ::stef::buf::encode_u128(w, #name.get()) },
+            DataType::I8 => quote! { ::stef::buf::encode_i8(w, #name.get()) },
+            DataType::I16 => quote! { ::stef::buf::encode_i16(w, #name.get()) },
+            DataType::I32 => quote! { ::stef::buf::encode_i32(w, #name.get()) },
+            DataType::I64 => quote! { ::stef::buf::encode_i64(w, #name.get()) },
+            DataType::I128 => quote! { ::stef::buf::encode_i128(w, #name.get()) },
             DataType::String
             | DataType::StringRef
             | DataType::Bytes

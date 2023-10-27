@@ -14,7 +14,7 @@ use winnow::{
 };
 
 use super::{imports, ws, Input, ParserExt, Result};
-use crate::{highlight, DataType, ExternalType};
+use crate::{highlight, DataType, ExternalType, Name};
 
 /// Encountered an invalid type definition.
 #[derive(Debug, ParserError)]
@@ -171,8 +171,13 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
         })
 }
 
-fn parse_external_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+fn parse_external_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (one_of('A'..='Z'), alphanumeric0)
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(|(value, span)| Name {
+            value,
+            span: span.into(),
+        })
 }

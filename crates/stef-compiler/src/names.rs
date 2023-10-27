@@ -117,16 +117,13 @@ pub(crate) fn validate_names_in_module(value: &[Definition<'_>]) -> Result<(), D
                 Definition::Module(m) => &m.name,
                 Definition::Struct(s) => &s.name,
                 Definition::Enum(e) => &e.name,
-                Definition::TypeAlias(_) => {
-                    eprintln!("TODO: implement name check for type aliases");
-                    return None;
-                }
+                Definition::TypeAlias(a) => &a.name,
                 Definition::Const(c) => &c.name,
                 Definition::Import(Import {
                     element: Some(name),
                     ..
                 }) => name,
-                Definition::Import(_) => return None,
+                Definition::Import(Import { segments, .. }) => segments.last()?,
             };
             visited.insert(name.get(), name.span()).map(|first| {
                 DuplicateNameInModule {

@@ -54,9 +54,9 @@ pub enum Cause {
         #[err(label("Problematic character"))]
         at: usize,
     },
-    /// Invalid sturct generics declaration.
+    /// Invalid struct generics declaration.
     #[forward]
-    Generics(super::generics::ParseError),
+    Generics(generics::ParseError),
     /// Invalid declaration of struct fields.
     #[forward]
     Fields(fields::ParseError),

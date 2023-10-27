@@ -2,7 +2,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use stef_parser::{
     Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Import, Literal,
-    Module, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant,
+    Module, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant, Name,
 };
 
 use super::{decode, encode};
@@ -141,18 +141,20 @@ fn compile_variant(
 fn compile_alias(
     TypeAlias {
         comment,
-        alias,
+        name,
+        generics,
         target,
     }: &TypeAlias<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let alias = compile_data_type(alias);
+    let name = Ident::new(name.get(), Span::call_site());
+    let generics = compile_generics(generics);
     let target = compile_data_type(target);
 
     quote! {
         #comment
         #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
-        pub type #alias = #target;
+        pub type #name #generics = #target;
     }
 }
 
@@ -178,7 +180,7 @@ fn compile_const(
 
 fn compile_import(Import { segments, element }: &Import<'_>) -> TokenStream {
     let segments = segments.iter().enumerate().map(|(i, segment)| {
-        let segment = Ident::new(segment, Span::call_site());
+        let segment = Ident::new(segment.get(), Span::call_site());
         if i > 0 {
             quote! {::#segment}
         } else {
@@ -335,7 +337,8 @@ pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             name,
             generics,
         }) => {
-            let name = Ident::new(name, Span::call_site());
+            let path = path.iter().map(Name::get);
+            let name = Ident::new(name.get(), Span::call_site());
             let generics = (!generics.is_empty()).then(|| {
                 let types = generics.iter().map(compile_data_type);
                 quote! { <#(#types,)*> }

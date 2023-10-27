@@ -11,7 +11,7 @@ use winnow::{
 };
 
 use super::{enums, structs, Input, ParserExt, Result};
-use crate::{highlight, location, Import};
+use crate::{highlight, location, Import, Name};
 
 /// Encountered an invalid `use` declaration.
 #[derive(Debug, ParserError)]
@@ -91,13 +91,18 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
     })
 }
 
-pub(super) fn parse_segment<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+pub(super) fn parse_segment<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (
         one_of('a'..='z'),
         take_while(0.., ('a'..='z', '0'..='9', '_')),
     )
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(|(value, span)| Name {
+            value,
+            span: span.into(),
+        })
         .map_err(|e| {
             e.map(|()| Cause::InvalidSegmentName {
                 at: input.location(),

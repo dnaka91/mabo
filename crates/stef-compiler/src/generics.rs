@@ -106,7 +106,7 @@ fn validate_field_generics(value: &Fields<'_>, unvisited: &mut HashMap<&str, Spa
             for field in named {
                 visit_externals(&field.ty, &mut |external| {
                     if external.path.is_empty() && external.generics.is_empty() {
-                        unvisited.remove(external.name);
+                        unvisited.remove(external.name.get());
                     }
                 });
             }
@@ -115,7 +115,7 @@ fn validate_field_generics(value: &Fields<'_>, unvisited: &mut HashMap<&str, Spa
             for field in unnamed {
                 visit_externals(&field.ty, &mut |external| {
                     if external.path.is_empty() && external.generics.is_empty() {
-                        unvisited.remove(external.name);
+                        unvisited.remove(external.name.get());
                     }
                 });
             }

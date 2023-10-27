@@ -417,8 +417,10 @@ impl<'a> Display for Variant<'a> {
 pub struct TypeAlias<'a> {
     /// Optional comment.
     pub comment: Comment<'a>,
-    /// New data type definition.
-    pub alias: DataType<'a>,
+    /// Unique name of the type alias within the current scope.
+    pub name: Name<'a>,
+    /// Potential generic type arguments.
+    pub generics: Generics<'a>,
     /// Original type that is being aliased.
     pub target: DataType<'a>,
 }
@@ -427,14 +429,15 @@ impl<'a> Print for TypeAlias<'a> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
-            alias,
+            name,
+            generics,
             target,
         } = self;
 
         comment.print(f, level)?;
 
         Self::indent(f, level)?;
-        write!(f, "type {alias} = {target};")
+        write!(f, "type {name}{generics} = {target};")
     }
 }
 
@@ -779,9 +782,9 @@ impl<'a> Display for DataType<'a> {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ExternalType<'a> {
     /// Optional path, if the type wasn't fully imported with a `use` statement.
-    pub path: Vec<&'a str>,
+    pub path: Vec<Name<'a>>,
     /// Unique name of the type within the current scope (or the module if prefixed with a path).
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// Potential generic type arguments.
     pub generics: Vec<DataType<'a>>,
 }
@@ -949,7 +952,7 @@ impl Display for Literal {
 #[derive(Debug, PartialEq)]
 pub struct Import<'a> {
     /// Individual elements that form the import path.
-    pub segments: Vec<&'a str>,
+    pub segments: Vec<Name<'a>>,
     /// Optional final element that allows to fully import the type, making it look as it would be
     /// defined in the current schema.
     pub element: Option<Name<'a>>,
@@ -966,7 +969,7 @@ impl<'a> Print for Import<'a> {
             if i > 0 {
                 f.write_str("::")?;
             }
-            f.write_str(segment)?;
+            f.write_str(segment.get())?;
         }
 
         if let Some(element) = element {

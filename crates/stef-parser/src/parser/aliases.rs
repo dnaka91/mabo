@@ -2,15 +2,16 @@ use std::ops::Range;
 
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
-    ascii::{space0, space1},
-    combinator::{cut_err, delimited, preceded},
+    ascii::{alphanumeric0, space0, space1},
+    combinator::{cut_err, delimited, opt, preceded},
     error::ErrorKind,
     stream::Location,
+    token::one_of,
     Parser,
 };
 
-use super::{types, Input, ParserExt, Result};
-use crate::{highlight, Comment, TypeAlias};
+use super::{generics, types, Input, ParserExt, Result};
+use crate::{highlight, Comment, Name, TypeAlias};
 
 /// Encountered an invalid `type` alias declaration.
 #[derive(Debug, ParserError)]
@@ -37,6 +38,25 @@ pub struct ParseError {
 pub enum Cause {
     /// Non-specific general parser error.
     Parser(ErrorKind),
+    /// Defined name is not considered valid.
+    #[err(
+        msg("Invalid alias name"),
+        code(stef::parse::alias_def::invalid_name),
+        help(
+            "Alias names must start with an uppercase letter ({}), followed by zero or more \
+             alphanumeric characters ({})",
+            highlight::value("A-Z"),
+            highlight::value("A-Z, a-z, 0-9"),
+        )
+    )]
+    InvalidName {
+        /// Source location of the character.
+        #[err(label("Problematic character"))]
+        at: usize,
+    },
+    /// Invalid alias generics declaration.
+    #[forward]
+    Generics(generics::ParseError),
     /// Invalid type declaration.
     #[forward]
     Type(types::ParseError),
@@ -46,7 +66,8 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseErr
     preceded(
         ("type", space1),
         cut_err((
-            types::parse.map_err(Cause::from),
+            parse_name,
+            opt(generics::parse.map_err(Cause::Generics)).map(Option::unwrap_or_default),
             delimited(
                 (space0, '='),
                 preceded(space0, types::parse.map_err(Cause::from)),
@@ -55,9 +76,10 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseErr
         )),
     )
     .parse_next(input)
-    .map(|(alias, target)| TypeAlias {
+    .map(|(name, generics, target)| TypeAlias {
         comment: Comment::default(),
-        alias,
+        name,
+        generics,
         target,
     })
     .map_err(|e| {
@@ -66,4 +88,20 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseErr
             cause,
         })
     })
+}
+
+fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
+    (one_of('A'..='Z'), alphanumeric0)
+        .recognize()
+        .with_span()
+        .parse_next(input)
+        .map(|(value, span)| Name {
+            value,
+            span: span.into(),
+        })
+        .map_err(|e| {
+            e.map(|()| Cause::InvalidName {
+                at: input.location(),
+            })
+        })
 }

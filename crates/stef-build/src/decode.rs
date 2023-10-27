@@ -322,7 +322,7 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             quote! { ::stef::buf::decode_array(r, |r| { #ty }) }
         }
         DataType::External(ty) => {
-            let ty = Ident::new(ty.name, Span::call_site());
+            let ty = Ident::new(ty.name.get(), Span::call_site());
             quote! { #ty::decode(r) }
         }
     }

@@ -6,8 +6,7 @@ input_file: crates/stef-parser/tests/inputs/invalid/alias_name.stef
 stef::parse::alias_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseAliasError.html)
 
   × Failed to parse type alias declaration
-  ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Invalid alias name
    ╭────
  1 │ type sImple = Simple;
    ·      ▲
@@ -15,16 +14,14 @@ stef::parse::alias_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
    ╰────
   help: Expected type alias declaration in the form `❬B❭type <Alias> = <Type>;❬B❭`
 
-Error: stef::parse::type_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseTypeError.html)
+Error: stef::parse::alias_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseAliasCause.html#variant.InvalidName)
 
-  × Failed to parse type definition
-  ╰─▶ error Verify
+  × Invalid alias name
    ╭────
  1 │ type sImple = Simple;
    ·      ▲
-   ·      ╰── In this declaration
+   ·      ╰── Problematic character
    ╰────
-  help: Expected type definition in the form `❬B❭<Name>❬B❭`
-
-Error:   × error Verify
+  help: Alias names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric
+        characters (❬Y❭A-Z, a-z, 0-9❬Y❭)
 

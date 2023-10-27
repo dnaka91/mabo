@@ -12,12 +12,15 @@ Schema {
                         "Sample type alias.",
                     ],
                 ),
-                alias: External(
-                    ExternalType {
-                        path: [],
-                        name: "Sample",
-                        generics: [],
+                name: Name {
+                    value: "Sample",
+                    span: Span {
+                        start: 28,
+                        end: 34,
                     },
+                },
+                generics: Generics(
+                    [],
                 ),
                 target: U32,
             },

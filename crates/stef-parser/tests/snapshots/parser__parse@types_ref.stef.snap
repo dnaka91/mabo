@@ -39,7 +39,13 @@ Schema {
                             ty: External(
                                 ExternalType {
                                     path: [],
-                                    name: "Test123",
+                                    name: Name {
+                                        value: "Test123",
+                                        span: Span {
+                                            start: 27,
+                                            end: 34,
+                                        },
+                                    },
                                     generics: [],
                                 },
                             ),
@@ -69,7 +75,13 @@ Schema {
                             ty: External(
                                 ExternalType {
                                     path: [],
-                                    name: "KeyValue",
+                                    name: Name {
+                                        value: "KeyValue",
+                                        span: Span {
+                                            start: 58,
+                                            end: 66,
+                                        },
+                                    },
                                     generics: [
                                         U32,
                                         Bool,
@@ -187,7 +199,13 @@ Schema {
                             ty: External(
                                 ExternalType {
                                     path: [],
-                                    name: "K",
+                                    name: Name {
+                                        value: "K",
+                                        span: Span {
+                                            start: 150,
+                                            end: 151,
+                                        },
+                                    },
                                     generics: [],
                                 },
                             ),
@@ -217,7 +235,13 @@ Schema {
                             ty: External(
                                 ExternalType {
                                     path: [],
-                                    name: "V",
+                                    name: Name {
+                                        value: "V",
+                                        span: Span {
+                                            start: 167,
+                                            end: 168,
+                                        },
+                                    },
                                     generics: [],
                                 },
                             ),

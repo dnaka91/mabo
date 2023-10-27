@@ -5,6 +5,7 @@
 
 [Introduction](introduction.md)
 [General idea](general_idea.md)
+[Ideas](ideas.md)
 
 ---
 

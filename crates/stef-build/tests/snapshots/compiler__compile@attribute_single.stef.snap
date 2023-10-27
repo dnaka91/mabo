@@ -1,0 +1,28 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "#[deprecated = \"don't use\"]\nstruct Sample"
+input_file: crates/stef-parser/tests/inputs/attribute_single.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample;
+#[automatically_derived]
+impl ::stef::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {}
+}
+#[automatically_derived]
+impl ::stef::Decode for Sample {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        Ok(Self)
+    }
+}
+

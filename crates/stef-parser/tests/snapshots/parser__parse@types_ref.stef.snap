@@ -1,0 +1,223 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types_ref.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "basic",
+                                span: Span {
+                                    start: 20,
+                                    end: 25,
+                                },
+                            },
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "Test123",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 35,
+                                    end: 37,
+                                },
+                            },
+                            span: Span {
+                                start: 20,
+                                end: 37,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "with_generics",
+                                span: Span {
+                                    start: 43,
+                                    end: 56,
+                                },
+                            },
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "KeyValue",
+                                    generics: [
+                                        U32,
+                                        Bool,
+                                    ],
+                                },
+                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 78,
+                                    end: 80,
+                                },
+                            },
+                            span: Span {
+                                start: 43,
+                                end: 80,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+        Enum(
+            Enum {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Test123",
+                generics: Generics(
+                    [],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "Value",
+                            span: Span {
+                                start: 104,
+                                end: 109,
+                            },
+                        },
+                        fields: Unit,
+                        id: Id {
+                            value: 1,
+                            span: Span {
+                                start: 110,
+                                end: 112,
+                            },
+                        },
+                        span: Span {
+                            start: 104,
+                            end: 112,
+                        },
+                    },
+                ],
+            },
+        ),
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "KeyValue",
+                generics: Generics(
+                    [
+                        Name {
+                            value: "K",
+                            span: Span {
+                                start: 133,
+                                end: 134,
+                            },
+                        },
+                        Name {
+                            value: "V",
+                            span: Span {
+                                start: 136,
+                                end: 137,
+                            },
+                        },
+                    ],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "key",
+                                span: Span {
+                                    start: 145,
+                                    end: 148,
+                                },
+                            },
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "K",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 152,
+                                    end: 154,
+                                },
+                            },
+                            span: Span {
+                                start: 145,
+                                end: 154,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "value",
+                                span: Span {
+                                    start: 160,
+                                    end: 165,
+                                },
+                            },
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "V",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 169,
+                                    end: 171,
+                                },
+                            },
+                            span: Span {
+                                start: 160,
+                                end: 171,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

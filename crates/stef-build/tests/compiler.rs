@@ -17,12 +17,12 @@ fn compile_schema() {
 
 #[test]
 fn compile_schema_extra() {
-    glob!("inputs-extra/*.stef", |path| {
+    glob!("inputs_extra/*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
         let value = Schema::parse(input.as_str()).unwrap();
         let value = stef_build::compile_schema(&value);
         let value = prettyplease::unparse(&syn::parse2(value.clone()).unwrap());
 
-        assert_snapshot!("compile-extra", format!("{value}"), input.trim());
+        assert_snapshot!("compile_extra", format!("{value}"), input.trim());
     });
 }

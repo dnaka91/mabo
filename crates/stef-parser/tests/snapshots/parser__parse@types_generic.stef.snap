@@ -1,0 +1,160 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types_generic.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f1",
+                                span: Span {
+                                    start: 20,
+                                    end: 22,
+                                },
+                            },
+                            ty: Vec(
+                                U32,
+                            ),
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 33,
+                                    end: 35,
+                                },
+                            },
+                            span: Span {
+                                start: 20,
+                                end: 35,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f2",
+                                span: Span {
+                                    start: 41,
+                                    end: 43,
+                                },
+                            },
+                            ty: HashMap(
+                                (
+                                    U32,
+                                    String,
+                                ),
+                            ),
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 67,
+                                    end: 69,
+                                },
+                            },
+                            span: Span {
+                                start: 41,
+                                end: 69,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f3",
+                                span: Span {
+                                    start: 75,
+                                    end: 77,
+                                },
+                            },
+                            ty: HashSet(
+                                U32,
+                            ),
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 93,
+                                    end: 95,
+                                },
+                            },
+                            span: Span {
+                                start: 75,
+                                end: 95,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f4",
+                                span: Span {
+                                    start: 101,
+                                    end: 103,
+                                },
+                            },
+                            ty: Option(
+                                U32,
+                            ),
+                            id: Id {
+                                value: 4,
+                                span: Span {
+                                    start: 117,
+                                    end: 119,
+                                },
+                            },
+                            span: Span {
+                                start: 101,
+                                end: 119,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f5",
+                                span: Span {
+                                    start: 125,
+                                    end: 127,
+                                },
+                            },
+                            ty: NonZero(
+                                U32,
+                            ),
+                            id: Id {
+                                value: 5,
+                                span: Span {
+                                    start: 143,
+                                    end: 145,
+                                },
+                            },
+                            span: Span {
+                                start: 125,
+                                end: 145,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

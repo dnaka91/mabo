@@ -1,0 +1,90 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Some comment\n       struct      Sample<\n            T\n        >  {\n\n      a:    u32    @1,\n      b:    bool   @2,\n      c:    T      @3,\n    }"
+input_file: crates/stef-parser/tests/inputs/struct_many_ws.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+/// Some comment
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample<T> {
+    pub a: u32,
+    pub b: bool,
+    pub c: T,
+}
+#[automatically_derived]
+impl<T> ::stef::Encode for Sample<T>
+where
+    T: ::stef::buf::Encode,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_u32(w, self.a);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                ::stef::buf::encode_bool(w, self.b);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                (self.c).encode(w);
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl<T> ::stef::Decode for Sample<T>
+where
+    T: ::std::fmt::Debug + ::stef::buf::Decode,
+{
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut a: Option<u32> = None;
+        let mut b: Option<bool> = None;
+        let mut c: Option<T> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => a = Some(::stef::buf::decode_u32(r)?),
+                2 => b = Some(::stef::buf::decode_bool(r)?),
+                3 => c = Some(T::decode(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            a: a
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("a"),
+                })?,
+            b: b
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("b"),
+                })?,
+            c: c
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("c"),
+                })?,
+        })
+    }
+}
+

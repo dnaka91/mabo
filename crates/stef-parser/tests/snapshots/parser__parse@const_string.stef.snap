@@ -1,0 +1,57 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/const_string.stef
+---
+Schema {
+    definitions: [
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: "SIMPLE",
+                ty: String,
+                value: String(
+                    "value",
+                ),
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: "NEWLINE_ESCAPE",
+                ty: String,
+                value: String(
+                    "one two three",
+                ),
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: "ESCAPES",
+                ty: String,
+                value: String(
+                    "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
+                ),
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: "MULTILINE",
+                ty: String,
+                value: String(
+                    "a\n    b\n    c\n",
+                ),
+            },
+        ),
+    ],
+}

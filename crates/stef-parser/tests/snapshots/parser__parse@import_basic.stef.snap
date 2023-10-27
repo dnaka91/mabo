@@ -1,0 +1,29 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/import_basic.stef
+---
+Schema {
+    definitions: [
+        Import(
+            Import {
+                segments: [
+                    "other",
+                    "schema",
+                ],
+                element: Some(
+                    "Sample",
+                ),
+            },
+        ),
+        Import(
+            Import {
+                segments: [
+                    "second",
+                    "submodule",
+                ],
+                element: None,
+            },
+        ),
+    ],
+}

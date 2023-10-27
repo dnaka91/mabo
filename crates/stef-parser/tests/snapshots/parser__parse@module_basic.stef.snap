@@ -1,0 +1,113 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/module_basic.stef
+---
+Schema {
+    definitions: [
+        Module(
+            Module {
+                comment: Comment(
+                    [],
+                ),
+                name: "a",
+                definitions: [
+                    Module(
+                        Module {
+                            comment: Comment(
+                                [
+                                    "Inner module",
+                                ],
+                            ),
+                            name: "b",
+                            definitions: [
+                                Enum(
+                                    Enum {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        attributes: Attributes(
+                                            [],
+                                        ),
+                                        name: "Sample",
+                                        generics: Generics(
+                                            [],
+                                        ),
+                                        variants: [
+                                            Variant {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "One",
+                                                    span: Span {
+                                                        start: 75,
+                                                        end: 78,
+                                                    },
+                                                },
+                                                fields: Unit,
+                                                id: Id {
+                                                    value: 1,
+                                                    span: Span {
+                                                        start: 79,
+                                                        end: 81,
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: 75,
+                                                    end: 81,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    Struct(
+                        Struct {
+                            comment: Comment(
+                                [],
+                            ),
+                            attributes: Attributes(
+                                [],
+                            ),
+                            name: "Sample",
+                            generics: Generics(
+                                [],
+                            ),
+                            fields: Named(
+                                [
+                                    NamedField {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        name: Name {
+                                            value: "value",
+                                            span: Span {
+                                                start: 128,
+                                                end: 133,
+                                            },
+                                        },
+                                        ty: U32,
+                                        id: Id {
+                                            value: 1,
+                                            span: Span {
+                                                start: 139,
+                                                end: 141,
+                                            },
+                                        },
+                                        span: Span {
+                                            start: 128,
+                                            end: 141,
+                                        },
+                                    },
+                                ],
+                            ),
+                        },
+                    ),
+                ],
+            },
+        ),
+    ],
+}

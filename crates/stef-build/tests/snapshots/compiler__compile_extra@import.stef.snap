@@ -1,0 +1,10 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "use other::module;\nuse other::module::Type;"
+input_file: crates/stef-build/tests/inputs_extra/import.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+use other::module;
+use other::module::Type;
+

@@ -1,0 +1,20 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types_ref.stef
+---
+struct Sample {
+    basic: Test123 @1,
+    with_generics: KeyValue<u32, bool> @2,
+}
+
+enum Test123 {
+    Value @1,
+}
+
+struct KeyValue<K, V> {
+    key: K @1,
+    value: V @2,
+}
+
+

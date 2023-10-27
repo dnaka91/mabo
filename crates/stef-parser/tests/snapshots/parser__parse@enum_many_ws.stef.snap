@@ -1,0 +1,181 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/enum_many_ws.stef
+---
+Schema {
+    definitions: [
+        Enum(
+            Enum {
+                comment: Comment(
+                    [
+                        "Sample enum.",
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "One",
+                            span: Span {
+                                start: 49,
+                                end: 52,
+                            },
+                        },
+                        fields: Unit,
+                        id: Id {
+                            value: 1,
+                            span: Span {
+                                start: 58,
+                                end: 60,
+                            },
+                        },
+                        span: Span {
+                            start: 49,
+                            end: 60,
+                        },
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "Two",
+                            span: Span {
+                                start: 70,
+                                end: 73,
+                            },
+                        },
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: U32,
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 85,
+                                            end: 87,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 76,
+                                        end: 87,
+                                    },
+                                },
+                                UnnamedField {
+                                    ty: U64,
+                                    id: Id {
+                                        value: 2,
+                                        span: Span {
+                                            start: 101,
+                                            end: 103,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 88,
+                                        end: 103,
+                                    },
+                                },
+                            ],
+                        ),
+                        id: Id {
+                            value: 2,
+                            span: Span {
+                                start: 108,
+                                end: 110,
+                            },
+                        },
+                        span: Span {
+                            start: 70,
+                            end: 110,
+                        },
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "Three",
+                            span: Span {
+                                start: 125,
+                                end: 130,
+                            },
+                        },
+                        fields: Named(
+                            [
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "field1",
+                                        span: Span {
+                                            start: 158,
+                                            end: 164,
+                                        },
+                                    },
+                                    ty: U32,
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 178,
+                                            end: 180,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 158,
+                                        end: 180,
+                                    },
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "field2",
+                                        span: Span {
+                                            start: 203,
+                                            end: 209,
+                                        },
+                                    },
+                                    ty: Bool,
+                                    id: Id {
+                                        value: 2,
+                                        span: Span {
+                                            start: 223,
+                                            end: 225,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 203,
+                                        end: 225,
+                                    },
+                                },
+                            ],
+                        ),
+                        id: Id {
+                            value: 3,
+                            span: Span {
+                                start: 245,
+                                end: 247,
+                            },
+                        },
+                        span: Span {
+                            start: 125,
+                            end: 247,
+                        },
+                    },
+                ],
+            },
+        ),
+    ],
+}

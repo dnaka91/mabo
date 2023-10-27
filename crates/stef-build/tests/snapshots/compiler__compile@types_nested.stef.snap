@@ -1,0 +1,92 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}"
+input_file: crates/stef-parser/tests/inputs/types_nested.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample {
+    pub value: Vec<Option<::stef::NonZeroHashMap<i64, Box<str>>>>,
+}
+#[automatically_derived]
+impl ::stef::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_vec(
+                    w,
+                    &self.value,
+                    |w, v| {
+                        ::stef::buf::encode_option(
+                            w,
+                            &v,
+                            |w, v| {
+                                ::stef::buf::encode_hash_map(
+                                    w,
+                                    &v.get(),
+                                    |w, k| {
+                                        ::stef::buf::encode_i64(w, *k);
+                                    },
+                                    |w, v| {
+                                        ::stef::buf::encode_string(w, &*v);
+                                    },
+                                );
+                            },
+                        );
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for Sample {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut value: Option<Vec<Option<::stef::NonZeroHashMap<i64, Box<str>>>>> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => {
+                    value = Some(
+                        ::stef::buf::decode_vec(
+                            r,
+                            |r| {
+                                ::stef::buf::decode_option(
+                                    r,
+                                    |r| {
+                                        ::stef::buf::decode_non_zero_hash_map(
+                                            r,
+                                            |r| { ::stef::buf::decode_i64(r) },
+                                            |r| { Box::<str>::decode(r) },
+                                        )
+                                    },
+                                )
+                            },
+                        )?,
+                    );
+                }
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            value: value
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("value"),
+                })?,
+        })
+    }
+}
+

@@ -9,23 +9,23 @@ mod sample {
 
 mod schemas {
     mod alias_basic {
-        include!(concat!(env!("OUT_DIR"), "/alias-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/alias_basic.rs"));
     }
 
     mod attribute_multi {
-        include!(concat!(env!("OUT_DIR"), "/attribute-multi.rs"));
+        include!(concat!(env!("OUT_DIR"), "/attribute_multi.rs"));
     }
 
     mod attribute_single {
-        include!(concat!(env!("OUT_DIR"), "/attribute-single.rs"));
+        include!(concat!(env!("OUT_DIR"), "/attribute_single.rs"));
     }
 
     mod attribute_unit {
-        include!(concat!(env!("OUT_DIR"), "/attribute-unit.rs"));
+        include!(concat!(env!("OUT_DIR"), "/attribute_unit.rs"));
     }
 
     mod attributes_min_ws {
-        include!(concat!(env!("OUT_DIR"), "/attributes-min-ws.rs"));
+        include!(concat!(env!("OUT_DIR"), "/attributes_min_ws.rs"));
     }
 
     mod attributes {
@@ -33,80 +33,80 @@ mod schemas {
     }
 
     mod const_basic {
-        include!(concat!(env!("OUT_DIR"), "/const-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/const_basic.rs"));
     }
 
     mod const_string {
-        include!(concat!(env!("OUT_DIR"), "/const-string.rs"));
+        include!(concat!(env!("OUT_DIR"), "/const_string.rs"));
     }
 
     mod enum_basic {
-        include!(concat!(env!("OUT_DIR"), "/enum-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/enum_basic.rs"));
     }
 
     mod enum_generics {
-        include!(concat!(env!("OUT_DIR"), "/enum-generics.rs"));
+        include!(concat!(env!("OUT_DIR"), "/enum_generics.rs"));
     }
 
     mod enum_many_ws {
-        include!(concat!(env!("OUT_DIR"), "/enum-many-ws.rs"));
+        include!(concat!(env!("OUT_DIR"), "/enum_many_ws.rs"));
     }
 
     mod enum_min_ws {
-        include!(concat!(env!("OUT_DIR"), "/enum-min-ws.rs"));
+        include!(concat!(env!("OUT_DIR"), "/enum_min_ws.rs"));
     }
 
     // TODO: implement imports
     // mod import_basic {
-    //     include!(concat!(env!("OUT_DIR"), "/import-basic.rs"));
+    //     include!(concat!(env!("OUT_DIR"), "/import_basic.rs"));
     // }
 
     mod module_basic {
-        include!(concat!(env!("OUT_DIR"), "/module-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/module_basic.rs"));
     }
 
     mod schema_basic {
-        include!(concat!(env!("OUT_DIR"), "/schema-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/schema_basic.rs"));
     }
 
     mod struct_basic {
-        include!(concat!(env!("OUT_DIR"), "/struct-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/struct_basic.rs"));
     }
 
     mod struct_generics {
-        include!(concat!(env!("OUT_DIR"), "/struct-generics.rs"));
+        include!(concat!(env!("OUT_DIR"), "/struct_generics.rs"));
     }
 
     mod struct_many_ws {
-        include!(concat!(env!("OUT_DIR"), "/struct-many-ws.rs"));
+        include!(concat!(env!("OUT_DIR"), "/struct_many_ws.rs"));
     }
 
     mod struct_min_ws {
-        include!(concat!(env!("OUT_DIR"), "/struct-min-ws.rs"));
+        include!(concat!(env!("OUT_DIR"), "/struct_min_ws.rs"));
     }
 
     mod struct_tuple {
-        include!(concat!(env!("OUT_DIR"), "/struct-tuple.rs"));
+        include!(concat!(env!("OUT_DIR"), "/struct_tuple.rs"));
     }
 
     mod types_basic {
-        include!(concat!(env!("OUT_DIR"), "/types-basic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/types_basic.rs"));
     }
 
     mod types_generic {
-        include!(concat!(env!("OUT_DIR"), "/types-generic.rs"));
+        include!(concat!(env!("OUT_DIR"), "/types_generic.rs"));
     }
 
     mod types_nested {
-        include!(concat!(env!("OUT_DIR"), "/types-nested.rs"));
+        include!(concat!(env!("OUT_DIR"), "/types_nested.rs"));
     }
 
     mod types_non_zero {
-        include!(concat!(env!("OUT_DIR"), "/types-non-zero.rs"));
+        include!(concat!(env!("OUT_DIR"), "/types_non_zero.rs"));
     }
 
     mod types_ref {
-        include!(concat!(env!("OUT_DIR"), "/types-ref.rs"));
+        include!(concat!(env!("OUT_DIR"), "/types_ref.rs"));
     }
 }
 

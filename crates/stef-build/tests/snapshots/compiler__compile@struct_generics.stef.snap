@@ -1,0 +1,77 @@
+---
+source: crates/stef-build/tests/compiler.rs
+expression: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
+input_file: crates/stef-parser/tests/inputs/struct_generics.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode};
+/// Generic key-value pair.
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct KeyValue<K, V> {
+    pub key: K,
+    pub value: V,
+}
+#[automatically_derived]
+impl<K, V> ::stef::Encode for KeyValue<K, V>
+where
+    K: ::stef::buf::Encode,
+    V: ::stef::buf::Encode,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                (self.key).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                (self.value).encode(w);
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl<K, V> ::stef::Decode for KeyValue<K, V>
+where
+    K: ::std::fmt::Debug + ::stef::buf::Decode,
+    V: ::std::fmt::Debug + ::stef::buf::Decode,
+{
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut key: Option<K> = None;
+        let mut value: Option<V> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => key = Some(K::decode(r)?),
+                2 => value = Some(V::decode(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            key: key
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("key"),
+                })?,
+            value: value
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("value"),
+                })?,
+        })
+    }
+}
+

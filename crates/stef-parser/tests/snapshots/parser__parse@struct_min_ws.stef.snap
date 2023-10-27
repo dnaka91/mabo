@@ -1,0 +1,113 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/struct_min_ws.stef
+---
+Schema {
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: "Sample",
+                generics: Generics(
+                    [
+                        Name {
+                            value: "T",
+                            span: Span {
+                                start: 14,
+                                end: 15,
+                            },
+                        },
+                    ],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "a",
+                                span: Span {
+                                    start: 17,
+                                    end: 18,
+                                },
+                            },
+                            ty: U32,
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 22,
+                                    end: 24,
+                                },
+                            },
+                            span: Span {
+                                start: 17,
+                                end: 24,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "b",
+                                span: Span {
+                                    start: 25,
+                                    end: 26,
+                                },
+                            },
+                            ty: Bool,
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 31,
+                                    end: 33,
+                                },
+                            },
+                            span: Span {
+                                start: 25,
+                                end: 33,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "c",
+                                span: Span {
+                                    start: 34,
+                                    end: 35,
+                                },
+                            },
+                            ty: External(
+                                ExternalType {
+                                    path: [],
+                                    name: "T",
+                                    generics: [],
+                                },
+                            ),
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 37,
+                                    end: 39,
+                                },
+                            },
+                            span: Span {
+                                start: 34,
+                                end: 39,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

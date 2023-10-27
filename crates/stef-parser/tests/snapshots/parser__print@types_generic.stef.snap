@@ -1,0 +1,14 @@
+---
+source: crates/stef-parser/tests/parser.rs
+expression: "Schema :: parse(input.as_str()).unwrap()"
+input_file: crates/stef-parser/tests/inputs/types_generic.stef
+---
+struct Sample {
+    f1: vec<u32> @1,
+    f2: hash_map<u32, string> @2,
+    f3: hash_set<u32> @3,
+    f4: option<u32> @4,
+    f5: non_zero<u32> @5,
+}
+
+

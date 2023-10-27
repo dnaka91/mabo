@@ -99,10 +99,7 @@ pub(super) fn parse_segment<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause
         .recognize()
         .with_span()
         .parse_next(input)
-        .map(|(value, span)| Name {
-            value,
-            span: span.into(),
-        })
+        .map(Into::into)
         .map_err(|e| {
             e.map(|()| Cause::InvalidSegmentName {
                 at: input.location(),

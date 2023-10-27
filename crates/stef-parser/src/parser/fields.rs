@@ -12,7 +12,7 @@ use winnow::{
 };
 
 use super::{comments, ids, types, ws, Input, ParserExt, Result};
-use crate::{highlight, location, Fields, NamedField, UnnamedField};
+use crate::{highlight, location, Fields, Name, NamedField, UnnamedField};
 
 /// Encountered an invalid field declaration.
 #[derive(Debug, ParserError)]
@@ -130,7 +130,7 @@ fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause>
     (
         ws(comments::parse.map_err(Cause::from)),
         (
-            delimited(space0, parse_field_name.with_span(), ':'),
+            delimited(space0, parse_field_name, ':'),
             preceded(space0, types::parse.map_err(Cause::from)),
             preceded(space0, ids::parse.map_err(Cause::from)),
         )
@@ -139,20 +139,22 @@ fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause>
         .parse_next(input)
         .map(|(comment, ((name, ty, id), span))| NamedField {
             comment,
-            name: name.into(),
+            name,
             ty,
             id,
             span: span.into(),
         })
 }
 
-fn parse_field_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+fn parse_field_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (
         one_of('a'..='z'),
         take_while(0.., ('a'..='z', '0'..='9', '_')),
     )
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(Into::into)
         .map_err(|e| {
             e.map(|()| Cause::InvalidName {
                 at: input.location(),

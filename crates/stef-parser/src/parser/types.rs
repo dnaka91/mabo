@@ -176,8 +176,5 @@ fn parse_external_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         .recognize()
         .with_span()
         .parse_next(input)
-        .map(|(value, span)| Name {
-            value,
-            span: span.into(),
-        })
+        .map(Into::into)
 }

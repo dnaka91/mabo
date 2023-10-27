@@ -2,7 +2,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use stef_parser::{
     Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Import, Literal,
-    Module, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant, Name,
+    Module, Name, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant,
 };
 
 use super::{decode, encode};

@@ -67,10 +67,7 @@ fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         .recognize()
         .with_span()
         .parse_next(input)
-        .map(|(name, span)| Name {
-            value: name,
-            span: span.into(),
-        })
+        .map(Into::into)
         .map_err(|e| {
             e.map(|()| Cause::InvalidName {
                 at: input.location(),

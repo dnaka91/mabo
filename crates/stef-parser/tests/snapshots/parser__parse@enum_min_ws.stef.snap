@@ -13,7 +13,13 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
-                name: "Sample",
+                name: Name {
+                    value: "Sample",
+                    span: Span {
+                        start: 5,
+                        end: 11,
+                    },
+                },
                 generics: Generics(
                     [
                         Name {

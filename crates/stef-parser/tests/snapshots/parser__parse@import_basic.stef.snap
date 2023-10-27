@@ -12,7 +12,13 @@ Schema {
                     "schema",
                 ],
                 element: Some(
-                    "Sample",
+                    Name {
+                        value: "Sample",
+                        span: Span {
+                            start: 19,
+                            end: 25,
+                        },
+                    },
                 ),
             },
         ),

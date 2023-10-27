@@ -207,7 +207,7 @@ pub struct Module<'a> {
     /// Optional module-level comment.
     pub comment: Comment<'a>,
     /// Unique name of the module, within the current scope.
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// List of definitions that are scoped within this module.
     pub definitions: Vec<Definition<'a>>,
 }
@@ -264,7 +264,7 @@ pub struct Struct<'a> {
     /// Optional attributes to customize the behavior.
     pub attributes: Attributes<'a>,
     /// Unique name for this struct (within its scope).
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// Potential generics.
     pub generics: Generics<'a>,
     /// Fields of the struct, if any.
@@ -318,7 +318,7 @@ pub struct Enum<'a> {
     /// Optional attributes to customize the behavior.
     pub attributes: Attributes<'a>,
     /// Unique name for this enum, within its current scope.
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// Potential generics.
     pub generics: Generics<'a>,
     /// List of possible variants that the enum can represent.
@@ -895,7 +895,7 @@ pub struct Const<'a> {
     /// Optional element-level comment.
     pub comment: Comment<'a>,
     /// Unique identifier of this constant.
-    pub name: &'a str,
+    pub name: Name<'a>,
     /// Type of the value.
     pub ty: DataType<'a>,
     /// Literal value that this declaration represents.
@@ -952,7 +952,7 @@ pub struct Import<'a> {
     pub segments: Vec<&'a str>,
     /// Optional final element that allows to fully import the type, making it look as it would be
     /// defined in the current schema.
-    pub element: Option<&'a str>,
+    pub element: Option<Name<'a>>,
 }
 
 impl<'a> Print for Import<'a> {

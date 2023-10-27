@@ -43,12 +43,14 @@ impl From<DuplicateFieldName> for Error {
 }
 
 pub fn validate_schema(value: &Schema<'_>) -> Result<(), Error> {
+    names::validate_names_in_module(&value.definitions)?;
     value.definitions.iter().try_for_each(validate_definition)
 }
 
 fn validate_definition(value: &Definition<'_>) -> Result<(), Error> {
     match value {
         Definition::Module(m) => {
+            names::validate_names_in_module(&m.definitions)?;
             m.definitions.iter().try_for_each(validate_definition)?;
         }
         Definition::Struct(s) => {

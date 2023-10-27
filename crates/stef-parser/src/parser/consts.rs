@@ -11,7 +11,7 @@ use winnow::{
 };
 
 use super::{literals, types, Input, ParserExt, Result};
-use crate::{highlight, location, Comment, Const};
+use crate::{highlight, location, Comment, Const, Name};
 
 /// Encountered an invalid `const` declaration.
 #[derive(Debug, ParserError)]
@@ -105,13 +105,18 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Const<'i>, ParseError> 
     })
 }
 
-pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (
         one_of('A'..='Z'),
         take_while(0.., ('A'..='Z', '0'..='9', '_')),
     )
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(|(value, span)| Name {
+            value,
+            span: span.into(),
+        })
         .map_err(|e| {
             e.map(|()| Cause::InvalidName {
                 at: input.location(),

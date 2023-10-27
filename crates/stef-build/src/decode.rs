@@ -11,7 +11,7 @@ pub fn compile_struct(
         fields,
     }: &Struct<'_>,
 ) -> TokenStream {
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let (generics, generics_where) = compile_generics(generics);
     let field_vars = compile_field_vars(fields);
     let field_matches = compile_field_matches(fields);
@@ -55,7 +55,7 @@ pub fn compile_enum(
         variants,
     }: &Enum<'_>,
 ) -> TokenStream {
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let (generics, generics_where) = compile_generics(generics);
     let variants = variants.iter().map(compile_variant);
 

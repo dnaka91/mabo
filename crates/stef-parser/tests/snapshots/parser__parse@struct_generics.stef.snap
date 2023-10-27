@@ -15,7 +15,13 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
-                name: "KeyValue",
+                name: Name {
+                    value: "KeyValue",
+                    span: Span {
+                        start: 35,
+                        end: 43,
+                    },
+                },
                 generics: Generics(
                     [
                         Name {

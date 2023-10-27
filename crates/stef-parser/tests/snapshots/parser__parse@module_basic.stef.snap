@@ -10,7 +10,13 @@ Schema {
                 comment: Comment(
                     [],
                 ),
-                name: "a",
+                name: Name {
+                    value: "a",
+                    span: Span {
+                        start: 4,
+                        end: 5,
+                    },
+                },
                 definitions: [
                     Module(
                         Module {
@@ -19,7 +25,13 @@ Schema {
                                     "Inner module",
                                 ],
                             ),
-                            name: "b",
+                            name: Name {
+                                value: "b",
+                                span: Span {
+                                    start: 37,
+                                    end: 38,
+                                },
+                            },
                             definitions: [
                                 Enum(
                                     Enum {
@@ -29,7 +41,13 @@ Schema {
                                         attributes: Attributes(
                                             [],
                                         ),
-                                        name: "Sample",
+                                        name: Name {
+                                            value: "Sample",
+                                            span: Span {
+                                                start: 54,
+                                                end: 60,
+                                            },
+                                        },
                                         generics: Generics(
                                             [],
                                         ),
@@ -72,7 +90,13 @@ Schema {
                             attributes: Attributes(
                                 [],
                             ),
-                            name: "Sample",
+                            name: Name {
+                                value: "Sample",
+                                span: Span {
+                                    start: 111,
+                                    end: 117,
+                                },
+                            },
                             generics: Generics(
                                 [],
                             ),

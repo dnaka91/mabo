@@ -15,7 +15,13 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
-                name: "SampleStruct",
+                name: Name {
+                    value: "SampleStruct",
+                    span: Span {
+                        start: 25,
+                        end: 37,
+                    },
+                },
                 generics: Generics(
                     [],
                 ),
@@ -83,7 +89,13 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
-                name: "SampleEnum",
+                name: Name {
+                    value: "SampleEnum",
+                    span: Span {
+                        start: 96,
+                        end: 106,
+                    },
+                },
                 generics: Generics(
                     [],
                 ),

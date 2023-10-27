@@ -11,7 +11,7 @@ use winnow::{
 };
 
 use super::{comments, fields, generics, ids, ws, Input, ParserExt, Result};
-use crate::{highlight, Attributes, Comment, Enum, Variant};
+use crate::{highlight, Attributes, Comment, Enum, Name, Variant};
 
 /// Encountered an invalid `enum` declaration.
 #[derive(Debug, ParserError)]
@@ -109,10 +109,15 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Enum<'i>, ParseError> {
     })
 }
 
-pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (one_of('A'..='Z'), alphanumeric0)
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(|(value, span)| Name {
+            value,
+            span: span.into(),
+        })
         .map_err(|e| {
             e.map(|()| Cause::InvalidName {
                 at: input.location(),

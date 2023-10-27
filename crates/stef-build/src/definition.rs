@@ -59,7 +59,7 @@ fn compile_module(
     }: &Module<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let definitions = definitions.iter().map(compile_definition);
 
     quote! {
@@ -83,7 +83,7 @@ fn compile_struct(
     }: &Struct<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let generics = compile_generics(generics);
     let fields = compile_fields(fields, true);
 
@@ -105,7 +105,7 @@ fn compile_enum(
     }: &Enum<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let generics = compile_generics(generics);
     let variants = variants.iter().map(compile_variant);
 
@@ -165,7 +165,7 @@ fn compile_const(
     }: &Const<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name, Span::call_site());
+    let name = Ident::new(name.get(), Span::call_site());
     let ty = compile_const_data_type(ty);
     let value = compile_literal(value);
 
@@ -185,8 +185,8 @@ fn compile_import(Import { segments, element }: &Import<'_>) -> TokenStream {
             quote! {#segment}
         }
     });
-    let element = element.map(|element| {
-        let element = Ident::new(element, Span::call_site());
+    let element = element.as_ref().map(|element| {
+        let element = Ident::new(element.get(), Span::call_site());
         quote! { ::#element}
     });
 

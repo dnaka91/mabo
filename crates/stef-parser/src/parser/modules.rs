@@ -11,7 +11,7 @@ use winnow::{
 };
 
 use super::{parse_definition, ws, Input, ParserExt, Result};
-use crate::{error::ParseDefinitionError, highlight, location, Comment, Module};
+use crate::{error::ParseDefinitionError, highlight, location, Comment, Module, Name};
 
 /// Encountered an invalid `mod` declaration.
 #[derive(Debug, ParserError)]
@@ -89,13 +89,18 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Module<'i>, ParseError>
     })
 }
 
-fn parse_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
+fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (
         one_of('a'..='z'),
         take_while(0.., ('a'..='z', '0'..='9', '_')),
     )
         .recognize()
+        .with_span()
         .parse_next(input)
+        .map(|(value, span)| Name {
+            value,
+            span: span.into(),
+        })
         .map_err(|e| {
             e.map(|()| Cause::InvalidName {
                 at: input.location(),

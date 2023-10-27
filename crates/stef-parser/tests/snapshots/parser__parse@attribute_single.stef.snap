@@ -22,7 +22,13 @@ Schema {
                         },
                     ],
                 ),
-                name: "Sample",
+                name: Name {
+                    value: "Sample",
+                    span: Span {
+                        start: 35,
+                        end: 41,
+                    },
+                },
                 generics: Generics(
                     [],
                 ),

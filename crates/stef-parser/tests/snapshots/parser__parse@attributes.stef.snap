@@ -60,7 +60,13 @@ Schema {
                         },
                     ],
                 ),
-                name: "Sample",
+                name: Name {
+                    value: "Sample",
+                    span: Span {
+                        start: 111,
+                        end: 117,
+                    },
+                },
                 generics: Generics(
                     [],
                 ),

@@ -11,11 +11,13 @@ use thiserror::Error;
 use self::{
     generics::InvalidGenericType,
     names::{DuplicateFieldName, DuplicateName},
+    resolve::ResolveError,
 };
 
 mod generics;
 mod ids;
 mod names;
+mod resolve;
 
 #[derive(Debug, Diagnostic, Error)]
 pub enum Error {
@@ -28,6 +30,9 @@ pub enum Error {
     #[error("invalid generic type found")]
     #[diagnostic(transparent)]
     InvalidGeneric(#[from] InvalidGenericType),
+    #[error("type resolution failed")]
+    #[diagnostic(transparent)]
+    Resolve(#[from] ResolveError),
 }
 
 impl From<DuplicateFieldId> for Error {
@@ -42,9 +47,14 @@ impl From<DuplicateFieldName> for Error {
     }
 }
 
-pub fn validate_schema(value: &Schema<'_>) -> Result<(), Error> {
+pub fn validate_schema(name: &str, value: &Schema<'_>) -> Result<(), Error> {
     names::validate_names_in_module(&value.definitions)?;
-    value.definitions.iter().try_for_each(validate_definition)
+    value.definitions.iter().try_for_each(validate_definition)?;
+
+    let module = resolve::resolve_types(name, value);
+    resolve::resolve_module_definitions(&module)?;
+
+    Ok(())
 }
 
 fn validate_definition(value: &Definition<'_>) -> Result<(), Error> {

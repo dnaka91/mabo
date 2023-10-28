@@ -1,0 +1,16 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+input_file: crates/stef-compiler/tests/inputs/invalid/resolve_root.stef
+---
+  × type resolution failed
+  ├─▶ failed resolving type in local modules
+  ╰─▶ definition Other not found in module ::resolve_root
+   ╭─[resolve_root.stef:1:1]
+ 1 │ struct Sample {
+ 2 │     value: Other @1,
+   ·            ──┬──
+   ·              ╰── used here
+ 3 │ }
+   ╰────
+

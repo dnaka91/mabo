@@ -1,0 +1,5 @@
+struct Sample {
+    value: inner::Other @1,
+}
+
+mod inner {}

@@ -1,0 +1,5 @@
+struct Sample {
+    value: Other @1,
+}
+
+struct Other<T>(T @1)

@@ -1,0 +1,19 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+input_file: crates/stef-compiler/tests/inputs/invalid/resolve_sub_nested2.stef
+---
+  × type resolution failed
+  ├─▶ failed resolving type in local modules
+  ╰─▶ module b not found
+   ╭─[resolve_sub_nested2.stef:1:1]
+ 1 │ struct Sample {
+ 2 │     value: inner::a::b::c::Other @1,
+   ·                            ──┬──
+   ·                              ╰── used here
+ 3 │ }
+ 4 │ 
+ 5 │ mod inner {
+   ╰────
+  help: the resolution stopped at module path ::resolve_sub_nested2::inner::a
+

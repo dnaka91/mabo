@@ -26,9 +26,10 @@ fn compile_invalid_schema() {
         .build();
 
     glob!("inputs/invalid/*.stef", |path| {
+        let name = path.file_stem().unwrap().to_str().unwrap();
         let input = fs::read_to_string(path).unwrap();
         let schema = Schema::parse(input.as_str()).unwrap();
-        let result = stef_compiler::validate_schema(&schema).unwrap_err();
+        let result = stef_compiler::validate_schema(name, &schema).unwrap_err();
         let report = Report::new(result).with_source_code(NamedSource::new(
             path.file_name().unwrap().to_string_lossy(),
             input,

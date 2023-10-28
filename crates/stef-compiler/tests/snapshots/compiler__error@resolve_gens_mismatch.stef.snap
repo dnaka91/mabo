@@ -1,0 +1,21 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+input_file: crates/stef-compiler/tests/inputs/invalid/resolve_gens_mismatch.stef
+---
+  × type resolution failed
+  ├─▶ failed resolving type in local modules
+  ╰─▶ the definition has 1 generics but the use side has 0
+   ╭─[resolve_gens_mismatch.stef:1:1]
+ 1 │ struct Sample {
+ 2 │     value: Other @1,
+   ·            ──┬──
+   ·              ╰── used here
+ 3 │ }
+ 4 │ 
+ 5 │ struct Other<T>(T @1)
+   ·        ──┬──
+   ·          ╰── declared here
+   ╰────
+  help: the amount of generics must always match
+

@@ -73,6 +73,7 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
             glob: schema.to_owned(),
         })? {
             let path = schema.map_err(|e| Error::Glob { source: e })?;
+            let stem = path.file_stem().unwrap().to_str().unwrap();
 
             let input = std::fs::read_to_string(&path).map_err(|source| Error::Read {
                 source,
@@ -85,7 +86,7 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
                 file: path.clone(),
             })?;
 
-            stef_compiler::validate_schema(&schema).map_err(|e| Error::Compile {
+            stef_compiler::validate_schema(stem, &schema).map_err(|e| Error::Compile {
                 report: Report::new(e)
                     .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
                 file: path.clone(),
@@ -94,12 +95,7 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
             let code = definition::compile_schema(&schema);
             let code = prettyplease::unparse(&syn::parse2(code).unwrap());
 
-            println!("{code}");
-
-            let out_file = out_dir.join(format!(
-                "{}.rs",
-                path.file_stem().unwrap().to_str().unwrap()
-            ));
+            let out_file = out_dir.join(format!("{stem}.rs",));
 
             std::fs::write(out_file, code).unwrap();
         }

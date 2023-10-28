@@ -1,0 +1,5 @@
+struct Sample {
+    value: OTHER @1,
+}
+
+const OTHER: u32 = 1;

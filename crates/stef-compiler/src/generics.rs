@@ -34,7 +34,7 @@ pub struct UnusedGeneric {
     pub definition: Range<usize>,
 }
 
-/// Ensure all generics in a struct are unqiue and used.
+/// Ensure all generics in a struct are unique and used.
 pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGenericType> {
     validate_duplicate_generics(&value.generics)?;
 
@@ -56,7 +56,7 @@ pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGeneric
     })
 }
 
-/// Ensure all generics in an enum are unqiue and used.
+/// Ensure all generics in an enum are unique and used.
 pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType> {
     validate_duplicate_generics(&value.generics)?;
 

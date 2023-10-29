@@ -1,0 +1,12 @@
+[default.extend-identifiers]
+froms = "froms"
+relateds = "relateds"
+vALUE = "vALUE"
+
+[type.cargo-insta]
+extend-glob = ["*.snap", "*.snap.new"]
+check-file = false
+
+[type.changelog]
+extend-glob = ["CHANGELOG.md"]
+check-file = false

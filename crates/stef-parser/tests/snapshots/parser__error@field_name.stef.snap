@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap_err()"
+description: "struct Sample {\n    1value: u32 @1,\n}"
 input_file: crates/stef-parser/tests/inputs/invalid/field_name.stef
 ---
 stef::parse::struct_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseStructError.html)

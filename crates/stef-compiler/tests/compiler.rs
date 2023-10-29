@@ -3,7 +3,7 @@ use std::{
     fs,
 };
 
-use insta::{assert_snapshot, glob};
+use insta::{assert_snapshot,with_settings, glob};
 use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, NamedSource, Report, ReportHandler};
 use stef_parser::Schema;
 
@@ -32,13 +32,14 @@ fn compile_invalid_schema() {
         let result = stef_compiler::validate_schema(name, &schema).unwrap_err();
         let report = Report::new(result).with_source_code(NamedSource::new(
             path.file_name().unwrap().to_string_lossy(),
-            input,
+            input.clone(),
         ));
 
-        assert_snapshot!(
-            "error",
-            Wrapper(&handler, &*report).to_string(),
-            stringify!(stef_compiler::validate_schema(&schema).unwrap_err())
-        );
+        with_settings!({
+            description => input.trim(),
+            omit_expression => true,
+        }, {
+            assert_snapshot!("error", Wrapper(&handler, &*report).to_string());
+        });
     });
 }

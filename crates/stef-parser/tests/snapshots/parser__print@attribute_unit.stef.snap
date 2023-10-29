@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap()"
+description: "#[deprecated]\nstruct Sample"
 input_file: crates/stef-parser/tests/inputs/attribute_unit.stef
 ---
 #[deprecated]

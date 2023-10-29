@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Hello world!\nmod sample {}"
+description: "/// Hello world!\nmod sample {}"
 input_file: crates/stef-build/tests/inputs_extra/module.stef
 ---
 #[allow(unused_imports)]

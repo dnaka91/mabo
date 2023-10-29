@@ -1,6 +1,6 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
-expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+description: "struct Sample {\n    value: inner::a::b::c::Other @1,\n}\n\nmod inner {\n    mod a {\n        mod d {\n            mod c {}\n        }\n    }\n}"
 input_file: crates/stef-compiler/tests/inputs/invalid/resolve_sub_nested2.stef
 ---
   × type resolution failed

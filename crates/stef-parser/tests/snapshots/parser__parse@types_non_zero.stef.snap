@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap()"
+description: "struct Sample {\n    f01: non_zero<u8> @1,\n    f02: non_zero<u16> @2,\n    f03: non_zero<u32> @3,\n    f04: non_zero<u64> @4,\n    f05: non_zero<u128> @5,\n    f06: non_zero<i8> @6,\n    f07: non_zero<i16> @7,\n    f08: non_zero<i32> @8,\n    f09: non_zero<i64> @9,\n    f10: non_zero<i128> @10,\n    f11: non_zero<string> @11,\n    f12: non_zero<bytes> @12,\n    f13: non_zero<vec<string>> @13,\n    f14: non_zero<hash_map<string, bytes>> @14,\n    f15: non_zero<hash_set<string>> @15,\n}"
 input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
 ---
 Schema {

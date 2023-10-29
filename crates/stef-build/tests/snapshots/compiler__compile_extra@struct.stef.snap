@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Hello world!\nstruct Sample {\n    field1: u32 @1,\n    field2: bytes @2,\n    field3: (bool, [i16; 4]) @3,\n}"
+description: "/// Hello world!\nstruct Sample {\n    field1: u32 @1,\n    field2: bytes @2,\n    field3: (bool, [i16; 4]) @3,\n}"
 input_file: crates/stef-build/tests/inputs_extra/struct.stef
 ---
 #[allow(unused_imports)]

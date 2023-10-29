@@ -3,7 +3,7 @@ use std::{
     fs,
 };
 
-use insta::{assert_snapshot, glob};
+use insta::{assert_snapshot, glob, with_settings};
 use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, ReportHandler};
 use stef_parser::Schema;
 
@@ -13,16 +13,13 @@ fn parse_schema() {
         let input = fs::read_to_string(path).unwrap();
         let value = Schema::parse(input.as_str()).unwrap();
 
-        assert_snapshot!(
-            "parse",
-            format!("{value:#?}"),
-            stringify!(Schema::parse(input.as_str()).unwrap())
-        );
-        assert_snapshot!(
-            "print",
-            value.to_string(),
-            stringify!(Schema::parse(input.as_str()).unwrap())
-        );
+        with_settings!({
+            description => input.trim(),
+            omit_expression => true,
+        }, {
+            assert_snapshot!("parse", format!("{value:#?}"));
+            assert_snapshot!("print", value.to_string());
+        });
     });
 }
 
@@ -47,10 +44,11 @@ fn parse_invalid_schema() {
         let input = fs::read_to_string(path).unwrap();
         let value = Schema::parse(input.as_str()).unwrap_err();
 
-        insta::assert_snapshot!(
-            "error",
-            Wrapper(&handler, &*value).to_string(),
-            stringify!(Schema::parse(input.as_str()).unwrap_err())
-        );
+        with_settings!({
+            description => input.trim(),
+            omit_expression => true,
+        }, {
+            assert_snapshot!("error", Wrapper(&handler, &*value).to_string());
+        });
     });
 }

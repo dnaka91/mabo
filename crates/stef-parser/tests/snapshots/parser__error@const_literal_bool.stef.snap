@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap_err()"
+description: "const VALUE: bool = truze;"
 input_file: crates/stef-parser/tests/inputs/invalid/const_literal_bool.stef
 ---
 stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseConstError.html)

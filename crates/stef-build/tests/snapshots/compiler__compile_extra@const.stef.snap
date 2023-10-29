@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// A bool.\nconst BOOL: bool = true;\n/// An integer.\nconst INT: u32 = 100;\n/// A float.\nconst FLOAT: f64 = 5.0;\n/// A string.\nconst STRING: string = \"hello\";\n/// Some bytes.\nconst BYTES: bytes = [1, 2, 3];"
+description: "/// A bool.\nconst BOOL: bool = true;\n/// An integer.\nconst INT: u32 = 100;\n/// A float.\nconst FLOAT: f64 = 5.0;\n/// A string.\nconst STRING: string = \"hello\";\n/// Some bytes.\nconst BYTES: bytes = [1, 2, 3];"
 input_file: crates/stef-build/tests/inputs_extra/const.stef
 ---
 #[allow(unused_imports)]

@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap()"
+description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n    }\n}"
 input_file: crates/stef-parser/tests/inputs/module_basic.stef
 ---
 mod a {

@@ -1,6 +1,6 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
-expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+description: "struct Sample<T> {\n    value: string @1,\n}"
 input_file: crates/stef-compiler/tests/inputs/invalid/struct_gen_unused.stef
 ---
   × invalid generic type found

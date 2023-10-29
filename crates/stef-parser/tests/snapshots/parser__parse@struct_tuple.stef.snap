@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap()"
+description: "/// Basic struct.\nstruct Sample(u32 @1, bool @2)"
 input_file: crates/stef-parser/tests/inputs/struct_tuple.stef
 ---
 Schema {

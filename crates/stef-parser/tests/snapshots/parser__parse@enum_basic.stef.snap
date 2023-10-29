@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap()"
+description: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}"
 input_file: crates/stef-parser/tests/inputs/enum_basic.stef
 ---
 Schema {

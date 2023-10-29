@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Hello world!\ntype Sample = String;"
+description: "/// Hello world!\ntype Sample = String;"
 input_file: crates/stef-build/tests/inputs_extra/alias.stef
 ---
 #[allow(unused_imports)]

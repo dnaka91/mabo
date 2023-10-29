@@ -1,6 +1,6 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
-expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+description: "enum Sample<T, T> {\n    One @1,\n    Two { value: T @1 } @2,\n}"
 input_file: crates/stef-compiler/tests/inputs/invalid/enum_gen_dup.stef
 ---
   × invalid generic type found

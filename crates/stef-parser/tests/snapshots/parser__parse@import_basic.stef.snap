@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap()"
+description: "use other::schema::Sample;\nuse second::submodule;"
 input_file: crates/stef-parser/tests/inputs/import_basic.stef
 ---
 Schema {

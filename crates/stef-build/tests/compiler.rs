@@ -1,6 +1,6 @@
 use std::fs;
 
-use insta::{assert_snapshot, glob};
+use insta::{assert_snapshot, glob, with_settings};
 use stef_parser::Schema;
 
 #[test]
@@ -11,7 +11,12 @@ fn compile_schema() {
         let value = stef_build::compile_schema(&value);
         let value = prettyplease::unparse(&syn::parse2(value.clone()).unwrap());
 
-        assert_snapshot!("compile", format!("{value}"), input.trim());
+        with_settings!({
+            description => input.trim(),
+            omit_expression => true,
+        }, {
+            assert_snapshot!("compile", value);
+        });
     });
 }
 
@@ -23,6 +28,11 @@ fn compile_schema_extra() {
         let value = stef_build::compile_schema(&value);
         let value = prettyplease::unparse(&syn::parse2(value.clone()).unwrap());
 
-        assert_snapshot!("compile_extra", format!("{value}"), input.trim());
+        with_settings!({
+            description => input.trim(),
+            omit_expression => true,
+        }, {
+            assert_snapshot!("compile_extra", value);
+        });
     });
 }

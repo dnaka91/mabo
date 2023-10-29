@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap_err()"
+description: type sImple = Simple;
 input_file: crates/stef-parser/tests/inputs/invalid/alias_name.stef
 ---
 stef::parse::alias_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseAliasError.html)

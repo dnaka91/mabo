@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-expression: "Schema :: parse(input.as_str()).unwrap_err()"
+description: "enum sample {\n    One @1,\n}"
 input_file: crates/stef-parser/tests/inputs/invalid/enum_name.stef
 ---
 stef::parse::enum_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct.ParseEnumError.html)

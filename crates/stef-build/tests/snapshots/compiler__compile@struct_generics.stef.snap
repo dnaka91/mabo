@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
+description: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
 input_file: crates/stef-parser/tests/inputs/struct_generics.stef
 ---
 #[allow(unused_imports)]

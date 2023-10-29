@@ -1,6 +1,6 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
-expression: "stef_compiler :: validate_schema(& schema).unwrap_err()"
+description: "struct Sample {\n    value: OTHER @1,\n}\n\nconst OTHER: u32 = 1;"
 input_file: crates/stef-compiler/tests/inputs/invalid/resolve_kind_mismatch.stef
 ---
   × type resolution failed

@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Hello world!\nenum Sample {\n    Variant1 @1,\n    Variant2(u32 @1, u8 @2) @2,\n    Variant3 {\n        field1: string @1,\n        field2: vec<bool> @2,\n    } @3,\n}"
+description: "/// Hello world!\nenum Sample {\n    Variant1 @1,\n    Variant2(u32 @1, u8 @2) @2,\n    Variant3 {\n        field1: string @1,\n        field2: vec<bool> @2,\n    } @3,\n}"
 input_file: crates/stef-build/tests/inputs_extra/enum.stef
 ---
 #[allow(unused_imports)]

@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-expression: "/// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n       Two  (   u32   @1,     u64     @2)    @2,\n\n            Three     {\n\n                    field1:    u32      @1,\n\n                    field2:    bool     @2,\n\n            }    @3,\n\n }"
+description: "/// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n       Two  (   u32   @1,     u64     @2)    @2,\n\n            Three     {\n\n                    field1:    u32      @1,\n\n                    field2:    bool     @2,\n\n            }    @3,\n\n }"
 input_file: crates/stef-parser/tests/inputs/enum_many_ws.stef
 ---
 #[allow(unused_imports)]

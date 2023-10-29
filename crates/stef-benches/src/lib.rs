@@ -99,5 +99,20 @@ pub fn generate_schema(count: usize) -> String {
         writeln!(&mut input, "type Alias{i} = SampleNamed;").unwrap();
     }
 
+    input.push_str("\nmod resolve {\n");
+    writeln!(&mut input, "    struct Sample {{").unwrap();
+    for i in 1..=count {
+        writeln!(&mut input, "        field{i:05}: Type{i:05} @{i},").unwrap();
+    }
+    writeln!(&mut input, "    }}").unwrap();
+    for i in 1..=count {
+        writeln!(&mut input, "    struct Type{i:05} {{").unwrap();
+        writeln!(&mut input, "        value1: string @1,").unwrap();
+        writeln!(&mut input, "        value2: i64 @2,").unwrap();
+        writeln!(&mut input, "        value3: u64 @3,").unwrap();
+        writeln!(&mut input, "    }}").unwrap();
+    }
+    input.push_str("}\n");
+
     input
 }

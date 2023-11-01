@@ -8,10 +8,21 @@ fn main() {
 }
 
 #[divan::bench(consts = [1, 10, 100, 1000])]
-fn large_schema<const N: usize>(bencher: Bencher) {
+fn validate_large_schema<const N: usize>(bencher: Bencher) {
     let schema = stef_benches::generate_schema(N);
     let schema = stef_parser::Schema::parse(&schema).unwrap();
-    stef_compiler::validate_schema("bench", &schema).unwrap();
+    stef_compiler::validate_schema(&schema).unwrap();
 
-    bencher.bench(|| stef_compiler::validate_schema("bench", black_box(&schema)))
+    bencher.bench(|| stef_compiler::validate_schema(black_box(&schema)))
+}
+
+#[divan::bench(consts = [1, 10, 100, 1000])]
+fn resolve_large_schema<const N: usize>(bencher: Bencher) {
+    let schema = stef_benches::generate_schema(N);
+    let schema = stef_parser::Schema::parse(&schema).unwrap();
+    stef_compiler::validate_schema(&schema).unwrap();
+
+    let list = &[("bench", black_box(&schema))];
+
+    bencher.bench(|| stef_compiler::resolve_schemas(black_box(list)))
 }

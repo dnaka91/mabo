@@ -1,7 +1,7 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "enum Sample<T> {\n    One @1,\n    Two { value: string @1 } @2,\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/enum_gen_unused.stef
+input_file: crates/stef-compiler/tests/inputs/validate/enum_gen_unused.stef
 ---
   × invalid generic type found
   ├─▶ unused generic type argument found

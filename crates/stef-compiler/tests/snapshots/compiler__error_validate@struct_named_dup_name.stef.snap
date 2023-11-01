@@ -1,7 +1,7 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "struct Sample {\n    field: string @1,\n    field: string @2,\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/struct_named_dup_name.stef
+input_file: crates/stef-compiler/tests/inputs/validate/struct_named_dup_name.stef
 ---
   × duplicate name found
   ├─▶ duplicate name in a field

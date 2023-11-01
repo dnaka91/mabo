@@ -1,12 +1,12 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "struct Sample {\n    value: Other @1,\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/resolve_root.stef
+input_file: crates/stef-compiler/tests/inputs/resolve/local_root.stef
 ---
   × type resolution failed
   ├─▶ failed resolving type in local modules
-  ╰─▶ definition Other not found in module ::resolve_root
-   ╭─[resolve_root.stef:1:1]
+  ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭test❬Y❭
+   ╭─[local_root.stef:1:1]
  1 │ struct Sample {
  2 │     value: Other @1,
    ·            ──┬──

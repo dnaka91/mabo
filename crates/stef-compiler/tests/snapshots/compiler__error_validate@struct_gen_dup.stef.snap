@@ -1,7 +1,7 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "struct Sample<T, T> {\n    value: T @1,\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/struct_gen_dup.stef
+input_file: crates/stef-compiler/tests/inputs/validate/struct_gen_dup.stef
 ---
   × invalid generic type found
   ├─▶ duplicate generic type name found

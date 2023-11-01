@@ -66,6 +66,8 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
     .ok();
 
     let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
+    let mut inputs = Vec::new();
+    let mut validated = Vec::new();
 
     for schema in schemas.iter().map(AsRef::as_ref) {
         for schema in glob::glob(schema).map_err(|source| Error::Pattern {
@@ -73,32 +75,50 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
             glob: schema.to_owned(),
         })? {
             let path = schema.map_err(|e| Error::Glob { source: e })?;
-            let stem = path.file_stem().unwrap().to_str().unwrap();
 
             let input = std::fs::read_to_string(&path).map_err(|source| Error::Read {
                 source,
                 file: path.clone(),
             })?;
 
-            let schema = Schema::parse(&input).map_err(|e| Error::Parse {
-                report: e
-                    .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
-                file: path.clone(),
-            })?;
-
-            stef_compiler::validate_schema(stem, &schema).map_err(|e| Error::Compile {
-                report: Report::new(e)
-                    .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
-                file: path.clone(),
-            })?;
-
-            let code = definition::compile_schema(&schema);
-            let code = prettyplease::unparse(&syn::parse2(code).unwrap());
-
-            let out_file = out_dir.join(format!("{stem}.rs",));
-
-            std::fs::write(out_file, code).unwrap();
+            inputs.push((path, input));
         }
+    }
+
+    for (path, input) in &inputs {
+        let stem = path.file_stem().unwrap().to_str().unwrap();
+
+        let schema = Schema::parse(input).map_err(|e| Error::Parse {
+            report: e.with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
+            file: path.clone(),
+        })?;
+
+        stef_compiler::validate_schema(&schema).map_err(|e| Error::Compile {
+            report: Report::new(e)
+                .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
+            file: path.clone(),
+        })?;
+
+        validated.push((stem, schema));
+    }
+
+    let validated = validated
+        .iter()
+        .map(|(name, schema)| (*name, schema))
+        .collect::<Vec<_>>();
+
+    stef_compiler::resolve_schemas(&validated).map_err(|e| Error::Compile {
+        report: Report::new(e),
+        file: PathBuf::new(),
+    })?;
+
+    for (stem, schema) in validated {
+        let code = definition::compile_schema(schema);
+        let code = prettyplease::unparse(&syn::parse2(code).unwrap());
+
+        let out_file = out_dir.join(format!("{stem}.rs",));
+
+        std::fs::write(out_file, code).unwrap();
     }
 
     Ok(())

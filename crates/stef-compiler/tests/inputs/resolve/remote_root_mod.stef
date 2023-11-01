@@ -1,0 +1,5 @@
+use datetime;
+
+struct Sample {
+    value: datetime::Other @1,
+}

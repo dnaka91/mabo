@@ -1,7 +1,7 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "enum Sample {\n    One @1,\n    One @2,\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/enum_variant_dup_name.stef
+input_file: crates/stef-compiler/tests/inputs/validate/enum_variant_dup_name.stef
 ---
   × duplicate name found
   ├─▶ duplicate name in an enum variant

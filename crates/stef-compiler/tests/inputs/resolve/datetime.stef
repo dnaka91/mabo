@@ -1,0 +1,11 @@
+struct Date {
+    year: u32 @1,
+    month: u8 @2,
+    day: u8 @3,
+}
+
+mod timing {
+    const UNIX_EPOCH: u64 = 0;
+
+    struct Timestamp(u64 @1)
+}

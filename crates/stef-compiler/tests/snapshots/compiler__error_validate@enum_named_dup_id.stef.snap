@@ -1,7 +1,7 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "enum Sample {\n    One @1,\n    Two {\n        field1: string @1,\n        field2: string @1,\n    } @2,\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/enum_named_dup_id.stef
+input_file: crates/stef-compiler/tests/inputs/validate/enum_named_dup_id.stef
 ---
   × duplicate ID found
   ├─▶ duplicate ID in a field

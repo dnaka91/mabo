@@ -1,12 +1,12 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "struct Sample {\n    value: inner::a::b::c::Other @1,\n}\n\nmod inner {\n    mod a {\n        mod d {\n            mod c {}\n        }\n    }\n}"
-input_file: crates/stef-compiler/tests/inputs/invalid/resolve_sub_nested2.stef
+input_file: crates/stef-compiler/tests/inputs/resolve/local_sub_nested2.stef
 ---
   × type resolution failed
   ├─▶ failed resolving type in local modules
-  ╰─▶ module b not found
-   ╭─[resolve_sub_nested2.stef:1:1]
+  ╰─▶ module ❬Y❭b❬Y❭ not found
+   ╭─[local_sub_nested2.stef:1:1]
  1 │ struct Sample {
  2 │     value: inner::a::b::c::Other @1,
    ·                            ──┬──
@@ -15,5 +15,5 @@ input_file: crates/stef-compiler/tests/inputs/invalid/resolve_sub_nested2.stef
  4 │ 
  5 │ mod inner {
    ╰────
-  help: the resolution stopped at module path ::resolve_sub_nested2::inner::a
+  help: the resolution stopped at module path ❬Y❭test::inner::a❬Y❭
 

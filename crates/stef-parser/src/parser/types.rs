@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
-    ascii::{alphanumeric0, dec_uint, space0},
+    ascii::{dec_uint, space0},
     combinator::{
         alt, cut_err, fail, opt, preceded, separated1, separated_pair, success, terminated,
     },
@@ -172,7 +172,10 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
 }
 
 fn parse_external_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
-    (one_of('A'..='Z'), alphanumeric0)
+    (
+        one_of('A'..='Z'),
+        take_while(0.., ('a'..='z', 'A'..='Z', '0'..='9', '_')),
+    )
         .recognize()
         .with_span()
         .parse_next(input)

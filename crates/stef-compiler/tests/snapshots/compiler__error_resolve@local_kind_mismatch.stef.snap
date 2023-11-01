@@ -1,12 +1,12 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "struct Sample {\n    value: OTHER @1,\n}\n\nconst OTHER: u32 = 1;"
-input_file: crates/stef-compiler/tests/inputs/invalid/resolve_kind_mismatch.stef
+input_file: crates/stef-compiler/tests/inputs/resolve/local_kind_mismatch.stef
 ---
   × type resolution failed
   ├─▶ failed resolving type in local modules
-  ╰─▶ definition found, but a const can't be referenced
-   ╭─[resolve_kind_mismatch.stef:1:1]
+  ╰─▶ definition found, but a ❬B❭constant❬B❭ can't be referenced
+   ╭─[local_kind_mismatch.stef:1:1]
  1 │ struct Sample {
  2 │     value: OTHER @1,
    ·            ──┬──

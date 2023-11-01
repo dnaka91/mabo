@@ -1,0 +1,18 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+description: "use datetime::timing;\n\nstruct Sample {\n    value: timing::Other @1,\n}"
+input_file: crates/stef-compiler/tests/inputs/resolve/remote_sub.stef
+---
+  × type resolution failed
+  ├─▶ failed resolving type in remote modules
+  ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭datetime::timing❬Y❭
+   ╭─[remote_sub.stef:1:1]
+ 1 │ use datetime::timing;
+ 2 │ 
+ 3 │ struct Sample {
+ 4 │     value: timing::Other @1,
+   ·                    ──┬──
+   ·                      ╰── used here
+ 5 │ }
+   ╰────
+

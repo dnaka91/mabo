@@ -1,0 +1,19 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+description: "use datetime::timing;\n\nstruct Sample {\n    value: timing::UNIX_EPOCH @1,\n}"
+input_file: crates/stef-compiler/tests/inputs/resolve/remote_kind_mismatch.stef
+---
+  × type resolution failed
+  ├─▶ failed resolving type in remote modules
+  ╰─▶ definition found, but a ❬B❭constant❬B❭ can't be referenced
+   ╭─[remote_kind_mismatch.stef:1:1]
+ 1 │ use datetime::timing;
+ 2 │ 
+ 3 │ struct Sample {
+ 4 │     value: timing::UNIX_EPOCH @1,
+   ·                    ─────┬────
+   ·                         ╰── used here
+ 5 │ }
+   ╰────
+  help: only struct and enum definitions can be used
+

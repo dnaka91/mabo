@@ -1,0 +1,5 @@
+use datetime::timing;
+
+struct Sample {
+    value: timing::UNIX_EPOCH @1,
+}

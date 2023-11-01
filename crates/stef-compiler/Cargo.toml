@@ -11,9 +11,13 @@ license.workspace = true
 
 [dependencies]
 miette.workspace = true
+owo-colors.workspace = true
 stef-parser = { path = "../stef-parser" }
 thiserror.workspace = true
 
 [dev-dependencies]
 insta.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
+
+[features]
+debug = []

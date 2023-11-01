@@ -28,5 +28,5 @@ stef-compiler = { path = "../stef-compiler" }
 stef-parser = { path = "../stef-parser" }
 
 [dev-dependencies]
-divan = "0.1.0"
+divan = "0.1.2"
 indoc.workspace = true

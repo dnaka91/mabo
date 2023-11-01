@@ -1,12 +1,12 @@
 ---
 source: crates/stef-compiler/tests/compiler.rs
 description: "struct Sample {\n    value: inner::Other @1,\n}\n\nmod inner {}"
-input_file: crates/stef-compiler/tests/inputs/invalid/resolve_sub.stef
+input_file: crates/stef-compiler/tests/inputs/resolve/local_sub.stef
 ---
   × type resolution failed
   ├─▶ failed resolving type in local modules
-  ╰─▶ definition Other not found in module ::resolve_sub::inner
-   ╭─[resolve_sub.stef:1:1]
+  ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭test::inner❬Y❭
+   ╭─[local_sub.stef:1:1]
  1 │ struct Sample {
  2 │     value: inner::Other @1,
    ·                   ──┬──

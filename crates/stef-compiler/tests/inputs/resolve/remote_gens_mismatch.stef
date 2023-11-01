@@ -1,0 +1,5 @@
+use datetime::timing::Timestamp;
+
+struct Sample {
+    value: Timestamp<u32> @1,
+}

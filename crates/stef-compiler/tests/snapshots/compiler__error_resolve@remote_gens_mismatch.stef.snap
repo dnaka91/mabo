@@ -1,0 +1,19 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+description: "use datetime::timing::Timestamp;\n\nstruct Sample {\n    value: Timestamp<u32> @1,\n}"
+input_file: crates/stef-compiler/tests/inputs/resolve/remote_gens_mismatch.stef
+---
+  × type resolution failed
+  ├─▶ failed resolving type in remote modules
+  ╰─▶ the definition has ❬Y❭0❬Y❭ generics but the use side has ❬Y❭1❬Y❭
+   ╭─[remote_gens_mismatch.stef:1:1]
+ 1 │ use datetime::timing::Timestamp;
+ 2 │ 
+ 3 │ struct Sample {
+ 4 │     value: Timestamp<u32> @1,
+   ·            ────┬────
+   ·                ╰── used here
+ 5 │ }
+   ╰────
+  help: the amount of generics must always match
+

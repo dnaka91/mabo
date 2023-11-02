@@ -31,14 +31,14 @@ body = """
 
 - {% if commit.breaking %}[**breaking**] {% endif -%}
   {% if commit.scope %}_{{ commit.scope }}_: {% endif -%}
-  {{ commit.message | upper_first }} ([{{ id }}]({{ url }}))
+  {{ commit.message | escape | upper_first }} ([{{ id }}]({{ url }}))
     {%- if commit.body %}
     {{ commit.body | indent(prefix="  > ", first=true, blank=true) }}
     {%- endif -%}
 {% endmacro -%}
 
 {% for group, commits in commits | group_by(attribute="group") %}
-    ### {{ group | upper_first }}
+    ### {{ group | striptags | trim | upper_first }}
 
     {% for commit in commits | filter(attribute="scope") | sort(attribute="scope") -%}
         {{ self::commit(commit=commit) }}
@@ -60,7 +60,6 @@ footer = """
 # postprocessors
 postprocessors = [
     { pattern = '<REPO>', replace = "https://github.com/dnaka91/stef" }, # replace repository URL
-    { pattern = '<!-- \d+ -->', replace = "" },
 ]
 
 [git]
@@ -73,6 +72,7 @@ split_commits = false
 # regex for preprocessing the commit messages
 commit_preprocessors = [
     { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](<REPO>/issues/${2}))" }, # replace issue numbers
+    { pattern = ".*", replace_command = "typos --write-changes -" }, # fix commit message typos
 ]
 # regex for parsing and grouping commits
 commit_parsers = [
@@ -84,10 +84,7 @@ commit_parsers = [
     { message = "^style", group = "<!-- 5 -->🎨 Styling" },
     { message = "^test", group = "<!-- 6 -->🧪 Testing" },
     { message = '^chore\(release\): [pP]repare for', skip = true },
-    { message = '^chore\(deps\)', skip = true },
-    { message = '^chore\(pr\)', skip = true },
-    { message = '^chore\(pull\)', skip = true },
-    { message = '^chore\(fmt\)', skip = true },
+    { message = '^chore\((deps|pr|pull|fmt)\)', skip = true },
     { message = "^chore|ci", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
     { body = ".*security", group = "<!-- 8 -->🛡️ Security" },
     { message = "^revert", group = "<!-- 9 -->◀️ Revert" },

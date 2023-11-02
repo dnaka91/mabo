@@ -124,7 +124,6 @@ fn compile_variant(
         comment,
         name,
         fields,
-        id: _,
         ..
     }: &Variant<'_>,
 ) -> TokenStream {
@@ -219,7 +218,6 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
                      comment,
                      name,
                      ty,
-                     id: _,
                      ..
                  }| {
                     let comment = compile_comment(comment);
@@ -238,9 +236,10 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
             } }
         }
         Fields::Unnamed(unnamed) => {
-            let fields = unnamed.iter().map(|UnnamedField { ty, id: _, .. }| {
+            let fields = unnamed.iter().map(|UnnamedField { ty, .. }| {
+                let public = for_struct.then(|| quote! { pub });
                 let ty = compile_data_type(ty);
-                quote! { #ty }
+                quote! { #public #ty }
             });
 
             if for_struct {

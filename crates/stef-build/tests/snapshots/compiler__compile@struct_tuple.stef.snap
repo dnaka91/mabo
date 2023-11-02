@@ -8,7 +8,7 @@ use ::stef::buf::{Decode, Encode};
 /// Basic struct.
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
-pub struct Sample(u32, bool);
+pub struct Sample(pub u32, pub bool);
 #[automatically_derived]
 impl ::stef::Encode for Sample {
     #[allow(

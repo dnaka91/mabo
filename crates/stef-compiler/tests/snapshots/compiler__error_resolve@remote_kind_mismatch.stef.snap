@@ -17,3 +17,16 @@ input_file: crates/stef-compiler/tests/inputs/resolve/remote_kind_mismatch.stef
    ╰────
   help: only struct and enum definitions can be used
 
+Error:   × the definition is a ❬B❭constant❬B❭, which can't be referenced
+    ╭─[resolve/datetime.stef:5:1]
+  5 │ }
+  6 │ 
+  7 │ mod timing {
+  8 │     const UNIX_EPOCH: u64 = 0;
+    ·           ─────┬────
+    ·                ╰── declared here
+  9 │ 
+ 10 │     struct Timestamp(u64 @1)
+ 11 │ }
+    ╰────
+

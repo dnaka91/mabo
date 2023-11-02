@@ -7,7 +7,7 @@ stef::parse::mod_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct
 
   × Failed to parse id declaration
   ╰─▶ Invalid module name
-   ╭────
+   ╭─[invalid/mod_name.stef:1:1]
  1 │ mod Sample {}
    · ──────┬──────
    ·       ╰── In this declaration
@@ -17,7 +17,7 @@ stef::parse::mod_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struct
 Error: stef::parse::module::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseModuleCause.html#variant.InvalidName)
 
   × Invalid module name
-   ╭────
+   ╭─[invalid/mod_name.stef:1:1]
  1 │ mod Sample {}
    ·     ▲
    ·     ╰── Problematic character

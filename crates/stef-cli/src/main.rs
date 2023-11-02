@@ -51,7 +51,8 @@ fn check(patterns: Vec<String>) -> Result<()> {
                 .into_diagnostic()
                 .wrap_err_with(|| format!("Failed reading {entry:?}"))?;
 
-            if let Err(e) = Schema::parse(&buf).wrap_err("Failed parsing schema file") {
+            if let Err(e) = Schema::parse(&buf, Some(&entry)).wrap_err("Failed parsing schema file")
+            {
                 eprintln!("{e:?}");
             }
         }
@@ -68,13 +69,14 @@ fn format(patterns: Vec<String>) -> Result<()> {
         {
             let entry = entry.into_diagnostic().wrap_err("Failed reading entry")?;
             let buf = fs::read_to_string(&entry).into_diagnostic()?;
-            let schema = match Schema::parse(&buf).wrap_err("Failed parsing schema file") {
-                Ok(schema) => schema,
-                Err(e) => {
-                    eprintln!("{e:?}");
-                    continue;
-                }
-            };
+            let schema =
+                match Schema::parse(&buf, Some(&entry)).wrap_err("Failed parsing schema file") {
+                    Ok(schema) => schema,
+                    Err(e) => {
+                        eprintln!("{e:?}");
+                        continue;
+                    }
+                };
 
             let formatted = schema.to_string();
 

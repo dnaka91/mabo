@@ -4,6 +4,10 @@ description: "use other::schema::Sample;\nuse second::submodule;"
 input_file: crates/stef-parser/tests/inputs/import_basic.stef
 ---
 Schema {
+    path: Some(
+        "import_basic.stef",
+    ),
+    source: "use other::schema::Sample;\nuse second::submodule;\n",
     definitions: [
         Import(
             Import {

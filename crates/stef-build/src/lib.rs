@@ -88,14 +88,13 @@ pub fn compile(schemas: &[impl AsRef<str>], _includes: &[impl AsRef<Path>]) -> R
     for (path, input) in &inputs {
         let stem = path.file_stem().unwrap().to_str().unwrap();
 
-        let schema = Schema::parse(input).map_err(|e| Error::Parse {
-            report: e.with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
+        let schema = Schema::parse(input, Some(path)).map_err(|e| Error::Parse {
+            report: Report::new(e),
             file: path.clone(),
         })?;
 
         stef_compiler::validate_schema(&schema).map_err(|e| Error::Compile {
-            report: Report::new(e)
-                .with_source_code(NamedSource::new(path.display().to_string(), input.clone())),
+            report: Report::new(e),
             file: path.clone(),
         })?;
 

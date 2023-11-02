@@ -4,6 +4,10 @@ description: "#[deprecated=\"don't use\",compress]\n#[validate(in_range(min=100,
 input_file: crates/stef-parser/tests/inputs/attributes_min_ws.stef
 ---
 Schema {
+    path: Some(
+        "attributes_min_ws.stef",
+    ),
+    source: "#[deprecated=\"don't use\",compress]\n#[validate(in_range(min=100,max=200),non_empty)]\nstruct Sample\n",
     definitions: [
         Struct(
             Struct {

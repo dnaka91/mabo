@@ -8,7 +8,7 @@
 //! Parse a basic `STEF` schema and print it back out.
 //!
 //! ```
-//! let schema = stef_parser::Schema::parse("struct Sample(u32 @1)").unwrap();
+//! let schema = stef_parser::Schema::parse("struct Sample(u32 @1)", None).unwrap();
 //!
 //! // Pretty print the schema itself
 //! println!("{schema}");
@@ -23,11 +23,14 @@
 use std::{
     fmt::{self, Display},
     ops::Range,
+    path::{Path, PathBuf},
 };
 
 pub use miette::{Diagnostic, LabeledSpan};
-use miette::{IntoDiagnostic, Report, Result};
+use miette::{IntoDiagnostic, NamedSource, Result};
 use winnow::Parser;
+
+use self::error::ParseSchemaError;
 
 pub mod error;
 mod ext;
@@ -88,8 +91,8 @@ pub trait Spanned {
 ///
 /// Fails if the schema is not proper. The returned error will try to describe the problem as
 /// precise as possible.
-pub fn from_str(schema: &str) -> Result<Schema<'_>> {
-    Schema::parse(schema)
+pub fn from_str<'a>(schema: &'a str, path: Option<&Path>) -> Result<Schema<'a>> {
+    Schema::parse(schema, path).into_diagnostic()
 }
 
 /// Shorthand for calling [`Schema::parse`], but converts the byte slice to valid [`&str`] first.
@@ -98,14 +101,21 @@ pub fn from_str(schema: &str) -> Result<Schema<'_>> {
 ///
 /// Fails if the schema is not proper. The returned error will try to describe the problem as
 /// precise as possible. Or, in case the given bytes are not valid UTF-8.
-pub fn from_slice(schema: &[u8]) -> Result<Schema<'_>> {
+pub fn from_slice<'a>(schema: &'a [u8], path: Option<&Path>) -> Result<Schema<'a>> {
     let s = std::str::from_utf8(schema).into_diagnostic()?;
-    Schema::parse(s)
+    Schema::parse(s, path).into_diagnostic()
 }
 
 /// Uppermost element, describing a single _`STEF` Schema_ file.
 #[derive(Debug, PartialEq)]
 pub struct Schema<'a> {
+    /// Physical location of the file that contains the schema source code.
+    ///
+    /// Might be missing if the schema originated from an inline string or otherwise omitted during
+    /// the parsing process.
+    pub path: Option<PathBuf>,
+    /// Original source code form which this schema was parsed.
+    pub source: &'a str,
     /// List of all the definitions that make up the schema.
     pub definitions: Vec<Definition<'a>>,
 }
@@ -113,14 +123,28 @@ pub struct Schema<'a> {
 impl<'a> Schema<'a> {
     /// Try to parse the given schema.
     ///
+    /// The optional path is not necessary, but can help to improve the error messages that are
+    /// printed out on the terminal in case of an invalid schema. Effectively that means messages
+    /// will include direct links to the files.
+    ///
     /// # Errors
     ///
     /// Fails if the schema is not proper. The returned error will try to describe the problem as
     /// precise as possible.
-    pub fn parse(input: &'a str) -> Result<Self> {
+    pub fn parse(input: &'a str, path: Option<&Path>) -> Result<Self, ParseSchemaError> {
         parser::parse_schema
             .parse(winnow::Located::new(input))
-            .map_err(|e| Report::new(e.into_inner()).with_source_code(input.to_owned()))
+            .map(|mut schema| {
+                schema.path = path.map(ToOwned::to_owned);
+                schema
+            })
+            .map_err(|e| ParseSchemaError {
+                source_code: NamedSource::new(
+                    path.map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
+                    input.to_owned(),
+                ),
+                cause: e.into_inner(),
+            })
     }
 }
 

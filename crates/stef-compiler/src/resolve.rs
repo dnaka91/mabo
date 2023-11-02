@@ -1,6 +1,6 @@
 use std::{collections::HashMap, ops::Range};
 
-use miette::Diagnostic;
+use miette::{Diagnostic, NamedSource};
 use stef_parser::{
     DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned,
 };
@@ -18,7 +18,13 @@ pub enum ResolveError {
     Import(#[from] ResolveImport),
     #[error("failed resolving type in remote modules")]
     #[diagnostic(transparent)]
-    Remote(#[from] ResolveRemote),
+    Remote(#[from] Box<ResolveRemote>),
+}
+
+impl From<ResolveRemote> for ResolveError {
+    fn from(value: ResolveRemote) -> Self {
+        Self::Remote(value.into())
+    }
 }
 
 #[derive(Debug, Diagnostic, Error)]
@@ -93,6 +99,7 @@ pub struct InvalidKind {
 pub(crate) struct Module<'a> {
     /// Name of this module.
     pub name: &'a str,
+    schema: &'a Schema<'a>,
     /// Full path from the root (the schema) till here.
     path: String,
     path2: Vec<&'a str>,
@@ -119,7 +126,11 @@ enum TypeKind {
 
 pub(crate) enum ResolvedImport<'a> {
     Module(&'a Module<'a>),
-    Type { name: &'a Name<'a>, generics: usize },
+    Type {
+        schema: &'a Schema<'a>,
+        name: &'a Name<'a>,
+        generics: usize,
+    },
 }
 
 impl<'a> Module<'a> {
@@ -217,6 +228,7 @@ impl<'a> Module<'a> {
                 .into()),
                 TypeKind::Struct { generics } | TypeKind::Enum { generics } => {
                     Ok(ResolvedImport::Type {
+                        schema: self.schema,
                         name: &definition.name,
                         generics,
                     })
@@ -259,20 +271,52 @@ impl<'a> Module<'a> {
                 if generics != ty.generics.len() =>
             {
                 Err(RemoteGenericsCount {
-                    definition: generics,
-                    usage: ty.generics.len(),
+                    amount: ty.generics.len(),
                     used: ty.name.span().into(),
+                    declaration: [RemoteGenericsCountDeclaration {
+                        amount: generics,
+                        source_code: NamedSource::new(
+                            self.schema.path.as_ref().map_or_else(
+                                || "<unknown>".to_owned(),
+                                |p| p.display().to_string(),
+                            ),
+                            self.schema.source.to_owned(),
+                        ),
+                        used: definition.name.span().into(),
+                    }],
                 }
                 .into())
             }
             TypeKind::Alias => Err(RemoteInvalidKind {
                 kind: "type alias",
                 used: ty.name.span().into(),
+                declaration: [RemoteInvalidKindDeclaration {
+                    kind: "type alias",
+                    source_code: NamedSource::new(
+                        self.schema
+                            .path
+                            .as_ref()
+                            .map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
+                        self.schema.source.to_owned(),
+                    ),
+                    used: definition.name.span().into(),
+                }],
             }
             .into()),
             TypeKind::Const => Err(RemoteInvalidKind {
                 kind: "constant",
                 used: ty.name.span().into(),
+                declaration: [RemoteInvalidKindDeclaration {
+                    kind: "constant",
+                    source_code: NamedSource::new(
+                        self.schema
+                            .path
+                            .as_ref()
+                            .map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
+                        self.schema.source.to_owned(),
+                    ),
+                    used: definition.name.span().into(),
+                }],
             }
             .into()),
             _ => Ok(()),
@@ -354,8 +398,8 @@ pub(crate) fn resolve_module_types<'a>(
     }
 }
 
-pub(crate) fn resolve_types<'a>(name: &'a str, value: &'a Schema<'_>) -> Module<'a> {
-    visit_module_tree(name, &[], &value.definitions)
+pub(crate) fn resolve_types<'a>(name: &'a str, schema: &'a Schema<'a>) -> Module<'a> {
+    visit_module_tree(name, schema, &[], &schema.definitions)
 }
 
 /// Build up modules from the given one all the way down to all submodules.
@@ -364,6 +408,7 @@ pub(crate) fn resolve_types<'a>(name: &'a str, value: &'a Schema<'_>) -> Module<
 /// 2nd step to ensure all used types are actually available and correct.
 fn visit_module_tree<'a>(
     name: &'a str,
+    schema: &'a Schema<'a>,
     path: &[&'a str],
     defs: &'a [Definition<'_>],
 ) -> Module<'a> {
@@ -376,6 +421,7 @@ fn visit_module_tree<'a>(
 
     let mut module = Module {
         name,
+        schema,
         path: path.join("::"),
         path2: path,
         imports: Vec::new(),
@@ -389,7 +435,7 @@ fn visit_module_tree<'a>(
             Definition::Module(m) => {
                 module.modules.insert(
                     m.name.get(),
-                    visit_module_tree(m.name.get(), &module.path2, &m.definitions),
+                    visit_module_tree(m.name.get(), schema, &module.path2, &m.definitions),
                 );
             }
             Definition::Struct(s) => module.types.push(Type {
@@ -509,12 +555,9 @@ pub(crate) fn resolve_module_imports<'a>(
 
 #[derive(Debug, Diagnostic, Error)]
 pub enum ResolveRemote {
-    #[error("missing import for type {}", highlight::value(ty))]
-    MissingImport {
-        ty: String,
-        #[label("used here")]
-        used: Range<usize>,
-    },
+    #[error(transparent)]
+    #[diagnostic(transparent)]
+    MissingImport(#[from] MissingImport),
     #[error(transparent)]
     #[diagnostic(transparent)]
     MissingModule(#[from] MissingModule),
@@ -530,17 +573,38 @@ pub enum ResolveRemote {
 }
 
 #[derive(Debug, Diagnostic, Error)]
+#[error("missing import for type {}", highlight::value(ty))]
+pub struct MissingImport {
+    ty: String,
+    #[label("used here")]
+    used: Range<usize>,
+}
+
+#[derive(Debug, Diagnostic, Error)]
 #[error(
-    "the definition has {} generics but the use side has {}",
-    highlight::value(definition),
-    highlight::value(usage)
+    "the use side has {} generic(s), mismatching with the declaration",
+    highlight::value(amount)
 )]
 #[diagnostic(help("the amount of generics must always match"))]
 pub struct RemoteGenericsCount {
-    pub definition: usize,
-    pub usage: usize,
+    pub amount: usize,
     #[label("used here")]
-    pub used: Range<usize>,
+    used: Range<usize>,
+    #[related]
+    declaration: [RemoteGenericsCountDeclaration; 1],
+}
+
+#[derive(Debug, Diagnostic, Error)]
+#[error(
+    "the declaration has {} generic(s), mismatching with the use side",
+    highlight::value(amount)
+)]
+pub struct RemoteGenericsCountDeclaration {
+    pub amount: usize,
+    #[source_code]
+    source_code: NamedSource,
+    #[label("declared here")]
+    used: Range<usize>,
 }
 
 #[derive(Debug, Diagnostic, Error)]
@@ -552,13 +616,28 @@ pub struct RemoteGenericsCount {
 pub struct RemoteInvalidKind {
     pub kind: &'static str,
     #[label("used here")]
-    pub used: Range<usize>,
+    used: Range<usize>,
+    #[related]
+    pub declaration: [RemoteInvalidKindDeclaration; 1],
+}
+
+#[derive(Debug, Diagnostic, Error)]
+#[error(
+    "the definition is a {}, which can't be referenced",
+    highlight::sample(kind)
+)]
+pub struct RemoteInvalidKindDeclaration {
+    pub kind: &'static str,
+    #[source_code]
+    source_code: NamedSource,
+    #[label("declared here")]
+    used: Range<usize>,
 }
 
 pub(crate) fn resolve_type_remotely(
     ty: LocallyMissingType<'_>,
     imports: &[ResolvedImport<'_>],
-) -> Result<(), super::Error> {
+) -> Result<(), ResolveError> {
     if imports.is_empty() {
         return Err(ty.error.into());
     } else if let Some(name) = ty.external.path.first() {
@@ -570,7 +649,7 @@ pub(crate) fn resolve_type_remotely(
         match module {
             Some(module) => module.resolve_remote(ty.external)?,
             None => {
-                return Err(ResolveRemote::MissingImport {
+                return Err(ResolveRemote::MissingImport(MissingImport {
                     ty: format!(
                         "{}{}",
                         ty.external
@@ -584,35 +663,47 @@ pub(crate) fn resolve_type_remotely(
                         ty.external.name
                     ),
                     used: ty.external.name.span().into(),
-                }
+                })
                 .into());
             }
         }
     } else {
         let found = imports.iter().find_map(|import| match import {
             ResolvedImport::Module(_) => None,
-            ResolvedImport::Type { name, generics } => {
-                (name.get() == ty.external.name.get()).then_some((name, *generics))
-            }
+            ResolvedImport::Type {
+                schema,
+                name,
+                generics,
+            } => (name.get() == ty.external.name.get()).then_some((schema, name, *generics)),
         });
 
-        if let Some((_name, generics)) = found {
+        if let Some((schema, name, generics)) = found {
             if generics == ty.external.generics.len() {
                 return Ok(());
             }
 
             return Err(ResolveRemote::GenericsCount(RemoteGenericsCount {
-                definition: generics,
-                usage: ty.external.generics.len(),
+                amount: ty.external.generics.len(),
                 used: ty.external.name.span().into(),
+                declaration: [RemoteGenericsCountDeclaration {
+                    amount: generics,
+                    source_code: NamedSource::new(
+                        schema
+                            .path
+                            .as_ref()
+                            .map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
+                        schema.source.to_owned(),
+                    ),
+                    used: name.span().into(),
+                }],
             })
             .into());
         }
 
-        return Err(ResolveRemote::MissingImport {
+        return Err(ResolveRemote::MissingImport(MissingImport {
             ty: ty.external.name.get().to_owned(),
             used: ty.external.name.span().into(),
-        }
+        })
         .into());
     }
 

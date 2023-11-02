@@ -4,6 +4,10 @@ description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string 
 input_file: crates/stef-parser/tests/inputs/const_string.stef
 ---
 Schema {
+    path: Some(
+        "const_string.stef",
+    ),
+    source: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";\n",
     definitions: [
         Const(
             Const {

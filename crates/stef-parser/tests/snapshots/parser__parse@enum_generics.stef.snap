@@ -4,6 +4,10 @@ description: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n 
 input_file: crates/stef-parser/tests/inputs/enum_generics.stef
 ---
 Schema {
+    path: Some(
+        "enum_generics.stef",
+    ),
+    source: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n    Two(A @1, B @2) @2,\n    Three {\n        field1: C @1,\n        field2: D @2,\n    } @3,\n}\n",
     definitions: [
         Enum(
             Enum {

@@ -1,17 +1,24 @@
 use std::{
     fmt::{self, Display},
     fs,
+    path::{Path, PathBuf},
 };
 
 use insta::{assert_snapshot, glob, with_settings};
 use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, ReportHandler};
 use stef_parser::Schema;
 
+fn strip_path(path: &Path) -> PathBuf {
+    path.strip_prefix(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/inputs"))
+        .unwrap()
+        .to_owned()
+}
+
 #[test]
 fn parse_schema() {
     glob!("inputs/*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let value = Schema::parse(input.as_str()).unwrap();
+        let value = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap();
 
         with_settings!({
             description => input.trim(),
@@ -42,13 +49,13 @@ fn parse_invalid_schema() {
 
     glob!("inputs/invalid/*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let value = Schema::parse(input.as_str()).unwrap_err();
+        let value = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap_err();
 
         with_settings!({
             description => input.trim(),
             omit_expression => true,
         }, {
-            assert_snapshot!("error", Wrapper(&handler, &*value).to_string());
+            assert_snapshot!("error", Wrapper(&handler, &value).to_string());
         });
     });
 }

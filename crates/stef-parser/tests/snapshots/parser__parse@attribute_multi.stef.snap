@@ -4,6 +4,10 @@ description: "#[validate(min = 1, max = 100)]\nstruct Sample"
 input_file: crates/stef-parser/tests/inputs/attribute_multi.stef
 ---
 Schema {
+    path: Some(
+        "attribute_multi.stef",
+    ),
+    source: "#[validate(min = 1, max = 100)]\nstruct Sample\n",
     definitions: [
         Struct(
             Struct {

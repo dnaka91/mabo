@@ -7,7 +7,7 @@ stef::parse::enum_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struc
 
   × Failed to parse enum declaration
   ╰─▶ Invalid enum name
-   ╭─[1:1]
+   ╭─[invalid/enum_name.stef:1:1]
  1 │ enum sample {
    ·      ▲
    ·      ╰── In this declaration
@@ -18,7 +18,7 @@ stef::parse::enum_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/struc
 Error: stef::parse::enum_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseEnumCause.html#variant.InvalidName)
 
   × Invalid enum name
-   ╭─[1:1]
+   ╭─[invalid/enum_name.stef:1:1]
  1 │ enum sample {
    ·      ▲
    ·      ╰── Problematic character

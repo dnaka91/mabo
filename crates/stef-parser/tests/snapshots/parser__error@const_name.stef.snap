@@ -7,7 +7,7 @@ stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
 
   × Failed to parse const declaration
   ╰─▶ Invalid const name
-   ╭────
+   ╭─[invalid/const_name.stef:1:1]
  1 │ const vALUE: u32 = 1;
    · ──────────┬──────────
    ·           ╰── In this declaration
@@ -17,7 +17,7 @@ stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
 Error: stef::parse::const_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseConstCause.html#variant.InvalidName)
 
   × Invalid const name
-   ╭────
+   ╭─[invalid/const_name.stef:1:1]
  1 │ const vALUE: u32 = 1;
    ·       ▲
    ·       ╰── Problematic character

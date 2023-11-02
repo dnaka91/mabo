@@ -4,6 +4,10 @@ description: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second varia
 input_file: crates/stef-parser/tests/inputs/enum_basic.stef
 ---
 Schema {
+    path: Some(
+        "enum_basic.stef",
+    ),
+    source: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}\n",
     definitions: [
         Enum(
             Enum {

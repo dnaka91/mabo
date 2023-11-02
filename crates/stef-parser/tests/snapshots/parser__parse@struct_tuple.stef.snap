@@ -4,6 +4,10 @@ description: "/// Basic struct.\nstruct Sample(u32 @1, bool @2)"
 input_file: crates/stef-parser/tests/inputs/struct_tuple.stef
 ---
 Schema {
+    path: Some(
+        "struct_tuple.stef",
+    ),
+    source: "/// Basic struct.\nstruct Sample(u32 @1, bool @2)\n",
     definitions: [
         Struct(
             Struct {

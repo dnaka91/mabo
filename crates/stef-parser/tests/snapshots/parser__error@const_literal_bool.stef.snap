@@ -8,7 +8,7 @@ stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
   × Failed to parse const declaration
   ├─▶ Failed to parse literal value
   ╰─▶ error Tag
-   ╭────
+   ╭─[invalid/const_literal_bool.stef:1:1]
  1 │ const VALUE: bool = truze;
    · ─────────────┬────────────
    ·              ╰── In this declaration
@@ -19,7 +19,7 @@ Error: stef::parse::literal (https://docs.rs/stef-parser/0.1.0/stef_parser/error
 
   × Failed to parse literal value
   ╰─▶ error Tag
-   ╭────
+   ╭─[invalid/const_literal_bool.stef:1:1]
  1 │ const VALUE: bool = truze;
    ·                     ▲
    ·                     ╰── In this declaration

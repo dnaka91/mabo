@@ -1,7 +1,7 @@
 use std::{
     fmt::{self, Display},
     fs,
-    path::Path,
+    path::{Path, PathBuf},
     sync::OnceLock,
 };
 
@@ -36,11 +36,17 @@ impl<'a> Display for Wrapper<'a> {
     }
 }
 
+fn strip_path(path: &Path) -> PathBuf {
+    path.strip_prefix(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/inputs"))
+        .unwrap()
+        .to_owned()
+}
+
 #[test]
 fn validate_schema() {
     glob!("inputs/validate/*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let schema = Schema::parse(input.as_str()).unwrap();
+        let schema = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap();
         let result = stef_compiler::validate_schema(&schema).unwrap_err();
         let report = Report::new(result).with_source_code(NamedSource::new(
             path.file_name().unwrap().to_string_lossy(),
@@ -60,7 +66,7 @@ fn validate_schema() {
 fn resolve_schema_local() {
     glob!("inputs/resolve/local_*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let schema = Schema::parse(input.as_str()).unwrap();
+        let schema = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap();
         let result = stef_compiler::resolve_schemas(&[("test", &schema)]).unwrap_err();
         let report = Report::new(result).with_source_code(NamedSource::new(
             path.file_name().unwrap().to_string_lossy(),
@@ -78,15 +84,15 @@ fn resolve_schema_local() {
 
 #[test]
 fn resolve_schema_import() {
-    let input = fs::read_to_string(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/inputs/resolve/datetime.stef"),
-    )
-    .unwrap();
-    let datetime = Schema::parse(input.as_str()).unwrap();
+    let input = include_str!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/inputs/resolve/datetime.stef"
+    ));
+    let datetime = Schema::parse(input, Some(Path::new("resolve/datetime.stef"))).unwrap();
 
     glob!("inputs/resolve/import_*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let schema = Schema::parse(input.as_str()).unwrap();
+        let schema = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap();
         let result = stef_compiler::resolve_schemas(&[("test", &schema), ("datetime", &datetime)])
             .unwrap_err();
         let report = Report::new(result).with_source_code(NamedSource::new(
@@ -105,15 +111,15 @@ fn resolve_schema_import() {
 
 #[test]
 fn resolve_schema_remote() {
-    let input = fs::read_to_string(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/inputs/resolve/datetime.stef"),
-    )
-    .unwrap();
-    let datetime = Schema::parse(input.as_str()).unwrap();
+    let input = include_str!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/inputs/resolve/datetime.stef"
+    ));
+    let datetime = Schema::parse(input, Some(Path::new("resolve/datetime.stef"))).unwrap();
 
     glob!("inputs/resolve/remote_*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let schema = Schema::parse(input.as_str()).unwrap();
+        let schema = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap();
         let result = stef_compiler::resolve_schemas(&[("test", &schema), ("datetime", &datetime)])
             .unwrap_err();
         let report = Report::new(result).with_source_code(NamedSource::new(

@@ -7,7 +7,7 @@ stef::parse::alias_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
 
   × Failed to parse type alias declaration
   ╰─▶ Invalid alias name
-   ╭────
+   ╭─[invalid/alias_name.stef:1:1]
  1 │ type sImple = Simple;
    ·      ▲
    ·      ╰── In this declaration
@@ -17,7 +17,7 @@ stef::parse::alias_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
 Error: stef::parse::alias_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseAliasCause.html#variant.InvalidName)
 
   × Invalid alias name
-   ╭────
+   ╭─[invalid/alias_name.stef:1:1]
  1 │ type sImple = Simple;
    ·      ▲
    ·      ╰── Problematic character

@@ -25,7 +25,7 @@ pub use self::{
     types::{Cause as ParseTypeCause, ParseError as ParseTypeError},
 };
 use crate::{
-    error::{ParseDefinitionError, ParseSchemaError},
+    error::{ParseDefinitionError, ParseSchemaCause},
     ext::ParserExt,
     Definition, Schema,
 };
@@ -43,9 +43,11 @@ mod structs;
 mod types;
 
 type Input<'i> = winnow::Located<&'i str>;
-type Result<T, E = ParseSchemaError> = winnow::PResult<T, E>;
+type Result<T, E = ParseSchemaCause> = winnow::PResult<T, E>;
 
-pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, ParseSchemaError> {
+pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, ParseSchemaCause> {
+    let source = *input.as_ref();
+
     trace(
         "schema",
         terminated(
@@ -54,7 +56,11 @@ pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, Pars
         ),
     )
     .parse_next(input)
-    .map(|definitions| Schema { definitions })
+    .map(|definitions| Schema {
+        path: None,
+        source,
+        definitions,
+    })
 }
 
 fn parse_definition<'i>(input: &mut Input<'i>) -> Result<Definition<'i>, ParseDefinitionError> {

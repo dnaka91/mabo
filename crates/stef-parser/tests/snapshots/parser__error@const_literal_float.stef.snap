@@ -7,7 +7,7 @@ stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
 
   × Failed to parse const declaration
   ╰─▶ Unexpected character
-   ╭────
+   ╭─[invalid/const_literal_float.stef:1:1]
  1 │ const VALUE: f64 = 1.0z;
    · ────────────┬───────────
    ·             ╰── In this declaration
@@ -17,7 +17,7 @@ stef::parse::const_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/stru
 Error: stef::parse::const_def::char (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseConstCause.html#variant.UnexpectedChar)
 
   × Unexpected character
-   ╭────
+   ╭─[invalid/const_literal_float.stef:1:1]
  1 │ const VALUE: f64 = 1.0z;
    ·                       ▲
    ·                       ╰── Problematic character

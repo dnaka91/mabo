@@ -7,7 +7,7 @@ stef::parse::struct_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/str
 
   × Failed to parse struct declaration
   ╰─▶ Invalid struct name
-   ╭─[1:1]
+   ╭─[invalid/struct_name.stef:1:1]
  1 │ ╭─▶ struct sample {
  2 │ │       value: u32 @1,
  3 │ ├─▶ }
@@ -18,7 +18,7 @@ stef::parse::struct_def (https://docs.rs/stef-parser/0.1.0/stef_parser/error/str
 Error: stef::parse::struct_def::invalid_name (https://docs.rs/stef-parser/0.1.0/stef_parser/error/enum.ParseStructCause.html#variant.InvalidName)
 
   × Invalid struct name
-   ╭─[1:1]
+   ╭─[invalid/struct_name.stef:1:1]
  1 │ struct sample {
    ·        ▲
    ·        ╰── Problematic character

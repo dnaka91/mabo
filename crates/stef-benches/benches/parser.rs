@@ -41,23 +41,23 @@ fn basic(bencher: Bencher) {
             type SampleTyped = SampleStruct<bool, string>;
         "#};
 
-    stef_parser::Schema::parse(input).unwrap();
+    stef_parser::Schema::parse(input, None).unwrap();
 
-    bencher.bench(|| stef_parser::Schema::parse(black_box(input)));
+    bencher.bench(|| stef_parser::Schema::parse(black_box(input), None));
 }
 
 #[divan::bench(consts = [1, 10, 100, 1000])]
 fn large_schema<const N: usize>(bencher: Bencher) {
     let schema = stef_benches::generate_schema(N);
-    stef_parser::Schema::parse(&schema).unwrap();
+    stef_parser::Schema::parse(&schema, None).unwrap();
 
-    bencher.bench(|| stef_parser::Schema::parse(black_box(&schema)))
+    bencher.bench(|| stef_parser::Schema::parse(black_box(&schema), None))
 }
 
 #[divan::bench(consts = [1, 10, 100, 1000])]
 fn print<const N: usize>(bencher: Bencher) {
     let schema = stef_benches::generate_schema(N);
-    let schema = stef_parser::Schema::parse(&schema).unwrap();
+    let schema = stef_parser::Schema::parse(&schema, None).unwrap();
 
     bencher.bench(|| black_box(&schema).to_string())
 }

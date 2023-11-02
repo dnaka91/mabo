@@ -11,7 +11,7 @@ use std::{
     fmt::{self, Display},
 };
 
-use miette::Diagnostic;
+use miette::{Diagnostic, NamedSource};
 use winnow::error::ErrorKind;
 
 pub use crate::parser::{
@@ -24,14 +24,66 @@ pub use crate::parser::{
 };
 
 /// Reason why a `STEF` schema definition was invalid.
+#[derive(Debug)]
+pub struct ParseSchemaError {
+    pub(crate) source_code: NamedSource,
+    pub cause: ParseSchemaCause,
+}
+
+impl Error for ParseSchemaError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        self.cause.source()
+    }
+}
+
+impl Display for ParseSchemaError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.cause.fmt(f)
+    }
+}
+
+impl Diagnostic for ParseSchemaError {
+    fn code<'a>(&'a self) -> Option<Box<dyn Display + 'a>> {
+        self.cause.code()
+    }
+
+    fn severity(&self) -> Option<miette::Severity> {
+        self.cause.severity()
+    }
+
+    fn help<'a>(&'a self) -> Option<Box<dyn Display + 'a>> {
+        self.cause.help()
+    }
+
+    fn url<'a>(&'a self) -> Option<Box<dyn Display + 'a>> {
+        self.cause.url()
+    }
+
+    fn source_code(&self) -> Option<&dyn miette::SourceCode> {
+        Some(&self.source_code)
+    }
+
+    fn labels(&self) -> Option<Box<dyn Iterator<Item = miette::LabeledSpan> + '_>> {
+        self.cause.labels()
+    }
+
+    fn related<'a>(&'a self) -> Option<Box<dyn Iterator<Item = &'a dyn Diagnostic> + 'a>> {
+        self.cause.related()
+    }
+
+    fn diagnostic_source(&self) -> Option<&dyn Diagnostic> {
+        self.cause.diagnostic_source()
+    }
+}
+
 #[derive(Debug, Diagnostic)]
-pub enum ParseSchemaError {
+pub enum ParseSchemaCause {
     Parser(ErrorKind),
     #[diagnostic(transparent)]
     Definition(ParseDefinitionError),
 }
 
-impl Error for ParseSchemaError {
+impl Error for ParseSchemaCause {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             Self::Parser(kind) => kind.source(),
@@ -40,7 +92,7 @@ impl Error for ParseSchemaError {
     }
 }
 
-impl Display for ParseSchemaError {
+impl Display for ParseSchemaCause {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Parser(kind) => kind.fmt(f),
@@ -49,13 +101,13 @@ impl Display for ParseSchemaError {
     }
 }
 
-impl From<ParseDefinitionError> for ParseSchemaError {
+impl From<ParseDefinitionError> for ParseSchemaCause {
     fn from(value: ParseDefinitionError) -> Self {
         Self::Definition(value)
     }
 }
 
-impl<I> winnow::error::ParserError<I> for ParseSchemaError {
+impl<I> winnow::error::ParserError<I> for ParseSchemaCause {
     fn from_error_kind(_: &I, kind: winnow::error::ErrorKind) -> Self {
         Self::Parser(kind)
     }

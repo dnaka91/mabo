@@ -4,34 +4,41 @@ use miette::Diagnostic;
 use stef_parser::{DataType, Enum, ExternalType, Fields, Generics, Span, Spanned, Struct};
 use thiserror::Error;
 
+/// Generic type parameters are considered invalid.
 #[derive(Debug, Diagnostic, Error)]
 pub enum InvalidGenericType {
+    /// Two parameters with the same name found.
     #[error("duplicate generic type name found")]
     #[diagnostic(transparent)]
     Duplicate(#[from] DuplicateGenericName),
+    /// Unused parameter found.
     #[error("unused generic type argument found")]
     #[diagnostic(transparent)]
     Unused(#[from] UnusedGeneric),
 }
 
+/// Duplicate name for type parameters.
 #[derive(Debug, Diagnostic, Error)]
 #[error("duplicate generic type name `{name}`")]
 #[diagnostic(help("the names of each generic type must be unique"))]
 pub struct DuplicateGenericName {
+    /// Name of the parameter.
     pub name: String,
     #[label("first declared here")]
-    pub first: Range<usize>,
+    first: Range<usize>,
     #[label("used here again")]
-    pub second: Range<usize>,
+    second: Range<usize>,
 }
 
+/// Defined but unused type parameter.
 #[derive(Debug, Diagnostic, Error)]
 #[error("unused generic type argument `{name}`")]
 #[diagnostic(help("each declared generic must be used in some way"))]
 pub struct UnusedGeneric {
+    /// Name of the parameter.
     pub name: String,
     #[label("declared here")]
-    pub definition: Range<usize>,
+    definition: Range<usize>,
 }
 
 /// Ensure all generics in a struct are unique and used.

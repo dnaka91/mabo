@@ -1,99 +1,70 @@
-use std::{collections::HashMap, ops::Range};
+//! Ensure all referenced types within a schema itself, aswell as between schemas exist and are
+//! correct.
 
-use miette::{Diagnostic, NamedSource};
+use std::collections::HashMap;
+
+use miette::NamedSource;
 use stef_parser::{
     DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned,
 };
-use thiserror::Error;
 
-use crate::highlight;
+pub use self::error::{
+    Error, GenericsCount, InvalidKind, MissingDefinition, MissingImport, MissingModule,
+    MissingSchema, RemoteGenericsCount, RemoteGenericsCountDeclaration, RemoteInvalidKind,
+    RemoteInvalidKindDeclaration, ResolveError, ResolveImport, ResolveLocal, ResolveRemote,
+};
 
-#[derive(Debug, Diagnostic, Error)]
-pub enum ResolveError {
-    #[error("failed resolving type in local modules")]
-    #[diagnostic(transparent)]
-    Local(#[from] ResolveLocal),
-    #[error("failed resolving import statement")]
-    #[diagnostic(transparent)]
-    Import(#[from] ResolveImport),
-    #[error("failed resolving type in remote modules")]
-    #[diagnostic(transparent)]
-    Remote(#[from] Box<ResolveRemote>),
-}
+mod error;
 
-impl From<ResolveRemote> for ResolveError {
-    fn from(value: ResolveRemote) -> Self {
-        Self::Remote(value.into())
+/// Ensure all referenced types in the schema definitions exist and are valid.
+///
+/// This validation happens in three distinct steps:
+/// - First, each schema is checked individually, trying to resolve types from submodules. Any
+///   not-found types are collected for later checks against external schemas.
+/// - Then, the imports in each schema are checked to point to an existing type or module in another
+///   schema.
+/// - Lastly, the not-found types from the first steps are checked for in the other schemas by
+///   utilizing the imports from the second step.
+pub fn schemas(values: &[(&str, &Schema<'_>)]) -> Result<(), Error> {
+    let modules = values
+        .iter()
+        .map(|(name, schema)| (*name, resolve_types(name, schema)))
+        .collect::<Vec<_>>();
+
+    for (schema, module) in modules
+        .iter()
+        .enumerate()
+        .map(|(i, (_, module))| (values[i].1, module))
+    {
+        let mut missing = Vec::new();
+        resolve_module_types(module, &mut missing);
+
+        let imports = resolve_module_imports(module, &modules).map_err(|e| Error {
+            source_code: NamedSource::new(
+                schema
+                    .path
+                    .as_ref()
+                    .map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
+                schema.source.to_owned(),
+            ),
+            cause: ResolveError::Import(e),
+        })?;
+
+        for ty in missing {
+            resolve_type_remotely(ty, &imports).map_err(|e| Error {
+                source_code: NamedSource::new(
+                    schema
+                        .path
+                        .as_ref()
+                        .map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
+                    schema.source.to_owned(),
+                ),
+                cause: e,
+            })?;
+        }
     }
-}
 
-#[derive(Debug, Diagnostic, Error)]
-pub enum ResolveLocal {
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingModule(#[from] MissingModule),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingDefinition(#[from] MissingDefinition),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    GenericsCount(#[from] GenericsCount),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    InvalidKind(#[from] InvalidKind),
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error("module {} not found", highlight::value(name))]
-#[diagnostic(help("the resolution stopped at module path {}", highlight::value(path)))]
-pub struct MissingModule {
-    pub name: String,
-    pub path: String,
-    #[label("used here")]
-    pub used: Range<usize>,
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "definition {} not found in module {}",
-    highlight::value(name),
-    highlight::value(path)
-)]
-pub struct MissingDefinition {
-    pub name: String,
-    pub path: String,
-    #[label("used here")]
-    pub used: Range<usize>,
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "the definition has {} generics but the use side has {}",
-    highlight::value(definition),
-    highlight::value(usage)
-)]
-#[diagnostic(help("the amount of generics must always match"))]
-pub struct GenericsCount {
-    pub definition: usize,
-    pub usage: usize,
-    #[label("declared here")]
-    pub declared: Range<usize>,
-    #[label("used here")]
-    pub used: Range<usize>,
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "definition found, but a {} can't be referenced",
-    highlight::sample(kind)
-)]
-#[diagnostic(help("only struct and enum definitions can be used"))]
-pub struct InvalidKind {
-    pub kind: &'static str,
-    #[label("declared here")]
-    pub declared: Range<usize>,
-    #[label("used here")]
-    pub used: Range<usize>,
+    Ok(())
 }
 
 pub(crate) struct Module<'a> {
@@ -512,25 +483,6 @@ fn visit_externals<'a>(value: &'a DataType<'_>, visit: &mut impl FnMut(&'a Exter
     }
 }
 
-#[derive(Debug, Diagnostic, Error)]
-pub enum ResolveImport {
-    #[error("schema {} not found", highlight::value(name))]
-    MissingSchema {
-        name: String,
-        #[label("used here")]
-        used: Range<usize>,
-    },
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingModule(#[from] MissingModule),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingDefinition(#[from] MissingDefinition),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    InvalidKind(#[from] InvalidKind),
-}
-
 pub(crate) fn resolve_module_imports<'a>(
     module: &Module<'_>,
     schemas: &'a [(&str, Module<'_>)],
@@ -543,7 +495,7 @@ pub(crate) fn resolve_module_imports<'a>(
             let schema = schemas
                 .iter()
                 .find_map(|(name, schema)| (*name == root.get()).then_some(schema))
-                .ok_or_else(|| ResolveImport::MissingSchema {
+                .ok_or_else(|| MissingSchema {
                     name: root.get().to_owned(),
                     used: root.span().into(),
                 })?;
@@ -551,87 +503,6 @@ pub(crate) fn resolve_module_imports<'a>(
             schema.resolve_import(import)
         })
         .collect()
-}
-
-#[derive(Debug, Diagnostic, Error)]
-pub enum ResolveRemote {
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingImport(#[from] MissingImport),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingModule(#[from] MissingModule),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    MissingDefinition(#[from] MissingDefinition),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    GenericsCount(#[from] RemoteGenericsCount),
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    InvalidKind(#[from] RemoteInvalidKind),
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error("missing import for type {}", highlight::value(ty))]
-pub struct MissingImport {
-    ty: String,
-    #[label("used here")]
-    used: Range<usize>,
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "the use side has {} generic(s), mismatching with the declaration",
-    highlight::value(amount)
-)]
-#[diagnostic(help("the amount of generics must always match"))]
-pub struct RemoteGenericsCount {
-    pub amount: usize,
-    #[label("used here")]
-    used: Range<usize>,
-    #[related]
-    declaration: [RemoteGenericsCountDeclaration; 1],
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "the declaration has {} generic(s), mismatching with the use side",
-    highlight::value(amount)
-)]
-pub struct RemoteGenericsCountDeclaration {
-    pub amount: usize,
-    #[source_code]
-    source_code: NamedSource,
-    #[label("declared here")]
-    used: Range<usize>,
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "definition found, but a {} can't be referenced",
-    highlight::sample(kind)
-)]
-#[diagnostic(help("only struct and enum definitions can be used"))]
-pub struct RemoteInvalidKind {
-    pub kind: &'static str,
-    #[label("used here")]
-    used: Range<usize>,
-    #[related]
-    pub declaration: [RemoteInvalidKindDeclaration; 1],
-}
-
-#[derive(Debug, Diagnostic, Error)]
-#[error(
-    "the definition is a {}, which can't be referenced",
-    highlight::sample(kind)
-)]
-pub struct RemoteInvalidKindDeclaration {
-    pub kind: &'static str,
-    #[source_code]
-    source_code: NamedSource,
-    #[label("declared here")]
-    used: Range<usize>,
 }
 
 pub(crate) fn resolve_type_remotely(

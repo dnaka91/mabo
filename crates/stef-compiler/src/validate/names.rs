@@ -4,52 +4,62 @@ use miette::Diagnostic;
 use stef_parser::{Definition, Enum, Fields, Import, Spanned, Struct};
 use thiserror::Error;
 
+/// Duplicate name was encountered for two elements in the same scope.
 #[derive(Debug, Diagnostic, Error)]
 pub enum DuplicateName {
+    /// Two variants of an enum have the same name.
     #[error("duplicate name in an enum variant")]
     #[diagnostic(transparent)]
     EnumVariant(#[from] DuplicateVariantName),
+    /// Two fields in a struct or enum variant have the same name.
     #[error("duplicate name in a field")]
     #[diagnostic(transparent)]
     Field(#[from] DuplicateFieldName),
+    /// Two definitions in a module have the same name.
     #[error("duplicate name in the scope of a module")]
     #[diagnostic(transparent)]
     InModule(#[from] DuplicateNameInModule),
 }
 
+/// Duplicate name for enum variants.
 #[derive(Debug, Diagnostic, Error)]
 #[error("duplicate variant name `{name}` in enum")]
 #[diagnostic(help("the names of each variant must be unique"))]
 pub struct DuplicateVariantName {
+    /// Name of the variant.
     pub name: String,
     #[label("first declared here")]
-    pub first: Range<usize>,
+    first: Range<usize>,
     #[label("used here again")]
-    pub second: Range<usize>,
+    second: Range<usize>,
 }
 
+/// Duplicate name for fields of a struct or enum variant.
 #[derive(Debug, Diagnostic, Error)]
 #[error("duplicate field name `{name}`")]
 #[diagnostic(help("the names of each field must be unique"))]
 pub struct DuplicateFieldName {
+    /// Name of the field.
     pub name: String,
     #[label("first declared here")]
-    pub first: Range<usize>,
+    first: Range<usize>,
     #[label("used here again")]
-    pub second: Range<usize>,
+    second: Range<usize>,
 }
 
+/// Duplicate name for definitions inside a module.
 #[derive(Debug, Diagnostic, Error)]
 #[error("duplicate definition name `{name}`")]
 #[diagnostic(help(
     "the names of each definition must be unique and not collide with other declarations"
 ))]
 pub struct DuplicateNameInModule {
+    /// Name of the declaration.
     pub name: String,
     #[label("first declared here")]
-    pub first: Range<usize>,
+    first: Range<usize>,
     #[label("used here again")]
-    pub second: Range<usize>,
+    second: Range<usize>,
 }
 
 /// Ensure all field names inside a struct are unique.

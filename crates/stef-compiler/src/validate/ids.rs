@@ -4,53 +4,81 @@ use miette::Diagnostic;
 use stef_parser::{Enum, Fields, Id, Spanned, Struct};
 use thiserror::Error;
 
+/// Duplicate ID was encountered for two elements in the same scope.
 #[derive(Debug, Diagnostic, Error)]
 pub enum DuplicateId {
+    /// Two enum variants use the same ID.
     #[error("duplicate ID in an enum variant")]
     #[diagnostic(transparent)]
     EnumVariant(#[from] DuplicateVariantId),
+    /// Two fields use the same ID.
     #[error("duplicate ID in a field")]
     #[diagnostic(transparent)]
     Field(#[from] DuplicateFieldId),
 }
 
+/// Duplicate ID for enum variants.
 #[derive(Debug, Diagnostic, Error)]
 #[error("duplicate ID {} in enum variant `{name}`, already used in `{other_name}`", id.get())]
 #[diagnostic(help("the IDs for each variant of an enum must be unique"))]
 pub struct DuplicateVariantId {
+    /// The duplicate ID.
     pub id: Id,
+    /// Name of the variant that tries to use the same ID again.
     pub name: String,
+    /// Name of the variant that used the ID for the first time.
     pub other_name: String,
     #[label("first declared here")]
-    pub first: Range<usize>,
+    first: Range<usize>,
     #[label("used here again")]
-    pub second: Range<usize>,
+    second: Range<usize>,
 }
 
+/// Duplicate ID for fields of a struct or enum variant.
 #[derive(Debug, Diagnostic, Error)]
 pub enum DuplicateFieldId {
-    #[error("duplicate ID {} in field `{name}`, already used in `{other_name}`", id.get())]
-    #[diagnostic(help("the IDs for each field must be unique"))]
-    Named {
-        id: Id,
-        name: String,
-        other_name: String,
-        #[label("first declared here")]
-        first: Range<usize>,
-        #[label("used here again")]
-        second: Range<usize>,
-    },
-    #[error("duplicate ID {} in position {position}, already used at {other_position}", id.get())]
-    #[diagnostic(help("the IDs for each field must be unique"))]
-    Unnamed {
-        id: Id,
-        position: usize,
-        other_position: usize,
-        #[label("first declared here")]
-        first: Range<usize>,
-        #[label("used here again")]
-        second: Range<usize>,
-    },
+    /// Found duplicate IDs in named fields.
+    #[error(transparent)]
+    #[diagnostic(transparent)]
+    Named(#[from] DuplicateNamedFieldId),
+    /// Found duplicate IDs in **un**named fields.
+    #[error(transparent)]
+    #[diagnostic(transparent)]
+    Unnamed(#[from] DuplicateUnnamedFieldId),
+}
+
+/// Duplicate ID for named fields.
+#[derive(Debug, Diagnostic, Error)]
+#[error("duplicate ID {} in field `{name}`, already used in `{other_name}`", id.get())]
+#[diagnostic(help("the IDs for each field must be unique"))]
+pub struct DuplicateNamedFieldId {
+    /// The duplicate ID.
+    pub id: Id,
+    /// Name of the field that tries to use the same ID again.
+    pub name: String,
+    /// Name of the field that used the ID for the first time.
+    pub other_name: String,
+    #[label("first declared here")]
+    first: Range<usize>,
+    #[label("used here again")]
+    second: Range<usize>,
+}
+
+/// Duplicate ID for unnamed fields.
+#[derive(Debug, Diagnostic, Error)]
+#[error("duplicate ID {} in position {position}, already used at {other_position}", id.get())]
+#[diagnostic(help("the IDs for each field must be unique"))]
+pub struct DuplicateUnnamedFieldId {
+    /// The duplicate ID.
+    pub id: Id,
+    /// 1-based position of the field that tries to use the same ID again.
+    pub position: usize,
+    /// 1-base position of the field that used the ID for the first time.
+    pub other_position: usize,
+    #[label("first declared here")]
+    first: Range<usize>,
+    #[label("used here again")]
+    second: Range<usize>,
 }
 
 /// Ensure all IDs inside a struct are unique (which are the field IDs).
@@ -97,7 +125,7 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
                 .find_map(|field| {
                     visited
                         .insert(field.id.get(), (field.name.get(), field.id.span()))
-                        .map(|(other_field, other_span)| DuplicateFieldId::Named {
+                        .map(|(other_field, other_span)| DuplicateNamedFieldId {
                             id: field.id.clone(),
                             name: field.name.get().to_owned(),
                             other_name: other_field.to_owned(),
@@ -114,7 +142,7 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
                 .enumerate()
                 .find_map(|(pos, field)| {
                     visited.insert(field.id.get(), (pos, field.id.span())).map(
-                        |(other_position, other_span)| DuplicateFieldId::Unnamed {
+                        |(other_position, other_span)| DuplicateUnnamedFieldId {
                             id: field.id.clone(),
                             position: pos + 1,
                             other_position: other_position + 1,

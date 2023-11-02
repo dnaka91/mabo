@@ -9,7 +9,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use miette::{NamedSource, Report};
+use miette::Report;
 use stef_parser::Schema;
 use thiserror::Error;
 

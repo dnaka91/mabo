@@ -26,7 +26,13 @@ Schema {
                 generics: Generics(
                     [],
                 ),
-                target: U32,
+                target: Type {
+                    value: U32,
+                    span: Span {
+                        start: 37,
+                        end: 40,
+                    },
+                },
             },
         ),
     ],

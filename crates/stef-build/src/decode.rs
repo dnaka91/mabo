@@ -1,6 +1,8 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
-use stef_parser::{DataType, Enum, Fields, Generics, NamedField, Struct, UnnamedField, Variant};
+use stef_parser::{
+    DataType, Enum, Fields, Generics, NamedField, Struct, Type, UnnamedField, Variant,
+};
 
 pub fn compile_struct(
     Struct {
@@ -125,7 +127,7 @@ fn compile_field_vars(fields: &Fields<'_>) -> TokenStream {
     let vars = vars.map(|(name, ty)| {
         let ty_ident = super::definition::compile_data_type(ty);
 
-        if matches!(ty, DataType::Option(_)) {
+        if matches!(ty.value, DataType::Option(_)) {
             quote! { let mut #name: #ty_ident = None; }
         } else {
             quote! { let mut #name: Option<#ty_ident> = None; }
@@ -148,7 +150,7 @@ fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {
                  }| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = proc_macro2::Ident::new(name.get(), Span::call_site());
-                    let ty = compile_data_type(if let DataType::Option(ty) = ty {
+                    let ty = compile_data_type(if let DataType::Option(ty) = &ty.value {
                         ty
                     } else {
                         ty
@@ -167,7 +169,7 @@ fn compile_field_matches(fields: &Fields<'_>) -> TokenStream {
                 .map(|(idx, UnnamedField { ty, id, .. })| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
-                    let ty = compile_data_type(if let DataType::Option(ty) = ty {
+                    let ty = compile_data_type(if let DataType::Option(ty) = &ty.value {
                         ty
                     } else {
                         ty
@@ -190,7 +192,7 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
                 let name_lit = proc_macro2::Literal::string(named.name.get());
                 let id = proc_macro2::Literal::u32_unsuffixed(named.id.get());
 
-                if matches!(named.ty, DataType::Option(_)) {
+                if matches!(named.ty.value, DataType::Option(_)) {
                     quote! { #name }
                 } else {
                     quote! { #name: #name.ok_or(::stef::buf::Error::MissingField {
@@ -207,7 +209,7 @@ fn compile_field_assigns(fields: &Fields<'_>) -> TokenStream {
                 let name = Ident::new(&format!("n{idx}"), Span::call_site());
                 let id = proc_macro2::Literal::u32_unsuffixed(unnamed.id.get());
 
-                if matches!(unnamed.ty, DataType::Option(_)) {
+                if matches!(unnamed.ty.value, DataType::Option(_)) {
                     quote! { #name }
                 } else {
                     quote! { #name.ok_or(::stef::buf::Error::MissingField {
@@ -240,8 +242,8 @@ fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream
 }
 
 #[allow(clippy::needless_pass_by_value)]
-fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
-    match ty {
+fn compile_data_type(ty: &Type<'_>) -> TokenStream {
+    match &ty.value {
         DataType::Bool => quote! { ::stef::buf::decode_bool(r) },
         DataType::U8 => quote! { ::stef::buf::decode_u8(r) },
         DataType::U16 => quote! { ::stef::buf::decode_u16(r) },
@@ -274,7 +276,7 @@ fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             let ty = compile_data_type(ty);
             quote! { ::stef::buf::decode_option(r, |r| { #ty }) }
         }
-        DataType::NonZero(ty) => match &**ty {
+        DataType::NonZero(ty) => match &ty.value {
             DataType::U8 => quote! { ::stef::buf::decode_non_zero_u8(r) },
             DataType::U16 => quote! { ::stef::buf::decode_non_zero_u16(r) },
             DataType::U32 => quote! { ::stef::buf::decode_non_zero_u32(r) },

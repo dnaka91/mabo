@@ -2,7 +2,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use stef_parser::{
     Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Import, Literal,
-    Module, Name, NamedField, Schema, Struct, TypeAlias, UnnamedField, Variant,
+    Module, Name, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
 };
 
 use super::{decode, encode};
@@ -215,10 +215,7 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
         Fields::Named(named) => {
             let fields = named.iter().map(
                 |NamedField {
-                     comment,
-                     name,
-                     ty,
-                     ..
+                     comment, name, ty, ..
                  }| {
                     let comment = compile_comment(comment);
                     let public = for_struct.then(|| quote! { pub });
@@ -258,8 +255,8 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
     }
 }
 
-pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
-    match ty {
+pub(super) fn compile_data_type(ty: &Type<'_>) -> TokenStream {
+    match &ty.value {
         DataType::Bool => quote! { bool },
         DataType::U8 => quote! { u8 },
         DataType::U16 => quote! { u16 },
@@ -292,7 +289,7 @@ pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
             let ty = compile_data_type(ty);
             quote! { Option<#ty> }
         }
-        DataType::NonZero(ty) => match &**ty {
+        DataType::NonZero(ty) => match &ty.value {
             DataType::U8 => quote! { ::std::num::NonZeroU8 },
             DataType::U16 => quote! { ::std::num::NonZeroU16 },
             DataType::U32 => quote! { ::std::num::NonZeroU32 },
@@ -350,8 +347,8 @@ pub(super) fn compile_data_type(ty: &DataType<'_>) -> TokenStream {
     }
 }
 
-fn compile_const_data_type(ty: &DataType<'_>) -> TokenStream {
-    match ty {
+fn compile_const_data_type(ty: &Type<'_>) -> TokenStream {
+    match &ty.value {
         DataType::Bool => quote! { bool },
         DataType::U8 => quote! { u8 },
         DataType::U16 => quote! { u16 },

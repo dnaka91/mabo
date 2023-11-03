@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 use miette::NamedSource;
 use stef_parser::{
-    DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned,
+    DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
 };
 
 pub use self::error::{
@@ -77,18 +77,18 @@ pub(crate) struct Module<'a> {
     /// List of imports declared in the module.
     imports: Vec<&'a Import<'a>>,
     /// List of types that are declared in this module.
-    types: Vec<Type<'a>>,
+    types: Vec<Declaration<'a>>,
     /// Directly submodules located in this module.
     modules: HashMap<&'a str, Module<'a>>,
     definitions: &'a [Definition<'a>],
 }
 
-struct Type<'a> {
-    kind: TypeKind,
+struct Declaration<'a> {
+    kind: DeclarationKind,
     name: Name<'a>,
 }
 
-enum TypeKind {
+enum DeclarationKind {
     Struct { generics: usize },
     Enum { generics: usize },
     Alias,
@@ -129,7 +129,7 @@ impl<'a> Module<'a> {
             })?;
 
         match definition.kind {
-            TypeKind::Struct { generics } | TypeKind::Enum { generics }
+            DeclarationKind::Struct { generics } | DeclarationKind::Enum { generics }
                 if generics != ty.generics.len() =>
             {
                 Err(GenericsCount {
@@ -140,13 +140,13 @@ impl<'a> Module<'a> {
                 }
                 .into())
             }
-            TypeKind::Alias => Err(InvalidKind {
+            DeclarationKind::Alias => Err(InvalidKind {
                 kind: "type alias",
                 declared: definition.name.span().into(),
                 used: ty.name.span().into(),
             }
             .into()),
-            TypeKind::Const => Err(InvalidKind {
+            DeclarationKind::Const => Err(InvalidKind {
                 kind: "constant",
                 declared: definition.name.span().into(),
                 used: ty.name.span().into(),
@@ -185,19 +185,19 @@ impl<'a> Module<'a> {
                 })?;
 
             match definition.kind {
-                TypeKind::Alias => Err(InvalidKind {
+                DeclarationKind::Alias => Err(InvalidKind {
                     kind: "alias",
                     declared: definition.name.span().into(),
                     used: element.span().into(),
                 }
                 .into()),
-                TypeKind::Const => Err(InvalidKind {
+                DeclarationKind::Const => Err(InvalidKind {
                     kind: "const",
                     declared: definition.name.span().into(),
                     used: element.span().into(),
                 }
                 .into()),
-                TypeKind::Struct { generics } | TypeKind::Enum { generics } => {
+                DeclarationKind::Struct { generics } | DeclarationKind::Enum { generics } => {
                     Ok(ResolvedImport::Type {
                         schema: self.schema,
                         name: &definition.name,
@@ -238,7 +238,7 @@ impl<'a> Module<'a> {
             })?;
 
         match definition.kind {
-            TypeKind::Struct { generics } | TypeKind::Enum { generics }
+            DeclarationKind::Struct { generics } | DeclarationKind::Enum { generics }
                 if generics != ty.generics.len() =>
             {
                 Err(RemoteGenericsCount {
@@ -258,7 +258,7 @@ impl<'a> Module<'a> {
                 }
                 .into())
             }
-            TypeKind::Alias => Err(RemoteInvalidKind {
+            DeclarationKind::Alias => Err(RemoteInvalidKind {
                 kind: "type alias",
                 used: ty.name.span().into(),
                 declaration: [RemoteInvalidKindDeclaration {
@@ -274,7 +274,7 @@ impl<'a> Module<'a> {
                 }],
             }
             .into()),
-            TypeKind::Const => Err(RemoteInvalidKind {
+            DeclarationKind::Const => Err(RemoteInvalidKind {
                 kind: "constant",
                 used: ty.name.span().into(),
                 declaration: [RemoteInvalidKindDeclaration {
@@ -315,7 +315,7 @@ pub(crate) fn resolve_module_types<'a>(
 
     fn resolve<'a>(
         missing: &mut Vec<LocallyMissingType<'a>>,
-        ty: &'a DataType<'_>,
+        ty: &'a Type<'_>,
         generics: &Generics<'_>,
         module: &'a Module<'_>,
     ) {
@@ -409,24 +409,24 @@ fn visit_module_tree<'a>(
                     visit_module_tree(m.name.get(), schema, &module.path2, &m.definitions),
                 );
             }
-            Definition::Struct(s) => module.types.push(Type {
-                kind: TypeKind::Struct {
+            Definition::Struct(s) => module.types.push(Declaration {
+                kind: DeclarationKind::Struct {
                     generics: s.generics.0.len(),
                 },
                 name: s.name.clone(),
             }),
-            Definition::Enum(e) => module.types.push(Type {
-                kind: TypeKind::Enum {
+            Definition::Enum(e) => module.types.push(Declaration {
+                kind: DeclarationKind::Enum {
                     generics: e.generics.0.len(),
                 },
                 name: e.name.clone(),
             }),
-            Definition::TypeAlias(a) => module.types.push(Type {
-                kind: TypeKind::Alias,
+            Definition::TypeAlias(a) => module.types.push(Declaration {
+                kind: DeclarationKind::Alias,
                 name: a.name.clone(),
             }),
-            Definition::Const(c) => module.types.push(Type {
-                kind: TypeKind::Const,
+            Definition::Const(c) => module.types.push(Declaration {
+                kind: DeclarationKind::Const,
                 name: c.name.clone(),
             }),
             Definition::Import(i) => module.imports.push(i),
@@ -436,8 +436,8 @@ fn visit_module_tree<'a>(
     module
 }
 
-fn visit_externals<'a>(value: &'a DataType<'_>, visit: &mut impl FnMut(&'a ExternalType<'_>)) {
-    match value {
+fn visit_externals<'a>(value: &'a Type<'_>, visit: &mut impl FnMut(&'a ExternalType<'_>)) {
+    match &value.value {
         DataType::Bool
         | DataType::U8
         | DataType::U16

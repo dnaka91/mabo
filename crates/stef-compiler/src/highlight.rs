@@ -14,6 +14,14 @@ pub fn value(value: impl Display) -> String {
     if cfg!(feature = "debug") {
         format!("❬Y❭{value}❬Y❭")
     } else {
-        value.bright_yellow().bold().to_string()
+        value.bright_yellow().to_string()
+    }
+}
+
+pub fn focus(value: impl Display) -> String {
+    if cfg!(feature = "debug") {
+        format!("❬W❭{value}❬W❭")
+    } else {
+        value.bright_white().to_string()
     }
 }

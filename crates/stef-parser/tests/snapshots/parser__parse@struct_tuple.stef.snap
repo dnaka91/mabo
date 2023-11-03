@@ -32,7 +32,13 @@ Schema {
                 fields: Unnamed(
                     [
                         UnnamedField {
-                            ty: U32,
+                            ty: Type {
+                                value: U32,
+                                span: Span {
+                                    start: 32,
+                                    end: 35,
+                                },
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {
@@ -46,7 +52,13 @@ Schema {
                             },
                         },
                         UnnamedField {
-                            ty: Bool,
+                            ty: Type {
+                                value: Bool,
+                                span: Span {
+                                    start: 40,
+                                    end: 44,
+                                },
+                            },
                             id: Id {
                                 value: 2,
                                 span: Span {

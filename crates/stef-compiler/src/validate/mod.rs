@@ -12,11 +12,13 @@ pub use self::{
         DuplicateVariantId,
     },
     names::{DuplicateFieldName, DuplicateName, DuplicateNameInModule, DuplicateVariantName},
+    tuples::{InvalidTupleAmount, TupleSize},
 };
 
 mod generics;
 mod ids;
 mod names;
+mod tuples;
 
 /// Reason why a schema was invalid.
 #[derive(Debug, Diagnostic, Error)]
@@ -33,6 +35,10 @@ pub enum Error {
     #[error("invalid generic type found")]
     #[diagnostic(transparent)]
     InvalidGeneric(#[from] InvalidGenericType),
+    /// Tuple type defined with too few or too many elements.
+    #[error("invalid tuple element size found")]
+    #[diagnostic(transparent)]
+    TupleSize(#[from] TupleSize),
 }
 
 impl From<DuplicateFieldId> for Error {
@@ -72,13 +78,21 @@ fn definition(value: &Definition<'_>) -> Result<(), Error> {
             ids::validate_struct_ids(s)?;
             names::validate_struct_names(s)?;
             generics::validate_struct_generics(s)?;
+            tuples::validate_struct_tuples(s)?;
         }
         Definition::Enum(e) => {
             ids::validate_enum_ids(e)?;
             names::validate_enum_names(e)?;
             generics::validate_enum_generics(e)?;
+            tuples::validate_enum_tuples(e)?;
         }
-        Definition::TypeAlias(_) | Definition::Const(_) | Definition::Import(_) => {}
+        Definition::TypeAlias(a) => {
+            tuples::validate_alias_tuples(a)?;
+        }
+        Definition::Const(c) => {
+            tuples::validate_const_tuples(c)?;
+        }
+        Definition::Import(_) => {}
     }
 
     Ok(())

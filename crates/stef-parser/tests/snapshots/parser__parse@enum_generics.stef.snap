@@ -97,19 +97,25 @@ Schema {
                         fields: Unnamed(
                             [
                                 UnnamedField {
-                                    ty: External(
-                                        ExternalType {
-                                            path: [],
-                                            name: Name {
-                                                value: "A",
-                                                span: Span {
-                                                    start: 70,
-                                                    end: 71,
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "A",
+                                                    span: Span {
+                                                        start: 70,
+                                                        end: 71,
+                                                    },
                                                 },
+                                                generics: [],
                                             },
-                                            generics: [],
+                                        ),
+                                        span: Span {
+                                            start: 70,
+                                            end: 71,
                                         },
-                                    ),
+                                    },
                                     id: Id {
                                         value: 1,
                                         span: Span {
@@ -123,19 +129,25 @@ Schema {
                                     },
                                 },
                                 UnnamedField {
-                                    ty: External(
-                                        ExternalType {
-                                            path: [],
-                                            name: Name {
-                                                value: "B",
-                                                span: Span {
-                                                    start: 76,
-                                                    end: 77,
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "B",
+                                                    span: Span {
+                                                        start: 76,
+                                                        end: 77,
+                                                    },
                                                 },
+                                                generics: [],
                                             },
-                                            generics: [],
+                                        ),
+                                        span: Span {
+                                            start: 76,
+                                            end: 77,
                                         },
-                                    ),
+                                    },
                                     id: Id {
                                         value: 2,
                                         span: Span {
@@ -186,19 +198,25 @@ Schema {
                                             end: 112,
                                         },
                                     },
-                                    ty: External(
-                                        ExternalType {
-                                            path: [],
-                                            name: Name {
-                                                value: "C",
-                                                span: Span {
-                                                    start: 114,
-                                                    end: 115,
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "C",
+                                                    span: Span {
+                                                        start: 114,
+                                                        end: 115,
+                                                    },
                                                 },
+                                                generics: [],
                                             },
-                                            generics: [],
+                                        ),
+                                        span: Span {
+                                            start: 114,
+                                            end: 115,
                                         },
-                                    ),
+                                    },
                                     id: Id {
                                         value: 1,
                                         span: Span {
@@ -222,19 +240,25 @@ Schema {
                                             end: 134,
                                         },
                                     },
-                                    ty: External(
-                                        ExternalType {
-                                            path: [],
-                                            name: Name {
-                                                value: "D",
-                                                span: Span {
-                                                    start: 136,
-                                                    end: 137,
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "D",
+                                                    span: Span {
+                                                        start: 136,
+                                                        end: 137,
+                                                    },
                                                 },
+                                                generics: [],
                                             },
-                                            generics: [],
+                                        ),
+                                        span: Span {
+                                            start: 136,
+                                            end: 137,
                                         },
-                                    ),
+                                    },
                                     id: Id {
                                         value: 2,
                                         span: Span {

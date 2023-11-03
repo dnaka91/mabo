@@ -40,9 +40,21 @@ Schema {
                                     end: 23,
                                 },
                             },
-                            ty: NonZero(
-                                U8,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U8,
+                                        span: Span {
+                                            start: 34,
+                                            end: 36,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 25,
+                                    end: 37,
+                                },
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {
@@ -66,9 +78,21 @@ Schema {
                                     end: 49,
                                 },
                             },
-                            ty: NonZero(
-                                U16,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U16,
+                                        span: Span {
+                                            start: 60,
+                                            end: 63,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 51,
+                                    end: 64,
+                                },
+                            },
                             id: Id {
                                 value: 2,
                                 span: Span {
@@ -92,9 +116,21 @@ Schema {
                                     end: 76,
                                 },
                             },
-                            ty: NonZero(
-                                U32,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 87,
+                                            end: 90,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 78,
+                                    end: 91,
+                                },
+                            },
                             id: Id {
                                 value: 3,
                                 span: Span {
@@ -118,9 +154,21 @@ Schema {
                                     end: 103,
                                 },
                             },
-                            ty: NonZero(
-                                U64,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U64,
+                                        span: Span {
+                                            start: 114,
+                                            end: 117,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 105,
+                                    end: 118,
+                                },
+                            },
                             id: Id {
                                 value: 4,
                                 span: Span {
@@ -144,9 +192,21 @@ Schema {
                                     end: 130,
                                 },
                             },
-                            ty: NonZero(
-                                U128,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U128,
+                                        span: Span {
+                                            start: 141,
+                                            end: 145,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 132,
+                                    end: 146,
+                                },
+                            },
                             id: Id {
                                 value: 5,
                                 span: Span {
@@ -170,9 +230,21 @@ Schema {
                                     end: 158,
                                 },
                             },
-                            ty: NonZero(
-                                I8,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I8,
+                                        span: Span {
+                                            start: 169,
+                                            end: 171,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 160,
+                                    end: 172,
+                                },
+                            },
                             id: Id {
                                 value: 6,
                                 span: Span {
@@ -196,9 +268,21 @@ Schema {
                                     end: 184,
                                 },
                             },
-                            ty: NonZero(
-                                I16,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I16,
+                                        span: Span {
+                                            start: 195,
+                                            end: 198,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 186,
+                                    end: 199,
+                                },
+                            },
                             id: Id {
                                 value: 7,
                                 span: Span {
@@ -222,9 +306,21 @@ Schema {
                                     end: 211,
                                 },
                             },
-                            ty: NonZero(
-                                I32,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I32,
+                                        span: Span {
+                                            start: 222,
+                                            end: 225,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 213,
+                                    end: 226,
+                                },
+                            },
                             id: Id {
                                 value: 8,
                                 span: Span {
@@ -248,9 +344,21 @@ Schema {
                                     end: 238,
                                 },
                             },
-                            ty: NonZero(
-                                I64,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I64,
+                                        span: Span {
+                                            start: 249,
+                                            end: 252,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 240,
+                                    end: 253,
+                                },
+                            },
                             id: Id {
                                 value: 9,
                                 span: Span {
@@ -274,9 +382,21 @@ Schema {
                                     end: 265,
                                 },
                             },
-                            ty: NonZero(
-                                I128,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I128,
+                                        span: Span {
+                                            start: 276,
+                                            end: 280,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 267,
+                                    end: 281,
+                                },
+                            },
                             id: Id {
                                 value: 10,
                                 span: Span {
@@ -300,9 +420,21 @@ Schema {
                                     end: 294,
                                 },
                             },
-                            ty: NonZero(
-                                String,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: String,
+                                        span: Span {
+                                            start: 305,
+                                            end: 311,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 296,
+                                    end: 312,
+                                },
+                            },
                             id: Id {
                                 value: 11,
                                 span: Span {
@@ -326,9 +458,21 @@ Schema {
                                     end: 325,
                                 },
                             },
-                            ty: NonZero(
-                                Bytes,
-                            ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: Bytes,
+                                        span: Span {
+                                            start: 336,
+                                            end: 341,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 327,
+                                    end: 342,
+                                },
+                            },
                             id: Id {
                                 value: 12,
                                 span: Span {
@@ -352,11 +496,29 @@ Schema {
                                     end: 355,
                                 },
                             },
-                            ty: NonZero(
-                                Vec(
-                                    String,
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: Vec(
+                                            Type {
+                                                value: String,
+                                                span: Span {
+                                                    start: 370,
+                                                    end: 376,
+                                                },
+                                            },
+                                        ),
+                                        span: Span {
+                                            start: 366,
+                                            end: 377,
+                                        },
+                                    },
                                 ),
-                            ),
+                                span: Span {
+                                    start: 357,
+                                    end: 378,
+                                },
+                            },
                             id: Id {
                                 value: 13,
                                 span: Span {
@@ -380,14 +542,38 @@ Schema {
                                     end: 391,
                                 },
                             },
-                            ty: NonZero(
-                                HashMap(
-                                    (
-                                        String,
-                                        Bytes,
-                                    ),
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: HashMap(
+                                            (
+                                                Type {
+                                                    value: String,
+                                                    span: Span {
+                                                        start: 411,
+                                                        end: 417,
+                                                    },
+                                                },
+                                                Type {
+                                                    value: Bytes,
+                                                    span: Span {
+                                                        start: 419,
+                                                        end: 424,
+                                                    },
+                                                },
+                                            ),
+                                        ),
+                                        span: Span {
+                                            start: 402,
+                                            end: 425,
+                                        },
+                                    },
                                 ),
-                            ),
+                                span: Span {
+                                    start: 393,
+                                    end: 426,
+                                },
+                            },
                             id: Id {
                                 value: 14,
                                 span: Span {
@@ -411,11 +597,29 @@ Schema {
                                     end: 439,
                                 },
                             },
-                            ty: NonZero(
-                                HashSet(
-                                    String,
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: HashSet(
+                                            Type {
+                                                value: String,
+                                                span: Span {
+                                                    start: 459,
+                                                    end: 465,
+                                                },
+                                            },
+                                        ),
+                                        span: Span {
+                                            start: 450,
+                                            end: 466,
+                                        },
+                                    },
                                 ),
-                            ),
+                                span: Span {
+                                    start: 441,
+                                    end: 467,
+                                },
+                            },
                             id: Id {
                                 value: 15,
                                 span: Span {

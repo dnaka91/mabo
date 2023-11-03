@@ -1,0 +1,3 @@
+struct Sample {
+    field: (u8) @1,
+}

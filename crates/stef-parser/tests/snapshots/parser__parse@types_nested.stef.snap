@@ -40,18 +40,54 @@ Schema {
                                     end: 25,
                                 },
                             },
-                            ty: Vec(
-                                Option(
-                                    NonZero(
-                                        HashMap(
-                                            (
-                                                I64,
-                                                BoxString,
-                                            ),
+                            ty: Type {
+                                value: Vec(
+                                    Type {
+                                        value: Option(
+                                            Type {
+                                                value: NonZero(
+                                                    Type {
+                                                        value: HashMap(
+                                                            (
+                                                                Type {
+                                                                    value: I64,
+                                                                    span: Span {
+                                                                        start: 56,
+                                                                        end: 59,
+                                                                    },
+                                                                },
+                                                                Type {
+                                                                    value: BoxString,
+                                                                    span: Span {
+                                                                        start: 61,
+                                                                        end: 72,
+                                                                    },
+                                                                },
+                                                            ),
+                                                        ),
+                                                        span: Span {
+                                                            start: 47,
+                                                            end: 73,
+                                                        },
+                                                    },
+                                                ),
+                                                span: Span {
+                                                    start: 38,
+                                                    end: 74,
+                                                },
+                                            },
                                         ),
-                                    ),
+                                        span: Span {
+                                            start: 31,
+                                            end: 75,
+                                        },
+                                    },
                                 ),
-                            ),
+                                span: Span {
+                                    start: 27,
+                                    end: 76,
+                                },
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {

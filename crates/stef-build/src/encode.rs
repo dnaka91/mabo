@@ -1,6 +1,8 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
-use stef_parser::{DataType, Enum, Fields, Generics, NamedField, Struct, UnnamedField, Variant};
+use stef_parser::{
+    DataType, Enum, Fields, Generics, NamedField, Struct, Type, UnnamedField, Variant,
+};
 
 pub fn compile_struct(
     Struct {
@@ -45,8 +47,8 @@ fn compile_struct_fields(fields: &Fields<'_>) -> TokenStream {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = proc_macro2::Ident::new(name.get(), Span::call_site());
 
-                    if let DataType::Option(ty) = ty {
-                        let ty = compile_data_type(ty, if is_copy(ty) {
+                    if let DataType::Option(ty) = &ty.value {
+                        let ty = compile_data_type(ty, if is_copy(&ty.value) {
                             quote! { *v }
                         } else {
                             quote! { v }
@@ -177,7 +179,7 @@ fn compile_variant_fields(fields: &Fields<'_>) -> TokenStream {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = proc_macro2::Ident::new(name.get(), Span::call_site());
 
-                    if matches!(ty, DataType::Option(_)) {
+                    if matches!(ty.value, DataType::Option(_)) {
                         quote! { ::stef::buf::encode_field_option(w, #id, &#name); }
                     } else {
                         let ty = compile_data_type(ty, quote! { *#name });
@@ -248,8 +250,8 @@ fn is_copy(ty: &DataType<'_>) -> bool {
 }
 
 #[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
-fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
-    match ty {
+fn compile_data_type(ty: &Type<'_>, name: TokenStream) -> TokenStream {
+    match &ty.value {
         DataType::Bool => quote! { ::stef::buf::encode_bool(w, #name) },
         DataType::U8 => quote! { ::stef::buf::encode_u8(w, #name) },
         DataType::U16 => quote! { ::stef::buf::encode_u16(w, #name) },
@@ -268,7 +270,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::Vec(ty) => {
             let ty = compile_data_type(
                 ty,
-                if is_copy(ty) {
+                if is_copy(&ty.value) {
                     quote! { *v }
                 } else {
                     quote! { v }
@@ -279,7 +281,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::HashMap(kv) => {
             let ty_k = compile_data_type(
                 &kv.0,
-                if is_copy(&kv.0) {
+                if is_copy(&kv.0.value) {
                     quote! { *k }
                 } else {
                     quote! { k }
@@ -287,7 +289,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             );
             let ty_v = compile_data_type(
                 &kv.1,
-                if is_copy(&kv.1) {
+                if is_copy(&kv.1.value) {
                     quote! { *v }
                 } else {
                     quote! { v }
@@ -298,7 +300,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::HashSet(ty) => {
             let ty = compile_data_type(
                 ty,
-                if is_copy(ty) {
+                if is_copy(&ty.value) {
                     quote! { *v }
                 } else {
                     quote! { v }
@@ -309,7 +311,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::Option(ty) => {
             let ty = compile_data_type(
                 ty,
-                if is_copy(ty) {
+                if is_copy(&ty.value) {
                     quote! { *v }
                 } else {
                     quote! { v }
@@ -317,7 +319,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
             );
             quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #ty; }) }
         }
-        DataType::NonZero(ty) => match &**ty {
+        DataType::NonZero(ty) => match &ty.value {
             DataType::U8 => quote! { ::stef::buf::encode_u8(w, #name.get()) },
             DataType::U16 => quote! { ::stef::buf::encode_u16(w, #name.get()) },
             DataType::U32 => quote! { ::stef::buf::encode_u32(w, #name.get()) },
@@ -346,7 +348,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
                     let idx = proc_macro2::Literal::usize_unsuffixed(idx);
                     compile_data_type(
                         ty,
-                        if is_copy(ty) {
+                        if is_copy(&ty.value) {
                             quote! { #name.#idx }
                         } else {
                             quote! { &(#name.#idx) }
@@ -362,7 +364,7 @@ fn compile_data_type(ty: &DataType<'_>, name: TokenStream) -> TokenStream {
         DataType::Array(ty, _size) => {
             let ty = compile_data_type(
                 ty,
-                if is_copy(ty) {
+                if is_copy(&ty.value) {
                     quote! { *v }
                 } else {
                     quote! { v }

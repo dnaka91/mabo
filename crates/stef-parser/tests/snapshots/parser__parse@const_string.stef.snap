@@ -21,7 +21,13 @@ Schema {
                         end: 12,
                     },
                 },
-                ty: String,
+                ty: Type {
+                    value: String,
+                    span: Span {
+                        start: 14,
+                        end: 20,
+                    },
+                },
                 value: String(
                     "value",
                 ),
@@ -39,7 +45,13 @@ Schema {
                         end: 53,
                     },
                 },
-                ty: String,
+                ty: Type {
+                    value: String,
+                    span: Span {
+                        start: 55,
+                        end: 61,
+                    },
+                },
                 value: String(
                     "one two three",
                 ),
@@ -57,7 +69,13 @@ Schema {
                         end: 109,
                     },
                 },
-                ty: String,
+                ty: Type {
+                    value: String,
+                    span: Span {
+                        start: 111,
+                        end: 117,
+                    },
+                },
                 value: String(
                     "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
                 ),
@@ -75,7 +93,13 @@ Schema {
                         end: 231,
                     },
                 },
-                ty: String,
+                ty: Type {
+                    value: String,
+                    span: Span {
+                        start: 233,
+                        end: 239,
+                    },
+                },
                 value: String(
                     "a\n    b\n    c\n",
                 ),

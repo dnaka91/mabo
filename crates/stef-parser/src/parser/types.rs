@@ -4,7 +4,8 @@ use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{dec_uint, space0},
     combinator::{
-        alt, cut_err, fail, opt, preceded, separated1, separated_pair, success, terminated,
+        alt, cut_err, fail, opt, preceded, separated0, separated1, separated_pair, success,
+        terminated,
     },
     dispatch,
     error::ErrorKind,
@@ -14,7 +15,7 @@ use winnow::{
 };
 
 use super::{imports, ws, Input, ParserExt, Result};
-use crate::{highlight, DataType, ExternalType, Name};
+use crate::{highlight, DataType, ExternalType, Name, Type};
 
 /// Encountered an invalid type definition.
 #[derive(Debug, ParserError)]
@@ -49,7 +50,7 @@ pub enum Cause {
     Segment(Box<imports::Cause>),
 }
 
-pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, ParseError> {
+pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Type<'i>, ParseError> {
     let start = input.location();
 
     alt((
@@ -59,7 +60,9 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, ParseErro
         parse_array,
         parse_external.map(DataType::External),
     ))
+    .with_span()
     .parse_next(input)
+    .map(Into::into)
     .map_err(|e| {
         e.map(|cause| ParseError {
             at: start..input.location(),
@@ -126,7 +129,7 @@ fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     preceded(
         '(',
         cut_err(terminated(
-            separated1(ws(parse.map_err(Cause::from)), ws(',')),
+            separated0(ws(parse.map_err(Cause::from)), ws(',')),
             ws(')'),
         )),
     )

@@ -1,0 +1,16 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+description: "struct Sample {\n    field: (u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8) @1,\n}"
+input_file: crates/stef-compiler/tests/inputs/validate/struct_named_tuple_too_large.stef
+---
+  × invalid tuple element size found
+  ╰─▶ tuples with ❬W❭more than 12 elements❬W❭ are invalid
+   ╭─[struct_named_tuple_too_large.stef:1:1]
+ 1 │ struct Sample {
+ 2 │     field: (u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8) @1,
+   ·            ──────────────────────────┬─────────────────────────
+   ·                                      ╰── declared here
+ 3 │ }
+   ╰────
+  help: a tuple must have between 2 and 12 elements
+

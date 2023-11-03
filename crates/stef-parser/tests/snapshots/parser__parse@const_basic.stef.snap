@@ -21,7 +21,13 @@ Schema {
                         end: 15,
                     },
                 },
-                ty: Bool,
+                ty: Type {
+                    value: Bool,
+                    span: Span {
+                        start: 17,
+                        end: 21,
+                    },
+                },
                 value: Bool(
                     true,
                 ),
@@ -39,7 +45,13 @@ Schema {
                         end: 46,
                     },
                 },
-                ty: Bool,
+                ty: Type {
+                    value: Bool,
+                    span: Span {
+                        start: 48,
+                        end: 52,
+                    },
+                },
                 value: Bool(
                     false,
                 ),
@@ -57,7 +69,13 @@ Schema {
                         end: 71,
                     },
                 },
-                ty: U32,
+                ty: Type {
+                    value: U32,
+                    span: Span {
+                        start: 73,
+                        end: 76,
+                    },
+                },
                 value: Int(
                     100,
                 ),
@@ -75,7 +93,13 @@ Schema {
                         end: 95,
                     },
                 },
-                ty: F64,
+                ty: Type {
+                    value: F64,
+                    span: Span {
+                        start: 97,
+                        end: 100,
+                    },
+                },
                 value: Float(
                     5.5,
                 ),
@@ -93,7 +117,13 @@ Schema {
                         end: 120,
                     },
                 },
-                ty: String,
+                ty: Type {
+                    value: String,
+                    span: Span {
+                        start: 122,
+                        end: 128,
+                    },
+                },
                 value: String(
                     "value",
                 ),
@@ -111,7 +141,13 @@ Schema {
                         end: 151,
                     },
                 },
-                ty: Bytes,
+                ty: Type {
+                    value: Bytes,
+                    span: Span {
+                        start: 153,
+                        end: 158,
+                    },
+                },
                 value: Bytes(
                     [
                         1,

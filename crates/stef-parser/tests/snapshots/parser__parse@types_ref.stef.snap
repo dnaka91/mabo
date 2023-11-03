@@ -40,19 +40,25 @@ Schema {
                                     end: 25,
                                 },
                             },
-                            ty: External(
-                                ExternalType {
-                                    path: [],
-                                    name: Name {
-                                        value: "Test123",
-                                        span: Span {
-                                            start: 27,
-                                            end: 34,
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "Test123",
+                                            span: Span {
+                                                start: 27,
+                                                end: 34,
+                                            },
                                         },
+                                        generics: [],
                                     },
-                                    generics: [],
+                                ),
+                                span: Span {
+                                    start: 27,
+                                    end: 34,
                                 },
-                            ),
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {
@@ -76,22 +82,40 @@ Schema {
                                     end: 56,
                                 },
                             },
-                            ty: External(
-                                ExternalType {
-                                    path: [],
-                                    name: Name {
-                                        value: "KeyValue",
-                                        span: Span {
-                                            start: 58,
-                                            end: 66,
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "KeyValue",
+                                            span: Span {
+                                                start: 58,
+                                                end: 66,
+                                            },
                                         },
+                                        generics: [
+                                            Type {
+                                                value: U32,
+                                                span: Span {
+                                                    start: 67,
+                                                    end: 70,
+                                                },
+                                            },
+                                            Type {
+                                                value: Bool,
+                                                span: Span {
+                                                    start: 72,
+                                                    end: 76,
+                                                },
+                                            },
+                                        ],
                                     },
-                                    generics: [
-                                        U32,
-                                        Bool,
-                                    ],
+                                ),
+                                span: Span {
+                                    start: 58,
+                                    end: 77,
                                 },
-                            ),
+                            },
                             id: Id {
                                 value: 2,
                                 span: Span {
@@ -200,19 +224,25 @@ Schema {
                                     end: 148,
                                 },
                             },
-                            ty: External(
-                                ExternalType {
-                                    path: [],
-                                    name: Name {
-                                        value: "K",
-                                        span: Span {
-                                            start: 150,
-                                            end: 151,
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "K",
+                                            span: Span {
+                                                start: 150,
+                                                end: 151,
+                                            },
                                         },
+                                        generics: [],
                                     },
-                                    generics: [],
+                                ),
+                                span: Span {
+                                    start: 150,
+                                    end: 151,
                                 },
-                            ),
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {
@@ -236,19 +266,25 @@ Schema {
                                     end: 165,
                                 },
                             },
-                            ty: External(
-                                ExternalType {
-                                    path: [],
-                                    name: Name {
-                                        value: "V",
-                                        span: Span {
-                                            start: 167,
-                                            end: 168,
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "V",
+                                            span: Span {
+                                                start: 167,
+                                                end: 168,
+                                            },
                                         },
+                                        generics: [],
                                     },
-                                    generics: [],
+                                ),
+                                span: Span {
+                                    start: 167,
+                                    end: 168,
                                 },
-                            ),
+                            },
                             id: Id {
                                 value: 2,
                                 span: Span {

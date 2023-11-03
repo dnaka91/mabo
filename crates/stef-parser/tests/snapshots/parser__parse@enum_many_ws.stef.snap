@@ -68,7 +68,13 @@ Schema {
                         fields: Unnamed(
                             [
                                 UnnamedField {
-                                    ty: U32,
+                                    ty: Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 79,
+                                            end: 82,
+                                        },
+                                    },
                                     id: Id {
                                         value: 1,
                                         span: Span {
@@ -82,7 +88,13 @@ Schema {
                                     },
                                 },
                                 UnnamedField {
-                                    ty: U64,
+                                    ty: Type {
+                                        value: U64,
+                                        span: Span {
+                                            start: 93,
+                                            end: 96,
+                                        },
+                                    },
                                     id: Id {
                                         value: 2,
                                         span: Span {
@@ -133,7 +145,13 @@ Schema {
                                             end: 164,
                                         },
                                     },
-                                    ty: U32,
+                                    ty: Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 169,
+                                            end: 172,
+                                        },
+                                    },
                                     id: Id {
                                         value: 1,
                                         span: Span {
@@ -157,7 +175,13 @@ Schema {
                                             end: 209,
                                         },
                                     },
-                                    ty: Bool,
+                                    ty: Type {
+                                        value: Bool,
+                                        span: Span {
+                                            start: 214,
+                                            end: 218,
+                                        },
+                                    },
                                     id: Id {
                                         value: 2,
                                         span: Span {

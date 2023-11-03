@@ -117,7 +117,13 @@ Schema {
                                                 end: 133,
                                             },
                                         },
-                                        ty: U32,
+                                        ty: Type {
+                                            value: U32,
+                                            span: Span {
+                                                start: 135,
+                                                end: 138,
+                                            },
+                                        },
                                         id: Id {
                                             value: 1,
                                             span: Span {

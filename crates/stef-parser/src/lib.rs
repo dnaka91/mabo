@@ -446,7 +446,7 @@ pub struct TypeAlias<'a> {
     /// Potential generic type arguments.
     pub generics: Generics<'a>,
     /// Original type that is being aliased.
-    pub target: DataType<'a>,
+    pub target: Type<'a>,
 }
 
 impl<'a> Print for TypeAlias<'a> {
@@ -534,7 +534,7 @@ pub struct NamedField<'a> {
     /// Unique name for this field, within the current element.
     pub name: Name<'a>,
     /// Data type that defines the shape of the contained data.
-    pub ty: DataType<'a>,
+    pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Id,
     /// Source code location.
@@ -581,7 +581,7 @@ impl<'a> Display for NamedField<'a> {
 #[derive(Debug, Eq, PartialEq)]
 pub struct UnnamedField<'a> {
     /// Data type that defines the shape of the contained data.
-    pub ty: DataType<'a>,
+    pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Id,
     /// Source code location.
@@ -704,6 +704,37 @@ impl<'a> Display for AttributeValue<'a> {
     }
 }
 
+/// The data type which describes the shape of a field through its [`Self::value`] value, and
+/// additionally carries the source span for it.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Type<'a> {
+    /// Possible data type of the field.
+    pub value: DataType<'a>,
+    /// Source code location.
+    span: Span,
+}
+
+impl<'a> Spanned for Type<'a> {
+    fn span(&self) -> Span {
+        self.span
+    }
+}
+
+impl<'a> Display for Type<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.value.fmt(f)
+    }
+}
+
+impl<'a> From<(DataType<'a>, Range<usize>)> for Type<'a> {
+    fn from((value, span): (DataType<'a>, Range<usize>)) -> Self {
+        Self {
+            value,
+            span: span.into(),
+        }
+    }
+}
+
 /// Possible data type that describes the shape of a field.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum DataType<'a> {
@@ -742,25 +773,25 @@ pub enum DataType<'a> {
     /// Reference version (slice) of `u8` bytes.
     BytesRef,
     /// Vector of another data type.
-    Vec(Box<DataType<'a>>),
+    Vec(Box<Type<'a>>),
     /// Key-value hash map of data types.
-    HashMap(Box<(DataType<'a>, DataType<'a>)>),
+    HashMap(Box<(Type<'a>, Type<'a>)>),
     /// Hash set of data types (each entry is unique).
-    HashSet(Box<DataType<'a>>),
+    HashSet(Box<Type<'a>>),
     /// Optional value.
-    Option(Box<DataType<'a>>),
+    Option(Box<Type<'a>>),
     /// Non-zero value.
     /// - Integers: `n > 0`
     /// - Collections: `len() > 0`
-    NonZero(Box<DataType<'a>>),
+    NonZero(Box<Type<'a>>),
     /// Boxed version of a string that is immutable.
     BoxString,
     /// Boxed version of a byte vector that is immutable.
     BoxBytes,
     /// Fixed size list of up to 12 types.
-    Tuple(Vec<DataType<'a>>),
+    Tuple(Vec<Type<'a>>),
     /// Continuous list of values with a single time and known length.
-    Array(Box<DataType<'a>>, u32),
+    Array(Box<Type<'a>>, u32),
     /// Any external, non-standard data type (like a user defined struct or enum).
     External(ExternalType<'a>),
 }
@@ -768,33 +799,33 @@ pub enum DataType<'a> {
 impl<'a> Display for DataType<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            DataType::Bool => f.write_str("bool"),
-            DataType::U8 => f.write_str("u8"),
-            DataType::U16 => f.write_str("u16"),
-            DataType::U32 => f.write_str("u32"),
-            DataType::U64 => f.write_str("u64"),
-            DataType::U128 => f.write_str("u128"),
-            DataType::I8 => f.write_str("i8"),
-            DataType::I16 => f.write_str("i16"),
-            DataType::I32 => f.write_str("i32"),
-            DataType::I64 => f.write_str("i64"),
-            DataType::I128 => f.write_str("i128"),
-            DataType::F32 => f.write_str("f32"),
-            DataType::F64 => f.write_str("f64"),
-            DataType::String => f.write_str("string"),
-            DataType::StringRef => f.write_str("&string"),
-            DataType::Bytes => f.write_str("bytes"),
-            DataType::BytesRef => f.write_str("&bytes"),
-            DataType::Vec(t) => write!(f, "vec<{t}>"),
-            DataType::HashMap(kv) => write!(f, "hash_map<{}, {}>", kv.0, kv.1),
-            DataType::HashSet(t) => write!(f, "hash_set<{t}>"),
-            DataType::Option(t) => write!(f, "option<{t}>"),
-            DataType::NonZero(t) => write!(f, "non_zero<{t}>"),
-            DataType::BoxString => f.write_str("box<string>"),
-            DataType::BoxBytes => f.write_str("box<bytes>"),
-            DataType::Tuple(l) => concat(f, "(", l, ", ", ")"),
-            DataType::Array(t, size) => write!(f, "[{t}; {size}]"),
-            DataType::External(t) => t.fmt(f),
+            Self::Bool => f.write_str("bool"),
+            Self::U8 => f.write_str("u8"),
+            Self::U16 => f.write_str("u16"),
+            Self::U32 => f.write_str("u32"),
+            Self::U64 => f.write_str("u64"),
+            Self::U128 => f.write_str("u128"),
+            Self::I8 => f.write_str("i8"),
+            Self::I16 => f.write_str("i16"),
+            Self::I32 => f.write_str("i32"),
+            Self::I64 => f.write_str("i64"),
+            Self::I128 => f.write_str("i128"),
+            Self::F32 => f.write_str("f32"),
+            Self::F64 => f.write_str("f64"),
+            Self::String => f.write_str("string"),
+            Self::StringRef => f.write_str("&string"),
+            Self::Bytes => f.write_str("bytes"),
+            Self::BytesRef => f.write_str("&bytes"),
+            Self::Vec(t) => write!(f, "vec<{t}>"),
+            Self::HashMap(kv) => write!(f, "hash_map<{}, {}>", kv.0, kv.1),
+            Self::HashSet(t) => write!(f, "hash_set<{t}>"),
+            Self::Option(t) => write!(f, "option<{t}>"),
+            Self::NonZero(t) => write!(f, "non_zero<{t}>"),
+            Self::BoxString => f.write_str("box<string>"),
+            Self::BoxBytes => f.write_str("box<bytes>"),
+            Self::Tuple(l) => concat(f, "(", l, ", ", ")"),
+            Self::Array(t, size) => write!(f, "[{t}; {size}]"),
+            Self::External(t) => t.fmt(f),
         }
     }
 }
@@ -810,7 +841,7 @@ pub struct ExternalType<'a> {
     /// Unique name of the type within the current scope (or the module if prefixed with a path).
     pub name: Name<'a>,
     /// Potential generic type arguments.
-    pub generics: Vec<DataType<'a>>,
+    pub generics: Vec<Type<'a>>,
 }
 
 impl<'a> Display for ExternalType<'a> {
@@ -924,7 +955,7 @@ pub struct Const<'a> {
     /// Unique identifier of this constant.
     pub name: Name<'a>,
     /// Type of the value.
-    pub ty: DataType<'a>,
+    pub ty: Type<'a>,
     /// Literal value that this declaration represents.
     pub value: Literal,
 }

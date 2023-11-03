@@ -1,0 +1,1 @@
+type Sample = (u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8);

@@ -1,7 +1,7 @@
 use std::{collections::HashMap, ops::Range};
 
 use miette::Diagnostic;
-use stef_parser::{DataType, Enum, ExternalType, Fields, Generics, Span, Spanned, Struct};
+use stef_parser::{DataType, Enum, ExternalType, Fields, Generics, Span, Spanned, Struct, Type};
 use thiserror::Error;
 
 /// Generic type parameters are considered invalid.
@@ -133,8 +133,8 @@ fn validate_field_generics(value: &Fields<'_>, unvisited: &mut HashMap<&str, Spa
 
 /// Iterate recursively through the data type and invoke the closure on each discovered external
 /// type.
-fn visit_externals(value: &DataType<'_>, visit: &mut impl FnMut(&ExternalType<'_>)) {
-    match value {
+fn visit_externals(value: &Type<'_>, visit: &mut impl FnMut(&ExternalType<'_>)) {
+    match &value.value {
         DataType::Bool
         | DataType::U8
         | DataType::U16

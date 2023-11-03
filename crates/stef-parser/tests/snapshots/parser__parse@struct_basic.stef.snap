@@ -42,7 +42,13 @@ Schema {
                                     end: 39,
                                 },
                             },
-                            ty: U32,
+                            ty: Type {
+                                value: U32,
+                                span: Span {
+                                    start: 41,
+                                    end: 44,
+                                },
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {
@@ -68,7 +74,13 @@ Schema {
                                     end: 75,
                                 },
                             },
-                            ty: Bool,
+                            ty: Type {
+                                value: Bool,
+                                span: Span {
+                                    start: 77,
+                                    end: 81,
+                                },
+                            },
                             id: Id {
                                 value: 2,
                                 span: Span {

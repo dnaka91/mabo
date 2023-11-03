@@ -42,7 +42,13 @@ Schema {
                                     end: 45,
                                 },
                             },
-                            ty: U32,
+                            ty: Type {
+                                value: U32,
+                                span: Span {
+                                    start: 47,
+                                    end: 50,
+                                },
+                            },
                             id: Id {
                                 value: 1,
                                 span: Span {
@@ -66,7 +72,13 @@ Schema {
                                     end: 60,
                                 },
                             },
-                            ty: Bool,
+                            ty: Type {
+                                value: Bool,
+                                span: Span {
+                                    start: 62,
+                                    end: 66,
+                                },
+                            },
                             id: Id {
                                 value: 2,
                                 span: Span {
@@ -142,7 +154,13 @@ Schema {
                         fields: Unnamed(
                             [
                                 UnnamedField {
-                                    ty: U32,
+                                    ty: Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 129,
+                                            end: 132,
+                                        },
+                                    },
                                     id: Id {
                                         value: 1,
                                         span: Span {
@@ -156,7 +174,13 @@ Schema {
                                     },
                                 },
                                 UnnamedField {
-                                    ty: U64,
+                                    ty: Type {
+                                        value: U64,
+                                        span: Span {
+                                            start: 137,
+                                            end: 140,
+                                        },
+                                    },
                                     id: Id {
                                         value: 2,
                                         span: Span {
@@ -207,7 +231,13 @@ Schema {
                                             end: 175,
                                         },
                                     },
-                                    ty: U32,
+                                    ty: Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 177,
+                                            end: 180,
+                                        },
+                                    },
                                     id: Id {
                                         value: 1,
                                         span: Span {
@@ -231,7 +261,13 @@ Schema {
                                             end: 199,
                                         },
                                     },
-                                    ty: Bool,
+                                    ty: Type {
+                                        value: Bool,
+                                        span: Span {
+                                            start: 201,
+                                            end: 205,
+                                        },
+                                    },
                                     id: Id {
                                         value: 2,
                                         span: Span {

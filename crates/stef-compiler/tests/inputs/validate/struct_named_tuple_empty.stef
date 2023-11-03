@@ -1,0 +1,3 @@
+struct Sample {
+    field: () @1,
+}

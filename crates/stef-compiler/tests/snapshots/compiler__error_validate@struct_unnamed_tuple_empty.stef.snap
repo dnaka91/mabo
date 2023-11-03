@@ -1,0 +1,14 @@
+---
+source: crates/stef-compiler/tests/compiler.rs
+description: struct Sample(() @1)
+input_file: crates/stef-compiler/tests/inputs/validate/struct_unnamed_tuple_empty.stef
+---
+  × invalid tuple element size found
+  ╰─▶ tuples with ❬W❭zero elements❬W❭ are invalid
+   ╭─[struct_unnamed_tuple_empty.stef:1:1]
+ 1 │ struct Sample(() @1)
+   ·               ─┬
+   ·                ╰── declared here
+   ╰────
+  help: a tuple must have between 2 and 12 elements
+

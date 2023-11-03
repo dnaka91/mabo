@@ -160,6 +160,11 @@ mod tests {
     }
 
     #[test]
+    fn sample3() {
+        roundtrip(&sample::Sample3(true, (vec![1, 2, 3, 4, 5], -500_000)));
+    }
+
+    #[test]
     fn sample_gen() {
         roundtrip(&sample::gens::SampleGen {
             raw: vec![5, 6, 7, 8],

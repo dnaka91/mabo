@@ -16,6 +16,9 @@ enum Sample2 {
     } @3,
 }
 
+/// A tuple struct.
+struct Sample3(bool @1, (bytes, i64) @2)
+
 const CHRISTMAS_MONTH: u8 = 12;
 const CHRISTMAS_DAY: u8 = 24;
 

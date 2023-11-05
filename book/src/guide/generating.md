@@ -10,7 +10,7 @@ The main entry point is the `stef-build` crate, which you use as build script in
 
 ```rust
 fn main() {
-    stef_build::compile(&["src/sample.stef"], &["src/"]).unwrap();
+    stef_build::Compiler::default().compile(&["src/sample.stef"]).unwrap();
 }
 ```
 
@@ -24,7 +24,7 @@ Continuing on the previous example, the generated could could be included like t
 // in src/main.rs
 
 mod sample {
-    include!(concat!(env!("OUT_DIR"), "/sample.rs"));
+    stef::include!("sample");
 }
 
 fn main() {
@@ -51,7 +51,7 @@ Then we could use the generated struct as follows:
 use stef::Encode;
 
 mod sample {
-    include!(concat!(env!("OUT_DIR"), "/sample.rs"));
+    stef::include!("sample");
 }
 
 fn main() {

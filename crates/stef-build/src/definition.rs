@@ -199,7 +199,8 @@ fn compile_import(Import { segments, element }: &Import<'_>) -> TokenStream {
     });
 
     quote! {
-        use #(#segments)*#element;
+        #[allow(unused_imports)]
+        use super::#(#segments)*#element;
     }
 }
 

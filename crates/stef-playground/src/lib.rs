@@ -56,10 +56,17 @@ mod schemas {
         stef::include!("enum_min_ws");
     }
 
-    // TODO: implement imports
-    // mod import_basic {
-    //     stef::include!("import_basic");
-    // }
+    mod import_basic {
+        stef::include!("import_basic");
+    }
+
+    mod other {
+        stef::include!("other");
+    }
+
+    mod second {
+        stef::include!("second");
+    }
 
     mod module_basic {
         stef::include!("module_basic");

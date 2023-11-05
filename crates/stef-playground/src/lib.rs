@@ -4,109 +4,109 @@
 #![allow(clippy::missing_errors_doc)]
 
 mod sample {
-    include!(concat!(env!("OUT_DIR"), "/sample.rs"));
+    stef::include!("sample");
 }
 
 mod schemas {
     mod alias_basic {
-        include!(concat!(env!("OUT_DIR"), "/alias_basic.rs"));
+        stef::include!("alias_basic");
     }
 
     mod attribute_multi {
-        include!(concat!(env!("OUT_DIR"), "/attribute_multi.rs"));
+        stef::include!("attribute_multi");
     }
 
     mod attribute_single {
-        include!(concat!(env!("OUT_DIR"), "/attribute_single.rs"));
+        stef::include!("attribute_single");
     }
 
     mod attribute_unit {
-        include!(concat!(env!("OUT_DIR"), "/attribute_unit.rs"));
+        stef::include!("attribute_unit");
     }
 
     mod attributes_min_ws {
-        include!(concat!(env!("OUT_DIR"), "/attributes_min_ws.rs"));
+        stef::include!("attributes_min_ws");
     }
 
     mod attributes {
-        include!(concat!(env!("OUT_DIR"), "/attributes.rs"));
+        stef::include!("attributes");
     }
 
     mod const_basic {
-        include!(concat!(env!("OUT_DIR"), "/const_basic.rs"));
+        stef::include!("const_basic");
     }
 
     mod const_string {
-        include!(concat!(env!("OUT_DIR"), "/const_string.rs"));
+        stef::include!("const_string");
     }
 
     mod enum_basic {
-        include!(concat!(env!("OUT_DIR"), "/enum_basic.rs"));
+        stef::include!("enum_basic");
     }
 
     mod enum_generics {
-        include!(concat!(env!("OUT_DIR"), "/enum_generics.rs"));
+        stef::include!("enum_generics");
     }
 
     mod enum_many_ws {
-        include!(concat!(env!("OUT_DIR"), "/enum_many_ws.rs"));
+        stef::include!("enum_many_ws");
     }
 
     mod enum_min_ws {
-        include!(concat!(env!("OUT_DIR"), "/enum_min_ws.rs"));
+        stef::include!("enum_min_ws");
     }
 
     // TODO: implement imports
     // mod import_basic {
-    //     include!(concat!(env!("OUT_DIR"), "/import_basic.rs"));
+    //     stef::include!("import_basic");
     // }
 
     mod module_basic {
-        include!(concat!(env!("OUT_DIR"), "/module_basic.rs"));
+        stef::include!("module_basic");
     }
 
     mod schema_basic {
-        include!(concat!(env!("OUT_DIR"), "/schema_basic.rs"));
+        stef::include!("schema_basic");
     }
 
     mod struct_basic {
-        include!(concat!(env!("OUT_DIR"), "/struct_basic.rs"));
+        stef::include!("struct_basic");
     }
 
     mod struct_generics {
-        include!(concat!(env!("OUT_DIR"), "/struct_generics.rs"));
+        stef::include!("struct_generics");
     }
 
     mod struct_many_ws {
-        include!(concat!(env!("OUT_DIR"), "/struct_many_ws.rs"));
+        stef::include!("struct_many_ws");
     }
 
     mod struct_min_ws {
-        include!(concat!(env!("OUT_DIR"), "/struct_min_ws.rs"));
+        stef::include!("struct_min_ws");
     }
 
     mod struct_tuple {
-        include!(concat!(env!("OUT_DIR"), "/struct_tuple.rs"));
+        stef::include!("struct_tuple");
     }
 
     mod types_basic {
-        include!(concat!(env!("OUT_DIR"), "/types_basic.rs"));
+        stef::include!("types_basic");
     }
 
     mod types_generic {
-        include!(concat!(env!("OUT_DIR"), "/types_generic.rs"));
+        stef::include!("types_generic");
     }
 
     mod types_nested {
-        include!(concat!(env!("OUT_DIR"), "/types_nested.rs"));
+        stef::include!("types_nested");
     }
 
     mod types_non_zero {
-        include!(concat!(env!("OUT_DIR"), "/types_non_zero.rs"));
+        stef::include!("types_non_zero");
     }
 
     mod types_ref {
-        include!(concat!(env!("OUT_DIR"), "/types_ref.rs"));
+        stef::include!("types_ref");
     }
 }
 

@@ -30,6 +30,12 @@ pub enum Error {
         #[source]
         source: glob::GlobError,
     },
+    #[error("failed creating output directory at {path:?}")]
+    Create {
+        #[source]
+        source: std::io::Error,
+        path: PathBuf,
+    },
     #[error("failed reading schema file at {file:?}")]
     Read {
         #[source]
@@ -75,7 +81,13 @@ impl Compiler {
     pub fn compile(&self, schemas: &[impl AsRef<str>]) -> Result<()> {
         init_miette();
 
-        let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
+        let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("stef");
+
+        std::fs::create_dir_all(&out_dir).map_err(|source| Error::Create {
+            source,
+            path: out_dir.clone(),
+        })?;
+
         let mut inputs = Vec::new();
         let mut validated = Vec::new();
 

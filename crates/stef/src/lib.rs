@@ -20,6 +20,13 @@ pub use buf::{Buf, BufMut, Bytes, Decode, Encode};
 pub mod buf;
 pub mod varint;
 
+#[macro_export]
+macro_rules! include {
+    ($name:literal) => {
+        include!(concat!(env!("OUT_DIR"), "/stef/", $name, ".rs"));
+    };
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct NonZero<T>(T);
 

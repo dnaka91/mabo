@@ -3,7 +3,7 @@ use std::ops::Range;
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space0,
-    combinator::{cut_err, delimited, opt, peek, preceded, separated1, terminated},
+    combinator::{cut_err, delimited, opt, peek, preceded, separated, terminated},
     dispatch,
     error::ErrorKind,
     stream::{Location, Stream},
@@ -90,7 +90,7 @@ fn parse_named<'i>(input: &mut Input<'i>) -> Result<Vec<NamedField<'i>>, Cause> 
     preceded(
         '{',
         cut_err(terminated(
-            terminated(separated1(parse_named_field, ws(',')), opt(ws(','))),
+            terminated(separated(1.., parse_named_field, ws(',')), opt(ws(','))),
             ws('}'),
         )),
     )
@@ -101,7 +101,7 @@ fn parse_unnamed<'i>(input: &mut Input<'i>) -> Result<Vec<UnnamedField<'i>>, Cau
     preceded(
         '(',
         cut_err(terminated(
-            terminated(separated1(parse_unnamed_field, ws(',')), opt(ws(','))),
+            terminated(separated(1.., parse_unnamed_field, ws(',')), opt(ws(','))),
             ws(')'),
         )),
     )

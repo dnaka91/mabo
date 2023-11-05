@@ -4,8 +4,7 @@ use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{dec_uint, space0},
     combinator::{
-        alt, cut_err, fail, opt, preceded, separated0, separated1, separated_pair, success,
-        terminated,
+        alt, cut_err, fail, opt, preceded, separated, separated_pair, success, terminated,
     },
     dispatch,
     error::ErrorKind,
@@ -129,7 +128,7 @@ fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     preceded(
         '(',
         cut_err(terminated(
-            separated0(ws(parse.map_err(Cause::from)), ws(',')),
+            separated(0.., ws(parse.map_err(Cause::from)), ws(',')),
             ws(')'),
         )),
     )
@@ -152,7 +151,7 @@ fn parse_array<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> {
     (
         opt(terminated(
-            separated1(imports::parse_segment.map_err(Cause::from), "::"),
+            separated(1.., imports::parse_segment.map_err(Cause::from), "::"),
             "::",
         ))
         .map(Option::unwrap_or_default),
@@ -160,7 +159,7 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
         opt(preceded(
             '<',
             cut_err(terminated(
-                separated1(ws(parse.map_err(Cause::from)), ws(',')),
+                separated(1.., ws(parse.map_err(Cause::from)), ws(',')),
                 ws('>'),
             )),
         ))

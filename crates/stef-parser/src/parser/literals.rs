@@ -4,7 +4,7 @@ use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{dec_uint, digit1, multispace1},
     combinator::{
-        alt, cut_err, delimited, fail, fold_repeat, opt, peek, preceded, separated1, terminated,
+        alt, cut_err, delimited, fail, fold_repeat, opt, peek, preceded, separated, terminated,
     },
     dispatch,
     error::ErrorKind,
@@ -222,7 +222,7 @@ fn parse_bytes(input: &mut Input<'_>) -> Result<Vec<u8>, Cause> {
     preceded(
         '[',
         cut_err(terminated(
-            separated1(ws(dec_uint::<_, u8, _>), ws(',')),
+            separated(1.., ws(dec_uint::<_, u8, _>), ws(',')),
             (opt(ws(',')), ws(']')),
         )),
     )

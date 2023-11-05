@@ -3,7 +3,7 @@ use std::ops::Range;
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{alphanumeric0, space0, space1},
-    combinator::{cut_err, opt, preceded, separated1, terminated},
+    combinator::{cut_err, opt, preceded, separated, terminated},
     error::ErrorKind,
     stream::Location,
     token::one_of,
@@ -126,7 +126,7 @@ fn parse_variants<'i>(input: &mut Input<'i>) -> Result<Vec<Variant<'i>>, Cause> 
     preceded(
         '{',
         cut_err(terminated(
-            terminated(separated1(parse_variant, ws(',')), opt(ws(','))),
+            terminated(separated(1.., parse_variant, ws(',')), opt(ws(','))),
             ws('}'),
         )),
     )

@@ -3,7 +3,7 @@ use std::ops::Range;
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space0,
-    combinator::{alt, cut_err, fold_repeat, opt, preceded, separated1, terminated},
+    combinator::{alt, cut_err, fold_repeat, opt, preceded, separated, terminated},
     error::ErrorKind,
     stream::Location,
     token::{one_of, take_while},
@@ -70,7 +70,8 @@ fn parse_attribute<'i>(input: &mut Input<'i>) -> Result<Vec<Attribute<'i>>, Caus
         "#[",
         cut_err(terminated(
             terminated(
-                separated1(
+                separated(
+                    1..,
                     ws((parse_name, parse_value)).map(|(name, value)| Attribute { name, value }),
                     ws(','),
                 ),
@@ -105,7 +106,8 @@ fn parse_multi_value<'i>(input: &mut Input<'i>) -> Result<Vec<Attribute<'i>>, Ca
         '(',
         cut_err(terminated(
             terminated(
-                separated1(
+                separated(
+                    1..,
                     ws((parse_name, parse_value)).map(|(name, value)| Attribute { name, value }),
                     ws(','),
                 ),

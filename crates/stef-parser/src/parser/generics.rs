@@ -3,7 +3,7 @@ use std::ops::Range;
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::alphanumeric0,
-    combinator::{cut_err, preceded, separated1, terminated},
+    combinator::{cut_err, preceded, separated, terminated},
     error::ErrorKind,
     stream::Location,
     token::one_of,
@@ -50,7 +50,7 @@ pub enum Cause {
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Generics<'i>, ParseError> {
     preceded(
         '<',
-        cut_err(terminated(separated1(ws(parse_name), ws(',')), ws('>'))),
+        cut_err(terminated(separated(1.., ws(parse_name), ws(',')), ws('>'))),
     )
     .parse_next(input)
     .map(Generics)

@@ -3,7 +3,7 @@ use std::ops::Range;
 use stef_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space1,
-    combinator::{alt, cut_err, opt, preceded, separated1, terminated},
+    combinator::{alt, cut_err, opt, preceded, separated, terminated},
     error::ErrorKind,
     stream::{Location, Stream},
     token::{one_of, take_while},
@@ -69,7 +69,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
         ("use", space1),
         cut_err(terminated(
             (
-                separated1(parse_segment, "::"),
+                separated(1.., parse_segment, "::"),
                 opt(preceded(
                     "::",
                     alt((

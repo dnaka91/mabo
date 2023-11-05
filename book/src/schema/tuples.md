@@ -5,7 +5,11 @@
 
 Tuples allow for the definition of a set of types, without having to define an explicit struct for it. These do not have any associated [ID](index.md#identifiers), meaning the order of declaration matters, and any modification to the type definition is generally incompatible.
 
-The maximum amount of types in a tuple are **12**.
+The minimum amount of types in a tuple are **2** and the maximum are **12**. Reasons for this choice are:
+
+- A tuple with 0 types is empty and can't carry any data.
+- Having only 1 type is equivalent to the contained type itself and is redundant.
+- Up to 12 types seems arbitrary, but having more than 3 or 4 types often calls for defining an explicit struct with field names for better clarity.
 
 ## Schema
 

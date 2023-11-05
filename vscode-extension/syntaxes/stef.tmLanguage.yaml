@@ -27,7 +27,7 @@ repository:
         end: \]$\n?
 
   mod:
-    begin: (mod)\s+([a-z][a-z0-9_]*)\s*(?=\{)
+    begin: (mod)\s+([a-zA-Z0-9_]+)\s*(?=\{)
     beginCaptures:
       "1": { name: keyword.declaration.mod.stef }
       "2": { name: entity.name.class.mod.stef }
@@ -44,7 +44,7 @@ repository:
 
   struct:
     patterns:
-      - begin: (struct)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\{)
+      - begin: (struct)\s+([a-zA-Z0-9_]+)\s*(<.+>)?\s*(?=\{)
         beginCaptures:
           "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
           "2": { name: entity.name.class.struct.named.stef }
@@ -53,7 +53,7 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#fieldsNamed"
-      - begin: (struct)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\()
+      - begin: (struct)\s+([a-zA-Z0-9_]+)\s*(<.+>)?\s*(?=\()
         beginCaptures:
           "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
           "2": { name: entity.name.class.struct.unnamed.stef }
@@ -62,13 +62,13 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#fieldsUnnamed"
-      - match: (struct)\s+([A-Z][A-Za-z0-9_]*)
+      - match: (struct)\s+([a-zA-Z0-9_]+)
         captures:
           "1": { name: keyword.declaration.struct.stef storage.type.struct.stef }
           "2": { name: entity.name.class.struct.unit.stef }
 
   enum:
-    begin: (enum)\s+([A-Z][A-Za-z0-9_]*)\s*(<.+>)?\s*(?=\{)
+    begin: (enum)\s+([a-zA-Z0-9_]+)\s*(<.+>)?\s*(?=\{)
     beginCaptures:
       "1": { name: keyword.declaration.enum.stef storage.type.enum.stef }
       "2": { name: entity.name.class.enum.stef }
@@ -79,7 +79,7 @@ repository:
       - include: "#variants"
   variants:
     patterns:
-      - begin: ([A-Z][A-Za-z0-9_]*)\s*(?=\{)
+      - begin: ([a-zA-Z0-9_]+)\s*(?=\{)
         beginCaptures:
           "1": { name: entity.name.class.enum.variant.named.stef }
         end: (?<=\})\s*(@\d+)(,)?
@@ -89,7 +89,7 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#fieldsNamed"
-      - begin: ([A-Z][A-Za-z0-9_]*)\s*(?=\()
+      - begin: ([a-zA-Z0-9_]+)\s*(?=\()
         beginCaptures:
           "1": { name: entity.name.class.enum.variant.unnamed.stef }
         end: (?<=\))\s*(@\d+)(,)?
@@ -99,7 +99,7 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#fieldsUnnamed"
-      - match: ([A-Z][A-Za-z0-9_]*)\s*(@\d+)(,)?
+      - match: ([a-zA-Z0-9_]+)\s*(@\d+)(,)?
         captures:
           "1": { name: entity.name.class.enum.variant.unit.stef }
           "2": { name: constant.numeric.stef }
@@ -117,7 +117,7 @@ repository:
       - include: "#fieldNamed"
   fieldNamed:
     patterns:
-      - match: \s*([a-z][a-z0-9_]*)\s*(:)\s*([A-Za-z0-9_&<>\[\]\(\);, ]+)\s*(@\d+)(,)?
+      - match: \s*([a-zA-Z0-9_]+)\s*(:)\s*(.+?)\s*(@\d+)(,)?
         captures:
           "1": { name: variable.language.stef variable.other.stef }
           "2": { name: punctuation.colon.stef }
@@ -136,9 +136,9 @@ repository:
       - include: "#fieldUnnamed"
   fieldUnnamed:
     patterns:
-      - match: ([A-Za-z0-9_&<>\[\]\(\);, ]+)\s*(@\d+)(,)?
+      - match: (.+?)\s*(@\d+)(,)?
         captures:
-          "1": { name: storage.type.stef }
+          "1": { name: storage.type.stef, patterns: [include: "#type"] }
           "2": { name: constant.numeric.stef }
           "3": { name: punctuation.comma.stef }
 
@@ -150,10 +150,9 @@ repository:
     endCaptures:
       "0": { name: punctuation.brackets.angle.close }
     patterns:
-      - match: ([A-Za-z0-9_&\[\]\(\)<>;, ]+?)\s*(,)?
-        captures:
-          "1": { name: storage.type.stef }
-          "2": { name: punctuation.comma.stef }
+      - include: "#type"
+      - name: punctuation.comma.stef
+        match: ","
 
   type:
     patterns:
@@ -183,7 +182,7 @@ repository:
         captures:
           "1": { patterns: [include: "#generics"] }
       - name: storage.type.builtin.hash_map.stef
-        match: hash_map(.+,.+>)
+        match: hash_map(<.+,.+>)
         captures:
           "1": { patterns: [include: "#generics"] }
       - name: storage.type.builtin.hash_set.stef
@@ -199,22 +198,45 @@ repository:
         captures:
           "1": { patterns: [include: "#generics"] }
       - name: storage.type.external.stef
-        match: '[A-Za-z0-9_&<>\[\]\(\);, ]+'
+        match: "[a-zA-Z0-9_]+(<.+>)?"
+        captures:
+          "1": { patterns: [include: "#generics"] }
 
   const:
     patterns:
-      - match: (const)\s+([A-Z][A-Z_]+)\s*(:)\s*(.+)\s*=\s*(.+)(;)
+      - match: (const)\s+([a-zA-Z0-9_]+)\s*(:)\s*(.+?)\s*=\s*(.+)(;)
         captures:
-          "1": { name: keyword.declaration.const.stef }
+          "1": { name: keyword.declaration.const.stef storage.type.const.stef }
           "2": { name: entity.name.class.const.stef }
           "3": { name: punctuation.colon.stef }
           "4": { patterns: [include: "#type"] }
-          "5": { name: constant.numeric.stef }
+          "5": { patterns: [include: "#literal"] }
           "6": { name: punctuation.semicolon.stef }
+
+  literal:
+    patterns:
+      - name: constant.bool.stef
+        match: (true|false)
+      - name: constant.numeric.stef
+        match: \d+(\.\d+)?
+      - name: string.quoted.stef
+        match: '".+"'
+      - name: constant.bytes.stef
+        begin: \[
+        beginCaptures:
+          "0": { name: punctuation.brackets.square.open }
+        end: \]
+        endCaptures:
+          "0": { name: punctuation.brackets.square.close }
+        patterns:
+          - name: constant.numeric.stef
+            match: \d+
+          - name: punctuation.comma.stef
+            match: ","
 
   use:
     patterns:
-      - match: (use)\s+([a-z][a-z0-9_]+(?:::[a-z][a-z0-9_]+))(.+)?(;)
+      - match: (use)\s+([a-zA-Z0-9_]+(?:::[a-zA-Z0-9_]+))(.+)?(;)
         captures:
           "1": { name: keyword.declaration.use.stef }
           "2": { name: entity.name.namespace.stef }
@@ -223,9 +245,9 @@ repository:
 
   alias:
     patterns:
-      - match: (type)\s+(.+)\s*=\s*(.+)(;)
+      - match: (type)\s+(.+?)\s*=\s*(.+?)(;)
         captures:
-          "1": { name: keyword.declaration.alias.stef }
+          "1": { name: keyword.declaration.alias.stef storage.type.alias.stef }
           "2": { patterns: [include: "#type"] }
           "3": { patterns: [include: "#type"] }
           "4": { name: punctuation.semicolon.stef }

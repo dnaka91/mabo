@@ -33,7 +33,7 @@ impl ::stef::Encode for Sample {
             w,
             2,
             |w| {
-                ::stef::buf::encode_bytes(w, &self.field2);
+                ::stef::buf::encode_bytes_std(w, &self.field2);
             },
         );
         ::stef::buf::encode_field(
@@ -64,7 +64,7 @@ impl ::stef::Decode for Sample {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
                 1 => field1 = Some(::stef::buf::decode_u32(r)?),
-                2 => field2 = Some(::stef::buf::decode_bytes(r)?),
+                2 => field2 = Some(::stef::buf::decode_bytes_std(r)?),
                 3 => {
                     field3 = Some(
                         {

@@ -6,9 +6,11 @@ use stef_parser::{
 };
 
 use super::{decode, encode};
+use crate::{BytesType, Opts};
 
-pub fn compile_schema(Schema { definitions, .. }: &Schema<'_>) -> TokenStream {
-    let definitions = definitions.iter().map(compile_definition);
+#[must_use]
+pub fn compile_schema(opts: &Opts, Schema { definitions, .. }: &Schema<'_>) -> TokenStream {
+    let definitions = definitions.iter().map(|def| compile_definition(opts, def));
 
     quote! {
         #[allow(unused_imports)]
@@ -18,13 +20,13 @@ pub fn compile_schema(Schema { definitions, .. }: &Schema<'_>) -> TokenStream {
     }
 }
 
-fn compile_definition(definition: &Definition<'_>) -> TokenStream {
+fn compile_definition(opts: &Opts, definition: &Definition<'_>) -> TokenStream {
     let definition = match definition {
-        Definition::Module(m) => compile_module(m),
+        Definition::Module(m) => compile_module(opts, m),
         Definition::Struct(s) => {
-            let def = compile_struct(s);
-            let encode = encode::compile_struct(s);
-            let decode = decode::compile_struct(s);
+            let def = compile_struct(opts, s);
+            let encode = encode::compile_struct(opts, s);
+            let decode = decode::compile_struct(opts, s);
 
             quote! {
                 #def
@@ -33,9 +35,9 @@ fn compile_definition(definition: &Definition<'_>) -> TokenStream {
             }
         }
         Definition::Enum(e) => {
-            let def = compile_enum(e);
-            let encode = encode::compile_enum(e);
-            let decode = decode::compile_enum(e);
+            let def = compile_enum(opts, e);
+            let encode = encode::compile_enum(opts, e);
+            let decode = decode::compile_enum(opts, e);
 
             quote! {
                 #def
@@ -43,7 +45,7 @@ fn compile_definition(definition: &Definition<'_>) -> TokenStream {
                 #decode
             }
         }
-        Definition::TypeAlias(a) => compile_alias(a),
+        Definition::TypeAlias(a) => compile_alias(opts, a),
         Definition::Const(c) => compile_const(c),
         Definition::Import(i) => compile_import(i),
     };
@@ -52,6 +54,7 @@ fn compile_definition(definition: &Definition<'_>) -> TokenStream {
 }
 
 fn compile_module(
+    opts: &Opts,
     Module {
         comment,
         name,
@@ -60,7 +63,7 @@ fn compile_module(
 ) -> TokenStream {
     let comment = compile_comment(comment);
     let name = Ident::new(name.get(), Span::call_site());
-    let definitions = definitions.iter().map(compile_definition);
+    let definitions = definitions.iter().map(|def| compile_definition(opts, def));
 
     quote! {
         #comment
@@ -74,6 +77,7 @@ fn compile_module(
 }
 
 fn compile_struct(
+    opts: &Opts,
     Struct {
         comment,
         attributes: _,
@@ -85,7 +89,7 @@ fn compile_struct(
     let comment = compile_comment(comment);
     let name = Ident::new(name.get(), Span::call_site());
     let generics = compile_generics(generics);
-    let fields = compile_fields(fields, true);
+    let fields = compile_fields(opts, fields, true);
 
     quote! {
         #comment
@@ -96,6 +100,7 @@ fn compile_struct(
 }
 
 fn compile_enum(
+    opts: &Opts,
     Enum {
         comment,
         attributes: _,
@@ -107,7 +112,7 @@ fn compile_enum(
     let comment = compile_comment(comment);
     let name = Ident::new(name.get(), Span::call_site());
     let generics = compile_generics(generics);
-    let variants = variants.iter().map(compile_variant);
+    let variants = variants.iter().map(|v| compile_variant(opts, v));
 
     quote! {
         #comment
@@ -120,6 +125,7 @@ fn compile_enum(
 }
 
 fn compile_variant(
+    opts: &Opts,
     Variant {
         comment,
         name,
@@ -129,7 +135,7 @@ fn compile_variant(
 ) -> TokenStream {
     let comment = compile_comment(comment);
     let name = Ident::new(name.get(), Span::call_site());
-    let fields = compile_fields(fields, false);
+    let fields = compile_fields(opts, fields, false);
 
     quote! {
         #comment
@@ -138,6 +144,7 @@ fn compile_variant(
 }
 
 fn compile_alias(
+    opts: &Opts,
     TypeAlias {
         comment,
         name,
@@ -148,7 +155,7 @@ fn compile_alias(
     let comment = compile_comment(comment);
     let name = Ident::new(name.get(), Span::call_site());
     let generics = compile_generics(generics);
-    let target = compile_data_type(target);
+    let target = compile_data_type(opts, target);
 
     quote! {
         #comment
@@ -210,7 +217,7 @@ fn compile_generics(Generics(types): &Generics<'_>) -> Option<TokenStream> {
     })
 }
 
-fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
+fn compile_fields(opts: &Opts, fields: &Fields<'_>, for_struct: bool) -> TokenStream {
     match fields {
         Fields::Named(named) => {
             let fields = named.iter().map(
@@ -220,7 +227,7 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
                     let comment = compile_comment(comment);
                     let public = for_struct.then(|| quote! { pub });
                     let name = Ident::new(name.get(), Span::call_site());
-                    let ty = compile_data_type(ty);
+                    let ty = compile_data_type(opts, ty);
                     quote! {
                         #comment
                         #public #name: #ty
@@ -235,7 +242,7 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
         Fields::Unnamed(unnamed) => {
             let fields = unnamed.iter().map(|UnnamedField { ty, .. }| {
                 let public = for_struct.then(|| quote! { pub });
-                let ty = compile_data_type(ty);
+                let ty = compile_data_type(opts, ty);
                 quote! { #public #ty }
             });
 
@@ -255,7 +262,7 @@ fn compile_fields(fields: &Fields<'_>, for_struct: bool) -> TokenStream {
     }
 }
 
-pub(super) fn compile_data_type(ty: &Type<'_>) -> TokenStream {
+pub(super) fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
     match &ty.value {
         DataType::Bool => quote! { bool },
         DataType::U8 => quote! { u8 },
@@ -271,22 +278,25 @@ pub(super) fn compile_data_type(ty: &Type<'_>) -> TokenStream {
         DataType::F32 => quote! { f32 },
         DataType::F64 => quote! { f64 },
         DataType::String | DataType::StringRef => quote! { String },
-        DataType::Bytes | DataType::BytesRef => quote! { Vec<u8> },
+        DataType::Bytes | DataType::BytesRef => match opts.bytes_type {
+            BytesType::VecU8 => quote! { Vec<u8> },
+            BytesType::Bytes => quote! { ::stef::buf::Bytes },
+        },
         DataType::Vec(ty) => {
-            let ty = compile_data_type(ty);
+            let ty = compile_data_type(opts, ty);
             quote! { Vec<#ty> }
         }
         DataType::HashMap(kv) => {
-            let k = compile_data_type(&kv.0);
-            let v = compile_data_type(&kv.1);
+            let k = compile_data_type(opts, &kv.0);
+            let v = compile_data_type(opts, &kv.1);
             quote! { ::std::collections::HashMap<#k, #v> }
         }
         DataType::HashSet(ty) => {
-            let ty = compile_data_type(ty);
+            let ty = compile_data_type(opts, ty);
             quote! { ::std::collections::HashSet<#ty> }
         }
         DataType::Option(ty) => {
-            let ty = compile_data_type(ty);
+            let ty = compile_data_type(opts, ty);
             quote! { Option<#ty> }
         }
         DataType::NonZero(ty) => match &ty.value {
@@ -301,18 +311,21 @@ pub(super) fn compile_data_type(ty: &Type<'_>) -> TokenStream {
             DataType::I64 => quote! { ::std::num::NonZeroI64 },
             DataType::I128 => quote! { ::std::num::NonZeroI128 },
             DataType::String | DataType::StringRef => quote! { ::stef::NonZeroString },
-            DataType::Bytes | DataType::BytesRef => quote! { ::stef::NonZeroBytes },
+            DataType::Bytes | DataType::BytesRef => match opts.bytes_type {
+                BytesType::VecU8 => quote! { ::stef::NonZeroBytes },
+                BytesType::Bytes => quote! { ::stef::NonZero<::stef::buf::Bytes> },
+            },
             DataType::Vec(ty) => {
-                let ty = compile_data_type(ty);
+                let ty = compile_data_type(opts, ty);
                 quote! { ::stef::NonZeroVec<#ty> }
             }
             DataType::HashMap(kv) => {
-                let k = compile_data_type(&kv.0);
-                let v = compile_data_type(&kv.1);
+                let k = compile_data_type(opts, &kv.0);
+                let v = compile_data_type(opts, &kv.1);
                 quote! { ::stef::NonZeroHashMap<#k, #v> }
             }
             DataType::HashSet(ty) => {
-                let ty = compile_data_type(ty);
+                let ty = compile_data_type(opts, ty);
                 quote! { ::stef::NonZeroHashSet<#ty> }
             }
             ty => todo!("compiler should catch invalid {ty:?} type"),
@@ -320,11 +333,11 @@ pub(super) fn compile_data_type(ty: &Type<'_>) -> TokenStream {
         DataType::BoxString => quote! { Box<str> },
         DataType::BoxBytes => quote! { Box<[u8]> },
         DataType::Tuple(types) => {
-            let types = types.iter().map(compile_data_type);
+            let types = types.iter().map(|ty| compile_data_type(opts, ty));
             quote! { (#(#types,)*) }
         }
         DataType::Array(ty, size) => {
-            let ty = compile_data_type(ty);
+            let ty = compile_data_type(opts, ty);
             let size = proc_macro2::Literal::u32_unsuffixed(*size);
             quote! { [#ty; #size] }
         }
@@ -336,7 +349,7 @@ pub(super) fn compile_data_type(ty: &Type<'_>) -> TokenStream {
             let path = path.iter().map(Name::get);
             let name = Ident::new(name.get(), Span::call_site());
             let generics = (!generics.is_empty()).then(|| {
-                let types = generics.iter().map(compile_data_type);
+                let types = generics.iter().map(|ty| compile_data_type(opts, ty));
                 quote! { <#(#types,)*> }
             });
 

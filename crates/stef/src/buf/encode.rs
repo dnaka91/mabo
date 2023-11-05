@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-pub use bytes::BufMut;
+pub use bytes::{BufMut, Bytes};
 
 use crate::{varint, NonZero};
 
@@ -42,12 +42,16 @@ pub fn encode_f64(w: &mut impl BufMut, value: f64) {
 }
 
 pub fn encode_string(w: &mut impl BufMut, value: &str) {
-    encode_bytes(w, value.as_bytes());
+    encode_bytes_std(w, value.as_bytes());
 }
 
-pub fn encode_bytes(w: &mut impl BufMut, value: &[u8]) {
+pub fn encode_bytes_std(w: &mut impl BufMut, value: &[u8]) {
     encode_u64(w, value.len() as u64);
     w.put(value);
+}
+
+pub fn encode_bytes_bytes(w: &mut impl BufMut, value: &Bytes) {
+    encode_bytes_std(w, value);
 }
 
 pub fn encode_vec<W, T, E>(w: &mut W, vec: &[T], encode: E)
@@ -186,7 +190,7 @@ impl Encode for Box<str> {
 impl Encode for Box<[u8]> {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        encode_bytes(w, self);
+        encode_bytes_std(w, self);
     }
 }
 

@@ -6,7 +6,7 @@ use std::{
     hash::Hash,
 };
 
-pub use bytes::Buf;
+pub use bytes::{Buf, Bytes};
 
 use crate::{varint, NonZero};
 
@@ -88,14 +88,21 @@ pub fn decode_f64(r: &mut impl Buf) -> Result<f64> {
 }
 
 pub fn decode_string(r: &mut impl Buf) -> Result<String> {
-    String::from_utf8(decode_bytes(r)?).map_err(Into::into)
+    String::from_utf8(decode_bytes_std(r)?).map_err(Into::into)
 }
 
-pub fn decode_bytes(r: &mut impl Buf) -> Result<Vec<u8>> {
+pub fn decode_bytes_std(r: &mut impl Buf) -> Result<Vec<u8>> {
     let len = decode_u64(r)?;
     ensure_size!(r, len as usize);
 
     Ok(r.copy_to_bytes(len as usize).to_vec())
+}
+
+pub fn decode_bytes_bytes(r: &mut impl Buf) -> Result<Bytes> {
+    let len = decode_u64(r)?;
+    ensure_size!(r, len as usize);
+
+    Ok(r.copy_to_bytes(len as usize))
 }
 
 pub fn decode_vec<R, T, D>(r: &mut R, decode: D) -> Result<Vec<T>>
@@ -199,17 +206,25 @@ decode_non_zero_int!(u8, u16, u32, u64, u128);
 decode_non_zero_int!(i8, i16, i32, i64, i128);
 
 pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZero<String>> {
-    String::from_utf8(decode_non_zero_bytes(r)?.into_inner())
+    String::from_utf8(decode_non_zero_bytes_std(r)?.into_inner())
         .map(|v| NonZero::<String>::new(v).unwrap())
         .map_err(Into::into)
 }
 
-pub fn decode_non_zero_bytes(r: &mut impl Buf) -> Result<NonZero<Vec<u8>>> {
+pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZero<Vec<u8>>> {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
     ensure_size!(r, len as usize);
 
     Ok(NonZero::<Vec<_>>::new(r.copy_to_bytes(len as usize).to_vec()).unwrap())
+}
+
+pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
+    let len = decode_u64(r)?;
+    ensure_not_empty!(len);
+    ensure_size!(r, len as usize);
+
+    Ok(NonZero::<Bytes>::new(r.copy_to_bytes(len as usize)).unwrap())
 }
 
 pub fn decode_non_zero_vec<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<Vec<T>>>
@@ -308,7 +323,7 @@ impl Decode for Box<str> {
 impl Decode for Box<[u8]> {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_bytes(r).map(Vec::into_boxed_slice)
+        decode_bytes_std(r).map(Vec::into_boxed_slice)
     }
 }
 

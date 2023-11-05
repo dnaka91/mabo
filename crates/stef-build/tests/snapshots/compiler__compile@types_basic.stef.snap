@@ -148,14 +148,14 @@ impl ::stef::Encode for Sample {
             w,
             16,
             |w| {
-                ::stef::buf::encode_bytes(w, &self.f16);
+                ::stef::buf::encode_bytes_std(w, &self.f16);
             },
         );
         ::stef::buf::encode_field(
             w,
             17,
             |w| {
-                ::stef::buf::encode_bytes(w, &self.f17);
+                ::stef::buf::encode_bytes_std(w, &self.f17);
             },
         );
         ::stef::buf::encode_field(
@@ -169,7 +169,7 @@ impl ::stef::Encode for Sample {
             w,
             19,
             |w| {
-                ::stef::buf::encode_bytes(w, &*self.f19);
+                ::stef::buf::encode_bytes_std(w, &*self.f19);
             },
         );
         ::stef::buf::encode_field(
@@ -240,8 +240,8 @@ impl ::stef::Decode for Sample {
                 13 => f13 = Some(::stef::buf::decode_f64(r)?),
                 14 => f14 = Some(::stef::buf::decode_string(r)?),
                 15 => f15 = Some(::stef::buf::decode_string(r)?),
-                16 => f16 = Some(::stef::buf::decode_bytes(r)?),
-                17 => f17 = Some(::stef::buf::decode_bytes(r)?),
+                16 => f16 = Some(::stef::buf::decode_bytes_std(r)?),
+                17 => f17 = Some(::stef::buf::decode_bytes_std(r)?),
                 18 => f18 = Some(Box::<str>::decode(r)?),
                 19 => f19 = Some(Box::<[u8]>::decode(r)?),
                 20 => {

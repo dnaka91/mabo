@@ -30,18 +30,35 @@ mod tests {
     }
 
     #[test]
-    fn non_zero_bytes_valid() {
+    fn non_zero_bytes_std_valid() {
         let mut buf = Vec::new();
-        encode_bytes(&mut buf, &[1, 2, 3]);
-        assert!(decode_non_zero_bytes(&mut &*buf).is_ok());
+        encode_bytes_std(&mut buf, &[1, 2, 3]);
+        assert!(decode_non_zero_bytes_std(&mut &*buf).is_ok());
     }
 
     #[test]
-    fn non_zero_bytes_invalid() {
+    fn non_zero_bytes_std_invalid() {
         let mut buf = Vec::new();
-        encode_bytes(&mut buf, &[]);
+        encode_bytes_std(&mut buf, &[]);
         assert!(matches!(
-            decode_non_zero_bytes(&mut &*buf),
+            decode_non_zero_bytes_std(&mut &*buf),
+            Err(Error::Zero),
+        ));
+    }
+
+    #[test]
+    fn non_zero_bytes_bytes_valid() {
+        let mut buf = Vec::new();
+        encode_bytes_bytes(&mut buf, &Bytes::from_static(&[1, 2, 3]));
+        assert!(decode_non_zero_bytes_bytes(&mut &*buf).is_ok());
+    }
+
+    #[test]
+    fn non_zero_bytes_bytes_invalid() {
+        let mut buf = Vec::new();
+        encode_bytes_bytes(&mut buf, &Bytes::from_static(&[]));
+        assert!(matches!(
+            decode_non_zero_bytes_bytes(&mut &*buf),
             Err(Error::Zero),
         ));
     }

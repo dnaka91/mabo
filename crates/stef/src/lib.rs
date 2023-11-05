@@ -15,7 +15,7 @@ use std::{
     ops::Deref,
 };
 
-pub use buf::{Buf, BufMut, Decode, Encode};
+pub use buf::{Buf, BufMut, Bytes, Decode, Encode};
 
 pub mod buf;
 pub mod varint;
@@ -60,6 +60,7 @@ macro_rules! non_zero_collection {
 
 non_zero_collection!(String);
 non_zero_collection!(Vec<T>);
+non_zero_collection!(Bytes);
 non_zero_collection!(HashMap<K, V>);
 non_zero_collection!(HashSet<T>);
 

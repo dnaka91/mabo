@@ -1,8 +1,6 @@
 fn main() -> stef_build::Result<()> {
-    stef_build::compile(&["src/sample.stef"], &["src/"])?;
-    stef_build::compile(
-        &["schemas/*.stef", "src/other.stef", "src/second.stef"],
-        &["schemas/"],
-    )?;
+    let compiler = stef_build::Compiler::default();
+    compiler.compile(&["src/sample.stef"])?;
+    compiler.compile(&["schemas/*.stef", "src/other.stef", "src/second.stef"])?;
     Ok(())
 }

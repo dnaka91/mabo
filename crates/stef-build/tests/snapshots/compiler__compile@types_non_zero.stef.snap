@@ -114,7 +114,7 @@ impl ::stef::Encode for Sample {
             w,
             12,
             |w| {
-                ::stef::buf::encode_bytes(w, &self.f12.get());
+                ::stef::buf::encode_bytes_std(w, &self.f12.get());
             },
         );
         ::stef::buf::encode_field(
@@ -141,7 +141,7 @@ impl ::stef::Encode for Sample {
                         ::stef::buf::encode_string(w, &k);
                     },
                     |w, v| {
-                        ::stef::buf::encode_bytes(w, &v);
+                        ::stef::buf::encode_bytes_std(w, &v);
                     },
                 );
             },
@@ -195,7 +195,7 @@ impl ::stef::Decode for Sample {
                 9 => f09 = Some(::stef::buf::decode_non_zero_i64(r)?),
                 10 => f10 = Some(::stef::buf::decode_non_zero_i128(r)?),
                 11 => f11 = Some(::stef::buf::decode_non_zero_string(r)?),
-                12 => f12 = Some(::stef::buf::decode_non_zero_bytes(r)?),
+                12 => f12 = Some(::stef::buf::decode_non_zero_bytes_std(r)?),
                 13 => {
                     f13 = Some(
                         ::stef::buf::decode_non_zero_vec(
@@ -209,7 +209,7 @@ impl ::stef::Decode for Sample {
                         ::stef::buf::decode_non_zero_hash_map(
                             r,
                             |r| { ::stef::buf::decode_string(r) },
-                            |r| { ::stef::buf::decode_bytes(r) },
+                            |r| { ::stef::buf::decode_bytes_std(r) },
                         )?,
                     );
                 }

@@ -38,7 +38,7 @@ The file name is the same as the input schema file name, but with `.rs` as file 
 
 From that point on, the generated code can be used like regular Rust code. Extending the example a bit, let's say the schema file contained the following:
 
-```rust,ignore
+```stef
 struct Sample {
     value: u32 @1,
 }
@@ -46,7 +46,7 @@ struct Sample {
 
 Then we could use the generated struct as follows:
 
-```rust,ignore
+```rust
 // Include stef's `Encode` trait to get access to the `encode()` method.
 use stef::Encode;
 

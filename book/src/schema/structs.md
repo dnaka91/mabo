@@ -27,7 +27,7 @@ A single field is defined as `name: type @id`, the name, its type and [ID]. Fiel
 
 Here is a basic named schema with two fields `field1` and `field2`. The first one is a 32-bit unsigned integer and assigned the ID 1. The second one is a 16-bit unsigned integer and assigned the ID 2.
 
-```rust,ignore
+```stef
 {{#include structs/named.stef}}
 ```
 
@@ -81,7 +81,7 @@ A single field is defined as `type @id`, the name and [ID].
 
 ### Schema #{unnamed-schema}
 
-```rust,ignore
+```stef
 {{#include structs/unnamed.stef}}
 ```
 
@@ -127,7 +127,7 @@ Instead, it's only the type that carries information.
 
 ### Schema {#unit-schema}
 
-```rust,ignore
+```stef
 {{#include structs/unit.stef}}
 ```
 
@@ -167,7 +167,7 @@ Instead, it's only the type that carries information.
 
 ### Schema {#generics-schema}
 
-```rust,ignore
+```stef
 {{#include structs/generics.stef}}
 ```
 

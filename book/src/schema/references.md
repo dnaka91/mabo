@@ -4,6 +4,6 @@
 
 ## Schema
 
-```rust,ignore
+```stef
 {{#include references/basic.stef}}
 ```

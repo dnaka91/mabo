@@ -1,5 +1,5 @@
 # Examples
 
-```rust,ignore
+```stef
 {{#include examples/01.stef}}
 ```

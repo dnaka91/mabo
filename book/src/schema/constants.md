@@ -13,7 +13,7 @@
 
 ## Schema
 
-```rust,ignore
+```stef
 {{#include constants/basic.stef}}
 ```
 

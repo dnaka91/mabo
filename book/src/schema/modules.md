@@ -4,7 +4,7 @@
 
 ## Schema
 
-```rust,ignore
+```stef
 {{#include modules/basic.stef}}
 ```
 
@@ -12,6 +12,6 @@
 
 ### Schema {#nesting-schema}
 
-```rust,ignore
+```stef
 {{#include modules/nesting.stef}}
 ```

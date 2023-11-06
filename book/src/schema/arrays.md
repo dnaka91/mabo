@@ -5,7 +5,7 @@
 
 ## Schema
 
-```rust,ignore
+```stef
 {{#include arrays/basic.stef}}
 ```
 

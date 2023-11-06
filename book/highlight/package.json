@@ -1,0 +1,17 @@
+{
+  "name": "highlight",
+  "private": true,
+  "scripts": {
+    "esbuild": "esbuild src/*.{css,ts} --outdir=../theme --target=es2016 --global-name=hljs --legal-comments=none --bundle",
+    "watch": "pnpm run esbuild --watch",
+    "build": "pnpm run esbuild --minify",
+    "lint": "biome check --apply src/**/*.ts"
+  },
+  "dependencies": {
+    "highlight.js": "^11.9.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.3.3",
+    "esbuild": "^0.19.5"
+  }
+}

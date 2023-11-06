@@ -23,6 +23,6 @@ Special types
 - Boxed strings: `box<string`.
 - Boxed bytes: `box<bytes>`.
 
-```rust,ignore
+```stef
 {{#include creating/basic.stef}}
 ```

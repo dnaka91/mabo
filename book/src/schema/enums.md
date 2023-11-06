@@ -7,7 +7,7 @@
 
 ### Schema {#basic-schema}
 
-```rust,ignore
+```stef
 {{#include enums/basic.stef}}
 ```
 
@@ -47,7 +47,7 @@
 
 ### Schema {#advanced-schema}
 
-```rust,ignore
+```stef
 {{#include enums/advanced.stef}}
 ```
 

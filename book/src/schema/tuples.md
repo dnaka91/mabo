@@ -15,7 +15,7 @@ The minimum amount of types in a tuple are **2** and the maximum are **12**. Rea
 
 In the schema, tuples are declared with parenthesis `(` and `)`, each type separated by a comma `,`, forming a definition like `(T1, T2, TN...)`.
 
-```rust,ignore
+```stef
 {{#include tuples/basic.stef}}
 ```
 

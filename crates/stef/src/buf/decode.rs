@@ -378,7 +378,7 @@ where
     }
 }
 
-impl<'a, T> Decode for std::borrow::Cow<'a, T>
+impl<T> Decode for std::borrow::Cow<'_, T>
 where
     T: Copy + Decode,
 {

@@ -162,14 +162,14 @@ impl ::stef::Encode for Sample {
             w,
             18,
             |w| {
-                ::stef::buf::encode_string(w, &*self.f18);
+                ::stef::buf::encode_string(w, &self.f18);
             },
         );
         ::stef::buf::encode_field(
             w,
             19,
             |w| {
-                ::stef::buf::encode_bytes_std(w, &*self.f19);
+                ::stef::buf::encode_bytes_std(w, &self.f19);
             },
         );
         ::stef::buf::encode_field(

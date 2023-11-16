@@ -101,7 +101,7 @@ mod ids {
     #[err(
         msg("Failed to parse id declaration"),
         code(stef::parse::id),
-        help("Expected id declaration in the form `{}`", highlight::sample("@..."),)
+        help("Expected id declaration in the form `{}`", highlight::sample("@..."))
     )]
     #[rename(ParseIdError)]
     pub struct ParseError {

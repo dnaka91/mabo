@@ -204,7 +204,7 @@ where
     }
 }
 
-impl<'a, T> Encode for &'a [T]
+impl<T> Encode for &'_ [T]
 where
     T: Encode,
 {
@@ -265,7 +265,7 @@ where
     }
 }
 
-impl<'a, T> Encode for std::borrow::Cow<'a, T>
+impl<T> Encode for std::borrow::Cow<'_, T>
 where
     T: Clone + Encode,
 {

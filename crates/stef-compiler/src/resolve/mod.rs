@@ -104,7 +104,7 @@ pub(crate) enum ResolvedImport<'a> {
     },
 }
 
-impl<'a> Module<'a> {
+impl Module<'_> {
     fn resolve_local(&self, ty: &ExternalType<'_>) -> Result<(), ResolveLocal> {
         let module = if ty.path.is_empty() {
             self

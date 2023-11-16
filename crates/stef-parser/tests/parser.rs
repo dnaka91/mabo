@@ -34,7 +34,7 @@ fn parse_schema() {
 fn parse_invalid_schema() {
     struct Wrapper<'a>(&'a MietteHandler, &'a dyn Diagnostic);
 
-    impl<'a> Display for Wrapper<'a> {
+    impl Display for Wrapper<'_> {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             self.0.debug(self.1, f)
         }

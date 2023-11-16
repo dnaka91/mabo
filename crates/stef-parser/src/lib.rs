@@ -144,7 +144,7 @@ impl<'a> Schema<'a> {
     }
 }
 
-impl<'a> Display for Schema<'a> {
+impl Display for Schema<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for definition in &self.definitions {
             writeln!(f, "{definition}")?;
@@ -170,7 +170,7 @@ pub enum Definition<'a> {
     Import(Import<'a>),
 }
 
-impl<'a> Print for Definition<'a> {
+impl Print for Definition<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         match self {
             Definition::Module(v) => v.print(f, level),
@@ -183,7 +183,7 @@ impl<'a> Print for Definition<'a> {
     }
 }
 
-impl<'a> Display for Definition<'a> {
+impl Display for Definition<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -232,7 +232,7 @@ pub struct Module<'a> {
     pub definitions: Vec<Definition<'a>>,
 }
 
-impl<'a> Print for Module<'a> {
+impl Print for Module<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -257,7 +257,7 @@ impl<'a> Print for Module<'a> {
     }
 }
 
-impl<'a> Display for Module<'a> {
+impl Display for Module<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -291,7 +291,7 @@ pub struct Struct<'a> {
     pub fields: Fields<'a>,
 }
 
-impl<'a> Print for Struct<'a> {
+impl Print for Struct<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let indent = Self::INDENT.repeat(level);
         let Self {
@@ -310,7 +310,7 @@ impl<'a> Print for Struct<'a> {
     }
 }
 
-impl<'a> Display for Struct<'a> {
+impl Display for Struct<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -345,7 +345,7 @@ pub struct Enum<'a> {
     pub variants: Vec<Variant<'a>>,
 }
 
-impl<'a> Print for Enum<'a> {
+impl Print for Enum<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -371,7 +371,7 @@ impl<'a> Print for Enum<'a> {
     }
 }
 
-impl<'a> Display for Enum<'a> {
+impl Display for Enum<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -392,7 +392,7 @@ pub struct Variant<'a> {
     span: Span,
 }
 
-impl<'a> Print for Variant<'a> {
+impl Print for Variant<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -412,13 +412,13 @@ impl<'a> Print for Variant<'a> {
     }
 }
 
-impl<'a> Spanned for Variant<'a> {
+impl Spanned for Variant<'_> {
     fn span(&self) -> Span {
         self.span
     }
 }
 
-impl<'a> Display for Variant<'a> {
+impl Display for Variant<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -445,7 +445,7 @@ pub struct TypeAlias<'a> {
     pub target: Type<'a>,
 }
 
-impl<'a> Print for TypeAlias<'a> {
+impl Print for TypeAlias<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -488,7 +488,7 @@ pub enum Fields<'a> {
     Unit,
 }
 
-impl<'a> Print for Fields<'a> {
+impl Print for Fields<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         match self {
             Fields::Named(fields) => {
@@ -508,7 +508,7 @@ impl<'a> Print for Fields<'a> {
     }
 }
 
-impl<'a> Display for Fields<'a> {
+impl Display for Fields<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -537,7 +537,7 @@ pub struct NamedField<'a> {
     span: Span,
 }
 
-impl<'a> Print for NamedField<'a> {
+impl Print for NamedField<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -554,13 +554,13 @@ impl<'a> Print for NamedField<'a> {
     }
 }
 
-impl<'a> Spanned for NamedField<'a> {
+impl Spanned for NamedField<'_> {
     fn span(&self) -> Span {
         self.span
     }
 }
 
-impl<'a> Display for NamedField<'a> {
+impl Display for NamedField<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -584,13 +584,13 @@ pub struct UnnamedField<'a> {
     span: Span,
 }
 
-impl<'a> Spanned for UnnamedField<'a> {
+impl Spanned for UnnamedField<'_> {
     fn span(&self) -> Span {
         self.span
     }
 }
 
-impl<'a> Display for UnnamedField<'a> {
+impl Display for UnnamedField<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self { ty, id, span: _ } = self;
         write!(f, "{ty} {id}")
@@ -607,7 +607,7 @@ impl<'a> Display for UnnamedField<'a> {
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Comment<'a>(pub Vec<&'a str>);
 
-impl<'a> Print for Comment<'a> {
+impl Print for Comment<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let lines = &self.0;
 
@@ -620,7 +620,7 @@ impl<'a> Print for Comment<'a> {
     }
 }
 
-impl<'a> Display for Comment<'a> {
+impl Display for Comment<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -630,7 +630,7 @@ impl<'a> Display for Comment<'a> {
 #[derive(Debug, Default, PartialEq)]
 pub struct Attributes<'a>(pub Vec<Attribute<'a>>);
 
-impl<'a> Print for Attributes<'a> {
+impl Print for Attributes<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         if self.0.is_empty() {
             return Ok(());
@@ -643,7 +643,7 @@ impl<'a> Print for Attributes<'a> {
     }
 }
 
-impl<'a> Display for Attributes<'a> {
+impl Display for Attributes<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -658,7 +658,7 @@ pub struct Attribute<'a> {
     pub value: AttributeValue<'a>,
 }
 
-impl<'a> Print for Attribute<'a> {
+impl Print for Attribute<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let indent = Self::INDENT.repeat(level);
         let Self { name, value } = self;
@@ -667,7 +667,7 @@ impl<'a> Print for Attribute<'a> {
     }
 }
 
-impl<'a> Display for Attribute<'a> {
+impl Display for Attribute<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -684,7 +684,7 @@ pub enum AttributeValue<'a> {
     Multi(Vec<Attribute<'a>>),
 }
 
-impl<'a> Print for AttributeValue<'a> {
+impl Print for AttributeValue<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, _level: usize) -> fmt::Result {
         match self {
             Self::Unit => Ok(()),
@@ -694,7 +694,7 @@ impl<'a> Print for AttributeValue<'a> {
     }
 }
 
-impl<'a> Display for AttributeValue<'a> {
+impl Display for AttributeValue<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }
@@ -710,13 +710,13 @@ pub struct Type<'a> {
     span: Span,
 }
 
-impl<'a> Spanned for Type<'a> {
+impl Spanned for Type<'_> {
     fn span(&self) -> Span {
         self.span
     }
 }
 
-impl<'a> Display for Type<'a> {
+impl Display for Type<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.value.fmt(f)
     }
@@ -792,7 +792,7 @@ pub enum DataType<'a> {
     External(ExternalType<'a>),
 }
 
-impl<'a> Display for DataType<'a> {
+impl Display for DataType<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Bool => f.write_str("bool"),
@@ -840,7 +840,7 @@ pub struct ExternalType<'a> {
     pub generics: Vec<Type<'a>>,
 }
 
-impl<'a> Display for ExternalType<'a> {
+impl Display for ExternalType<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self {
             path,
@@ -864,7 +864,7 @@ impl<'a> Display for ExternalType<'a> {
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Generics<'a>(pub Vec<Name<'a>>);
 
-impl<'a> Display for Generics<'a> {
+impl Display for Generics<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         concat(f, "<", &self.0, ", ", ">")
     }
@@ -914,7 +914,7 @@ pub struct Name<'a> {
     span: Span,
 }
 
-impl<'a> Name<'a> {
+impl Name<'_> {
     /// Retrieve the raw string value of this name.
     #[must_use]
     pub const fn get(&self) -> &str {
@@ -922,13 +922,13 @@ impl<'a> Name<'a> {
     }
 }
 
-impl<'a> Spanned for Name<'a> {
+impl Spanned for Name<'_> {
     fn span(&self) -> Span {
         self.span
     }
 }
 
-impl<'a> Display for Name<'a> {
+impl Display for Name<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.value.fmt(f)
     }
@@ -956,7 +956,7 @@ pub struct Const<'a> {
     pub value: Literal,
 }
 
-impl<'a> Print for Const<'a> {
+impl Print for Const<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -1009,7 +1009,7 @@ pub struct Import<'a> {
     pub element: Option<Name<'a>>,
 }
 
-impl<'a> Print for Import<'a> {
+impl Print for Import<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self { segments, element } = self;
 

@@ -270,8 +270,10 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
         DataType::I128 => quote! { ::stef::buf::encode_i128(w, #name) },
         DataType::F32 => quote! { ::stef::buf::encode_f32(w, #name) },
         DataType::F64 => quote! { ::stef::buf::encode_f64(w, #name) },
-        DataType::String | DataType::StringRef => quote! { ::stef::buf::encode_string(w, &#name) },
-        DataType::Bytes | DataType::BytesRef => match opts.bytes_type {
+        DataType::String | DataType::StringRef | DataType::BoxString => {
+            quote! { ::stef::buf::encode_string(w, &#name) }
+        }
+        DataType::Bytes | DataType::BytesRef | DataType::BoxBytes => match opts.bytes_type {
             BytesType::VecU8 => quote! { ::stef::buf::encode_bytes_std(w, &#name) },
             BytesType::Bytes => quote! { ::stef::buf::encode_bytes_bytes(w, &#name) },
         },
@@ -352,9 +354,6 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
             | DataType::HashSet(_) => compile_data_type(opts, ty, quote! { #name.get() }),
             ty => todo!("compiler should catch invalid {ty:?} type"),
         },
-
-        DataType::BoxString => quote! { ::stef::buf::encode_string(w, &*#name) },
-        DataType::BoxBytes => quote! { ::stef::buf::encode_bytes_std(w, &*#name) },
         DataType::Tuple(types) => match types.len() {
             2..=12 => {
                 let types = types.iter().enumerate().map(|(idx, ty)| {
@@ -371,9 +370,7 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                 });
                 quote! { #(#types;)* }
             }
-            0 => panic!("tuple with zero elements"),
-            1 => panic!("tuple with single element"),
-            _ => panic!("tuple with more than 12 elements"),
+            n => todo!("compiler should catch invalid tuple with {n} elements"),
         },
         DataType::Array(ty, _size) => {
             let ty = compile_data_type(

@@ -21,7 +21,7 @@ pub fn compile_schema(opts: &Opts, Schema { definitions, .. }: &Schema<'_>) -> T
 }
 
 fn compile_definition(opts: &Opts, definition: &Definition<'_>) -> TokenStream {
-    let definition = match definition {
+    match definition {
         Definition::Module(m) => compile_module(opts, m),
         Definition::Struct(s) => {
             let def = compile_struct(opts, s);
@@ -48,9 +48,7 @@ fn compile_definition(opts: &Opts, definition: &Definition<'_>) -> TokenStream {
         Definition::TypeAlias(a) => compile_alias(opts, a),
         Definition::Const(c) => compile_const(c),
         Definition::Import(i) => compile_import(i),
-    };
-
-    quote! { #definition }
+    }
 }
 
 fn compile_module(

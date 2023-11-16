@@ -16,10 +16,6 @@
 //! println!("{schema:#?}");
 //! ```
 
-#![forbid(unsafe_code)]
-#![deny(rust_2018_idioms, clippy::all)]
-#![warn(missing_docs, clippy::pedantic)]
-
 use std::{
     fmt::{self, Display},
     ops::Range,

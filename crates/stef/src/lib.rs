@@ -1,7 +1,5 @@
-#![forbid(unsafe_code)]
-#![deny(rust_2018_idioms, clippy::all)]
-#![warn(clippy::pedantic)]
 #![allow(
+    missing_docs,
     clippy::cast_possible_truncation,
     clippy::implicit_hasher,
     clippy::inline_always,

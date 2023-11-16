@@ -21,7 +21,7 @@ syn.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
-indoc.workspace = true
 insta.workspace = true
-pretty_assertions = "1.4.0"
-stef = { path = "../stef" }
+
+[lints]
+workspace = true

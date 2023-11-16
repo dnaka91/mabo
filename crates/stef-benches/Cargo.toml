@@ -30,3 +30,6 @@ stef-parser = { path = "../stef-parser" }
 [dev-dependencies]
 divan = "0.1.2"
 indoc.workspace = true
+
+[lints]
+workspace = true

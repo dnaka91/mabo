@@ -15,3 +15,6 @@ stef = { path = "../stef" }
 
 [build-dependencies]
 stef-build = { path = "../stef-build" }
+
+[lints]
+workspace = true

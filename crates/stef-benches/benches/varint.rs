@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use divan::black_box;
 use stef_benches::varint;
 

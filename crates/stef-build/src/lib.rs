@@ -1,7 +1,4 @@
-#![forbid(unsafe_code)]
-#![deny(rust_2018_idioms, clippy::all)]
-#![warn(clippy::pedantic)]
-#![allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
+#![allow(missing_docs, clippy::missing_errors_doc, clippy::missing_panics_doc)]
 
 use std::{convert::AsRef, fmt::Debug, path::PathBuf};
 

@@ -21,3 +21,6 @@ miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]
 debug = []
+
+[lints]
+workspace = true

@@ -20,3 +20,6 @@ glob.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mimalloc.workspace = true
 stef-parser = { path = "../stef-parser" }
+
+[lints]
+workspace = true

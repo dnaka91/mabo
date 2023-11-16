@@ -12,6 +12,15 @@ homepage = "https://github.com/dnaka91/stef"
 repository = "https://github.com/dnaka91/stef"
 license = "MIT"
 
+[workspace.lints.rust]
+unsafe_code = "forbid"
+rust_2018_idioms = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = "deny"
+pedantic = "warn"
+
 [workspace.dependencies]
 color-eyre = { version = "0.6.2", default-features = false }
 glob = "0.3.1"

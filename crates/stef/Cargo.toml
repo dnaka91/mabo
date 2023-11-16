@@ -13,3 +13,6 @@ license.workspace = true
 bytes = "1.5.0"
 paste = "1.0.14"
 thiserror.workspace = true
+
+[lints]
+workspace = true

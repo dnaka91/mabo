@@ -1,6 +1,6 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}"
+description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    vec<u32> @1,\n    hash_map<u32, string> @2,\n    hash_set<u32> @3,\n    option<u32> @4,\n    non_zero<u32> @5,\n)"
 input_file: crates/stef-parser/tests/inputs/types_generic.stef
 ---
 struct Sample {
@@ -10,5 +10,7 @@ struct Sample {
     f4: option<u32> @4,
     f5: non_zero<u32> @5,
 }
+
+struct SampleUnnamed(vec<u32> @1, hash_map<u32, string> @2, hash_set<u32> @3, option<u32> @4, non_zero<u32> @5)
 
 

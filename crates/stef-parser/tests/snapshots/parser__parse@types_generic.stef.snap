@@ -1,13 +1,13 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}"
+description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    vec<u32> @1,\n    hash_map<u32, string> @2,\n    hash_set<u32> @3,\n    option<u32> @4,\n    non_zero<u32> @5,\n)"
 input_file: crates/stef-parser/tests/inputs/types_generic.stef
 ---
 Schema {
     path: Some(
         "types_generic.stef",
     ),
-    source: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n",
+    source: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    vec<u32> @1,\n    hash_map<u32, string> @2,\n    hash_set<u32> @3,\n    option<u32> @4,\n    non_zero<u32> @5,\n)\n",
     definitions: [
         Struct(
             Struct {
@@ -226,6 +226,179 @@ Schema {
                             span: Span {
                                 start: 125,
                                 end: 145,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "SampleUnnamed",
+                    span: Span {
+                        start: 157,
+                        end: 170,
+                    },
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Unnamed(
+                    [
+                        UnnamedField {
+                            ty: Type {
+                                value: Vec(
+                                    Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 180,
+                                            end: 183,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 176,
+                                    end: 184,
+                                },
+                            },
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 185,
+                                    end: 187,
+                                },
+                            },
+                            span: Span {
+                                start: 171,
+                                end: 187,
+                            },
+                        },
+                        UnnamedField {
+                            ty: Type {
+                                value: HashMap(
+                                    (
+                                        Type {
+                                            value: U32,
+                                            span: Span {
+                                                start: 202,
+                                                end: 205,
+                                            },
+                                        },
+                                        Type {
+                                            value: String,
+                                            span: Span {
+                                                start: 207,
+                                                end: 213,
+                                            },
+                                        },
+                                    ),
+                                ),
+                                span: Span {
+                                    start: 193,
+                                    end: 214,
+                                },
+                            },
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 215,
+                                    end: 217,
+                                },
+                            },
+                            span: Span {
+                                start: 188,
+                                end: 217,
+                            },
+                        },
+                        UnnamedField {
+                            ty: Type {
+                                value: HashSet(
+                                    Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 232,
+                                            end: 235,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 223,
+                                    end: 236,
+                                },
+                            },
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 237,
+                                    end: 239,
+                                },
+                            },
+                            span: Span {
+                                start: 218,
+                                end: 239,
+                            },
+                        },
+                        UnnamedField {
+                            ty: Type {
+                                value: Option(
+                                    Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 252,
+                                            end: 255,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 245,
+                                    end: 256,
+                                },
+                            },
+                            id: Id {
+                                value: 4,
+                                span: Span {
+                                    start: 257,
+                                    end: 259,
+                                },
+                            },
+                            span: Span {
+                                start: 240,
+                                end: 259,
+                            },
+                        },
+                        UnnamedField {
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U32,
+                                        span: Span {
+                                            start: 274,
+                                            end: 277,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 265,
+                                    end: 278,
+                                },
+                            },
+                            id: Id {
+                                value: 5,
+                                span: Span {
+                                    start: 279,
+                                    end: 281,
+                                },
+                            },
+                            span: Span {
+                                start: 260,
+                                end: 281,
                             },
                         },
                     ],

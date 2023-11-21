@@ -76,9 +76,18 @@ fn compile_struct_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                 .map(|(idx, UnnamedField { ty, id, .. })| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let idx = proc_macro2::Literal::usize_unsuffixed(idx);
-                    let ty = compile_data_type(opts, ty, quote! { self.#idx });
 
-                    quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
+                    if let DataType::Option(ty) = &ty.value {
+                        let ty = compile_data_type(opts, ty, if is_copy(&ty.value) {
+                            quote! { *v }
+                        } else {
+                            quote! { v }
+                        });
+                        quote! { ::stef::buf::encode_field_option(w, #id, &self.#idx, |w, v| { #ty; }); }
+                    }else{
+                        let ty = compile_data_type(opts, ty, quote! { self.#idx });
+                        quote! { ::stef::buf::encode_field(w, #id, |w| { #ty; }); }
+                    }
                 });
 
             quote! {

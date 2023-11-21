@@ -18,8 +18,20 @@ impl ::stef::Encode for Sample {
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
-        ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, self.0) });
-        ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_bool(w, self.1) });
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_u32(w, self.0);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                ::stef::buf::encode_bool(w, self.1);
+            },
+        );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
     }
 }

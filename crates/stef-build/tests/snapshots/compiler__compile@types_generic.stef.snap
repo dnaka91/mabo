@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}"
+description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    vec<u32> @1,\n    hash_map<u32, string> @2,\n    hash_set<u32> @3,\n    option<u32> @4,\n    non_zero<u32> @5,\n)"
 input_file: crates/stef-parser/tests/inputs/types_generic.stef
 ---
 #[allow(unused_imports)]
@@ -145,6 +145,150 @@ impl ::stef::Decode for Sample {
                     name: Some("f5"),
                 })?,
         })
+    }
+}
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct SampleUnnamed(
+    pub Vec<u32>,
+    pub ::std::collections::HashMap<u32, String>,
+    pub ::std::collections::HashSet<u32>,
+    pub Option<u32>,
+    pub ::std::num::NonZeroU32,
+);
+#[automatically_derived]
+impl ::stef::Encode for SampleUnnamed {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_vec(
+                    w,
+                    &self.0,
+                    |w, v| {
+                        ::stef::buf::encode_u32(w, *v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                ::stef::buf::encode_hash_map(
+                    w,
+                    &self.1,
+                    |w, k| {
+                        ::stef::buf::encode_u32(w, *k);
+                    },
+                    |w, v| {
+                        ::stef::buf::encode_string(w, &v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                ::stef::buf::encode_hash_set(
+                    w,
+                    &self.2,
+                    |w, v| {
+                        ::stef::buf::encode_u32(w, *v);
+                    },
+                );
+            },
+        );
+        ::stef::buf::encode_field_option(
+            w,
+            4,
+            &self.3,
+            |w, v| {
+                ::stef::buf::encode_u32(w, *v);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            5,
+            |w| {
+                ::stef::buf::encode_u32(w, self.4.get());
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for SampleUnnamed {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut n0: Option<Vec<u32>> = None;
+        let mut n1: Option<::std::collections::HashMap<u32, String>> = None;
+        let mut n2: Option<::std::collections::HashSet<u32>> = None;
+        let mut n3: Option<u32> = None;
+        let mut n4: Option<::std::num::NonZeroU32> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => {
+                    n0 = Some(
+                        ::stef::buf::decode_vec(r, |r| { ::stef::buf::decode_u32(r) })?,
+                    );
+                }
+                2 => {
+                    n1 = Some(
+                        ::stef::buf::decode_hash_map(
+                            r,
+                            |r| { ::stef::buf::decode_u32(r) },
+                            |r| { ::stef::buf::decode_string(r) },
+                        )?,
+                    );
+                }
+                3 => {
+                    n2 = Some(
+                        ::stef::buf::decode_hash_set(
+                            r,
+                            |r| { ::stef::buf::decode_u32(r) },
+                        )?,
+                    );
+                }
+                4 => n3 = Some(::stef::buf::decode_u32(r)?),
+                5 => n4 = Some(::stef::buf::decode_non_zero_u32(r)?),
+                _ => continue,
+            }
+        }
+        Ok(
+            Self(
+                n0
+                    .ok_or(::stef::buf::Error::MissingField {
+                        id: 1,
+                        name: None,
+                    })?,
+                n1
+                    .ok_or(::stef::buf::Error::MissingField {
+                        id: 2,
+                        name: None,
+                    })?,
+                n2
+                    .ok_or(::stef::buf::Error::MissingField {
+                        id: 3,
+                        name: None,
+                    })?,
+                n3,
+                n4
+                    .ok_or(::stef::buf::Error::MissingField {
+                        id: 5,
+                        name: None,
+                    })?,
+            ),
+        )
     }
 }
 

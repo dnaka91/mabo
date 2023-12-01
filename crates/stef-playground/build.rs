@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 fn main() -> stef_build::Result<()> {
     let compiler = stef_build::Compiler::default();
     compiler.compile(&["src/sample.stef"])?;

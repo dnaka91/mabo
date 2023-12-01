@@ -2,7 +2,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use stef_parser::{
     Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Import, Literal,
-    Module, Name, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
+    Module, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
 };
 
 use super::{decode, encode};
@@ -345,7 +345,9 @@ pub(super) fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
             name,
             generics,
         }) => {
-            let path = path.iter().map(Name::get);
+            let path = path
+                .iter()
+                .map(|part| Ident::new(part.get(), Span::call_site()));
             let name = Ident::new(name.get(), Span::call_site());
             let generics = (!generics.is_empty()).then(|| {
                 let types = generics.iter().map(|ty| compile_data_type(opts, ty));

@@ -47,7 +47,7 @@ impl ::stef::Decode for Sample {
             match ::stef::buf::decode_id(r)? {
                 ::stef::buf::END_MARKER => break,
                 1 => basic = Some(Test123::decode(r)?),
-                2 => with_generics = Some(KeyValue::decode(r)?),
+                2 => with_generics = Some(KeyValue::<u32, bool>::decode(r)?),
                 _ => continue,
             }
         }

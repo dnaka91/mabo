@@ -8,5 +8,6 @@ mod a {
 
     struct Sample {
         value: u32 @1,
+        inner: b::Sample @2,
     }
 }

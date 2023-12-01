@@ -943,6 +943,12 @@ impl<'a> From<(&'a str, Range<usize>)> for Name<'a> {
     }
 }
 
+impl AsRef<str> for Name<'_> {
+    fn as_ref(&self) -> &str {
+        self.value
+    }
+}
+
 /// Declaration of a constant value.
 #[derive(Debug, PartialEq)]
 pub struct Const<'a> {

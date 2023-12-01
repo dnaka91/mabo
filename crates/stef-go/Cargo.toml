@@ -1,5 +1,5 @@
 [package]
-name = "stef-benches"
+name = "stef-go"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -8,28 +8,16 @@ readme.workspace = true
 homepage.workspace = true
 repository.workspace = true
 license.workspace = true
-publish = false
-
-[[bench]]
-name = "compiler"
-harness = false
-
-[[bench]]
-name = "parser"
-harness = false
-
-[[bench]]
-name = "varint"
-harness = false
 
 [dependencies]
-mimalloc.workspace = true
+clap = { version = "4.4.10", features = ["derive"] }
+heck = "0.4.1"
+miette = { workspace = true, features = ["fancy-no-backtrace"] }
 stef-compiler = { path = "../stef-compiler" }
 stef-parser = { path = "../stef-parser" }
 
 [dev-dependencies]
-divan = "0.1.3"
-indoc.workspace = true
+insta.workspace = true
 
 [lints]
 workspace = true

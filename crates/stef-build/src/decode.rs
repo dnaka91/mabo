@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use stef_parser::{
-    DataType, Enum, Fields, Generics, NamedField, Struct, Type, UnnamedField, Variant,
+    DataType, Enum, ExternalType, Fields, Generics, NamedField, Struct, Type, UnnamedField, Variant,
 };
 
 use crate::{BytesType, Opts};
@@ -252,7 +252,7 @@ fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream
         .unwrap_or_default()
 }
 
-#[allow(clippy::needless_pass_by_value)]
+#[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
 fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
     match &ty.value {
         DataType::Bool => quote! { ::stef::buf::decode_bool(r) },
@@ -334,17 +334,28 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
                 let types = types.iter().map(|ty| compile_data_type(opts, ty));
                 quote! { { Ok::<_, ::stef::buf::Error>((#(#types?,)*)) } }
             }
-            0 => panic!("tuple with zero elements"),
-            1 => panic!("tuple with single element"),
-            _ => panic!("tuple with more than 12 elements"),
+            n => todo!("compiler should catch invalid tuple with {n} elements"),
         },
         DataType::Array(ty, _size) => {
             let ty = compile_data_type(opts, ty);
             quote! { ::stef::buf::decode_array(r, |r| { #ty }) }
         }
-        DataType::External(ty) => {
-            let ty = Ident::new(ty.name.get(), Span::call_site());
-            quote! { #ty::decode(r) }
+        DataType::External(ExternalType {
+            path,
+            name,
+            generics,
+        }) => {
+            let path = path
+                .iter()
+                .map(|part| Ident::new(part.get(), Span::call_site()));
+            let ty = Ident::new(name.get(), Span::call_site());
+            let generics = (!generics.is_empty()).then(|| {
+                let types = generics
+                    .iter()
+                    .map(|ty| super::definition::compile_data_type(opts, ty));
+                quote! { ::<#(#types,)*> }
+            });
+            quote! { #(#path::)* #ty #generics::decode(r) }
         }
     }
 }

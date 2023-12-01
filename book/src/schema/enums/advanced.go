@@ -8,18 +8,18 @@ type SampleVariant interface {
 
 type Sample SampleVariant
 
-type SampleVariant1 struct {
+type Sample_Variant1 struct {
 	F1 uint32
 	F2 uint16
 }
 
-func (v SampleVariant1) sealed() {}
+func (v Sample_Variant1) sealed() {}
 
-type SampleVariant2 struct {
+type Sample_Variant2 struct {
 	Field1 int64
 	Field2 bool
 }
 
-func (v SampleVariant2) sealed() {}
+func (v Sample_Variant2) sealed() {}
 
 // N variants...

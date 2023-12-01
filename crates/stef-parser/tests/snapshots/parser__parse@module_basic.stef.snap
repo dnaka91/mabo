@@ -1,13 +1,13 @@
 ---
 source: crates/stef-parser/tests/parser.rs
-description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n    }\n}"
+description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}"
 input_file: crates/stef-parser/tests/inputs/module_basic.stef
 ---
 Schema {
     path: Some(
         "module_basic.stef",
     ),
-    source: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n    }\n}\n",
+    source: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}\n",
     definitions: [
         Module(
             Module {
@@ -134,6 +134,56 @@ Schema {
                                         span: Span {
                                             start: 128,
                                             end: 141,
+                                        },
+                                    },
+                                    NamedField {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        name: Name {
+                                            value: "inner",
+                                            span: Span {
+                                                start: 151,
+                                                end: 156,
+                                            },
+                                        },
+                                        ty: Type {
+                                            value: External(
+                                                ExternalType {
+                                                    path: [
+                                                        Name {
+                                                            value: "b",
+                                                            span: Span {
+                                                                start: 158,
+                                                                end: 159,
+                                                            },
+                                                        },
+                                                    ],
+                                                    name: Name {
+                                                        value: "Sample",
+                                                        span: Span {
+                                                            start: 161,
+                                                            end: 167,
+                                                        },
+                                                    },
+                                                    generics: [],
+                                                },
+                                            ),
+                                            span: Span {
+                                                start: 158,
+                                                end: 167,
+                                            },
+                                        },
+                                        id: Id {
+                                            value: 2,
+                                            span: Span {
+                                                start: 168,
+                                                end: 170,
+                                            },
+                                        },
+                                        span: Span {
+                                            start: 151,
+                                            end: 170,
                                         },
                                     },
                                 ],

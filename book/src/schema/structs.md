@@ -35,7 +35,7 @@ Here is a basic named schema with two fields `field1` and `field2`. The first on
 
 These samples describe how the schema would be defined in each language, when generating the code for it.
 
-#### Rust {#banamedbasicsic-lang-rs}
+#### Rust {#named-lang-rs}
 
 ```rust
 {{#include structs/named.rs}}
@@ -65,10 +65,10 @@ An additional constructor is required, to ensure all fields are properly initial
 
 #### Python {#named-lang-py}
 
-In Python the `typing.TypedDict` type is used to define the fields of a class.
+In Python the `@dataclass` attribute is used to define the fields of a class.
 
 ```python
-{{#include structs/named.py:4:}}
+{{#include structs/named.py:5:}}
 ```
 
 ## Unnamed
@@ -114,7 +114,7 @@ A single field is defined as `type @id`, the name and [ID].
 #### Python {#unnamed-lang-py}
 
 ```python
-{{#include structs/unnamed.py}}
+{{#include structs/unnamed.py:4:}}
 ```
 
 ## Unit
@@ -160,7 +160,7 @@ Instead, it's only the type that carries information.
 #### Python {#unit-lang-py}
 
 ```python
-{{#include structs/unit.py}}
+{{#include structs/unit.py:4:}}
 ```
 
 ## Generics
@@ -200,5 +200,5 @@ Instead, it's only the type that carries information.
 #### Python {#generics-lang-py}
 
 ```python
-{{#include structs/generics.py:3:}}
+{{#include structs/generics.py:5:}}
 ```

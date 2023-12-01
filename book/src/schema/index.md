@@ -33,8 +33,8 @@ Some of these are not natively supported in each language, turning into a common
 | f64     | f64      | float64   | Double       | number     | float  |
 | string  | String   | string    | String       | string     | str    |
 | &string | &str     | string    | String       | string     | str    |
-| bytes   | Vec\<u8> | []byte    | ByteArray    | Uint8Array | bytes  |
-| &bytes  | &\[u8]   | []byte    | ByteArray    | Uint8Array | bytes  |
+| bytes   | Vec\<u8> | \[]byte   | ByteArray    | Uint8Array | bytes  |
+| &bytes  | &\[u8]   | \[]byte   | ByteArray    | Uint8Array | bytes  |
 
 [big.Int]: https://pkg.go.dev/math/big#Int
 [BigInteger]: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/math/BigInteger.html
@@ -52,7 +52,7 @@ Containers for multiple values of a single type.
 | Language   | Definition |
 | ---------- | ---------- |
 | Rust       | Vec\<T>    |
-| Go         | []T        |
+| Go         | \[]T       |
 | Kotlin     | List\<T>   |
 | TypeScript | T\[]       |
 | Python     | list\[T]   |

@@ -1,5 +1,5 @@
 [package]
-name = "stef-benches"
+name = "stef-lsp"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -8,28 +8,15 @@ readme.workspace = true
 homepage.workspace = true
 repository.workspace = true
 license.workspace = true
-publish = false
-
-[[bench]]
-name = "compiler"
-harness = false
-
-[[bench]]
-name = "parser"
-harness = false
-
-[[bench]]
-name = "varint"
-harness = false
 
 [dependencies]
-mimalloc.workspace = true
+ouroboros = "0.18.0"
 stef-compiler = { path = "../stef-compiler" }
 stef-parser = { path = "../stef-parser" }
-
-[dev-dependencies]
-divan = "0.1.4"
-indoc.workspace = true
+tokio = { version = "1.34.0", features = ["io-std", "macros", "rt-multi-thread"] }
+tower-lsp = { version = "0.20.0", features = ["proposed"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
 [lints]
 workspace = true

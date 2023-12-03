@@ -1,0 +1,5 @@
+{
+  "name": "stef",
+  "private": true,
+  "workspaces": ["book/highlight", "vscode-extension"]
+}

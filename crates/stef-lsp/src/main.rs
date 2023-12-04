@@ -142,10 +142,6 @@ impl LanguageServer for Backend {
             .await
             .unwrap();
 
-        self.client
-            .log_message(MessageType::INFO, "server initialized!")
-            .await;
-
         debug!("initialized");
     }
 

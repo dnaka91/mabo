@@ -2,6 +2,7 @@
 
 use std::collections::HashMap;
 
+use directories::ProjectDirs;
 use ouroboros::self_referencing;
 use stef_parser::Schema;
 use tokio::sync::Mutex;
@@ -15,8 +16,8 @@ use tower_lsp::{
     },
     Client, LanguageServer, LspService, Server,
 };
-use tracing::debug;
-use tracing_subscriber::EnvFilter;
+use tracing::{debug, Level};
+use tracing_subscriber::{filter::Targets, fmt::MakeWriter, prelude::*};
 
 mod compile;
 mod utf16;
@@ -55,9 +56,7 @@ impl LanguageServer for Backend {
     }
 
     async fn initialized(&self, _params: InitializedParams) {
-        self.client
-            .log_message(MessageType::INFO, "server initialized!")
-            .await;
+        debug!("initialized");
     }
 
     async fn shutdown(&self) -> Result<()> {
@@ -121,23 +120,34 @@ impl LanguageServer for Backend {
 
 #[tokio::main]
 async fn main() {
-    let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
+    let dirs = ProjectDirs::from("rocks", "dnaka91", env!("CARGO_PKG_NAME")).unwrap();
+
+    let file_appender = tracing_appender::rolling::daily(dirs.cache_dir(), "log");
+    let (file_appender, _guard) = tracing_appender::non_blocking(file_appender);
+
     let (service, socket) = LspService::new(|client| {
-        tracing_subscriber::fmt()
-            .with_env_filter(EnvFilter::from_default_env())
-            .with_writer({
-                let client = client.clone();
-                move || ClientLogWriter {
-                    client: client.clone(),
-                }
-            })
+        tracing_subscriber::registry()
+            .with(
+                tracing_subscriber::fmt::layer()
+                    .with_ansi(false)
+                    .with_writer(ClientLogWriter::new(client.clone())),
+            )
+            .with(tracing_subscriber::fmt::layer().with_writer(file_appender))
+            .with(Targets::new().with_default(Level::WARN).with_targets([
+                (env!("CARGO_CRATE_NAME"), Level::TRACE),
+                ("stef_compiler", Level::TRACE),
+                ("stef_parser", Level::TRACE),
+                ("tower_lsp", Level::DEBUG),
+            ]))
             .init();
+
         Backend {
             client,
             files: Mutex::default(),
         }
     });
 
+    let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
     Server::new(stdin, stdout, socket).serve(service).await;
 }
 
@@ -145,17 +155,33 @@ struct ClientLogWriter {
     client: Client,
 }
 
+impl ClientLogWriter {
+    fn new(client: Client) -> Self {
+        Self { client }
+    }
+}
+
 impl std::io::Write for ClientLogWriter {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         let client = self.client.clone();
-        let message = String::from_utf8_lossy(buf).into_owned();
+        let message = String::from_utf8_lossy(buf).trim().to_owned();
 
-        tokio::spawn(async move { client.log_message(MessageType::INFO, message).await });
+        tokio::spawn(async move { client.log_message(MessageType::LOG, message).await });
 
         Ok(buf.len())
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
         Ok(())
+    }
+}
+
+impl MakeWriter<'_> for ClientLogWriter {
+    type Writer = Self;
+
+    fn make_writer(&self) -> Self::Writer {
+        Self {
+            client: self.client.clone(),
+        }
     }
 }

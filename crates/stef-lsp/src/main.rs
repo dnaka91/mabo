@@ -10,9 +10,10 @@ use tower_lsp::{
     async_trait,
     jsonrpc::Result,
     lsp_types::{
-        Diagnostic, DidChangeTextDocumentParams, DidOpenTextDocumentParams, InitializeParams,
-        InitializeResult, InitializedParams, MessageType, ServerCapabilities, ServerInfo,
-        TextDocumentSyncCapability, TextDocumentSyncKind, Url,
+        ConfigurationItem, Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
+        DidOpenTextDocumentParams, InitializeParams, InitializeResult, InitializedParams,
+        MessageType, Registration, ServerCapabilities, ServerInfo, TextDocumentSyncCapability,
+        TextDocumentSyncKind, Url,
     },
     Client, LanguageServer, LspService, Server,
 };
@@ -23,6 +24,7 @@ use self::cli::Cli;
 
 mod cli;
 mod compile;
+mod config;
 mod utf16;
 
 #[derive(Debug)]
@@ -59,6 +61,38 @@ impl LanguageServer for Backend {
     }
 
     async fn initialized(&self, _params: InitializedParams) {
+        let settings = self
+            .client
+            .configuration(vec![ConfigurationItem {
+                scope_uri: None,
+                section: Some("stef-lsp".to_owned()),
+            }])
+            .await
+            .unwrap()
+            .remove(0);
+
+        let settings = serde_json::from_value::<config::Global>(settings).unwrap();
+
+        self.client
+            .log_message(
+                MessageType::INFO,
+                format!("current settings: {settings:#?}"),
+            )
+            .await;
+
+        self.client
+            .register_capability(vec![Registration {
+                id: "1".to_owned(),
+                method: "workspace/didChangeConfiguration".to_owned(),
+                register_options: None,
+            }])
+            .await
+            .unwrap();
+
+        self.client
+            .log_message(MessageType::INFO, "server initialized!")
+            .await;
+
         debug!("initialized");
     }
 
@@ -118,6 +152,27 @@ impl LanguageServer for Backend {
             .lock()
             .await
             .insert(params.text_document.uri, file);
+    }
+
+    async fn did_change_configuration(&self, _: DidChangeConfigurationParams) {
+        let settings = self
+            .client
+            .configuration(vec![ConfigurationItem {
+                scope_uri: None,
+                section: Some("stef-lsp".to_owned()),
+            }])
+            .await
+            .unwrap()
+            .remove(0);
+
+        let settings = serde_json::from_value::<config::Global>(settings).unwrap();
+
+        self.client
+            .log_message(
+                MessageType::INFO,
+                format!("updated settings: {settings:#?}"),
+            )
+            .await;
     }
 }
 

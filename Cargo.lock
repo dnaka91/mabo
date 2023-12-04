@@ -1175,6 +1175,8 @@ dependencies = [
  "clap",
  "directories",
  "ouroboros",
+ "serde",
+ "serde_json",
  "stef-compiler",
  "stef-parser",
  "tokio",

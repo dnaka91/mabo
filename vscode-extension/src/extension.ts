@@ -35,8 +35,8 @@ export function activate(context: ExtensionContext) {
   };
 
   client = new LanguageClient(
-    "stef-lsp",
-    "STEF Language Server",
+    "stef",
+    "Strictly Typed Encoding Format",
     serverOptions,
     clientOptions,
   );

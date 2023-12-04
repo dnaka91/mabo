@@ -38,9 +38,9 @@
       }
     ],
     "configuration": {
-      "title": "STEF",
+      "title": "Strictly Typed Encoding Format",
       "properties": {
-        "stef-lsp.maxNumberOfProblems": {
+        "stef.maxNumberOfProblems": {
           "scope": "resource",
           "type": "number",
           "default": 100,

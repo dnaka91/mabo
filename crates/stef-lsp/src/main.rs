@@ -118,7 +118,7 @@ impl LanguageServer for Backend {
             .client
             .configuration(vec![ConfigurationItem {
                 scope_uri: None,
-                section: Some("stef-lsp".to_owned()),
+                section: Some("stef".to_owned()),
             }])
             .await
             .unwrap()
@@ -221,7 +221,7 @@ impl LanguageServer for Backend {
             .client
             .configuration(vec![ConfigurationItem {
                 scope_uri: None,
-                section: Some("stef-lsp".to_owned()),
+                section: Some("stef".to_owned()),
             }])
             .await
             .unwrap()

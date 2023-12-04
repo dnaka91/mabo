@@ -11,6 +11,8 @@ use stef_parser::{
 };
 use tower_lsp::lsp_types::{self as lsp, Diagnostic};
 
+use crate::utf16;
+
 pub fn compile(schema: &str) -> std::result::Result<Schema<'_>, Diagnostic> {
     stef_parser::Schema::parse(schema, None).map_err(|e| match &e.cause {
         ParseSchemaCause::Parser(_) => {
@@ -187,13 +189,10 @@ fn get_range(schema: &str, location: Range<usize>) -> lsp::Range {
     let start_char = schema[..location.start]
         .lines()
         .last()
-        .map_or(0, |line| line.chars().count());
+        .map_or(0, utf16::len);
 
     let end_line = schema[..location.end].lines().count().saturating_sub(1);
-    let end_char = schema[..location.end]
-        .lines()
-        .last()
-        .map_or(0, |line| line.chars().count());
+    let end_char = schema[..location.end].lines().last().map_or(0, utf16::len);
 
     lsp::Range::new(
         lsp::Position::new(start_line as u32, start_char as u32),

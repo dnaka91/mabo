@@ -1,7 +1,5 @@
 #![allow(missing_docs)]
 
-mod compile;
-
 use std::collections::HashMap;
 
 use ouroboros::self_referencing;
@@ -19,6 +17,9 @@ use tower_lsp::{
 };
 use tracing::debug;
 use tracing_subscriber::EnvFilter;
+
+mod compile;
+mod utf16;
 
 #[derive(Debug)]
 struct Backend {

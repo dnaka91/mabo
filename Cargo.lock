@@ -1172,6 +1172,7 @@ dependencies = [
 name = "stef-lsp"
 version = "0.1.0"
 dependencies = [
+ "clap",
  "directories",
  "ouroboros",
  "stef-compiler",

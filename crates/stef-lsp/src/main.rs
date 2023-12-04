@@ -19,6 +19,9 @@ use tower_lsp::{
 use tracing::{debug, Level};
 use tracing_subscriber::{filter::Targets, fmt::MakeWriter, prelude::*};
 
+use self::cli::Cli;
+
+mod cli;
 mod compile;
 mod utf16;
 
@@ -120,6 +123,8 @@ impl LanguageServer for Backend {
 
 #[tokio::main]
 async fn main() {
+    let cli = Cli::parse();
+
     let dirs = ProjectDirs::from("rocks", "dnaka91", env!("CARGO_PKG_NAME")).unwrap();
 
     let file_appender = tracing_appender::rolling::daily(dirs.cache_dir(), "log");
@@ -147,8 +152,21 @@ async fn main() {
         }
     });
 
-    let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
-    Server::new(stdin, stdout, socket).serve(service).await;
+    if cli.stdio {
+        let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
+        Server::new(stdin, stdout, socket).serve(service).await;
+    } else if let Some(file) = cli.pipe {
+        let file = tokio::fs::File::options()
+            .read(true)
+            .write(true)
+            .open(file)
+            .await
+            .expect("failed to open provided pipe/socket");
+        let (read, write) = tokio::io::split(file);
+        Server::new(read, write, socket).serve(service).await;
+    } else if let Some(port) = cli.socket {
+        unimplemented!("open TCP connection on port {port}");
+    }
 }
 
 struct ClientLogWriter {

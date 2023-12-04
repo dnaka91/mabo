@@ -10,6 +10,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
+anyhow = "1.0.75"
 clap.workspace = true
 directories = "5.0.1"
 ouroboros = "0.18.0"

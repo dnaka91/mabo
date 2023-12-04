@@ -1,14 +1,16 @@
+#![warn(clippy::expect_used, clippy::unwrap_used)]
 #![allow(missing_docs)]
 
 use std::collections::HashMap;
 
+use anyhow::{ensure, Context, Result};
 use directories::ProjectDirs;
 use ouroboros::self_referencing;
 use stef_parser::Schema;
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, RwLock};
 use tower_lsp::{
     async_trait,
-    jsonrpc::Result,
+    jsonrpc::Result as LspResult,
     lsp_types::{
         ConfigurationItem, Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
         DidCloseTextDocumentParams, DidOpenTextDocumentParams, InitializeParams, InitializeResult,
@@ -20,7 +22,7 @@ use tower_lsp::{
     },
     Client, LanguageServer, LspService, Server,
 };
-use tracing::{debug, Level};
+use tracing::{debug, error, Level};
 use tracing_subscriber::{filter::Targets, fmt::MakeWriter, prelude::*};
 
 use self::cli::Cli;
@@ -34,6 +36,7 @@ mod utf16;
 struct Backend {
     client: Client,
     files: Mutex<HashMap<Url, File>>,
+    settings: RwLock<config::Global>,
 }
 
 #[self_referencing]
@@ -42,12 +45,39 @@ struct File {
     content: String,
     #[borrows(content)]
     #[covariant]
-    schema: std::result::Result<Schema<'this>, Diagnostic>,
+    schema: Result<Schema<'this>, Diagnostic>,
+}
+
+impl Backend {
+    async fn reload_settings(&self) -> Result<()> {
+        let mut settings = self
+            .client
+            .configuration(vec![ConfigurationItem {
+                scope_uri: None,
+                section: Some("stef".to_owned()),
+            }])
+            .await
+            .context("failed getting configuration from client")?;
+
+        ensure!(
+            settings.len() == 1,
+            "configuration contains not exactly one object"
+        );
+
+        let settings = serde_json::from_value(settings.remove(0))
+            .context("failed to parse raw configuration")?;
+
+        debug!("configuration loaded: {settings:#?}");
+
+        *self.settings.write().await = settings;
+
+        Ok(())
+    }
 }
 
 #[async_trait]
 impl LanguageServer for Backend {
-    async fn initialize(&self, _params: InitializeParams) -> Result<InitializeResult> {
+    async fn initialize(&self, _params: InitializeParams) -> LspResult<InitializeResult> {
         Ok(InitializeResult {
             server_info: Some(ServerInfo {
                 name: env!("CARGO_CRATE_NAME").to_owned(),
@@ -114,38 +144,26 @@ impl LanguageServer for Backend {
     }
 
     async fn initialized(&self, _params: InitializedParams) {
-        let settings = self
+        if let Err(e) = self.reload_settings().await {
+            error!(error = ?e, "failed loading initial settings");
+        }
+
+        if let Err(e) = self
             .client
-            .configuration(vec![ConfigurationItem {
-                scope_uri: None,
-                section: Some("stef".to_owned()),
-            }])
-            .await
-            .unwrap()
-            .remove(0);
-
-        let settings = serde_json::from_value::<config::Global>(settings).unwrap();
-
-        self.client
-            .log_message(
-                MessageType::INFO,
-                format!("current settings: {settings:#?}"),
-            )
-            .await;
-
-        self.client
             .register_capability(vec![Registration {
                 id: "1".to_owned(),
                 method: "workspace/didChangeConfiguration".to_owned(),
                 register_options: None,
             }])
             .await
-            .unwrap();
+        {
+            error!(error = ?e, "failed registering for configuration changes");
+        }
 
         debug!("initialized");
     }
 
-    async fn shutdown(&self) -> Result<()> {
+    async fn shutdown(&self) -> LspResult<()> {
         Ok(())
     }
 
@@ -211,38 +229,26 @@ impl LanguageServer for Backend {
     async fn semantic_tokens_full(
         &self,
         params: SemanticTokensParams,
-    ) -> Result<Option<SemanticTokensResult>> {
+    ) -> LspResult<Option<SemanticTokensResult>> {
         debug!(uri = %params.text_document.uri, "requested semantic tokens");
         Ok(None)
     }
 
     async fn did_change_configuration(&self, _: DidChangeConfigurationParams) {
-        let settings = self
-            .client
-            .configuration(vec![ConfigurationItem {
-                scope_uri: None,
-                section: Some("stef".to_owned()),
-            }])
-            .await
-            .unwrap()
-            .remove(0);
+        debug!("configuration changed");
 
-        let settings = serde_json::from_value::<config::Global>(settings).unwrap();
-
-        self.client
-            .log_message(
-                MessageType::INFO,
-                format!("updated settings: {settings:#?}"),
-            )
-            .await;
+        if let Err(e) = self.reload_settings().await {
+            error!(error = ?e, "failed loading changed settings");
+        }
     }
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    let dirs = ProjectDirs::from("rocks", "dnaka91", env!("CARGO_PKG_NAME")).unwrap();
+    let dirs = ProjectDirs::from("rocks", "dnaka91", env!("CARGO_PKG_NAME"))
+        .context("failed locating project directories")?;
 
     let file_appender = tracing_appender::rolling::daily(dirs.cache_dir(), "log");
     let (file_appender, _guard) = tracing_appender::non_blocking(file_appender);
@@ -266,6 +272,7 @@ async fn main() {
         Backend {
             client,
             files: Mutex::default(),
+            settings: RwLock::default(),
         }
     });
 
@@ -278,12 +285,15 @@ async fn main() {
             .write(true)
             .open(file)
             .await
-            .expect("failed to open provided pipe/socket");
+            .context("failed to open provided pipe/socket")?;
+
         let (read, write) = tokio::io::split(file);
         Server::new(read, write, socket).serve(service).await;
     } else if let Some(port) = cli.socket {
         unimplemented!("open TCP connection on port {port}");
     }
+
+    Ok(())
 }
 
 struct ClientLogWriter {

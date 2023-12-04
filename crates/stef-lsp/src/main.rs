@@ -11,8 +11,8 @@ use tower_lsp::{
     jsonrpc::Result,
     lsp_types::{
         ConfigurationItem, Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
-        DidOpenTextDocumentParams, InitializeParams, InitializeResult, InitializedParams,
-        MessageType, Registration, SemanticTokenModifier, SemanticTokenType,
+        DidCloseTextDocumentParams, DidOpenTextDocumentParams, InitializeParams, InitializeResult,
+        InitializedParams, MessageType, Registration, SemanticTokenModifier, SemanticTokenType,
         SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
         SemanticTokensParams, SemanticTokensResult, SemanticTokensServerCapabilities,
         ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
@@ -205,6 +205,11 @@ impl LanguageServer for Backend {
             .lock()
             .await
             .insert(params.text_document.uri, file);
+    }
+
+    async fn did_close(&self, params: DidCloseTextDocumentParams) {
+        debug!(uri = %params.text_document.uri, "schema closed");
+        self.files.lock().await.remove(&params.text_document.uri);
     }
 
     async fn semantic_tokens_full(

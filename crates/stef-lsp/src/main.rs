@@ -12,8 +12,11 @@ use tower_lsp::{
     lsp_types::{
         ConfigurationItem, Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
         DidOpenTextDocumentParams, InitializeParams, InitializeResult, InitializedParams,
-        MessageType, Registration, ServerCapabilities, ServerInfo, TextDocumentSyncCapability,
-        TextDocumentSyncKind, Url,
+        MessageType, Registration, SemanticTokenModifier, SemanticTokenType,
+        SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
+        SemanticTokensParams, SemanticTokensResult, SemanticTokensServerCapabilities,
+        ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
+        WorkDoneProgressOptions,
     },
     Client, LanguageServer, LspService, Server,
 };
@@ -54,6 +57,56 @@ impl LanguageServer for Backend {
                 text_document_sync: Some(TextDocumentSyncCapability::Kind(
                     TextDocumentSyncKind::FULL,
                 )),
+                semantic_tokens_provider: Some(
+                    SemanticTokensServerCapabilities::SemanticTokensOptions(
+                        SemanticTokensOptions {
+                            work_done_progress_options: WorkDoneProgressOptions {
+                                work_done_progress: Some(false),
+                            },
+                            legend: SemanticTokensLegend {
+                                token_types: vec![
+                                    SemanticTokenType::NAMESPACE,
+                                    SemanticTokenType::TYPE,
+                                    SemanticTokenType::CLASS,
+                                    SemanticTokenType::ENUM,
+                                    SemanticTokenType::INTERFACE,
+                                    SemanticTokenType::STRUCT,
+                                    SemanticTokenType::TYPE_PARAMETER,
+                                    SemanticTokenType::PARAMETER,
+                                    SemanticTokenType::VARIABLE,
+                                    SemanticTokenType::PROPERTY,
+                                    SemanticTokenType::ENUM_MEMBER,
+                                    SemanticTokenType::EVENT,
+                                    SemanticTokenType::FUNCTION,
+                                    SemanticTokenType::METHOD,
+                                    SemanticTokenType::MACRO,
+                                    SemanticTokenType::KEYWORD,
+                                    SemanticTokenType::MODIFIER,
+                                    SemanticTokenType::COMMENT,
+                                    SemanticTokenType::STRING,
+                                    SemanticTokenType::NUMBER,
+                                    SemanticTokenType::REGEXP,
+                                    SemanticTokenType::OPERATOR,
+                                    SemanticTokenType::DECORATOR,
+                                ],
+                                token_modifiers: vec![
+                                    SemanticTokenModifier::DECLARATION,
+                                    SemanticTokenModifier::DEFINITION,
+                                    SemanticTokenModifier::READONLY,
+                                    SemanticTokenModifier::STATIC,
+                                    SemanticTokenModifier::DEPRECATED,
+                                    SemanticTokenModifier::ABSTRACT,
+                                    SemanticTokenModifier::ASYNC,
+                                    SemanticTokenModifier::MODIFICATION,
+                                    SemanticTokenModifier::DOCUMENTATION,
+                                    SemanticTokenModifier::DEFAULT_LIBRARY,
+                                ],
+                            },
+                            range: Some(false),
+                            full: Some(SemanticTokensFullOptions::Bool(true)),
+                        },
+                    ),
+                ),
                 ..ServerCapabilities::default()
             },
             offset_encoding: None,
@@ -152,6 +205,14 @@ impl LanguageServer for Backend {
             .lock()
             .await
             .insert(params.text_document.uri, file);
+    }
+
+    async fn semantic_tokens_full(
+        &self,
+        params: SemanticTokensParams,
+    ) -> Result<Option<SemanticTokensResult>> {
+        debug!(uri = %params.text_document.uri, "requested semantic tokens");
+        Ok(None)
     }
 
     async fn did_change_configuration(&self, _: DidChangeConfigurationParams) {

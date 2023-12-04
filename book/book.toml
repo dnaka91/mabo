@@ -1,5 +1,5 @@
 [book]
-title = "STEF"
+title = "STEF - Strongly Typed Encoding Format"
 authors = ["Dominik Nakamura"]
 description = "Strongly Typed Encoding Format"
 language = "en"

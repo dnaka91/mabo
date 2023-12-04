@@ -38,7 +38,7 @@
       }
     ],
     "configuration": {
-      "title": "Strictly Typed Encoding Format",
+      "title": "Strongly Typed Encoding Format",
       "properties": {
         "stef.maxNumberOfProblems": {
           "scope": "resource",

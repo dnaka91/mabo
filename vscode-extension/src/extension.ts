@@ -36,7 +36,7 @@ export function activate(context: ExtensionContext) {
 
   client = new LanguageClient(
     "stef",
-    "Strictly Typed Encoding Format",
+    "Strongly Typed Encoding Format",
     serverOptions,
     clientOptions,
   );

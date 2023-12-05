@@ -38,3 +38,14 @@ linkcheck:
     'book/src/**/*.md' \
     'book/book/**/*.html' \
     'crates/**/*.rs'
+
+# Install the LSP server into the local system
+install-lsp:
+  cargo install --path crates/stef-lsp --offline --debug
+
+# Install the VSCode extension into VSCodium
+install-vscodium: install-lsp
+  bun install
+  cd vscode-extension && \
+    bun run package && \
+    codium --install-extension stef-*.vsix

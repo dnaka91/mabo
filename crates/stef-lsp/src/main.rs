@@ -7,6 +7,7 @@ use anyhow::{ensure, Context, Result};
 use directories::ProjectDirs;
 use ouroboros::self_referencing;
 use stef_parser::Schema;
+use time::{macros::format_description, UtcOffset};
 use tokio::sync::{Mutex, RwLock};
 use tower_lsp::{
     async_trait,
@@ -23,7 +24,11 @@ use tower_lsp::{
     Client, LanguageServer, LspService, Server,
 };
 use tracing::{debug, error, Level};
-use tracing_subscriber::{filter::Targets, fmt::MakeWriter, prelude::*};
+use tracing_subscriber::{
+    filter::Targets,
+    fmt::{time::OffsetTime, MakeWriter},
+    prelude::*,
+};
 
 use self::cli::Cli;
 
@@ -243,9 +248,12 @@ impl LanguageServer for Backend {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
+    let timer = OffsetTime::new(
+        UtcOffset::current_local_offset().context("failed retrieving local UTC offset")?,
+        format_description!("[hour]:[minute]:[second]"),
+    );
 
     let dirs = ProjectDirs::from("rocks", "dnaka91", env!("CARGO_PKG_NAME"))
         .context("failed locating project directories")?;
@@ -258,9 +266,14 @@ async fn main() -> Result<()> {
             .with(
                 tracing_subscriber::fmt::layer()
                     .with_ansi(false)
+                    .with_timer(timer.clone())
                     .with_writer(ClientLogWriter::new(client.clone())),
             )
-            .with(tracing_subscriber::fmt::layer().with_writer(file_appender))
+            .with(
+                tracing_subscriber::fmt::layer()
+                    .with_timer(timer)
+                    .with_writer(file_appender),
+            )
             .with(Targets::new().with_default(Level::WARN).with_targets([
                 (env!("CARGO_CRATE_NAME"), Level::TRACE),
                 ("stef_compiler", Level::TRACE),
@@ -276,24 +289,29 @@ async fn main() -> Result<()> {
         }
     });
 
-    if cli.stdio {
-        let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
-        Server::new(stdin, stdout, socket).serve(service).await;
-    } else if let Some(file) = cli.pipe {
-        let file = tokio::fs::File::options()
-            .read(true)
-            .write(true)
-            .open(file)
-            .await
-            .context("failed to open provided pipe/socket")?;
+    tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()?
+        .block_on(async move {
+            if cli.stdio {
+                let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
+                Server::new(stdin, stdout, socket).serve(service).await;
+            } else if let Some(file) = cli.pipe {
+                let file = tokio::fs::File::options()
+                    .read(true)
+                    .write(true)
+                    .open(file)
+                    .await
+                    .context("failed to open provided pipe/socket")?;
 
-        let (read, write) = tokio::io::split(file);
-        Server::new(read, write, socket).serve(service).await;
-    } else if let Some(port) = cli.socket {
-        unimplemented!("open TCP connection on port {port}");
-    }
+                let (read, write) = tokio::io::split(file);
+                Server::new(read, write, socket).serve(service).await;
+            } else if let Some(port) = cli.socket {
+                unimplemented!("open TCP connection on port {port}");
+            }
 
-    Ok(())
+            anyhow::Ok(())
+        })
 }
 
 struct ClientLogWriter {

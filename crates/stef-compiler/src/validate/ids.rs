@@ -28,10 +28,12 @@ pub struct DuplicateVariantId {
     pub name: String,
     /// Name of the variant that used the ID for the first time.
     pub other_name: String,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Duplicate ID for fields of a struct or enum variant.
@@ -58,10 +60,12 @@ pub struct DuplicateNamedFieldId {
     pub name: String,
     /// Name of the field that used the ID for the first time.
     pub other_name: String,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Duplicate ID for unnamed fields.
@@ -75,10 +79,12 @@ pub struct DuplicateUnnamedFieldId {
     pub position: usize,
     /// 1-base position of the field that used the ID for the first time.
     pub other_position: usize,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Ensure all IDs inside a struct are unique (which are the field IDs).

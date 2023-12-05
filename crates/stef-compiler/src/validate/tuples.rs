@@ -20,8 +20,9 @@ use crate::highlight;
 pub struct TupleSize {
     /// The amount that's not allowed.
     pub amount: InvalidTupleAmount,
+    /// Source location of the declaration.
     #[label("declared here")]
-    declared: Range<usize>,
+    pub declared: Range<usize>,
 }
 
 /// Possible amount of tuple elements that are invalid.

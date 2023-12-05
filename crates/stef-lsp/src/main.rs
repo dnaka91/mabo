@@ -172,7 +172,7 @@ impl LanguageServer for Backend {
 
         let file = FileBuilder {
             content: params.text_document.text,
-            schema_builder: |schema| compile::compile(schema),
+            schema_builder: |schema| compile::compile(params.text_document.uri.clone(), schema),
         }
         .build();
 
@@ -199,7 +199,7 @@ impl LanguageServer for Backend {
 
         let file = FileBuilder {
             content: params.content_changes.remove(0).text,
-            schema_builder: |schema| compile::compile(schema),
+            schema_builder: |schema| compile::compile(params.text_document.uri.clone(), schema),
         }
         .build();
 

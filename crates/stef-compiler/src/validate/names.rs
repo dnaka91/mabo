@@ -28,10 +28,12 @@ pub enum DuplicateName {
 pub struct DuplicateVariantName {
     /// Name of the variant.
     pub name: String,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Duplicate name for fields of a struct or enum variant.
@@ -41,10 +43,12 @@ pub struct DuplicateVariantName {
 pub struct DuplicateFieldName {
     /// Name of the field.
     pub name: String,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Duplicate name for definitions inside a module.
@@ -56,10 +60,12 @@ pub struct DuplicateFieldName {
 pub struct DuplicateNameInModule {
     /// Name of the declaration.
     pub name: String,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Ensure all field names inside a struct are unique.

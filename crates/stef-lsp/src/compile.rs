@@ -1,25 +1,36 @@
 use std::ops::Range;
 
+use stef_compiler::validate;
 use stef_parser::{
     error::{
         ParseAliasCause, ParseAttributeCause, ParseCommentError, ParseConstCause,
         ParseDefinitionError, ParseEnumCause, ParseFieldsCause, ParseFieldsError,
         ParseGenericsError, ParseIdError, ParseImportCause, ParseLiteralCause, ParseModuleCause,
-        ParseSchemaCause, ParseStructCause, ParseTypeCause, ParseTypeError,
+        ParseSchemaCause, ParseSchemaError, ParseStructCause, ParseTypeCause, ParseTypeError,
     },
     Schema,
 };
-use tower_lsp::lsp_types::{self as lsp, Diagnostic};
+use tower_lsp::lsp_types::{self as lsp, Diagnostic, Url};
 
 use crate::utf16;
 
-pub fn compile(schema: &str) -> std::result::Result<Schema<'_>, Diagnostic> {
-    stef_parser::Schema::parse(schema, None).map_err(|e| match &e.cause {
+pub fn compile(file: Url, schema: &str) -> std::result::Result<Schema<'_>, Diagnostic> {
+    let parsed = stef_parser::Schema::parse(schema, None)
+        .map_err(|e| parse_schema_diagnostic(schema, &e))?;
+
+    stef_compiler::validate_schema(&parsed)
+        .map_err(|e| validate_schema_diagnostic(file, schema, e))?;
+
+    Ok(parsed)
+}
+
+fn parse_schema_diagnostic(schema: &str, e: &ParseSchemaError) -> Diagnostic {
+    match &e.cause {
         ParseSchemaCause::Parser(_) => {
             Diagnostic::new_simple(get_range(schema, 0..schema.len()), e.to_string())
         }
         ParseSchemaCause::Definition(e) => parse_definition_diagnostic(schema, e),
-    })
+    }
 }
 
 fn parse_definition_diagnostic(schema: &str, e: &ParseDefinitionError) -> Diagnostic {
@@ -181,6 +192,53 @@ fn parse_fields_diagnostic(schema: &str, e: &ParseFieldsError) -> Diagnostic {
 
 fn parse_id_diagnostic(schema: &str, e: &ParseIdError) -> Diagnostic {
     Diagnostic::new_simple(get_range(schema, e.at.clone()), e.to_string())
+}
+
+fn validate_schema_diagnostic(file: Url, schema: &str, e: validate::Error) -> Diagnostic {
+    use validate::{DuplicateFieldId, DuplicateId, DuplicateName, Error, InvalidGenericType};
+
+    let (message, first, second) = match e {
+        Error::DuplicateId(e) => match e {
+            DuplicateId::EnumVariant(e) => (e.to_string(), e.first, e.second),
+            DuplicateId::Field(e) => match e {
+                DuplicateFieldId::Named(e) => (e.to_string(), e.first, e.second),
+                DuplicateFieldId::Unnamed(e) => (e.to_string(), e.first, e.second),
+            },
+        },
+        Error::DuplicateName(e) => match e {
+            DuplicateName::EnumVariant(e) => (e.to_string(), e.first, e.second),
+            DuplicateName::Field(e) => (e.to_string(), e.first, e.second),
+            DuplicateName::InModule(e) => (e.to_string(), e.first, e.second),
+        },
+        Error::InvalidGeneric(e) => match e {
+            InvalidGenericType::Duplicate(e) => (e.to_string(), e.first, e.second),
+            InvalidGenericType::Unused(e) => {
+                let message = e.to_string();
+                return Diagnostic::new_simple(get_range(schema, e.declared), message);
+            }
+        },
+        Error::TupleSize(e) => {
+            let message = e.to_string();
+            return Diagnostic::new_simple(get_range(schema, e.declared), message);
+        }
+    };
+
+    diagnostic_with_related(
+        get_range(schema, second),
+        message,
+        vec![lsp::DiagnosticRelatedInformation {
+            location: lsp::Location::new(file, get_range(schema, first)),
+            message: "first used here".to_owned(),
+        }],
+    )
+}
+
+fn diagnostic_with_related(
+    range: lsp::Range,
+    message: String,
+    related: Vec<lsp::DiagnosticRelatedInformation>,
+) -> Diagnostic {
+    Diagnostic::new(range, None, None, None, message, Some(related), None)
 }
 
 #[allow(clippy::cast_possible_truncation)]

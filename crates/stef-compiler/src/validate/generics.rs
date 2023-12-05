@@ -24,10 +24,12 @@ pub enum InvalidGenericType {
 pub struct DuplicateGenericName {
     /// Name of the parameter.
     pub name: String,
+    /// Source location of the first occurrence.
     #[label("first declared here")]
-    first: Range<usize>,
+    pub first: Range<usize>,
+    /// Source location of the duplicate.
     #[label("used here again")]
-    second: Range<usize>,
+    pub second: Range<usize>,
 }
 
 /// Defined but unused type parameter.
@@ -37,8 +39,9 @@ pub struct DuplicateGenericName {
 pub struct UnusedGeneric {
     /// Name of the parameter.
     pub name: String,
+    /// Source location of the declaration.
     #[label("declared here")]
-    definition: Range<usize>,
+    pub declared: Range<usize>,
 }
 
 /// Ensure all generics in a struct are unique and used.
@@ -57,7 +60,7 @@ pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGeneric
     unvisited.into_iter().next().map_or(Ok(()), |(name, span)| {
         Err(UnusedGeneric {
             name: name.to_owned(),
-            definition: span.into(),
+            declared: span.into(),
         }
         .into())
     })
@@ -81,7 +84,7 @@ pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType
     unvisited.into_iter().next().map_or(Ok(()), |(name, span)| {
         Err(UnusedGeneric {
             name: name.to_owned(),
-            definition: span.into(),
+            declared: span.into(),
         }
         .into())
     })

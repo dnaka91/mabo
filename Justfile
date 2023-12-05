@@ -4,8 +4,10 @@ _default:
 # Build all crates and other parts of the project
 build:
   cargo build --release
+  bun install
+  cd book/highlight && bun run build
   cd book && just build
-  cd vscode-extension && pnpm run package
+  cd vscode-extension && bun run package
 
 # Run the benchmarks
 bench:

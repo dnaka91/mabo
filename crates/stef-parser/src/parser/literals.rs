@@ -9,7 +9,7 @@ use winnow::{
     dispatch,
     error::ErrorKind,
     stream::Location,
-    token::{any, one_of, take_till1, take_while},
+    token::{any, one_of, take_till, take_while},
     Parser,
 };
 
@@ -174,7 +174,7 @@ fn parse_fragment<'i>(input: &mut Input<'i>) -> Result<Fragment<'i>, Cause> {
 }
 
 fn parse_string_literal<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
-    take_till1(['"', '\\'])
+    take_till(1.., ['"', '\\'])
         .verify(|s: &str| !s.is_empty())
         .parse_next(input)
 }

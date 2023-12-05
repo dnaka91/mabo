@@ -145,7 +145,7 @@ mod comments {
         combinator::{preceded, repeat, terminated},
         error::ErrorKind,
         stream::Stream,
-        token::take_till0,
+        token::take_till,
         Parser,
     };
 
@@ -183,7 +183,10 @@ mod comments {
 
         repeat(
             0..,
-            preceded((space0, "///", space0), terminated(take_till0('\n'), '\n')),
+            preceded(
+                (space0, "///", space0),
+                terminated(take_till(0.., '\n'), '\n'),
+            ),
         )
         .parse_next(input)
         .map(Comment)

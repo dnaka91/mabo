@@ -1,4 +1,4 @@
-import { ExtensionContext, workspace } from "vscode";
+import { ExtensionContext, commands, workspace } from "vscode";
 import {
   Executable,
   LanguageClient,
@@ -9,7 +9,17 @@ import {
 
 let client: LanguageClient;
 
+enum Cmds {
+  Restart = "stef.restart",
+}
+
 export function activate(context: ExtensionContext) {
+  context.subscriptions.push(
+    commands.registerCommand(Cmds.Restart, () => {
+      client?.restart();
+    }),
+  );
+
   const executable: Executable = {
     command: "stef-lsp",
     transport: TransportKind.stdio,

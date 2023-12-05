@@ -47,13 +47,20 @@
           "description": "Controls the maximum number of problems produced by the server."
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "stef.restart",
+        "title": "Restart LSP Server",
+        "category": "Stef"
+      }
+    ]
   },
   "vsce": {
     "dependencies": false
   },
   "scripts": {
-    "esbuild": "esbuild ./src/extension.ts --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --bundle",
+    "esbuild": "esbuild src/extension.ts --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --bundle",
     "watch": "bun run esbuild --watch",
     "build": "bun run esbuild --minify",
     "lint": "biome check --apply src/**/*.ts",

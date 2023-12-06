@@ -114,7 +114,7 @@ where
     W: BufMut,
     E: Fn(&mut W, &T),
 {
-    encode_u64(w, array.len() as u64);
+    encode_u64(w, N as u64);
 
     for value in array {
         encode(w, value);

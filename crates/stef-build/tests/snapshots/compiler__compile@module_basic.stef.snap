@@ -4,14 +4,14 @@ description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\
 input_file: crates/stef-parser/tests/inputs/module_basic.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 pub mod a {
     #[allow(unused_imports)]
-    use ::stef::buf::{Decode, Encode};
+    use ::stef::buf::{Decode, Encode, Size};
     /// Inner module
     pub mod b {
         #[allow(unused_imports)]
-        use ::stef::buf::{Decode, Encode};
+        use ::stef::buf::{Decode, Encode, Size};
         #[derive(Clone, Debug, PartialEq)]
         #[allow(clippy::module_name_repetitions, clippy::option_option)]
         pub enum Sample {
@@ -39,6 +39,19 @@ pub mod a {
                 match ::stef::buf::decode_id(r)? {
                     1 => Ok(Self::One),
                     id => Err(::stef::buf::Error::UnknownVariant(id)),
+                }
+            }
+        }
+        #[automatically_derived]
+        impl ::stef::buf::Size for Sample {
+            #[allow(
+                clippy::borrow_deref_ref,
+                clippy::semicolon_if_nothing_returned,
+                clippy::too_many_lines,
+            )]
+            fn size(&self) -> usize {
+                match self {
+                    Self::One => ::stef::buf::size_id(1),
                 }
             }
         }
@@ -101,6 +114,20 @@ pub mod a {
                         name: Some("inner"),
                     })?,
             })
+        }
+    }
+    #[automatically_derived]
+    impl ::stef::buf::Size for Sample {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::explicit_auto_deref,
+            clippy::needless_borrow,
+            clippy::too_many_lines,
+        )]
+        fn size(&self) -> usize {
+            ::stef::buf::size_field(1, || { ::stef::buf::size_u32(self.value) })
+                + ::stef::buf::size_field(2, || { (self.inner).size() })
+                + ::stef::buf::size_u32(::stef::buf::END_MARKER)
         }
     }
 }

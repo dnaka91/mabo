@@ -4,7 +4,7 @@ description: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @
 input_file: crates/stef-parser/tests/inputs/struct_generics.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// Generic key-value pair.
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
@@ -72,6 +72,24 @@ where
                     name: Some("value"),
                 })?,
         })
+    }
+}
+#[automatically_derived]
+impl<K, V> ::stef::buf::Size for KeyValue<K, V>
+where
+    K: ::stef::buf::Size,
+    V: ::stef::buf::Size,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { (self.key).size() })
+            + ::stef::buf::size_field(2, || { (self.value).size() })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
 

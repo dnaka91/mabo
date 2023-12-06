@@ -7,13 +7,13 @@ macro_rules! zigzag {
         paste::paste! {
             #[doc = "Use the _ZigZag_ scheme to encode an `" $from "` as `" $to "`."]
             #[inline]
-            fn [<zigzag_encode_ $from>](value: $from) -> $to {
+            const fn [<zigzag_encode_ $from>](value: $from) -> $to {
                 ((value << 1) ^ (value >> ($from::BITS - 1))) as $to
             }
 
             #[doc = "Convert a _ZigZag_ encoded `" $from "` back to its original data."]
             #[inline]
-            fn [<zigzag_decode_ $from>](value: $to) -> $from {
+            const fn [<zigzag_decode_ $from>](value: $to) -> $from {
                 ((value >> 1) as $from) ^ (-((value & 0b1) as $from))
             }
         }
@@ -32,8 +32,13 @@ zigzag!(
 
 /// Calculate the maximum amount of bytes that an integer might require to be encoded as _varint_.
 #[inline]
-pub(crate) const fn max_size<T>() -> usize {
-    (std::mem::size_of::<T>() * 8 + 7) / 7
+const fn max_size<T>() -> usize {
+    (std::mem::size_of::<T>() * 8 + 6) / 7
+}
+
+#[inline]
+const fn size<T>(leading_zeros: usize) -> usize {
+    (std::mem::size_of::<T>() * 8 - leading_zeros + 6) / 7
 }
 
 macro_rules! varint {
@@ -74,6 +79,12 @@ macro_rules! varint {
 
             #[inline]
             #[must_use]
+            pub const fn [<size_ $ty>](value: $ty) -> usize {
+                size::<$ty>(value.leading_zeros() as usize)
+            }
+
+            #[inline]
+            #[must_use]
             pub fn [<encode_ $signed>](value: $signed) -> ([u8; max_size::<$ty>()], usize) {
                 [<encode_ $ty>]([<zigzag_encode_ $signed>](value))
             }
@@ -82,6 +93,13 @@ macro_rules! varint {
             pub fn [<decode_ $signed>](buf: &[u8]) -> Result<($signed, usize), DecodeIntError> {
                 [<decode_ $ty>](buf).map(|(v, b)| ([<zigzag_decode_ $signed>](v), b))
             }
+
+            #[inline]
+            #[must_use]
+            pub const fn [<size_ $signed>](value: $signed) -> usize {
+                size::<$ty>([<zigzag_encode_ $signed>](value).leading_zeros() as usize)
+            }
+
         }
     };
     ($(($ty:ty, $signed:ty)),+ $(,)?) => {

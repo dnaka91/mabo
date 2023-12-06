@@ -5,7 +5,7 @@ use stef_parser::{
     Module, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
 };
 
-use super::{decode, encode};
+use super::{decode, encode, size};
 use crate::{BytesType, Opts};
 
 #[must_use]
@@ -14,7 +14,7 @@ pub fn compile_schema(opts: &Opts, Schema { definitions, .. }: &Schema<'_>) -> T
 
     quote! {
         #[allow(unused_imports)]
-        use ::stef::buf::{Decode, Encode};
+        use ::stef::buf::{Decode, Encode, Size};
 
         #(#definitions)*
     }
@@ -27,22 +27,26 @@ fn compile_definition(opts: &Opts, definition: &Definition<'_>) -> TokenStream {
             let def = compile_struct(opts, s);
             let encode = encode::compile_struct(opts, s);
             let decode = decode::compile_struct(opts, s);
+            let size = size::compile_struct(opts, s);
 
             quote! {
                 #def
                 #encode
                 #decode
+                #size
             }
         }
         Definition::Enum(e) => {
             let def = compile_enum(opts, e);
             let encode = encode::compile_enum(opts, e);
             let decode = decode::compile_enum(opts, e);
+            let size = size::compile_enum(opts, e);
 
             quote! {
                 #def
                 #encode
                 #decode
+                #size
             }
         }
         Definition::TypeAlias(a) => compile_alias(opts, a),
@@ -67,7 +71,7 @@ fn compile_module(
         #comment
         pub mod #name {
             #[allow(unused_imports)]
-            use ::stef::buf::{Decode, Encode};
+            use ::stef::buf::{Decode, Encode, Size};
 
             #(#definitions)*
         }

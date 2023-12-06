@@ -4,7 +4,7 @@ description: "/// A bool.\nconst BOOL: bool = true;\n/// An integer.\nconst INT:
 input_file: crates/stef-build/tests/inputs_extra/const.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// A bool.
 #[allow(dead_code)]
 pub const BOOL: bool = true;

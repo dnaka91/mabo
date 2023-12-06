@@ -4,7 +4,7 @@ description: "/// Basic struct.\nstruct Sample(u32 @1, bool @2)"
 input_file: crates/stef-parser/tests/inputs/struct_tuple.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// Basic struct.
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
@@ -63,6 +63,20 @@ impl ::stef::Decode for Sample {
                     })?,
             ),
         )
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { ::stef::buf::size_u32(self.0) })
+            + ::stef::buf::size_field(2, || { ::stef::buf::size_bool(self.1) })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
 

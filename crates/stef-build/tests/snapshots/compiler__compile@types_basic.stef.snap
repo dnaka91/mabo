@@ -4,7 +4,7 @@ description: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 
 input_file: crates/stef-parser/tests/inputs/types_basic.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample {
@@ -373,6 +373,49 @@ impl ::stef::Decode for Sample {
                     name: Some("f21"),
                 })?,
         })
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { ::stef::buf::size_bool(self.f01) })
+            + ::stef::buf::size_field(2, || { ::stef::buf::size_u8(self.f02) })
+            + ::stef::buf::size_field(3, || { ::stef::buf::size_u16(self.f03) })
+            + ::stef::buf::size_field(4, || { ::stef::buf::size_u32(self.f04) })
+            + ::stef::buf::size_field(5, || { ::stef::buf::size_u64(self.f05) })
+            + ::stef::buf::size_field(6, || { ::stef::buf::size_u128(self.f06) })
+            + ::stef::buf::size_field(7, || { ::stef::buf::size_i8(self.f07) })
+            + ::stef::buf::size_field(8, || { ::stef::buf::size_i16(self.f08) })
+            + ::stef::buf::size_field(9, || { ::stef::buf::size_i32(self.f09) })
+            + ::stef::buf::size_field(10, || { ::stef::buf::size_i64(self.f10) })
+            + ::stef::buf::size_field(11, || { ::stef::buf::size_i128(self.f11) })
+            + ::stef::buf::size_field(12, || { ::stef::buf::size_f32(self.f12) })
+            + ::stef::buf::size_field(13, || { ::stef::buf::size_f64(self.f13) })
+            + ::stef::buf::size_field(14, || { ::stef::buf::size_string(&self.f14) })
+            + ::stef::buf::size_field(15, || { ::stef::buf::size_string(&self.f15) })
+            + ::stef::buf::size_field(16, || { ::stef::buf::size_bytes_std(&self.f16) })
+            + ::stef::buf::size_field(17, || { ::stef::buf::size_bytes_std(&self.f17) })
+            + ::stef::buf::size_field(18, || { ::stef::buf::size_string(&self.f18) })
+            + ::stef::buf::size_field(19, || { ::stef::buf::size_bytes_std(&self.f19) })
+            + ::stef::buf::size_field(
+                20,
+                || {
+                    ::stef::buf::size_u32(self.f20.0) + ::stef::buf::size_u32(self.f20.1)
+                        + ::stef::buf::size_u32(self.f20.2)
+                },
+            )
+            + ::stef::buf::size_field(
+                21,
+                || {
+                    ::stef::buf::size_array(&self.f21, |v| { ::stef::buf::size_u32(*v) })
+                },
+            ) + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
 

@@ -4,7 +4,7 @@ description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, strin
 input_file: crates/stef-parser/tests/inputs/types_generic.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample {
@@ -145,6 +145,46 @@ impl ::stef::Decode for Sample {
                     name: Some("f5"),
                 })?,
         })
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(
+            1,
+            || { ::stef::buf::size_vec(&self.f1, |v| { ::stef::buf::size_u32(*v) }) },
+        )
+            + ::stef::buf::size_field(
+                2,
+                || {
+                    ::stef::buf::size_hash_map(
+                        &self.f2,
+                        |k| { ::stef::buf::size_u32(*k) },
+                        |v| { ::stef::buf::size_string(&v) },
+                    )
+                },
+            )
+            + ::stef::buf::size_field(
+                3,
+                || {
+                    ::stef::buf::size_hash_set(
+                        &self.f3,
+                        |v| { ::stef::buf::size_u32(*v) },
+                    )
+                },
+            )
+            + ::stef::buf::size_field_option(
+                4,
+                self.f4.as_ref(),
+                |v| { ::stef::buf::size_u32(*v) },
+            ) + ::stef::buf::size_field(5, || { ::stef::buf::size_u32(self.f5.get()) })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
 #[derive(Clone, Debug, PartialEq)]
@@ -289,6 +329,46 @@ impl ::stef::Decode for SampleUnnamed {
                     })?,
             ),
         )
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for SampleUnnamed {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(
+            1,
+            || { ::stef::buf::size_vec(&self.0, |v| { ::stef::buf::size_u32(*v) }) },
+        )
+            + ::stef::buf::size_field(
+                2,
+                || {
+                    ::stef::buf::size_hash_map(
+                        &self.1,
+                        |k| { ::stef::buf::size_u32(*k) },
+                        |v| { ::stef::buf::size_string(&v) },
+                    )
+                },
+            )
+            + ::stef::buf::size_field(
+                3,
+                || {
+                    ::stef::buf::size_hash_set(
+                        &self.2,
+                        |v| { ::stef::buf::size_u32(*v) },
+                    )
+                },
+            )
+            + ::stef::buf::size_field_option(
+                4,
+                self.3.as_ref(),
+                |v| { ::stef::buf::size_u32(*v) },
+            ) + ::stef::buf::size_field(5, || { ::stef::buf::size_u32(self.4.get()) })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
 

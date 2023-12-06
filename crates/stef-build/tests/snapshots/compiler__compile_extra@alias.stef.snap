@@ -4,7 +4,7 @@ description: "/// Hello world!\ntype Sample = String;"
 input_file: crates/stef-build/tests/inputs_extra/alias.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// Hello world!
 #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub type Sample = String;

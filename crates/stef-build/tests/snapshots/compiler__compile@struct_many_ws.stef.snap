@@ -4,7 +4,7 @@ description: "/// Some comment\n       struct      Sample<\n            T\n     
 input_file: crates/stef-parser/tests/inputs/struct_many_ws.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// Some comment
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
@@ -85,6 +85,24 @@ where
                     name: Some("c"),
                 })?,
         })
+    }
+}
+#[automatically_derived]
+impl<T> ::stef::buf::Size for Sample<T>
+where
+    T: ::stef::buf::Size,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { ::stef::buf::size_u32(self.a) })
+            + ::stef::buf::size_field(2, || { ::stef::buf::size_bool(self.b) })
+            + ::stef::buf::size_field(3, || { (self.c).size() })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
 

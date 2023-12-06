@@ -11,6 +11,7 @@ pub use self::definition::compile_schema;
 mod decode;
 mod definition;
 mod encode;
+mod size;
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 

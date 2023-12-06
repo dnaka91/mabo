@@ -2,9 +2,11 @@
 
 pub use decode::*;
 pub use encode::*;
+pub use size::*;
 
 mod decode;
 mod encode;
+mod size;
 
 #[cfg(test)]
 mod tests {

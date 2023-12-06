@@ -4,10 +4,10 @@ description: "/// Hello world!\nmod sample {}"
 input_file: crates/stef-build/tests/inputs_extra/module.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// Hello world!
 pub mod sample {
     #[allow(unused_imports)]
-    use ::stef::buf::{Decode, Encode};
+    use ::stef::buf::{Decode, Encode, Size};
 }
 

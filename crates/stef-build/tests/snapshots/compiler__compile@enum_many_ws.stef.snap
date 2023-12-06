@@ -4,7 +4,7 @@ description: "/// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n
 input_file: crates/stef-parser/tests/inputs/enum_many_ws.stef
 ---
 #[allow(unused_imports)]
-use ::stef::buf::{Decode, Encode};
+use ::stef::buf::{Decode, Encode, Size};
 /// Sample enum.
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions, clippy::option_option)]
@@ -105,6 +105,31 @@ impl ::stef::Decode for Sample {
                 })
             }
             id => Err(::stef::buf::Error::UnknownVariant(id)),
+        }
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        match self {
+            Self::One => ::stef::buf::size_id(1),
+            Self::Two(n0, n1) => {
+                ::stef::buf::size_id(2)
+                    + ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*n0) })
+                    + ::stef::buf::size_field(2, || { ::stef::buf::size_u64(*n1) })
+                    + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+            }
+            Self::Three { field1, field2 } => {
+                ::stef::buf::size_id(3)
+                    + ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*field1) })
+                    + ::stef::buf::size_field(2, || { ::stef::buf::size_bool(*field2) })
+                    + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+            }
         }
     }
 }

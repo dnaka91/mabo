@@ -32,7 +32,7 @@ mimalloc = "0.1.39"
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.70", default-features = false }
 quote = { version = "1.0.33", default-features = false }
-syn = "2.0.39"
+syn = "2.0.40"
 thiserror = "1.0.50"
 
 [profile.release]

@@ -6,15 +6,18 @@ ignore = ["RUSTSEC-2021-0145"]
 [licenses]
 allow-osi-fsf-free = "both"
 exceptions = [
+    { allow = ["MPL-2.0"], name = "option-ext" },
     { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
 ]
 
 [bans]
 skip = [
+    { name = "bitflags", version = "1" },
     { name = "hermit-abi", version = "0.1" },
     { name = "supports-color", version = "1" },
+    { name = "syn", version = "1" },
     { name = "terminal_size", version = "0.1" },
 ]
 skip-tree = [
-    { name = "windows-sys", version = "0.45", depth = 3 },
+    { name = "windows-sys", version = "0.48", depth = 3 },
 ]

@@ -5,6 +5,7 @@ pub use definition::render_schema;
 mod decode;
 mod definition;
 mod encode;
+mod size;
 
 /// Options for the code generator that can modify the way the code is generated.
 #[derive(Default)]

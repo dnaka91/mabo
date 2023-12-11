@@ -12,7 +12,7 @@ impl Display for RenderStruct<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             f,
-            "var _ buf.Encode = (*{}{})(nil)\n",
+            "var _ buf.Size = (*{}{})(nil)\n",
             heck::AsUpperCamelCase(&self.0.name),
             RenderGenericNames {
                 generics: &self.0.generics,
@@ -22,14 +22,15 @@ impl Display for RenderStruct<'_> {
 
         writeln!(
             f,
-            "func (v *{}{}) Encode(w []byte) []byte {{",
+            "func (v *{}{}) Size() int {{",
             heck::AsUpperCamelCase(&self.0.name),
             RenderGenericNames {
                 generics: &self.0.generics,
                 fields_filter: None,
             }
         )?;
-        writeln!(f, "{}\treturn w\n}}", RenderFields(&self.0.fields))
+        writeln!(f, "\tsize := 0")?;
+        writeln!(f, "{}\treturn size\n}}", RenderFields(&self.0.fields))
     }
 }
 
@@ -43,7 +44,7 @@ impl Display for RenderEnumVariant<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             f,
-            "var _ buf.Encode = (*{}_{}{})(nil)\n",
+            "var _ buf.Size = (*{}_{}{})(nil)\n",
             heck::AsUpperCamelCase(self.enum_name),
             heck::AsUpperCamelCase(&self.variant.name),
             RenderGenericNames {
@@ -54,7 +55,7 @@ impl Display for RenderEnumVariant<'_> {
 
         writeln!(
             f,
-            "func (v *{}_{}{}) Encode(w []byte) []byte {{",
+            "func (v *{}_{}{}) Size() int {{",
             heck::AsUpperCamelCase(self.enum_name),
             heck::AsUpperCamelCase(&self.variant.name),
             RenderGenericNames {
@@ -62,7 +63,8 @@ impl Display for RenderEnumVariant<'_> {
                 fields_filter: Some(&self.variant.fields),
             }
         )?;
-        writeln!(f, "{}\treturn nil\n}}", RenderFields(&self.variant.fields))
+        writeln!(f, "\tsize := 0")?;
+        writeln!(f, "{}\treturn size\n}}", RenderFields(&self.variant.fields))
     }
 }
 
@@ -76,8 +78,8 @@ impl Display for RenderFields<'_> {
                     if let DataType::Option(ty) = &field.ty.value {
                         writeln!(
                             f,
-                            "\tw = buf.EncodeFieldOption[{}](w, {}, &v.{}, func (w []byte, v {0}) \
-                             []byte {{\n\t\treturn {}\n\t}})",
+                            "\tsize += buf.SizeFieldOption[{}]({}, &v.{}, func (v {0}) []byte \
+                             {{\n\t\treturn {}\n\t}})",
                             definition::RenderType(ty),
                             field.id.get(),
                             heck::AsUpperCamelCase(&field.name),
@@ -90,8 +92,7 @@ impl Display for RenderFields<'_> {
                     } else {
                         writeln!(
                             f,
-                            "\tw = buf.EncodeField(w, {}, func (w []byte) []byte {{\n\t\treturn \
-                             {}\n\t}})",
+                            "\tsize += buf.SizeField({}, func() int {{\n\t\treturn {}\n\t}})",
                             field.id.get(),
                             RenderType {
                                 ty: &field.ty,
@@ -102,15 +103,15 @@ impl Display for RenderFields<'_> {
                     }
                 }
 
-                writeln!(f, "\tw = buf.EncodeU32(w, buf.EndMarker)")?;
+                writeln!(f, "\tsize += buf.SizeU32(buf.EndMarker)")?;
             }
             Fields::Unnamed(unnamed) => {
                 for (idx, field) in unnamed.iter().enumerate() {
                     if let DataType::Option(ty) = &field.ty.value {
                         writeln!(
                             f,
-                            "\tw = buf.EncodeFieldOption[{}](w, {}, &v.F{idx}, func (w []byte, v \
-                             {0}) []byte {{\n\t\treturn {}\n\t}})",
+                            "\tsize += buf.SizeFieldOption[{}]({}, &v.F{idx}, func (v {0}) int \
+                             {{\n\t\treturn {}\n\t}})",
                             definition::RenderType(ty),
                             field.id.get(),
                             RenderType {
@@ -122,8 +123,7 @@ impl Display for RenderFields<'_> {
                     } else {
                         writeln!(
                             f,
-                            "\tw = buf.EncodeField(w, {}, func (w []byte) []byte {{\n\t\treturn \
-                             {}\n\t}})",
+                            "\tsize += buf.SizeField({}, func() int {{\n\t\treturn {}\n\t}})",
                             field.id.get(),
                             RenderType {
                                 ty: &field.ty,
@@ -134,7 +134,7 @@ impl Display for RenderFields<'_> {
                     }
                 }
 
-                writeln!(f, "\tw = buf.EncodeU32(w, buf.EndMarker)")?;
+                writeln!(f, "\tsize += buf.SizeU32(buf.EndMarker)")?;
             }
             Fields::Unit => {}
         }
@@ -155,29 +155,29 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.ty.value {
-            DataType::Bool => write!(f, "buf.EncodeBool(w, {})", self.name),
-            DataType::U8 => write!(f, "buf.EncodeU8(w, {})", self.name),
-            DataType::U16 => write!(f, "buf.EncodeU16(w, {})", self.name),
-            DataType::U32 => write!(f, "buf.EncodeU32(w, {})", self.name),
-            DataType::U64 => write!(f, "buf.EncodeU64(w, {})", self.name),
-            DataType::U128 => write!(f, "buf.EncodeU128(w, {})", self.name),
-            DataType::I8 => write!(f, "buf.EncodeI8(w, {})", self.name),
-            DataType::I16 => write!(f, "buf.EncodeI16(w, {})", self.name),
-            DataType::I32 => write!(f, "buf.EncodeI32(w, {})", self.name),
-            DataType::I64 => write!(f, "buf.EncodeI64(w, {})", self.name),
-            DataType::I128 => write!(f, "buf.EncodeI128(w, {})", self.name),
-            DataType::F32 => write!(f, "buf.EncodeF32(w, {})", self.name),
-            DataType::F64 => write!(f, "buf.EncodeF64(w, {})", self.name),
+            DataType::Bool => write!(f, "buf.SizeBool({})", self.name),
+            DataType::U8 => write!(f, "buf.SizeU8({})", self.name),
+            DataType::U16 => write!(f, "buf.SizeU16({})", self.name),
+            DataType::U32 => write!(f, "buf.SizeU32({})", self.name),
+            DataType::U64 => write!(f, "buf.SizeU64({})", self.name),
+            DataType::U128 => write!(f, "buf.SizeU128({})", self.name),
+            DataType::I8 => write!(f, "buf.SizeI8({})", self.name),
+            DataType::I16 => write!(f, "buf.SizeI16({})", self.name),
+            DataType::I32 => write!(f, "buf.SizeI32({})", self.name),
+            DataType::I64 => write!(f, "buf.SizeI64({})", self.name),
+            DataType::I128 => write!(f, "buf.SizeI128({})", self.name),
+            DataType::F32 => write!(f, "buf.SizeF32({})", self.name),
+            DataType::F64 => write!(f, "buf.SizeF64({})", self.name),
             DataType::String | DataType::StringRef | DataType::BoxString => {
-                write!(f, "buf.EncodeString(w, {})", self.name)
+                write!(f, "buf.SizeString({})", self.name)
             }
             DataType::Bytes | DataType::BytesRef | DataType::BoxBytes => {
-                write!(f, "buf.EncodeBytes(w, {})", self.name)
+                write!(f, "buf.SizeBytes({})", self.name)
             }
             DataType::Vec(ty) => {
                 writeln!(
                     f,
-                    "buf.EncodeVec[{}](w, {}, func(w []byte, v {0}) []byte {{",
+                    "buf.SizeVec[{}]({}, func(v {0}) int {{",
                     definition::RenderType(ty),
                     self.name
                 )?;
@@ -197,13 +197,13 @@ where
             DataType::HashMap(kv) => {
                 writeln!(
                     f,
-                    "buf.EncodeHashMap[{}, {}](",
+                    "buf.SizeHashMap[{}, {}](",
                     definition::RenderType(&kv.0),
                     definition::RenderType(&kv.1)
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}w, {},",
+                    "{:\t<indent$}{},",
                     "",
                     self.name,
                     indent = self.indent + 1
@@ -211,7 +211,7 @@ where
 
                 writeln!(
                     f,
-                    "{:\t<indent$}func(w []byte, k {}) []byte {{",
+                    "{:\t<indent$}func(k {}) int {{",
                     "",
                     definition::RenderType(&kv.0),
                     indent = self.indent + 1
@@ -231,7 +231,7 @@ where
 
                 writeln!(
                     f,
-                    "{:\t<indent$}func(w []byte, v {}) []byte {{",
+                    "{:\t<indent$}func(v {}) int {{",
                     "",
                     definition::RenderType(&kv.1),
                     indent = self.indent + 1
@@ -253,7 +253,7 @@ where
             DataType::HashSet(ty) => {
                 writeln!(
                     f,
-                    "buf.EncodeHashSet[{}](w, {}, func(w []byte, v {0}) []byte {{",
+                    "buf.SizeHashSet[{}]({}, func(v {0}) int {{",
                     definition::RenderType(ty),
                     self.name
                 )?;
@@ -273,7 +273,7 @@ where
             DataType::Option(ty) => {
                 writeln!(
                     f,
-                    "buf.EncodeOption[{}](w, {}, func(w []byte, v {0}) []byte {{",
+                    "buf.SizeOption[{}]({}, func(v {0}) int {{",
                     definition::RenderType(ty),
                     self.name
                 )?;
@@ -291,16 +291,16 @@ where
                 write!(f, "{:\t<indent$}}})", "", indent = self.indent)
             }
             DataType::NonZero(ty) => match &ty.value {
-                DataType::U8 => write!(f, "buf.EncodeU8(w, {}.Get())", self.name),
-                DataType::U16 => write!(f, "buf.EncodeU16(w, {}.Get())", self.name),
-                DataType::U32 => write!(f, "buf.EncodeU32(w, {}.Get())", self.name),
-                DataType::U64 => write!(f, "buf.EncodeU64(w, {}.Get())", self.name),
-                DataType::U128 => write!(f, "buf.EncodeU128(w, {}.Get())", self.name),
-                DataType::I8 => write!(f, "buf.EncodeI8(w, {}.Get())", self.name),
-                DataType::I16 => write!(f, "buf.EncodeI16(w, {}.Get())", self.name),
-                DataType::I32 => write!(f, "buf.EncodeI32(w, {}.Get())", self.name),
-                DataType::I64 => write!(f, "buf.EncodeI64(w, {}.Get())", self.name),
-                DataType::I128 => write!(f, "buf.EncodeI128(w, {}.Get())", self.name),
+                DataType::U8 => write!(f, "buf.SizeU8({}.Get())", self.name),
+                DataType::U16 => write!(f, "buf.SizeU16({}.Get())", self.name),
+                DataType::U32 => write!(f, "buf.SizeU32({}.Get())", self.name),
+                DataType::U64 => write!(f, "buf.SizeU64({}.Get())", self.name),
+                DataType::U128 => write!(f, "buf.SizeU128({}.Get())", self.name),
+                DataType::I8 => write!(f, "buf.SizeI8({}.Get())", self.name),
+                DataType::I16 => write!(f, "buf.SizeI16({}.Get())", self.name),
+                DataType::I32 => write!(f, "buf.SizeI32({}.Get())", self.name),
+                DataType::I64 => write!(f, "buf.SizeI64({}.Get())", self.name),
+                DataType::I128 => write!(f, "buf.SizeI128({}.Get())", self.name),
                 DataType::String
                 | DataType::StringRef
                 | DataType::Bytes
@@ -320,11 +320,12 @@ where
             },
             DataType::Tuple(types) => match types.len() {
                 2..=12 => {
-                    writeln!(f, "func (w []byte) []byte {{")?;
+                    writeln!(f, "func() int {{")?;
+                    writeln!(f, "{:\t<indent$}size := 0", "", indent = self.indent + 1)?;
                     for (idx, ty) in types.iter().enumerate() {
                         writeln!(
                             f,
-                            "{:\t<indent$}w = {}",
+                            "{:\t<indent$}size += {}",
                             "",
                             RenderType {
                                 ty,
@@ -334,8 +335,8 @@ where
                             indent = self.indent + 1,
                         )?;
                     }
-                    writeln!(f, "{:\t<indent$}return w", "", indent = self.indent + 1)?;
-                    write!(f, "{:\t<indent$}}}(w)", "", indent = self.indent)
+                    writeln!(f, "{:\t<indent$}return size", "", indent = self.indent + 1)?;
+                    write!(f, "{:\t<indent$}}}(size)", "", indent = self.indent)
                 }
                 n => todo!("compiler should catch invalid tuple with {n} elements"),
             },
@@ -343,7 +344,7 @@ where
                 1..=32 => {
                     writeln!(
                         f,
-                        "buf.EncodeArray{size}[{}](w, {}, func(w []byte, v {0}) []byte {{",
+                        "buf.SizeArray{size}[{}]({}, func(v {0}) int {{",
                         definition::RenderType(ty),
                         self.name
                     )?;
@@ -362,7 +363,7 @@ where
                 }
                 n => todo!("arrays with larger ({n}) sizes"),
             },
-            DataType::External(_) => write!(f, "{}.Encode(w)", self.name),
+            DataType::External(_) => write!(f, "{}.Size()", self.name),
         }
     }
 }

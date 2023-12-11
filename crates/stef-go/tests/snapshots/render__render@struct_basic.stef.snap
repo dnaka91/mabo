@@ -95,4 +95,18 @@ func (v *Sample) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample)(nil)
+
+func (v *Sample) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeU32(v.A)
+	})
+	size += buf.SizeField(2, func() int {
+		return buf.SizeBool(v.B)
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 

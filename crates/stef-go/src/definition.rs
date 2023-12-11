@@ -5,7 +5,7 @@ use stef_parser::{
     Schema, Struct, Type, TypeAlias, Variant,
 };
 
-use crate::{decode, encode, Opts, Output};
+use crate::{decode, encode, size, Opts, Output};
 
 /// Take a single schema and convert it into Go source code (which can result in multiple files).
 #[must_use]
@@ -68,9 +68,10 @@ fn render_definition<'a>(buf: &mut String, definition: &'a Definition<'_>) -> Op
             .unwrap();
             writeln!(
                 buf,
-                "\n{}\n{}",
+                "\n{}\n{}\n{}",
                 encode::RenderStruct(s),
-                decode::RenderStruct(s)
+                decode::RenderStruct(s),
+                size::RenderStruct(s),
             )
             .unwrap();
         }
@@ -709,13 +710,18 @@ impl Display for RenderEnumVariant<'_> {
 
         write!(
             f,
-            "\n{}\n{}",
+            "\n{}\n{}\n{}",
             encode::RenderEnumVariant {
                 enum_name: self.enum_name,
                 generics: self.generics,
                 variant: self.variant,
             },
             decode::RenderEnumVariant {
+                enum_name: self.enum_name,
+                generics: self.generics,
+                variant: self.variant,
+            },
+            size::RenderEnumVariant {
                 enum_name: self.enum_name,
                 generics: self.generics,
                 variant: self.variant,

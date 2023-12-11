@@ -521,4 +521,83 @@ func (v *Sample) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample)(nil)
+
+func (v *Sample) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeBool(v.F01)
+	})
+	size += buf.SizeField(2, func() int {
+		return buf.SizeU8(v.F02)
+	})
+	size += buf.SizeField(3, func() int {
+		return buf.SizeU16(v.F03)
+	})
+	size += buf.SizeField(4, func() int {
+		return buf.SizeU32(v.F04)
+	})
+	size += buf.SizeField(5, func() int {
+		return buf.SizeU64(v.F05)
+	})
+	size += buf.SizeField(6, func() int {
+		return buf.SizeU128(v.F06)
+	})
+	size += buf.SizeField(7, func() int {
+		return buf.SizeI8(v.F07)
+	})
+	size += buf.SizeField(8, func() int {
+		return buf.SizeI16(v.F08)
+	})
+	size += buf.SizeField(9, func() int {
+		return buf.SizeI32(v.F09)
+	})
+	size += buf.SizeField(10, func() int {
+		return buf.SizeI64(v.F10)
+	})
+	size += buf.SizeField(11, func() int {
+		return buf.SizeI128(v.F11)
+	})
+	size += buf.SizeField(12, func() int {
+		return buf.SizeF32(v.F12)
+	})
+	size += buf.SizeField(13, func() int {
+		return buf.SizeF64(v.F13)
+	})
+	size += buf.SizeField(14, func() int {
+		return buf.SizeString(v.F14)
+	})
+	size += buf.SizeField(15, func() int {
+		return buf.SizeString(v.F15)
+	})
+	size += buf.SizeField(16, func() int {
+		return buf.SizeBytes(v.F16)
+	})
+	size += buf.SizeField(17, func() int {
+		return buf.SizeBytes(v.F17)
+	})
+	size += buf.SizeField(18, func() int {
+		return buf.SizeString(v.F18)
+	})
+	size += buf.SizeField(19, func() int {
+		return buf.SizeBytes(v.F19)
+	})
+	size += buf.SizeField(20, func() int {
+		return func() int {
+			size := 0
+			size += buf.SizeU32(v.F20.F0)
+			size += buf.SizeU32(v.F20.F1)
+			size += buf.SizeU32(v.F20.F2)
+			return size
+		}(size)
+	})
+	size += buf.SizeField(21, func() int {
+		return buf.SizeArray12[uint32](v.F21, func(v uint32) int {
+			return buf.SizeU32(v)
+		})
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 

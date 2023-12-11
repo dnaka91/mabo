@@ -56,6 +56,13 @@ func (v *Sample_One) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample_One)(nil)
+
+func (v *Sample_One) Size() int {
+	size := 0
+	return size
+}
+
 type Sample_Two struct {
 	F0 uint32
 	F1 uint64
@@ -137,6 +144,20 @@ func (v *Sample_Two) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample_Two)(nil)
+
+func (v *Sample_Two) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeU32(v.F0)
+	})
+	size += buf.SizeField(2, func() int {
+		return buf.SizeU64(v.F1)
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 type Sample_Three struct {
 	Field1 uint32
 	Field2 bool
@@ -216,6 +237,20 @@ func (v *Sample_Three) Decode(r []byte) ([]byte, error) {
 	}
 
 	return r, nil
+}
+
+var _ buf.Size = (*Sample_Three)(nil)
+
+func (v *Sample_Three) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeU32(v.Field1)
+	})
+	size += buf.SizeField(2, func() int {
+		return buf.SizeBool(v.Field2)
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
 }
 
 

@@ -101,6 +101,20 @@ func (v *Sample) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample)(nil)
+
+func (v *Sample) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return v.Basic.Size()
+	})
+	size += buf.SizeField(2, func() int {
+		return v.WithGenerics.Size()
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 type Test123Variant interface {
 	 sealed()
 }
@@ -140,6 +154,13 @@ func (v *Test123_Value) Decode(r []byte) ([]byte, error) {
 
 
 	return r, nil
+}
+
+var _ buf.Size = (*Test123_Value)(nil)
+
+func (v *Test123_Value) Size() int {
+	size := 0
+	return size
 }
 
 type KeyValue[K any, V any] struct {
@@ -227,6 +248,20 @@ func (v *KeyValue[K, V]) Decode(r []byte) ([]byte, error) {
 	}
 
 	return r, nil
+}
+
+var _ buf.Size = (*KeyValue[K, V])(nil)
+
+func (v *KeyValue[K, V]) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return v.Key.Size()
+	})
+	size += buf.SizeField(2, func() int {
+		return v.Value.Size()
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
 }
 
 

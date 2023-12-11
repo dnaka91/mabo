@@ -102,4 +102,18 @@ func (v *KeyValue[K, V]) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*KeyValue[K, V])(nil)
+
+func (v *KeyValue[K, V]) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return v.Key.Size()
+	})
+	size += buf.SizeField(2, func() int {
+		return v.Value.Size()
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 

@@ -182,6 +182,41 @@ func (v *Sample) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample)(nil)
+
+func (v *Sample) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeVec[uint32](v.F1, func(v uint32) int {
+			return buf.SizeU32(v)
+		})
+	})
+	size += buf.SizeField(2, func() int {
+		return buf.SizeHashMap[uint32, string](
+			v.F2,
+			func(k uint32) int {
+				return buf.SizeU32(k)
+			},
+			func(v string) int {
+				return buf.SizeString(v)
+			},
+		)
+	})
+	size += buf.SizeField(3, func() int {
+		return buf.SizeHashSet[uint32](v.F3, func(v uint32) int {
+			return buf.SizeU32(v)
+		})
+	})
+	size += buf.SizeFieldOption[uint32](4, &v.F4, func (v uint32) []byte {
+		return buf.SizeU32(v)
+	})
+	size += buf.SizeField(5, func() int {
+		return buf.SizeU32(v.F5.Get())
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 type SampleUnnamed struct {
 	F0 []uint32
 	F1 map[uint32]string
@@ -230,7 +265,7 @@ func (v *SampleUnnamed) Encode(w []byte) []byte {
 			return buf.EncodeU32(w, v)
 		})
 	})
-	w = buf.EncodeFieldOption[uint32](w, 4, &v.F3, func (w []byte, v uint32) [] byte {
+	w = buf.EncodeFieldOption[uint32](w, 4, &v.F3, func (w []byte, v uint32) []byte {
 		return buf.EncodeU32(w, v)
 	})
 	w = buf.EncodeField(w, 5, func (w []byte) []byte {
@@ -348,6 +383,41 @@ func (v *SampleUnnamed) Decode(r []byte) ([]byte, error) {
 	}
 
 	return r, nil
+}
+
+var _ buf.Size = (*SampleUnnamed)(nil)
+
+func (v *SampleUnnamed) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeVec[uint32](v.F0, func(v uint32) int {
+			return buf.SizeU32(v)
+		})
+	})
+	size += buf.SizeField(2, func() int {
+		return buf.SizeHashMap[uint32, string](
+			v.F1,
+			func(k uint32) int {
+				return buf.SizeU32(k)
+			},
+			func(v string) int {
+				return buf.SizeString(v)
+			},
+		)
+	})
+	size += buf.SizeField(3, func() int {
+		return buf.SizeHashSet[uint32](v.F2, func(v uint32) int {
+			return buf.SizeU32(v)
+		})
+	})
+	size += buf.SizeFieldOption[uint32](4, &v.F3, func (v uint32) int {
+		return buf.SizeU32(v)
+	})
+	size += buf.SizeField(5, func() int {
+		return buf.SizeU32(v.F4.Get())
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
 }
 
 

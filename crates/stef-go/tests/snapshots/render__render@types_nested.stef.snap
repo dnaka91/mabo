@@ -96,4 +96,27 @@ func (v *Sample) Decode(r []byte) ([]byte, error) {
 	return r, nil
 }
 
+var _ buf.Size = (*Sample)(nil)
+
+func (v *Sample) Size() int {
+	size := 0
+	size += buf.SizeField(1, func() int {
+		return buf.SizeVec[*stef.NonZeroHashMap[int64, string]](v.Value, func(v *stef.NonZeroHashMap[int64, string]) int {
+			return buf.SizeOption[stef.NonZeroHashMap[int64, string]](v, func(v stef.NonZeroHashMap[int64, string]) int {
+				return buf.SizeHashMap[int64, string](
+					v.Get(),
+					func(k int64) int {
+						return buf.SizeI64(k)
+					},
+					func(v string) int {
+						return buf.SizeString(v)
+					},
+				)
+			})
+		})
+	})
+	size += buf.SizeU32(buf.EndMarker)
+	return size
+}
+
 

@@ -1,27 +1,30 @@
 #![warn(clippy::expect_used, clippy::unwrap_used)]
 #![allow(missing_docs)]
 
-use std::collections::HashMap;
+use std::{collections::HashMap, net::Ipv4Addr, time::Duration};
 
-use anyhow::{ensure, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
+use log::{as_debug, as_display, debug, error, info};
+use lsp_server::{Connection, Message, Notification, Request, RequestId, Response};
+use lsp_types::{
+    notification::{
+        DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument,
+        Initialized, Notification as LspNotification, PublishDiagnostics,
+    },
+    request::{
+        RegisterCapability, Request as LspRequest, SemanticTokensFullRequest, Shutdown,
+        WorkspaceConfiguration,
+    },
+    ConfigurationItem, ConfigurationParams, Diagnostic, DidChangeConfigurationParams,
+    DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
+    InitializeParams, InitializeResult, InitializedParams, PublishDiagnosticsParams, Registration,
+    RegistrationParams, SemanticTokenModifier, SemanticTokenType, SemanticTokens,
+    SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams,
+    SemanticTokensResult, SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo,
+    TextDocumentSyncCapability, TextDocumentSyncKind, Url, WorkDoneProgressOptions,
+};
 use ouroboros::self_referencing;
 use stef_parser::Schema;
-use tokio::sync::{Mutex, RwLock};
-use tower_lsp::{
-    async_trait,
-    jsonrpc::Result as LspResult,
-    lsp_types::{
-        ConfigurationItem, Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
-        DidCloseTextDocumentParams, DidOpenTextDocumentParams, InitializeParams, InitializeResult,
-        InitializedParams, Registration, SemanticTokenModifier, SemanticTokenType,
-        SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
-        SemanticTokensParams, SemanticTokensResult, SemanticTokensServerCapabilities,
-        ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
-        WorkDoneProgressOptions,
-    },
-    Client, LanguageServer, LspService, Server,
-};
-use tracing::{debug, error};
 
 use self::cli::Cli;
 
@@ -31,11 +34,11 @@ mod config;
 mod logging;
 mod utf16;
 
-#[derive(Debug)]
 struct Backend {
-    client: Client,
-    files: Mutex<HashMap<Url, File>>,
-    settings: RwLock<config::Global>,
+    conn: Connection,
+    files: HashMap<Url, File>,
+    settings: config::Global,
+    next_id: i32,
 }
 
 #[self_referencing]
@@ -48,14 +51,76 @@ struct File {
 }
 
 impl Backend {
-    async fn reload_settings(&self) -> Result<()> {
+    fn send_notification<T>(&self, params: T::Params) -> Result<()>
+    where
+        T: LspNotification,
+    {
+        self.conn
+            .sender
+            .send_timeout(
+                Notification::new(T::METHOD.to_owned(), params).into(),
+                Duration::from_secs(2),
+            )
+            .map_err(Into::into)
+    }
+
+    fn send_request<T>(&mut self, params: T::Params) -> Result<T::Result>
+    where
+        T: LspRequest,
+    {
+        let next_id = self.next_id.wrapping_add(1);
+        self.next_id = next_id;
+
+        self.conn.sender.send_timeout(
+            Request::new(next_id.into(), T::METHOD.to_owned(), params).into(),
+            Duration::from_secs(2),
+        )?;
+
+        match self.conn.receiver.recv_timeout(Duration::from_secs(2))? {
+            Message::Response(Response {
+                id,
+                result: Some(result),
+                error: None,
+            }) => {
+                ensure!(id == next_id.into(), "invalid ID");
+                serde_json::from_value(result).map_err(Into::into)
+            }
+            Message::Response(Response {
+                id,
+                result: None,
+                error: Some(error),
+            }) => bail!("request {id} failed: {error:?}"),
+            _ => bail!("invalid message type"),
+        }
+    }
+
+    fn publish_diagnostics(
+        &self,
+        uri: Url,
+        diagnostics: Vec<Diagnostic>,
+        version: Option<i32>,
+    ) -> Result<()> {
+        self.send_notification::<PublishDiagnostics>(PublishDiagnosticsParams {
+            uri,
+            diagnostics,
+            version,
+        })
+    }
+
+    fn configuration(&mut self, items: Vec<ConfigurationItem>) -> Result<Vec<serde_json::Value>> {
+        self.send_request::<WorkspaceConfiguration>(ConfigurationParams { items })
+    }
+
+    fn register_capability(&mut self, registrations: Vec<Registration>) -> Result<()> {
+        self.send_request::<RegisterCapability>(RegistrationParams { registrations })
+    }
+
+    fn reload_settings(&mut self) -> Result<()> {
         let mut settings = self
-            .client
             .configuration(vec![ConfigurationItem {
                 scope_uri: None,
                 section: Some("stef".to_owned()),
             }])
-            .await
             .context("failed getting configuration from client")?;
 
         ensure!(
@@ -68,15 +133,28 @@ impl Backend {
 
         debug!("configuration loaded: {settings:#?}");
 
-        *self.settings.write().await = settings;
+        self.settings = settings;
 
         Ok(())
     }
 }
 
-#[async_trait]
+trait LanguageServer {
+    fn initialize(&mut self, params: InitializeParams) -> Result<InitializeResult>;
+    fn initialized(&mut self, params: InitializedParams);
+    fn shutdown(&mut self) -> Result<()>;
+    fn did_open(&mut self, params: DidOpenTextDocumentParams);
+    fn did_change(&mut self, params: DidChangeTextDocumentParams);
+    fn did_close(&mut self, params: DidCloseTextDocumentParams);
+    fn semantic_tokens_full(
+        &mut self,
+        params: SemanticTokensParams,
+    ) -> Result<Option<SemanticTokensResult>>;
+    fn did_change_configuration(&mut self, params: DidChangeConfigurationParams);
+}
+
 impl LanguageServer for Backend {
-    async fn initialize(&self, _params: InitializeParams) -> LspResult<InitializeResult> {
+    fn initialize(&mut self, _params: InitializeParams) -> Result<InitializeResult> {
         Ok(InitializeResult {
             server_info: Some(ServerInfo {
                 name: env!("CARGO_CRATE_NAME").to_owned(),
@@ -142,32 +220,29 @@ impl LanguageServer for Backend {
         })
     }
 
-    async fn initialized(&self, _params: InitializedParams) {
-        if let Err(e) = self.reload_settings().await {
-            error!(error = ?e, "failed loading initial settings");
+    fn initialized(&mut self, _params: InitializedParams) {
+        if let Err(e) = self.reload_settings() {
+            error!(error = as_debug!(e); "failed loading initial settings");
         }
 
-        if let Err(e) = self
-            .client
-            .register_capability(vec![Registration {
-                id: "1".to_owned(),
-                method: "workspace/didChangeConfiguration".to_owned(),
-                register_options: None,
-            }])
-            .await
-        {
-            error!(error = ?e, "failed registering for configuration changes");
+        if let Err(e) = self.register_capability(vec![Registration {
+            id: "1".to_owned(),
+            method: "workspace/didChangeConfiguration".to_owned(),
+            register_options: None,
+        }]) {
+            error!(error = as_debug!(e); "failed registering for configuration changes");
         }
 
         debug!("initialized");
     }
 
-    async fn shutdown(&self) -> LspResult<()> {
+    fn shutdown(&mut self) -> Result<()> {
+        debug!("got shutdown request");
         Ok(())
     }
 
-    async fn did_open(&self, params: DidOpenTextDocumentParams) {
-        debug!(uri = %params.text_document.uri, "schema opened");
+    fn did_open(&mut self, params: DidOpenTextDocumentParams) {
+        debug!(uri = as_display!(params.text_document.uri); "schema opened");
 
         let file = FileBuilder {
             content: params.text_document.text,
@@ -175,26 +250,23 @@ impl LanguageServer for Backend {
         }
         .build();
 
-        self.client
-            .publish_diagnostics(
-                params.text_document.uri.clone(),
-                file.borrow_schema()
-                    .as_ref()
-                    .err()
-                    .map(|diag| vec![diag.clone()])
-                    .unwrap_or_default(),
-                None,
-            )
-            .await;
+        if let Err(e) = self.publish_diagnostics(
+            params.text_document.uri.clone(),
+            file.borrow_schema()
+                .as_ref()
+                .err()
+                .map(|diag| vec![diag.clone()])
+                .unwrap_or_default(),
+            None,
+        ) {
+            error!(error = as_debug!(e); "failed publishing diagnostics");
+        }
 
-        self.files
-            .lock()
-            .await
-            .insert(params.text_document.uri, file);
+        self.files.insert(params.text_document.uri, file);
     }
 
-    async fn did_change(&self, mut params: DidChangeTextDocumentParams) {
-        debug!(uri = %params.text_document.uri, "schema changed");
+    fn did_change(&mut self, mut params: DidChangeTextDocumentParams) {
+        debug!(uri = as_display!(params.text_document.uri); "schema changed");
 
         let file = FileBuilder {
             content: params.content_changes.remove(0).text,
@@ -202,81 +274,157 @@ impl LanguageServer for Backend {
         }
         .build();
 
-        self.client
-            .publish_diagnostics(
-                params.text_document.uri.clone(),
-                file.borrow_schema()
-                    .as_ref()
-                    .err()
-                    .map(|diag| vec![diag.clone()])
-                    .unwrap_or_default(),
-                None,
-            )
-            .await;
+        if let Err(e) = self.publish_diagnostics(
+            params.text_document.uri.clone(),
+            file.borrow_schema()
+                .as_ref()
+                .err()
+                .map(|diag| vec![diag.clone()])
+                .unwrap_or_default(),
+            None,
+        ) {
+            error!(error = as_debug!(e); "failed publishing diagnostics");
+        }
 
-        self.files
-            .lock()
-            .await
-            .insert(params.text_document.uri, file);
+        self.files.insert(params.text_document.uri, file);
     }
 
-    async fn did_close(&self, params: DidCloseTextDocumentParams) {
-        debug!(uri = %params.text_document.uri, "schema closed");
-        self.files.lock().await.remove(&params.text_document.uri);
+    fn did_close(&mut self, params: DidCloseTextDocumentParams) {
+        debug!(uri = as_display!(params.text_document.uri); "schema closed");
+        self.files.remove(&params.text_document.uri);
     }
 
-    async fn semantic_tokens_full(
-        &self,
+    fn semantic_tokens_full(
+        &mut self,
         params: SemanticTokensParams,
-    ) -> LspResult<Option<SemanticTokensResult>> {
-        debug!(uri = %params.text_document.uri, "requested semantic tokens");
+    ) -> Result<Option<SemanticTokensResult>> {
+        debug!(uri = as_display!(params.text_document.uri); "requested semantic tokens");
         Ok(None)
     }
 
-    async fn did_change_configuration(&self, _: DidChangeConfigurationParams) {
+    fn did_change_configuration(&mut self, _params: DidChangeConfigurationParams) {
         debug!("configuration changed");
 
-        if let Err(e) = self.reload_settings().await {
-            error!(error = ?e, "failed loading changed settings");
+        if let Err(e) = self.reload_settings() {
+            error!(error = as_debug!(e); "failed loading changed settings");
         }
     }
 }
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let (log_options, _guard) = logging::prepare()?;
+    logging::init(None)?;
 
-    let (service, socket) = LspService::new(|client| {
-        logging::init(log_options, client.clone());
+    let (connection, _io_threads) = if cli.stdio {
+        Connection::stdio()
+    } else if let Some(file) = cli.pipe {
+        unimplemented!("open connection on pipe/socket {file:?}");
+    } else if let Some(port) = cli.socket {
+        Connection::connect((Ipv4Addr::LOCALHOST, port))?
+    } else {
+        bail!("no connection method provided")
+    };
 
-        Backend {
-            client,
-            files: Mutex::default(),
-            settings: RwLock::default(),
-        }
-    });
+    let mut server = Backend {
+        conn: Connection {
+            sender: connection.sender.clone(),
+            receiver: connection.receiver.clone(),
+        },
+        files: HashMap::default(),
+        settings: config::Global::default(),
+        next_id: 0,
+    };
 
-    tokio::runtime::Builder::new_multi_thread()
-        .enable_all()
-        .build()?
-        .block_on(async move {
-            if cli.stdio {
-                let (stdin, stdout) = (tokio::io::stdin(), tokio::io::stdout());
-                Server::new(stdin, stdout, socket).serve(service).await;
-            } else if let Some(file) = cli.pipe {
-                let file = tokio::fs::File::options()
-                    .read(true)
-                    .write(true)
-                    .open(file)
-                    .await
-                    .context("failed to open provided pipe/socket")?;
+    let (id, params) = connection.initialize_start()?;
+    let init_params = serde_json::from_value::<InitializeParams>(params)?;
+    let init_result = server.initialize(init_params)?;
+    connection.initialize_finish(id, serde_json::to_value(init_result)?)?;
 
-                let (read, write) = tokio::io::split(file);
-                Server::new(read, write, socket).serve(service).await;
-            } else if let Some(port) = cli.socket {
-                unimplemented!("open TCP connection on port {port}");
+    info!("server initialized");
+
+    if let Err(e) = main_loop(&connection, server) {
+        error!(error = as_debug!(e); "error in main loop");
+        return Err(e);
+    }
+
+    // TODO: investigate why this hangs
+    // io_threads.join()?;
+
+    info!("goodbye!");
+
+    Ok(())
+}
+
+fn main_loop(conn: &Connection, mut server: impl LanguageServer) -> Result<()> {
+    for msg in &conn.receiver {
+        match msg {
+            lsp_server::Message::Request(req) => {
+                if conn.handle_shutdown(&req)? {
+                    info!("shutting down");
+                    return Ok(());
+                }
+
+                match req.method.as_str() {
+                    Shutdown::METHOD => {
+                        server.shutdown()?;
+                    }
+                    SemanticTokensFullRequest::METHOD => {
+                        let (id, params) = cast_req::<SemanticTokensFullRequest>(req)?;
+                        let result = server.semantic_tokens_full(params)?;
+
+                        conn.sender.send(
+                            Response::new_ok(
+                                id,
+                                result.unwrap_or(SemanticTokensResult::Tokens(
+                                    SemanticTokens::default(),
+                                )),
+                            )
+                            .into(),
+                        )?;
+                    }
+
+                    _ => debug!("got request: {req:?}"),
+                }
             }
+            lsp_server::Message::Response(resp) => {
+                debug!("got response: {resp:?}");
+            }
+            lsp_server::Message::Notification(notif) => match notif.method.as_str() {
+                Initialized::METHOD => {
+                    server.initialized(cast_notify::<Initialized>(notif)?);
+                }
+                DidOpenTextDocument::METHOD => {
+                    server.did_open(cast_notify::<DidOpenTextDocument>(notif)?);
+                }
+                DidChangeTextDocument::METHOD => {
+                    server.did_change(cast_notify::<DidChangeTextDocument>(notif)?);
+                }
+                DidCloseTextDocument::METHOD => {
+                    server.did_close(cast_notify::<DidCloseTextDocument>(notif)?);
+                }
+                DidChangeConfiguration::METHOD => {
+                    server.did_change_configuration(cast_notify::<DidChangeConfiguration>(notif)?);
+                }
+                _ => debug!("got unknown notification: {notif:?}"),
+            },
+        }
+    }
 
-            anyhow::Ok(())
-        })
+    Ok(())
+}
+
+fn cast_req<R>(req: Request) -> Result<(RequestId, R::Params)>
+where
+    R: LspRequest,
+    R::Params: serde::de::DeserializeOwned,
+{
+    req.extract(R::METHOD).map_err(Into::into)
+}
+
+fn cast_notify<R>(notif: Notification) -> Result<R::Params>
+where
+    R: LspNotification,
+    R::Params: serde::de::DeserializeOwned,
+{
+    notif.extract(R::METHOD).map_err(Into::into)
 }

@@ -1,5 +1,6 @@
 use std::ops::Range;
 
+use lsp_types::{self as lsp, Diagnostic, Url};
 use stef_compiler::validate;
 use stef_parser::{
     error::{
@@ -10,7 +11,6 @@ use stef_parser::{
     },
     Schema,
 };
-use tower_lsp::lsp_types::{self as lsp, Diagnostic, Url};
 
 use crate::utf16;
 

@@ -13,17 +13,16 @@ license.workspace = true
 anyhow = "1.0.75"
 clap.workspace = true
 directories = "5.0.1"
+log = { version = "0.4.20", features = ["kv_unstable_std", "std"] }
+lsp-server = "0.7.5"
+lsp-types = { version = "0.94.1", features = ["proposed"] }
 ouroboros = "0.18.1"
+parking_lot = "0.12.1"
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
 stef-compiler = { path = "../stef-compiler" }
 stef-parser = { path = "../stef-parser" }
 time = { version = "0.3.30", features = ["formatting", "local-offset", "macros"] }
-tokio = { version = "1.35.0", features = ["fs", "io-std", "io-util", "rt-multi-thread"] }
-tower-lsp = { version = "0.20.0", features = ["proposed"] }
-tracing = "0.1.40"
-tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.18", features = ["time"] }
 
 [lints]
 workspace = true

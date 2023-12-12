@@ -1,104 +1,262 @@
-use std::io::Write;
+use std::{fs::File, io::Write, path::PathBuf};
 
 use anyhow::{Context, Result};
 use directories::ProjectDirs;
-use time::{format_description::FormatItem, macros::format_description, UtcOffset};
-use tower_lsp::{lsp_types::MessageType, Client};
-use tracing::Level;
-use tracing_appender::non_blocking::NonBlocking;
-use tracing_subscriber::{
-    filter::Targets,
-    fmt::{time::OffsetTime, MakeWriter},
-    prelude::*,
+use log::{kv::Visitor, Level, LevelFilter, Metadata, Record};
+use lsp_server::{Connection, Message, Notification};
+use lsp_types::{
+    notification::{LogMessage, Notification as _},
+    LogMessageParams, MessageType,
 };
+use parking_lot::Mutex;
+use time::{format_description::FormatItem, macros::format_description, OffsetDateTime, UtcOffset};
 
-pub fn prepare() -> Result<(Options, Guard)> {
-    let timer = OffsetTime::new(
-        UtcOffset::current_local_offset().context("failed retrieving local UTC offset")?,
-        format_description!("[hour]:[minute]:[second]"),
-    );
+static FORMAT_HMS: &[FormatItem<'_>] = format_description!("[hour]:[minute]:[second]");
+
+pub fn init(conn: Option<Connection>) -> Result<()> {
+    let offset = UtcOffset::current_local_offset()?;
 
     let dirs = ProjectDirs::from("rocks", "dnaka91", env!("CARGO_PKG_NAME"))
         .context("failed locating project directories")?;
 
-    let file_appender = tracing_appender::rolling::daily(dirs.cache_dir(), "log");
-    let (file_appender, guard) = tracing_appender::non_blocking(file_appender);
-
-    Ok((
-        Options {
-            timer,
-            file_appender,
-        },
-        Guard(guard),
-    ))
+    log::set_max_level(LevelFilter::Trace);
+    log::set_boxed_logger(Box::new(CombinedLogger {
+        client: conn.map(|conn| ClientLogger::new(conn, offset)),
+        file: FileLogger::new(dirs.cache_dir().join("lsp.log"), offset)?,
+        stderr: StderrLogger::new(offset),
+    }))
+    .map_err(Into::into)
 }
 
-pub fn init(
-    Options {
-        timer,
-        file_appender,
-    }: Options,
-    client: Client,
-) {
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::fmt::layer()
-                .with_ansi(false)
-                .with_timer(timer.clone())
-                .with_writer(ClientLogWriter::new(client)),
-        )
-        .with(
-            tracing_subscriber::fmt::layer()
-                .with_timer(timer)
-                .with_writer(file_appender),
-        )
-        .with(Targets::new().with_default(Level::WARN).with_targets([
-            (env!("CARGO_CRATE_NAME"), Level::TRACE),
-            ("stef_compiler", Level::TRACE),
-            ("stef_parser", Level::TRACE),
-            ("tower_lsp", Level::DEBUG),
-        ]))
-        .init();
+fn write_message<'a>(
+    f: &mut impl std::io::Write,
+    record: &'a Record<'a>,
+    offset: UtcOffset,
+) -> Result<()> {
+    OffsetDateTime::now_utc()
+        .to_offset(offset)
+        .format_into(f, FORMAT_HMS)?;
+
+    write!(
+        f,
+        " {:5} {}: {}",
+        record.level(),
+        record.target(),
+        record.args()
+    )?;
+
+    record.key_values().visit(&mut FormatVisitor(f))?;
+
+    writeln!(f).map_err(Into::into)
 }
 
-pub struct Options {
-    timer: OffsetTime<&'static [FormatItem<'static>]>,
-    file_appender: NonBlocking,
-}
+struct FormatVisitor<'a, T>(&'a mut T);
 
-pub struct Guard(tracing_appender::non_blocking::WorkerGuard);
-
-struct ClientLogWriter {
-    client: Client,
-}
-
-impl ClientLogWriter {
-    fn new(client: Client) -> Self {
-        Self { client }
+impl<T: std::io::Write> Visitor<'_> for FormatVisitor<'_, T> {
+    fn visit_pair(
+        &mut self,
+        key: log::kv::Key<'_>,
+        value: log::kv::Value<'_>,
+    ) -> Result<(), log::kv::Error> {
+        write!(self.0, " {}=", key.as_str())?;
+        value.visit(self)
     }
 }
 
-impl Write for ClientLogWriter {
-    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        let client = self.client.clone();
-        let message = String::from_utf8_lossy(buf).trim().to_owned();
-
-        tokio::spawn(async move { client.log_message(MessageType::LOG, message).await });
-
-        Ok(buf.len())
+impl<T: std::io::Write> log::kv::value::Visit<'_> for FormatVisitor<'_, T> {
+    fn visit_any(&mut self, value: log::kv::Value<'_>) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
     }
 
-    fn flush(&mut self) -> std::io::Result<()> {
-        Ok(())
+    fn visit_u64(&mut self, value: u64) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_i64(&mut self, value: i64) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_u128(&mut self, value: u128) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_i128(&mut self, value: i128) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_f64(&mut self, value: f64) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_bool(&mut self, value: bool) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_str(&mut self, value: &str) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_borrowed_str(&mut self, value: &str) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_char(&mut self, value: char) -> Result<(), log::kv::Error> {
+        write!(self.0, "{value}").map_err(Into::into)
+    }
+
+    fn visit_error(
+        &mut self,
+        err: &(dyn std::error::Error + 'static),
+    ) -> Result<(), log::kv::Error> {
+        write!(self.0, "{err}").map_err(Into::into)
+    }
+
+    fn visit_borrowed_error(
+        &mut self,
+        err: &(dyn std::error::Error + 'static),
+    ) -> Result<(), log::kv::Error> {
+        write!(self.0, "{err}").map_err(Into::into)
     }
 }
 
-impl MakeWriter<'_> for ClientLogWriter {
-    type Writer = Self;
+struct ClientLogger {
+    conn: Connection,
+    offset: UtcOffset,
+}
 
-    fn make_writer(&self) -> Self::Writer {
-        Self {
-            client: self.client.clone(),
+impl ClientLogger {
+    fn new(conn: Connection, offset: UtcOffset) -> Self {
+        Self { conn, offset }
+    }
+}
+
+impl log::Log for ClientLogger {
+    fn enabled(&self, _metadata: &Metadata<'_>) -> bool {
+        true
+    }
+
+    fn log(&self, record: &Record<'_>) {
+        let message = {
+            let mut buf = Vec::new();
+            if let Err(e) = write_message(&mut buf, record, self.offset) {
+                eprintln!("failed formatting log message: {e:?}");
+                return;
+            }
+            String::from_utf8_lossy(&buf).into_owned()
+        };
+
+        let params = match serde_json::to_value(LogMessageParams {
+            typ: MessageType::LOG,
+            message,
+        }) {
+            Ok(params) => params,
+            Err(e) => {
+                eprintln!("failed serializing log message params: {e:?}");
+                return;
+            }
+        };
+
+        if let Err(e) = self.conn.sender.send(Message::Notification(Notification {
+            method: LogMessage::METHOD.to_owned(),
+            params,
+        })) {
+            eprintln!("failed sending log message to client: {e:?}");
         }
+    }
+
+    fn flush(&self) {}
+}
+
+struct FileLogger {
+    file: Mutex<File>,
+    offset: UtcOffset,
+}
+
+impl FileLogger {
+    fn new(file: PathBuf, offset: UtcOffset) -> Result<Self> {
+        Ok(Self {
+            file: File::options().create(true).append(true).open(file)?.into(),
+            offset,
+        })
+    }
+}
+
+impl log::Log for FileLogger {
+    fn enabled(&self, _metadata: &Metadata<'_>) -> bool {
+        true
+    }
+
+    fn log(&self, record: &Record<'_>) {
+        if let Err(e) = write_message(&mut *self.file.lock(), record, self.offset) {
+            eprintln!("failed writing log message to file: {e:?}");
+        }
+    }
+
+    fn flush(&self) {
+        if let Err(e) = self.file.lock().flush() {
+            eprintln!("failed flushing log file: {e:?}");
+        }
+    }
+}
+
+struct StderrLogger {
+    offset: UtcOffset,
+}
+
+impl StderrLogger {
+    fn new(offset: UtcOffset) -> Self {
+        Self { offset }
+    }
+}
+
+impl log::Log for StderrLogger {
+    fn enabled(&self, _metadata: &Metadata<'_>) -> bool {
+        true
+    }
+
+    fn log(&self, record: &Record<'_>) {
+        if let Err(e) = write_message(&mut std::io::stderr(), record, self.offset) {
+            eprintln!("failed formatting log message: {e:?}");
+        }
+    }
+
+    fn flush(&self) {
+        std::io::stderr().flush().ok();
+    }
+}
+
+struct CombinedLogger {
+    client: Option<ClientLogger>,
+    file: FileLogger,
+    stderr: StderrLogger,
+}
+
+impl log::Log for CombinedLogger {
+    fn enabled(&self, metadata: &Metadata<'_>) -> bool {
+        metadata.level() <= Level::Warn
+            || (metadata.target().starts_with(env!("CARGO_CRATE_NAME"))
+                && metadata.level() <= Level::Trace)
+            || (metadata.target().starts_with("stef_compiler") && metadata.level() <= Level::Trace)
+            || (metadata.target().starts_with("stef_parser") && metadata.level() <= Level::Trace)
+            || (metadata.target().starts_with("lsp_server::msg")
+                && metadata.level() <= Level::Debug)
+    }
+
+    fn log(&self, record: &Record<'_>) {
+        if self.enabled(record.metadata()) {
+            if let Some(client) = &self.client {
+                client.log(record);
+            }
+            self.file.log(record);
+            self.stderr.log(record);
+        }
+    }
+
+    fn flush(&self) {
+        if let Some(client) = &self.client {
+            client.flush();
+        }
+        self.file.flush();
+        self.stderr.flush();
     }
 }

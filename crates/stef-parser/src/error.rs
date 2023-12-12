@@ -78,7 +78,7 @@ impl Diagnostic for ParseSchemaError {
 
 #[derive(Debug, Diagnostic)]
 pub enum ParseSchemaCause {
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     #[diagnostic(transparent)]
     Definition(ParseDefinitionError),
 }
@@ -86,7 +86,7 @@ pub enum ParseSchemaCause {
 impl Error for ParseSchemaCause {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
-            Self::Parser(kind) => kind.source(),
+            Self::Parser(kind, _) => kind.source(),
             Self::Definition(inner) => inner.source(),
         }
     }
@@ -95,7 +95,7 @@ impl Error for ParseSchemaCause {
 impl Display for ParseSchemaCause {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Parser(kind) => kind.fmt(f),
+            Self::Parser(kind, _) => kind.fmt(f),
             Self::Definition(inner) => inner.fmt(f),
         }
     }
@@ -107,9 +107,12 @@ impl From<ParseDefinitionError> for ParseSchemaCause {
     }
 }
 
-impl<I> winnow::error::ParserError<I> for ParseSchemaCause {
-    fn from_error_kind(_: &I, kind: winnow::error::ErrorKind) -> Self {
-        Self::Parser(kind)
+impl<I> winnow::error::ParserError<I> for ParseSchemaCause
+where
+    I: winnow::stream::Location,
+{
+    fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
+        Self::Parser(kind, input.location())
     }
 
     fn append(self, _: &I, _: winnow::error::ErrorKind) -> Self {
@@ -120,7 +123,7 @@ impl<I> winnow::error::ParserError<I> for ParseSchemaCause {
 /// Reason why a single definition was invalid.
 #[derive(Debug, Diagnostic)]
 pub enum ParseDefinitionError {
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     #[diagnostic(transparent)]
     Comment(ParseCommentError),
     #[diagnostic(transparent)]
@@ -142,7 +145,7 @@ pub enum ParseDefinitionError {
 impl Error for ParseDefinitionError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
-            Self::Parser(kind) => kind.source(),
+            Self::Parser(kind, _) => kind.source(),
             Self::Comment(inner) => inner.source(),
             Self::Attribute(inner) => inner.source(),
             Self::Module(inner) => inner.source(),
@@ -158,7 +161,7 @@ impl Error for ParseDefinitionError {
 impl Display for ParseDefinitionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Parser(kind) => kind.fmt(f),
+            Self::Parser(kind, _) => kind.fmt(f),
             Self::Comment(inner) => inner.fmt(f),
             Self::Attribute(inner) => inner.fmt(f),
             Self::Module(inner) => inner.fmt(f),
@@ -219,9 +222,12 @@ impl From<ParseImportError> for ParseDefinitionError {
     }
 }
 
-impl<I> winnow::error::ParserError<I> for ParseDefinitionError {
-    fn from_error_kind(_: &I, kind: winnow::error::ErrorKind) -> Self {
-        Self::Parser(kind)
+impl<I> winnow::error::ParserError<I> for ParseDefinitionError
+where
+    I: winnow::stream::Location,
+{
+    fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
+        Self::Parser(kind, input.location())
     }
 
     fn append(self, _: &I, _: winnow::error::ErrorKind) -> Self {

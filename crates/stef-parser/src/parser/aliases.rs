@@ -37,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseAliasCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     /// Defined name is not considered valid.
     #[err(
         msg("Invalid alias name"),

@@ -46,11 +46,14 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
         #error_impl
         #miette_impl
 
-        impl<I> ::winnow::error::ParserError<I> for #ident {
-            fn from_error_kind(_: &I, kind: ::winnow::error::ErrorKind) -> Self {
+        impl<I> ::winnow::error::ParserError<I> for #ident
+        where
+            I: ::winnow::stream::Location,
+        {
+            fn from_error_kind(input: &I, kind: ::winnow::error::ErrorKind) -> Self {
                 Self{
-                    at: Default::default(),
-                    cause: Cause::Parser(kind),
+                    at: input.location()..input.location(),
+                    cause: Cause::Parser(kind, input.location()),
                 }
             }
 

@@ -40,7 +40,7 @@ pub struct ParseError {
 #[rename(ParseTypeCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     /// Invalid type declaration.
     #[forward]
     Type(Box<ParseError>),

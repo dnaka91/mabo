@@ -40,7 +40,7 @@ pub struct ParseError {
 #[rename(ParseFieldsCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     /// Defined name is not considered valid.
     #[err(
         msg("Invalid field name"),

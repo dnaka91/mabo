@@ -58,19 +58,27 @@ fn is_parser_variant(variant: &Variant) -> syn::Result<()> {
         bail!(variant, "first variant must be unnamed");
     };
 
-    let Some(field) = fields.unnamed.first().filter(|_| fields.unnamed.len() == 1) else {
+    if fields.unnamed.len() != 2 {
         bail!(
             fields,
-            "first variant must only contain a single unnamed field"
+            "first variant must contain exactly two unnamed fields"
         );
     };
 
-    let Type::Path(ty) = &field.ty else {
-        bail!(field, "first variant type invalid");
+    let Type::Path(ty) = &fields.unnamed[0].ty else {
+        bail!(fields.unnamed[0], "first variant type invalid");
     };
 
     if !compare_path(ty, &[&["ErrorKind"], &["winnow", "error", "ErrorKind"]]) {
         bail!(ty, "first variant type must be `ErrorKind`");
+    }
+
+    let Type::Path(ty) = &fields.unnamed[1].ty else {
+        bail!(fields.unnamed[1], "second variant type invalid");
+    };
+
+    if !compare_path(ty, &[&["usize"]]) {
+        bail!(ty, "second variant type must be `usize`");
     }
 
     Ok(())
@@ -220,7 +228,7 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> TokenStream {
         impl std::error::Error for #ident {
             fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
                 match self {
-                    Self::Parser(kind) => None,
+                    Self::Parser(_, _) => None,
                     #(#sources,)*
                 }
             }
@@ -229,7 +237,7 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> TokenStream {
         impl std::fmt::Display for #ident {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self {
-                    Self::Parser(kind) => kind.fmt(f),
+                    Self::Parser(kind, _) => kind.fmt(f),
                     #(#fmts,)*
                 }
             }
@@ -391,35 +399,35 @@ fn expand_miette(
         impl miette::Diagnostic for #ident {
             fn code(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
-                    Self::Parser(_) => None,
+                    Self::Parser(_, _) => None,
                     #(#codes,)*
                 }
             }
 
             fn help(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
-                    Self::Parser(_) => None,
+                    Self::Parser(_, _) => None,
                     #(#helps,)*
                 }
             }
 
             fn labels(&self) -> Option<Box<dyn Iterator<Item = miette::LabeledSpan> +'_>> {
                 match self {
-                    Self::Parser(_) => None,
+                    Self::Parser(_, _) => None,
                     #(#labels,)*
                 }
             }
 
             fn related(&self) -> Option<Box<dyn Iterator<Item = &dyn miette::Diagnostic> + '_>> {
                 match self {
-                    Self::Parser(_) => None,
+                    Self::Parser(_, _) => None,
                     #(#relateds,)*
                 }
             }
 
             fn url(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
-                    Self::Parser(_) => None,
+                    Self::Parser(_, _) => None,
                     #(#urls,)*
                 }
             }
@@ -467,9 +475,12 @@ fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Tok
     }).collect::<syn::Result<Vec<_>>>()?;
 
     Ok(quote! {
-        impl<I> winnow::error::ParserError<I> for #ident {
-            fn from_error_kind(_: &I, kind: winnow::error::ErrorKind) -> Self {
-                Self::Parser(kind)
+        impl<I> winnow::error::ParserError<I> for #ident
+        where
+            I: winnow::stream::Location,
+        {
+            fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
+                Self::Parser(kind, input.location())
             }
 
             fn append(self, _: &I, _: winnow::error::ErrorKind) -> Self {

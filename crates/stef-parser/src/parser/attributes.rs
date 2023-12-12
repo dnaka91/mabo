@@ -37,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseAttributeCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     /// Invalid literal for the attribute value.
     #[forward]
     Literal(literals::ParseError),

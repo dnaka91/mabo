@@ -37,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseConstCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     #[err(
         msg("Unexpected character"),
         code(stef::parse::const_def::char),

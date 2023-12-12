@@ -17,11 +17,12 @@ use lsp_types::{
     },
     ConfigurationItem, ConfigurationParams, Diagnostic, DidChangeConfigurationParams,
     DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
-    InitializeParams, InitializeResult, InitializedParams, PublishDiagnosticsParams, Registration,
-    RegistrationParams, SemanticTokenModifier, SemanticTokenType, SemanticTokens,
-    SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams,
-    SemanticTokensResult, SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo,
-    TextDocumentSyncCapability, TextDocumentSyncKind, Url, WorkDoneProgressOptions,
+    InitializeParams, InitializeResult, InitializedParams, PositionEncodingKind,
+    PublishDiagnosticsParams, Registration, RegistrationParams, SemanticTokenModifier,
+    SemanticTokenType, SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend,
+    SemanticTokensOptions, SemanticTokensParams, SemanticTokensResult,
+    SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo, TextDocumentSyncCapability,
+    TextDocumentSyncKind, Url, WorkDoneProgressOptions,
 };
 use ouroboros::self_referencing;
 use stef_parser::Schema;
@@ -32,7 +33,6 @@ mod cli;
 mod compile;
 mod config;
 mod logging;
-mod utf16;
 
 struct Backend {
     conn: Connection,
@@ -161,6 +161,7 @@ impl LanguageServer for Backend {
                 version: Some(env!("CARGO_PKG_VERSION").to_owned()),
             }),
             capabilities: ServerCapabilities {
+                position_encoding: Some(PositionEncodingKind::UTF16),
                 text_document_sync: Some(TextDocumentSyncCapability::Kind(
                     TextDocumentSyncKind::FULL,
                 )),

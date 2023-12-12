@@ -116,7 +116,7 @@ mod ids {
     #[derive(Debug, ParserErrorCause)]
     pub enum Cause {
         /// Non-specific general parser error.
-        Parser(ErrorKind),
+        Parser(ErrorKind, usize),
     }
 
     pub(super) fn parse(input: &mut Input<'_>) -> Result<Id, ParseError> {
@@ -130,7 +130,7 @@ mod ids {
             .map_err(|e| {
                 e.map(|e: ErrorKind| ParseError {
                     at: input.location()..input.location(),
-                    cause: Cause::Parser(e),
+                    cause: Cause::Parser(e, input.location()),
                 })
             })
     }
@@ -175,7 +175,7 @@ mod comments {
     #[derive(Debug, ParserErrorCause)]
     pub enum Cause {
         /// Non-specific general parser error.
-        Parser(ErrorKind),
+        Parser(ErrorKind, usize),
     }
 
     pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Comment<'i>, ParseError> {

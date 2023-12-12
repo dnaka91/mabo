@@ -47,7 +47,7 @@ pub struct ParseError {
 #[rename(ParseLiteralCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     /// Found a reference value, which is not allowed.
     #[err(
         msg("Found a reference value"),

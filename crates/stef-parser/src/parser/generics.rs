@@ -37,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseGenericsCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind),
+    Parser(ErrorKind, usize),
     /// Defined name is not considered valid.
     #[err(msg("TODO!"), code(stef::parse::generics::invalid_name), help("TODO!"))]
     InvalidName {

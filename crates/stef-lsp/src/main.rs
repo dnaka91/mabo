@@ -4,7 +4,8 @@
 use std::{collections::HashMap, net::Ipv4Addr, time::Duration};
 
 use anyhow::{bail, ensure, Context, Result};
-use log::{as_debug, as_display, debug, error, info};
+use line_index::{LineIndex, TextRange};
+use log::{as_debug, as_display, debug, error, info, warn};
 use lsp_server::{Connection, Message, Notification, Request, RequestId, Response};
 use lsp_types::{
     notification::{
@@ -25,6 +26,7 @@ use lsp_types::{
     TextDocumentSyncKind, Url, WorkDoneProgressOptions,
 };
 use ouroboros::self_referencing;
+use ropey::Rope;
 use stef_parser::Schema;
 
 use self::cli::Cli;
@@ -44,8 +46,10 @@ struct Backend {
 #[self_referencing]
 #[derive(Debug)]
 struct File {
+    rope: Rope,
+    index: LineIndex,
     content: String,
-    #[borrows(content)]
+    #[borrows(index, content)]
     #[covariant]
     schema: Result<Schema<'this>, Diagnostic>,
 }
@@ -163,7 +167,7 @@ impl LanguageServer for Backend {
             capabilities: ServerCapabilities {
                 position_encoding: Some(PositionEncodingKind::UTF16),
                 text_document_sync: Some(TextDocumentSyncCapability::Kind(
-                    TextDocumentSyncKind::FULL,
+                    TextDocumentSyncKind::INCREMENTAL,
                 )),
                 semantic_tokens_provider: Some(
                     SemanticTokensServerCapabilities::SemanticTokensOptions(
@@ -245,9 +249,14 @@ impl LanguageServer for Backend {
     fn did_open(&mut self, params: DidOpenTextDocumentParams) {
         debug!(uri = as_display!(params.text_document.uri); "schema opened");
 
+        let text = params.text_document.text;
         let file = FileBuilder {
-            content: params.text_document.text,
-            schema_builder: |schema| compile::compile(params.text_document.uri.clone(), schema),
+            rope: Rope::from_str(&text),
+            index: LineIndex::new(&text),
+            content: text,
+            schema_builder: |index, schema| {
+                compile::compile(params.text_document.uri.clone(), schema, index)
+            },
         }
         .build();
 
@@ -269,11 +278,57 @@ impl LanguageServer for Backend {
     fn did_change(&mut self, mut params: DidChangeTextDocumentParams) {
         debug!(uri = as_display!(params.text_document.uri); "schema changed");
 
-        let file = FileBuilder {
-            content: params.content_changes.remove(0).text,
-            schema_builder: |schema| compile::compile(params.text_document.uri.clone(), schema),
-        }
-        .build();
+        let file = if params.content_changes.len() == 1
+            && params
+                .content_changes
+                .first()
+                .is_some_and(|change| change.range.is_none())
+        {
+            let text = params.content_changes.remove(0).text;
+            FileBuilder {
+                rope: Rope::from_str(&text),
+                index: LineIndex::new(&text),
+                content: text,
+                schema_builder: |index, schema| {
+                    compile::compile(params.text_document.uri.clone(), schema, index)
+                },
+            }
+            .build()
+        } else {
+            let Some(file) = self.files.remove(&params.text_document.uri) else {
+                warn!("missing state for changed file");
+                return;
+            };
+
+            let mut heads = file.into_heads();
+
+            for change in params.content_changes {
+                let range = match convert_range(&heads.index, change.range) {
+                    Ok(range) => range,
+                    Err(e) => {
+                        error!(error = as_debug!(e); "invalid change");
+                        continue;
+                    }
+                };
+
+                let start = heads.rope.byte_to_char(range.start().into());
+                let end = heads.rope.byte_to_char(range.end().into());
+                heads.rope.remove(start..end);
+                heads.rope.insert(start, &change.text);
+            }
+
+            let text = String::from(&heads.rope);
+
+            FileBuilder {
+                rope: heads.rope,
+                index: LineIndex::new(&text),
+                content: text,
+                schema_builder: |index, schema| {
+                    compile::compile(params.text_document.uri.clone(), schema, index)
+                },
+            }
+            .build()
+        };
 
         if let Err(e) = self.publish_diagnostics(
             params.text_document.uri.clone(),
@@ -428,4 +483,38 @@ where
     R::Params: serde::de::DeserializeOwned,
 {
     notif.extract(R::METHOD).map_err(Into::into)
+}
+
+fn convert_range(index: &LineIndex, range: Option<lsp_types::Range>) -> Result<TextRange> {
+    let range = range.context("incremental change misses range")?;
+
+    let start = index
+        .offset(
+            index
+                .to_utf8(
+                    line_index::WideEncoding::Utf16,
+                    line_index::WideLineCol {
+                        line: range.start.line,
+                        col: range.start.character,
+                    },
+                )
+                .context("failed to convert start position to utf-8")?,
+        )
+        .context("failed to convert start position to byte offset")?;
+
+    let end = index
+        .offset(
+            index
+                .to_utf8(
+                    line_index::WideEncoding::Utf16,
+                    line_index::WideLineCol {
+                        line: range.end.line,
+                        col: range.end.character,
+                    },
+                )
+                .context("failed to convert end position to utf-8")?,
+        )
+        .context("failed to convert end position to byte offset")?;
+
+    Ok(TextRange::new(start, end))
 }

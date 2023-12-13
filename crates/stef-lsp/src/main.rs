@@ -135,7 +135,7 @@ impl Backend {
         let settings = serde_json::from_value(settings.remove(0))
             .context("failed to parse raw configuration")?;
 
-        debug!("configuration loaded: {settings:#?}");
+        debug!(settings = as_debug!(settings); "configuration loaded");
 
         self.settings = settings;
 
@@ -446,11 +446,21 @@ fn main_loop(conn: &Connection, mut server: impl LanguageServer) -> Result<()> {
                         )?;
                     }
 
-                    _ => debug!("got request: {req:?}"),
+                    _ => {
+                        debug!(request = as_debug!(req); "got unsupported request");
+                        conn.sender.send(
+                            Response::new_err(
+                                req.id,
+                                ErrorCode::MethodNotFound as _,
+                                format!("request `{}` not supported", req.method),
+                            )
+                            .into(),
+                        )?;
+                    }
                 }
             }
             lsp_server::Message::Response(resp) => {
-                debug!("got response: {resp:?}");
+                debug!(response = as_debug!(resp); "got unexpected response");
             }
             lsp_server::Message::Notification(notif) => match notif.method.as_str() {
                 Initialized::METHOD => {
@@ -468,7 +478,7 @@ fn main_loop(conn: &Connection, mut server: impl LanguageServer) -> Result<()> {
                 DidChangeConfiguration::METHOD => {
                     server.did_change_configuration(cast_notify::<DidChangeConfiguration>(notif)?);
                 }
-                _ => debug!("got unknown notification: {notif:?}"),
+                _ => debug!(notification = as_debug!(notif); "got unknown notification"),
             },
         }
     }

@@ -6,7 +6,7 @@ use std::{collections::HashMap, net::Ipv4Addr, time::Duration};
 use anyhow::{bail, ensure, Context, Result};
 use line_index::{LineIndex, TextRange};
 use log::{as_debug, as_display, debug, error, info, warn};
-use lsp_server::{Connection, Message, Notification, Request, RequestId, Response};
+use lsp_server::{Connection, ErrorCode, Message, Notification, Request, RequestId, Response};
 use lsp_types::{
     notification::{
         DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument,
@@ -426,15 +426,22 @@ fn main_loop(conn: &Connection, mut server: impl LanguageServer) -> Result<()> {
                     }
                     SemanticTokensFullRequest::METHOD => {
                         let (id, params) = cast_req::<SemanticTokensFullRequest>(req)?;
-                        let result = server.semantic_tokens_full(params)?;
+                        let result = server.semantic_tokens_full(params);
 
                         conn.sender.send(
-                            Response::new_ok(
-                                id,
-                                result.unwrap_or(SemanticTokensResult::Tokens(
-                                    SemanticTokens::default(),
-                                )),
-                            )
+                            match result {
+                                Ok(value) => Response::new_ok(
+                                    id,
+                                    value.unwrap_or(SemanticTokensResult::Tokens(
+                                        SemanticTokens::default(),
+                                    )),
+                                ),
+                                Err(e) => Response::new_err(
+                                    id,
+                                    ErrorCode::InternalError as _,
+                                    e.to_string(),
+                                ),
+                            }
                             .into(),
                         )?;
                     }

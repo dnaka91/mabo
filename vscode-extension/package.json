@@ -53,6 +53,48 @@
         "title": "Restart LSP Server",
         "category": "Stef"
       }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "boolean",
+        "description": "Style for boolean literals",
+        "superType": "keyword"
+      },
+      {
+        "id": "builtinType",
+        "description": "Style for builtin types",
+        "superType": "type"
+      },
+      {
+        "id": "typeAlias",
+        "description": "Style for type aliases",
+        "superType": "type"
+      }
+    ],
+    "semanticTokenModifiers": [
+      {
+        "id": "constant",
+        "description": "Style for compile-time constants"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "stef",
+        "scopes": {
+          "boolean": [
+            "constant.language.boolean.stef"
+          ],
+          "builtinType": [
+            "support.type.primitive.stef"
+          ],
+          "typeAlias": [
+            "entity.name.type.declaration.stef"
+          ],
+          "variable.constant": [
+            "variable.other.constant.stef"
+          ]
+        }
+      }
     ]
   },
   "vsce": {

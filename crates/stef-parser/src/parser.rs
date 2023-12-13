@@ -123,10 +123,7 @@ mod ids {
         preceded('@', dec_uint)
             .with_span()
             .parse_next(input)
-            .map(|(value, span)| Id {
-                value,
-                span: span.into(),
-            })
+            .map(Id::from)
             .map_err(|e| {
                 e.map(|e: ErrorKind| ParseError {
                     at: input.location()..input.location(),
@@ -142,7 +139,7 @@ mod comments {
     use stef_derive::{ParserError, ParserErrorCause};
     use winnow::{
         ascii::space0,
-        combinator::{preceded, repeat, terminated},
+        combinator::{delimited, preceded, repeat},
         error::ErrorKind,
         stream::Stream,
         token::take_till,
@@ -150,7 +147,7 @@ mod comments {
     };
 
     use super::{Input, Result};
-    use crate::{highlight, location, Comment};
+    use crate::{highlight, location, Comment, CommentLine};
 
     /// Encountered an invalid `/// ...` comment declaration.
     #[derive(Debug, ParserError)]
@@ -183,10 +180,12 @@ mod comments {
 
         repeat(
             0..,
-            preceded(
-                (space0, "///", space0),
-                terminated(take_till(0.., '\n'), '\n'),
-            ),
+            delimited(
+                space0,
+                preceded(("///", space0), take_till(0.., '\n')).with_span(),
+                '\n',
+            )
+            .map(CommentLine::from),
         )
         .parse_next(input)
         .map(Comment)

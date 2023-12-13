@@ -6,14 +6,14 @@ use log::{as_debug, as_display, debug, error, warn};
 use lsp_types::{
     DidChangeConfigurationParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams,
     DidOpenTextDocumentParams, InitializeParams, InitializeResult, InitializedParams,
-    PositionEncodingKind, Registration, SemanticTokenModifier, SemanticTokenType,
-    SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams,
-    SemanticTokensResult, SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo,
-    TextDocumentSyncCapability, TextDocumentSyncKind, WorkDoneProgressOptions,
+    PositionEncodingKind, Registration, SemanticTokens, SemanticTokensFullOptions,
+    SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams, SemanticTokensResult,
+    SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo, TextDocumentSyncCapability,
+    TextDocumentSyncKind, WorkDoneProgressOptions,
 };
 use ropey::Rope;
 
-use crate::{compile, state::FileBuilder, GlobalState};
+use crate::{compile, semantic_tokens, state::FileBuilder, GlobalState};
 
 pub fn initialize(
     _state: &mut GlobalState<'_>,
@@ -35,43 +35,8 @@ pub fn initialize(
                         work_done_progress: Some(false),
                     },
                     legend: SemanticTokensLegend {
-                        token_types: vec![
-                            SemanticTokenType::NAMESPACE,
-                            SemanticTokenType::TYPE,
-                            SemanticTokenType::CLASS,
-                            SemanticTokenType::ENUM,
-                            SemanticTokenType::INTERFACE,
-                            SemanticTokenType::STRUCT,
-                            SemanticTokenType::TYPE_PARAMETER,
-                            SemanticTokenType::PARAMETER,
-                            SemanticTokenType::VARIABLE,
-                            SemanticTokenType::PROPERTY,
-                            SemanticTokenType::ENUM_MEMBER,
-                            SemanticTokenType::EVENT,
-                            SemanticTokenType::FUNCTION,
-                            SemanticTokenType::METHOD,
-                            SemanticTokenType::MACRO,
-                            SemanticTokenType::KEYWORD,
-                            SemanticTokenType::MODIFIER,
-                            SemanticTokenType::COMMENT,
-                            SemanticTokenType::STRING,
-                            SemanticTokenType::NUMBER,
-                            SemanticTokenType::REGEXP,
-                            SemanticTokenType::OPERATOR,
-                            SemanticTokenType::DECORATOR,
-                        ],
-                        token_modifiers: vec![
-                            SemanticTokenModifier::DECLARATION,
-                            SemanticTokenModifier::DEFINITION,
-                            SemanticTokenModifier::READONLY,
-                            SemanticTokenModifier::STATIC,
-                            SemanticTokenModifier::DEPRECATED,
-                            SemanticTokenModifier::ABSTRACT,
-                            SemanticTokenModifier::ASYNC,
-                            SemanticTokenModifier::MODIFICATION,
-                            SemanticTokenModifier::DOCUMENTATION,
-                            SemanticTokenModifier::DEFAULT_LIBRARY,
-                        ],
+                        token_types: semantic_tokens::TOKEN_TYPES.to_vec(),
+                        token_modifiers: semantic_tokens::TOKEN_MODIFIERS.to_vec(),
                     },
                     range: Some(false),
                     full: Some(SemanticTokensFullOptions::Bool(true)),
@@ -204,10 +169,23 @@ pub fn did_close(state: &mut GlobalState<'_>, params: DidCloseTextDocumentParams
 }
 
 pub fn semantic_tokens_full(
-    _state: &mut GlobalState<'_>,
+    state: &mut GlobalState<'_>,
     params: SemanticTokensParams,
 ) -> Result<Option<SemanticTokensResult>> {
     debug!(uri = as_display!(params.text_document.uri); "requested semantic tokens");
+
+    if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
+        file.borrow_schema()
+            .as_ref()
+            .ok()
+            .zip(Some(file.borrow_index()))
+    }) {
+        return Ok(Some(SemanticTokensResult::Tokens(SemanticTokens {
+            result_id: None,
+            data: semantic_tokens::Visitor::new(index).visit_schema(schema)?,
+        })));
+    }
+
     Ok(None)
 }
 

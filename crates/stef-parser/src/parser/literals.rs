@@ -14,7 +14,7 @@ use winnow::{
 };
 
 use super::{ws, Input, Result};
-use crate::{highlight, Literal};
+use crate::{highlight, Literal, LiteralValue};
 
 /// Encountered an invalid literal declaration.
 #[derive(Debug, ParserError)]
@@ -89,18 +89,20 @@ pub(super) fn parse(input: &mut Input<'_>) -> Result<Literal, ParseError> {
 
     dispatch! {
         peek(any);
-        't' => parse_true.map(Literal::Bool),
-        'f' => parse_false.map(Literal::Bool),
+        't' => parse_true.map(LiteralValue::Bool),
+        'f' => parse_false.map(LiteralValue::Bool),
         '+' | '-' | '0'..='9' => cut_err(alt((
-            parse_float.map(Literal::Float),
-            parse_int.map(Literal::Int)
+            parse_float.map(LiteralValue::Float),
+            parse_int.map(LiteralValue::Int)
         ))),
-        '"' => parse_string.map(Literal::String),
-        '[' => parse_bytes.map(Literal::Bytes),
+        '"' => parse_string.map(LiteralValue::String),
+        '[' => parse_bytes.map(LiteralValue::Bytes),
         '&' => fail,
         _ => fail,
     }
+    .with_span()
     .parse_next(input)
+    .map(Literal::from)
     .map_err(|e| {
         e.map(|cause| ParseError {
             at: start..start,

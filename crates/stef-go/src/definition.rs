@@ -1,8 +1,8 @@
 use std::fmt::{self, Display, Write};
 
 use stef_parser::{
-    Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Literal, Name,
-    Schema, Struct, Type, TypeAlias, Variant,
+    Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Literal,
+    LiteralValue, Name, Schema, Struct, Type, TypeAlias, Variant,
 };
 
 use crate::{decode, encode, size, Opts, Output};
@@ -597,12 +597,12 @@ struct RenderLiteral<'a>(&'a Literal);
 
 impl Display for RenderLiteral<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Literal::Bool(b) => write!(f, "{b}"),
-            Literal::Int(i) => write!(f, "{i}"),
-            Literal::Float(f2) => write!(f, "{f2}"),
-            Literal::String(s) => write!(f, "{s:?}"),
-            Literal::Bytes(b) => {
+        match &self.0.value {
+            LiteralValue::Bool(b) => write!(f, "{b}"),
+            LiteralValue::Int(i) => write!(f, "{i}"),
+            LiteralValue::Float(f2) => write!(f, "{f2}"),
+            LiteralValue::String(s) => write!(f, "{s:?}"),
+            LiteralValue::Bytes(b) => {
                 if b.is_empty() {
                     return Ok(());
                 }

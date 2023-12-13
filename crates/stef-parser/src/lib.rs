@@ -605,7 +605,7 @@ impl Display for UnnamedField<'_> {
 ///     ╰─── Content
 /// ```
 #[derive(Debug, Default, Eq, PartialEq)]
-pub struct Comment<'a>(pub Vec<&'a str>);
+pub struct Comment<'a>(pub Vec<CommentLine<'a>>);
 
 impl Print for Comment<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
@@ -613,7 +613,7 @@ impl Print for Comment<'_> {
 
         for line in lines {
             Self::indent(f, level)?;
-            writeln!(f, "/// {line}")?;
+            line.fmt(f)?;
         }
 
         Ok(())
@@ -623,6 +623,50 @@ impl Print for Comment<'_> {
 impl Display for Comment<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
+    }
+}
+
+/// Single [`Comment`] line, which additional tracks the location in the schema.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CommentLine<'a> {
+    /// Raw string value.
+    pub value: &'a str,
+    /// Source code location (including the leading `/// ` marker).
+    span: Span,
+}
+
+impl CommentLine<'_> {
+    /// Retrieve the raw string value of this name.
+    #[must_use]
+    pub const fn get(&self) -> &str {
+        self.value
+    }
+}
+
+impl Spanned for CommentLine<'_> {
+    fn span(&self) -> Span {
+        self.span
+    }
+}
+
+impl Display for CommentLine<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "/// {}", self.value)
+    }
+}
+
+impl<'a> From<(&'a str, Range<usize>)> for CommentLine<'a> {
+    fn from((value, span): (&'a str, Range<usize>)) -> Self {
+        Self {
+            value,
+            span: span.into(),
+        }
+    }
+}
+
+impl AsRef<str> for CommentLine<'_> {
+    fn as_ref(&self) -> &str {
+        self.value
     }
 }
 
@@ -904,6 +948,15 @@ impl Display for Id {
     }
 }
 
+impl From<(u32, Range<usize>)> for Id {
+    fn from((value, span): (u32, Range<usize>)) -> Self {
+        Self {
+            value,
+            span: span.into(),
+        }
+    }
+}
+
 /// An arbitrary name of any element, which additionally carries a span into the schema to mark its
 /// location.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -978,9 +1031,40 @@ impl Print for Const<'_> {
     }
 }
 
-/// In-schema definition of a literal value.
+/// In-schema definition of a literal value, together with a span into the schema to mark where it
+/// is defined.
 #[derive(Clone, Debug, PartialEq)]
-pub enum Literal {
+pub struct Literal {
+    /// The raw literal value.
+    pub value: LiteralValue,
+    /// Source code location.
+    span: Span,
+}
+
+impl Spanned for Literal {
+    fn span(&self) -> Span {
+        self.span
+    }
+}
+
+impl Display for Literal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.value.fmt(f)
+    }
+}
+
+impl From<(LiteralValue, Range<usize>)> for Literal {
+    fn from((value, span): (LiteralValue, Range<usize>)) -> Self {
+        Self {
+            value,
+            span: span.into(),
+        }
+    }
+}
+
+/// Raw value of a [`Literal`].
+#[derive(Clone, Debug, PartialEq)]
+pub enum LiteralValue {
     /// Boolean `true` or `false` value.
     Bool(bool),
     /// Integer number.
@@ -993,14 +1077,14 @@ pub enum Literal {
     Bytes(Vec<u8>),
 }
 
-impl Display for Literal {
+impl Display for LiteralValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
-            Literal::Bool(v) => v.fmt(f),
-            Literal::Int(v) => v.fmt(f),
-            Literal::Float(v) => v.fmt(f),
-            Literal::String(ref v) => write!(f, "{v:?}"),
-            Literal::Bytes(ref v) => write!(f, "{v:?}"),
+            Self::Bool(v) => v.fmt(f),
+            Self::Int(v) => v.fmt(f),
+            Self::Float(v) => v.fmt(f),
+            Self::String(ref v) => write!(f, "{v:?}"),
+            Self::Bytes(ref v) => write!(f, "{v:?}"),
         }
     }
 }

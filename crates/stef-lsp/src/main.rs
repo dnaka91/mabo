@@ -24,6 +24,7 @@ mod compile;
 mod config;
 mod handlers;
 mod logging;
+mod semantic_tokens;
 mod state;
 
 fn main() -> Result<()> {

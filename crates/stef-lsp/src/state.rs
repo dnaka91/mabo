@@ -21,7 +21,7 @@ pub struct GlobalState<'a> {
 #[derive(Debug)]
 pub struct File {
     rope: Rope,
-    index: LineIndex,
+    pub index: LineIndex,
     content: String,
     #[borrows(index, content)]
     #[covariant]

@@ -2,7 +2,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use stef_parser::{
     Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Import, Literal,
-    Module, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
+    LiteralValue, Module, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
 };
 
 use super::{decode, encode, size};
@@ -387,11 +387,11 @@ fn compile_const_data_type(ty: &Type<'_>) -> TokenStream {
 }
 
 fn compile_literal(literal: &Literal) -> TokenStream {
-    match literal {
-        Literal::Bool(b) => quote! { #b },
-        Literal::Int(i) => proc_macro2::Literal::i128_unsuffixed(*i).into_token_stream(),
-        Literal::Float(f) => proc_macro2::Literal::f64_unsuffixed(*f).into_token_stream(),
-        Literal::String(s) => proc_macro2::Literal::string(s).into_token_stream(),
-        Literal::Bytes(b) => proc_macro2::Literal::byte_string(b).into_token_stream(),
+    match &literal.value {
+        LiteralValue::Bool(b) => quote! { #b },
+        LiteralValue::Int(i) => proc_macro2::Literal::i128_unsuffixed(*i).into_token_stream(),
+        LiteralValue::Float(f) => proc_macro2::Literal::f64_unsuffixed(*f).into_token_stream(),
+        LiteralValue::String(s) => proc_macro2::Literal::string(s).into_token_stream(),
+        LiteralValue::Bytes(b) => proc_macro2::Literal::byte_string(b).into_token_stream(),
     }
 }

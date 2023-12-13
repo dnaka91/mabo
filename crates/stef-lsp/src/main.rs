@@ -371,7 +371,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     logging::init(None)?;
 
-    let (connection, _io_threads) = if cli.stdio {
+    let (connection, io_threads) = if cli.stdio {
         Connection::stdio()
     } else if let Some(file) = cli.pipe {
         unimplemented!("open connection on pipe/socket {file:?}");
@@ -403,8 +403,8 @@ fn main() -> Result<()> {
         return Err(e);
     }
 
-    // TODO: investigate why this hangs
-    // io_threads.join()?;
+    drop(connection);
+    io_threads.join()?;
 
     info!("goodbye!");
 

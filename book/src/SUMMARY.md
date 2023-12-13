@@ -37,6 +37,8 @@
 - [Wire format](wire-format/index.md)
 - [Compiler]()
 - [Generators]()
+  - [Rust]()
+  - [Go]()
 
 ---
 

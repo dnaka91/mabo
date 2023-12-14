@@ -20,6 +20,22 @@ macro_rules! zigzag {
     };
     ($($from:ty => $to:ty),+ $(,)?) => {
         $(zigzag!($from, $to);)+
+
+        #[cfg(test)]
+        mod zigzag_tests {
+            use super::*;
+
+            paste::paste! {$(
+                #[test]
+                fn [<roundtrip_ $from>]() {
+                    for value in [0, $from::MIN, $from::MAX] {
+                        let unsigned = [<zigzag_encode_ $from>](value);
+                        let result = [<zigzag_decode_ $from>](unsigned);
+                        assert_eq!(value, result);
+                    }
+                }
+            )+}
+        }
     }
 }
 
@@ -38,7 +54,16 @@ const fn max_size<T>() -> usize {
 
 #[inline]
 const fn size<T>(leading_zeros: usize) -> usize {
-    (std::mem::size_of::<T>() * 8 - leading_zeros + 6) / 7
+    max(1, (std::mem::size_of::<T>() * 8 - leading_zeros + 6) / 7)
+}
+
+#[inline]
+const fn max(a: usize, b: usize) -> usize {
+    if a > b {
+        a
+    } else {
+        b
+    }
 }
 
 macro_rules! varint {
@@ -104,6 +129,47 @@ macro_rules! varint {
     };
     ($(($ty:ty, $signed:ty)),+ $(,)?) => {
         $(varint!($ty, $signed);)+
+
+        #[cfg(test)]
+        mod varint_tests {
+            use super::*;
+
+            paste::paste! {$(
+                #[test]
+                fn [<roundtrip_ $ty>]() {
+                    for value in [$ty::MIN, 1, $ty::MAX] {
+                        let (buf, size) = [<encode_ $ty>](value);
+                        let (result, _) = [<decode_ $ty>](&buf[..size]).unwrap();
+                        assert_eq!(value, result);
+                    }
+                }
+
+                #[test]
+                fn [<roundtrip_ $signed>]() {
+                    for value in [$signed::MIN, -1, 0, 1, $signed::MAX] {
+                        let (buf, size) = [<encode_ $signed>](value);
+                        let (result, _) = [<decode_ $signed>](&buf[..size]).unwrap();
+                        assert_eq!(value, result);
+                    }
+                }
+
+                #[test]
+                fn [<sizecheck_ $ty>]() {
+                    assert_eq!(1, [<size_ $ty>]($ty::MIN));
+                    assert_eq!(1, [<size_ $ty>](1));
+                    assert_eq!(max_size::<$ty>(), [<size_ $ty>]($ty::MAX));
+                }
+
+                #[test]
+                fn [<sizecheck_ $signed>]() {
+                    assert_eq!(max_size::<$signed>(), [<size_ $signed>]($signed::MIN));
+                    assert_eq!(1, [<size_ $signed>](-1));
+                    assert_eq!(1, [<size_ $signed>](0));
+                    assert_eq!(1, [<size_ $signed>](1));
+                    assert_eq!(max_size::<$signed>(), [<size_ $signed>]($signed::MAX));
+                }
+            )+}
+        }
     }
 }
 
@@ -112,3 +178,14 @@ varint!((u16, i16), (u32, i32), (u64, i64), (u128, i128));
 #[derive(Debug, Error)]
 #[error("input was lacking a final marker for the end of the integer data")]
 pub struct DecodeIntError;
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn max_sizes() {
+        assert_eq!(3, super::max_size::<u16>());
+        assert_eq!(5, super::max_size::<u32>());
+        assert_eq!(10, super::max_size::<u64>());
+        assert_eq!(19, super::max_size::<u128>());
+    }
+}

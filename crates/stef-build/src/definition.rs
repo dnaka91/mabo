@@ -207,7 +207,7 @@ fn compile_import(Import { segments, element }: &Import<'_>) -> TokenStream {
 }
 
 fn compile_comment(Comment(lines): &Comment<'_>) -> TokenStream {
-    let lines = lines.iter().map(|line| format!(" {line}"));
+    let lines = lines.iter().map(|line| format!(" {}", line.value));
     quote! { #(#[doc = #lines])* }
 }
 

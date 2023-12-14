@@ -19,9 +19,15 @@ Schema {
                         Attribute {
                             name: "deprecated",
                             value: Single(
-                                String(
-                                    "don't use",
-                                ),
+                                Literal {
+                                    value: String(
+                                        "don't use",
+                                    ),
+                                    span: Span {
+                                        start: 13,
+                                        end: 24,
+                                    },
+                                },
                             ),
                         },
                         Attribute {
@@ -39,17 +45,29 @@ Schema {
                                                 Attribute {
                                                     name: "min",
                                                     value: Single(
-                                                        Int(
-                                                            100,
-                                                        ),
+                                                        Literal {
+                                                            value: Int(
+                                                                100,
+                                                            ),
+                                                            span: Span {
+                                                                start: 59,
+                                                                end: 62,
+                                                            },
+                                                        },
                                                     ),
                                                 },
                                                 Attribute {
                                                     name: "max",
                                                     value: Single(
-                                                        Int(
-                                                            200,
-                                                        ),
+                                                        Literal {
+                                                            value: Int(
+                                                                200,
+                                                            ),
+                                                            span: Span {
+                                                                start: 67,
+                                                                end: 70,
+                                                            },
+                                                        },
                                                     ),
                                                 },
                                             ],

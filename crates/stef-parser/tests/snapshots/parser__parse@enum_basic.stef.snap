@@ -13,7 +13,13 @@ Schema {
             Enum {
                 comment: Comment(
                     [
-                        "Sample enum.",
+                        CommentLine {
+                            value: "Sample enum.",
+                            span: Span {
+                                start: 0,
+                                end: 16,
+                            },
+                        },
                     ],
                 ),
                 attributes: Attributes(
@@ -57,7 +63,13 @@ Schema {
                     Variant {
                         comment: Comment(
                             [
-                                "Second variant",
+                                CommentLine {
+                                    value: "Second variant",
+                                    span: Span {
+                                        start: 47,
+                                        end: 65,
+                                    },
+                                },
                             ],
                         ),
                         name: Name {
@@ -169,7 +181,13 @@ Schema {
                                 NamedField {
                                     comment: Comment(
                                         [
-                                            "Second field of third variant",
+                                            CommentLine {
+                                                value: "Second field of third variant",
+                                                span: Span {
+                                                    start: 138,
+                                                    end: 171,
+                                                },
+                                            },
                                         ],
                                     ),
                                     name: Name {

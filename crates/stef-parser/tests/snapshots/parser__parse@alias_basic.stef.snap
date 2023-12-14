@@ -13,7 +13,13 @@ Schema {
             TypeAlias {
                 comment: Comment(
                     [
-                        "Sample type alias.",
+                        CommentLine {
+                            value: "Sample type alias.",
+                            span: Span {
+                                start: 0,
+                                end: 22,
+                            },
+                        },
                     ],
                 ),
                 name: Name {

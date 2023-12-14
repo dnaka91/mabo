@@ -23,17 +23,29 @@ Schema {
                                     Attribute {
                                         name: "min",
                                         value: Single(
-                                            Int(
-                                                1,
-                                            ),
+                                            Literal {
+                                                value: Int(
+                                                    1,
+                                                ),
+                                                span: Span {
+                                                    start: 17,
+                                                    end: 18,
+                                                },
+                                            },
                                         ),
                                     },
                                     Attribute {
                                         name: "max",
                                         value: Single(
-                                            Int(
-                                                100,
-                                            ),
+                                            Literal {
+                                                value: Int(
+                                                    100,
+                                                ),
+                                                span: Span {
+                                                    start: 26,
+                                                    end: 29,
+                                                },
+                                            },
                                         ),
                                     },
                                 ],

@@ -19,9 +19,15 @@ Schema {
                         Attribute {
                             name: "deprecated",
                             value: Single(
-                                String(
-                                    "don't use",
-                                ),
+                                Literal {
+                                    value: String(
+                                        "don't use",
+                                    ),
+                                    span: Span {
+                                        start: 15,
+                                        end: 26,
+                                    },
+                                },
                             ),
                         },
                     ],

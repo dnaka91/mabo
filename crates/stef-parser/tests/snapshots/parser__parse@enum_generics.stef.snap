@@ -13,7 +13,13 @@ Schema {
             Enum {
                 comment: Comment(
                     [
-                        "Enum with generics.",
+                        CommentLine {
+                            value: "Enum with generics.",
+                            span: Span {
+                                start: 0,
+                                end: 23,
+                            },
+                        },
                     ],
                 ),
                 attributes: Attributes(

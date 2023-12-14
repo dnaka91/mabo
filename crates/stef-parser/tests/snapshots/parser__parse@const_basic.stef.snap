@@ -28,9 +28,15 @@ Schema {
                         end: 21,
                     },
                 },
-                value: Bool(
-                    true,
-                ),
+                value: Literal {
+                    value: Bool(
+                        true,
+                    ),
+                    span: Span {
+                        start: 24,
+                        end: 28,
+                    },
+                },
             },
         ),
         Const(
@@ -52,9 +58,15 @@ Schema {
                         end: 52,
                     },
                 },
-                value: Bool(
-                    false,
-                ),
+                value: Literal {
+                    value: Bool(
+                        false,
+                    ),
+                    span: Span {
+                        start: 55,
+                        end: 60,
+                    },
+                },
             },
         ),
         Const(
@@ -76,9 +88,15 @@ Schema {
                         end: 76,
                     },
                 },
-                value: Int(
-                    100,
-                ),
+                value: Literal {
+                    value: Int(
+                        100,
+                    ),
+                    span: Span {
+                        start: 79,
+                        end: 82,
+                    },
+                },
             },
         ),
         Const(
@@ -100,9 +118,15 @@ Schema {
                         end: 100,
                     },
                 },
-                value: Float(
-                    5.5,
-                ),
+                value: Literal {
+                    value: Float(
+                        5.5,
+                    ),
+                    span: Span {
+                        start: 103,
+                        end: 106,
+                    },
+                },
             },
         ),
         Const(
@@ -124,9 +148,15 @@ Schema {
                         end: 128,
                     },
                 },
-                value: String(
-                    "value",
-                ),
+                value: Literal {
+                    value: String(
+                        "value",
+                    ),
+                    span: Span {
+                        start: 131,
+                        end: 138,
+                    },
+                },
             },
         ),
         Const(
@@ -148,13 +178,19 @@ Schema {
                         end: 158,
                     },
                 },
-                value: Bytes(
-                    [
-                        1,
-                        2,
-                        3,
-                    ],
-                ),
+                value: Literal {
+                    value: Bytes(
+                        [
+                            1,
+                            2,
+                            3,
+                        ],
+                    ),
+                    span: Span {
+                        start: 161,
+                        end: 170,
+                    },
+                },
             },
         ),
     ],

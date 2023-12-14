@@ -13,7 +13,13 @@ Schema {
             Struct {
                 comment: Comment(
                     [
-                        "Generic key-value pair.",
+                        CommentLine {
+                            value: "Generic key-value pair.",
+                            span: Span {
+                                start: 0,
+                                end: 27,
+                            },
+                        },
                     ],
                 ),
                 attributes: Attributes(

@@ -426,7 +426,7 @@ struct RenderComment<'a> {
 impl Display for RenderComment<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for line in &self.comment.0 {
-            writeln!(f, "{:\t<width$}// {line}", "", width = self.indent)?;
+            writeln!(f, "{:\t<width$}// {}", "", line.value, width = self.indent)?;
         }
 
         Ok(())

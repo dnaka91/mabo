@@ -13,7 +13,13 @@ Schema {
             Struct {
                 comment: Comment(
                     [
-                        "Some comment",
+                        CommentLine {
+                            value: "Some comment",
+                            span: Span {
+                                start: 2,
+                                end: 18,
+                            },
+                        },
                     ],
                 ),
                 attributes: Attributes(

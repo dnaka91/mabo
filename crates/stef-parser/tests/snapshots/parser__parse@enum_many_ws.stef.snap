@@ -13,7 +13,13 @@ Schema {
             Enum {
                 comment: Comment(
                     [
-                        "Sample enum.",
+                        CommentLine {
+                            value: "Sample enum.",
+                            span: Span {
+                                start: 2,
+                                end: 18,
+                            },
+                        },
                     ],
                 ),
                 attributes: Attributes(

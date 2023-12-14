@@ -26,7 +26,13 @@ Schema {
                         Module {
                             comment: Comment(
                                 [
-                                    "Inner module",
+                                    CommentLine {
+                                        value: "Inner module",
+                                        span: Span {
+                                            start: 12,
+                                            end: 28,
+                                        },
+                                    },
                                 ],
                             ),
                             name: Name {

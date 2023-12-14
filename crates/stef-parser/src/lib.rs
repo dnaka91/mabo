@@ -613,7 +613,7 @@ impl Print for Comment<'_> {
 
         for line in lines {
             Self::indent(f, level)?;
-            line.fmt(f)?;
+            writeln!(f, "{line}")?;
         }
 
         Ok(())

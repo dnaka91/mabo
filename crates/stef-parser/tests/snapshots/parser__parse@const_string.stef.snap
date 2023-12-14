@@ -28,9 +28,15 @@ Schema {
                         end: 20,
                     },
                 },
-                value: String(
-                    "value",
-                ),
+                value: Literal {
+                    value: String(
+                        "value",
+                    ),
+                    span: Span {
+                        start: 23,
+                        end: 30,
+                    },
+                },
             },
         ),
         Const(
@@ -52,9 +58,15 @@ Schema {
                         end: 61,
                     },
                 },
-                value: String(
-                    "one two three",
-                ),
+                value: Literal {
+                    value: String(
+                        "one two three",
+                    ),
+                    span: Span {
+                        start: 64,
+                        end: 93,
+                    },
+                },
             },
         ),
         Const(
@@ -76,9 +88,15 @@ Schema {
                         end: 117,
                     },
                 },
-                value: String(
-                    "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
-                ),
+                value: Literal {
+                    value: String(
+                        "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
+                    ),
+                    span: Span {
+                        start: 120,
+                        end: 213,
+                    },
+                },
             },
         ),
         Const(
@@ -100,9 +118,15 @@ Schema {
                         end: 239,
                     },
                 },
-                value: String(
-                    "a\n    b\n    c\n",
-                ),
+                value: Literal {
+                    value: String(
+                        "a\n    b\n    c\n",
+                    ),
+                    span: Span {
+                        start: 242,
+                        end: 258,
+                    },
+                },
             },
         ),
     ],

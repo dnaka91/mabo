@@ -3,7 +3,7 @@
 Data format and schema, with a type system as strong as Rust's.
 
 <div style="display: flex; justify-content: center;">
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 24 24" width="128" height="128" >
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 24 24" width="128" height="128">
         <path d="m0 0h24v24h-24z" fill="#222034" />
         <g fill="#3f3f74">
             <path d="m1 1h10v2h-8v2h8v6h-10v-2h8v-2h-8z"/>

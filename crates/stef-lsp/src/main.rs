@@ -1,7 +1,7 @@
 #![warn(clippy::expect_used, clippy::unwrap_used)]
 #![allow(missing_docs)]
 
-use std::{collections::HashMap, net::Ipv4Addr};
+use std::{collections::HashMap, net::Ipv4Addr, time::Instant};
 
 use anyhow::{bail, Result};
 use log::{as_debug, debug, error, info, warn};
@@ -11,7 +11,10 @@ use lsp_types::{
         DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument,
         Initialized, Notification as LspNotification,
     },
-    request::{DocumentSymbolRequest, Request as LspRequest, SemanticTokensFullRequest, Shutdown},
+    request::{
+        DocumentSymbolRequest, HoverRequest, Request as LspRequest, SemanticTokensFullRequest,
+        Shutdown,
+    },
     DocumentSymbol, InitializeParams, SemanticTokens,
 };
 
@@ -77,6 +80,15 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
                 match req.method.as_str() {
                     Shutdown::METHOD => {
                         warn!("should never reach this");
+                    }
+                    HoverRequest::METHOD => {
+                        handle_request::<HoverRequest, _>(
+                            conn,
+                            &mut state,
+                            req,
+                            handlers::hover,
+                            |value| value,
+                        )?;
                     }
                     DocumentSymbolRequest::METHOD => {
                         handle_request::<DocumentSymbolRequest, _>(
@@ -161,7 +173,11 @@ where
         }
     };
 
+    let start = Instant::now();
     let result = handler(state, params);
+
+    debug!(duration = as_debug!(start.elapsed()); "handled request");
+
     conn.sender
         .send(
             match result {

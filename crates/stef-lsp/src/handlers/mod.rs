@@ -5,12 +5,12 @@ use line_index::{LineIndex, TextRange};
 use log::{as_debug, as_display, debug, error, warn};
 use lsp_types::{
     DidChangeConfigurationParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams,
-    DidOpenTextDocumentParams, DocumentSymbolOptions, DocumentSymbolParams, DocumentSymbolResponse,
-    InitializeParams, InitializeResult, InitializedParams, PositionEncodingKind, Registration,
-    SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
-    SemanticTokensParams, SemanticTokensResult, SemanticTokensServerCapabilities,
-    ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind,
-    WorkDoneProgressOptions,
+    DidOpenTextDocumentParams, DocumentSymbolParams, DocumentSymbolResponse, Hover, HoverContents,
+    HoverParams, HoverProviderCapability, InitializeParams, InitializeResult, InitializedParams,
+    MarkupContent, MarkupKind, OneOf, PositionEncodingKind, Registration, SemanticTokens,
+    SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams,
+    SemanticTokensResult, SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo,
+    TextDocumentSyncCapability, TextDocumentSyncKind, WorkDoneProgressOptions,
 };
 use ropey::Rope;
 
@@ -18,6 +18,7 @@ use crate::{state::FileBuilder, GlobalState};
 
 mod compile;
 mod document_symbols;
+mod hover;
 mod semantic_tokens;
 
 pub fn initialize(
@@ -34,12 +35,8 @@ pub fn initialize(
             text_document_sync: Some(TextDocumentSyncCapability::Kind(
                 TextDocumentSyncKind::INCREMENTAL,
             )),
-            document_symbol_provider: Some(lsp_types::OneOf::Right(DocumentSymbolOptions {
-                label: None,
-                work_done_progress_options: WorkDoneProgressOptions {
-                    work_done_progress: Some(false),
-                },
-            })),
+            hover_provider: Some(HoverProviderCapability::Simple(true)),
+            document_symbol_provider: Some(OneOf::Left(true)),
             semantic_tokens_provider: Some(
                 SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
                     work_done_progress_options: WorkDoneProgressOptions {
@@ -177,6 +174,35 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
 pub fn did_close(state: &mut GlobalState<'_>, params: DidCloseTextDocumentParams) {
     debug!(uri = as_display!(params.text_document.uri); "schema closed");
     state.files.remove(&params.text_document.uri);
+}
+
+pub fn hover(state: &mut GlobalState<'_>, params: HoverParams) -> Result<Option<Hover>> {
+    let uri = params.text_document_position_params.text_document.uri;
+    let position = params.text_document_position_params.position;
+
+    debug!(
+        uri = as_display!(uri);
+        "requested hover info",
+    );
+
+    if let Some((schema, index)) = state.files.get_mut(&uri).and_then(|file| {
+        file.borrow_schema()
+            .as_ref()
+            .ok()
+            .zip(Some(file.borrow_index()))
+    }) {
+        Ok(
+            hover::visit_schema(index, schema, position)?.map(|(value, range)| Hover {
+                contents: HoverContents::Markup(MarkupContent {
+                    kind: MarkupKind::Markdown,
+                    value,
+                }),
+                range: Some(range),
+            }),
+        )
+    } else {
+        Ok(None)
+    }
 }
 
 pub fn document_symbol(

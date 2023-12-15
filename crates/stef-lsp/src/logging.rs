@@ -238,8 +238,7 @@ impl log::Log for CombinedLogger {
                 && metadata.level() <= Level::Trace)
             || (metadata.target().starts_with("stef_compiler") && metadata.level() <= Level::Trace)
             || (metadata.target().starts_with("stef_parser") && metadata.level() <= Level::Trace)
-            || (metadata.target().starts_with("lsp_server::msg")
-                && metadata.level() <= Level::Debug)
+            || (metadata.target().starts_with("lsp_server") && metadata.level() <= Level::Info)
     }
 
     fn log(&self, record: &Record<'_>) {

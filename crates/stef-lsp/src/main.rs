@@ -127,21 +127,22 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
             }
             lsp_server::Message::Notification(notif) => match notif.method.as_str() {
                 Initialized::METHOD => {
-                    handlers::initialized(&mut state, cast_notify::<Initialized>(notif)?);
+                    handle_notify::<Initialized>(&mut state, notif, handlers::initialized);
                 }
                 DidOpenTextDocument::METHOD => {
-                    handlers::did_open(&mut state, cast_notify::<DidOpenTextDocument>(notif)?);
+                    handle_notify::<DidOpenTextDocument>(&mut state, notif, handlers::did_open);
                 }
                 DidChangeTextDocument::METHOD => {
-                    handlers::did_change(&mut state, cast_notify::<DidChangeTextDocument>(notif)?);
+                    handle_notify::<DidChangeTextDocument>(&mut state, notif, handlers::did_change);
                 }
                 DidCloseTextDocument::METHOD => {
-                    handlers::did_close(&mut state, cast_notify::<DidCloseTextDocument>(notif)?);
+                    handle_notify::<DidCloseTextDocument>(&mut state, notif, handlers::did_close);
                 }
                 DidChangeConfiguration::METHOD => {
-                    handlers::did_change_configuration(
+                    handle_notify::<DidChangeConfiguration>(
                         &mut state,
-                        cast_notify::<DidChangeConfiguration>(notif)?,
+                        notif,
+                        handlers::did_change_configuration,
                     );
                 }
                 _ => debug!(notification = as_debug!(notif); "got unknown notification"),
@@ -204,6 +205,24 @@ where
             req.id,
         )),
     }
+}
+
+fn handle_notify<T>(
+    state: &mut GlobalState<'_>,
+    notif: Notification,
+    handler: fn(&mut GlobalState<'_>, T::Params),
+) where
+    T: LspNotification,
+{
+    let params = match cast_notify::<T>(notif) {
+        Ok(notif) => notif,
+        Err(e) => {
+            error!(error = as_debug!(e); "invalid notification parameters");
+            return;
+        }
+    };
+
+    handler(state, params);
 }
 
 fn cast_notify<R>(notif: Notification) -> Result<R::Params>

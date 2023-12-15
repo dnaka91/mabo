@@ -180,29 +180,26 @@ pub fn hover(state: &mut GlobalState<'_>, params: HoverParams) -> Result<Option<
     let uri = params.text_document_position_params.text_document.uri;
     let position = params.text_document_position_params.position;
 
-    debug!(
-        uri = as_display!(uri);
-        "requested hover info",
-    );
+    debug!(uri = as_display!(uri); "requested hover info");
 
-    if let Some((schema, index)) = state.files.get_mut(&uri).and_then(|file| {
-        file.borrow_schema()
-            .as_ref()
-            .ok()
-            .zip(Some(file.borrow_index()))
-    }) {
-        Ok(
+    Ok(
+        if let Some((schema, index)) = state.files.get_mut(&uri).and_then(|file| {
+            file.borrow_schema()
+                .as_ref()
+                .ok()
+                .zip(Some(file.borrow_index()))
+        }) {
             hover::visit_schema(index, schema, position)?.map(|(value, range)| Hover {
                 contents: HoverContents::Markup(MarkupContent {
                     kind: MarkupKind::Markdown,
                     value,
                 }),
                 range: Some(range),
-            }),
-        )
-    } else {
-        Ok(None)
-    }
+            })
+        } else {
+            None
+        },
+    )
 }
 
 pub fn document_symbol(
@@ -211,16 +208,18 @@ pub fn document_symbol(
 ) -> Result<Option<DocumentSymbolResponse>> {
     debug!(uri = as_display!(params.text_document.uri); "requested document symbols");
 
-    if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
-        file.borrow_schema()
-            .as_ref()
-            .ok()
-            .zip(Some(file.borrow_index()))
-    }) {
-        return Ok(Some(document_symbols::visit_schema(index, schema)?.into()));
-    }
-
-    Ok(None)
+    Ok(
+        if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
+            file.borrow_schema()
+                .as_ref()
+                .ok()
+                .zip(Some(file.borrow_index()))
+        }) {
+            Some(document_symbols::visit_schema(index, schema)?.into())
+        } else {
+            None
+        },
+    )
 }
 
 pub fn semantic_tokens_full(
@@ -229,22 +228,24 @@ pub fn semantic_tokens_full(
 ) -> Result<Option<SemanticTokensResult>> {
     debug!(uri = as_display!(params.text_document.uri); "requested semantic tokens");
 
-    if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
-        file.borrow_schema()
-            .as_ref()
-            .ok()
-            .zip(Some(file.borrow_index()))
-    }) {
-        return Ok(Some(
-            SemanticTokens {
-                result_id: None,
-                data: semantic_tokens::Visitor::new(index).visit_schema(schema)?,
-            }
-            .into(),
-        ));
-    }
-
-    Ok(None)
+    Ok(
+        if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
+            file.borrow_schema()
+                .as_ref()
+                .ok()
+                .zip(Some(file.borrow_index()))
+        }) {
+            Some(
+                SemanticTokens {
+                    result_id: None,
+                    data: semantic_tokens::Visitor::new(index).visit_schema(schema)?,
+                }
+                .into(),
+            )
+        } else {
+            None
+        },
+    )
 }
 
 pub fn did_change_configuration(

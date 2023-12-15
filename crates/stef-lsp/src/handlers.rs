@@ -5,15 +5,16 @@ use line_index::{LineIndex, TextRange};
 use log::{as_debug, as_display, debug, error, warn};
 use lsp_types::{
     DidChangeConfigurationParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams,
-    DidOpenTextDocumentParams, InitializeParams, InitializeResult, InitializedParams,
-    PositionEncodingKind, Registration, SemanticTokens, SemanticTokensFullOptions,
-    SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams, SemanticTokensResult,
-    SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo, TextDocumentSyncCapability,
-    TextDocumentSyncKind, WorkDoneProgressOptions,
+    DidOpenTextDocumentParams, DocumentSymbolOptions, DocumentSymbolParams, DocumentSymbolResponse,
+    InitializeParams, InitializeResult, InitializedParams, PositionEncodingKind, Registration,
+    SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
+    SemanticTokensParams, SemanticTokensResult, SemanticTokensServerCapabilities,
+    ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind,
+    WorkDoneProgressOptions,
 };
 use ropey::Rope;
 
-use crate::{compile, semantic_tokens, state::FileBuilder, GlobalState};
+use crate::{compile, document_symbols, semantic_tokens, state::FileBuilder, GlobalState};
 
 pub fn initialize(
     _state: &mut GlobalState<'_>,
@@ -29,6 +30,12 @@ pub fn initialize(
             text_document_sync: Some(TextDocumentSyncCapability::Kind(
                 TextDocumentSyncKind::INCREMENTAL,
             )),
+            document_symbol_provider: Some(lsp_types::OneOf::Right(DocumentSymbolOptions {
+                label: None,
+                work_done_progress_options: WorkDoneProgressOptions {
+                    work_done_progress: Some(false),
+                },
+            })),
             semantic_tokens_provider: Some(
                 SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
                     work_done_progress_options: WorkDoneProgressOptions {
@@ -168,6 +175,24 @@ pub fn did_close(state: &mut GlobalState<'_>, params: DidCloseTextDocumentParams
     state.files.remove(&params.text_document.uri);
 }
 
+pub fn document_symbol(
+    state: &mut GlobalState<'_>,
+    params: DocumentSymbolParams,
+) -> Result<Option<DocumentSymbolResponse>> {
+    debug!(uri = as_display!(params.text_document.uri); "requested document symbols");
+
+    if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
+        file.borrow_schema()
+            .as_ref()
+            .ok()
+            .zip(Some(file.borrow_index()))
+    }) {
+        return Ok(Some(document_symbols::visit_schema(index, schema)?.into()));
+    }
+
+    Ok(None)
+}
+
 pub fn semantic_tokens_full(
     state: &mut GlobalState<'_>,
     params: SemanticTokensParams,
@@ -180,10 +205,13 @@ pub fn semantic_tokens_full(
             .ok()
             .zip(Some(file.borrow_index()))
     }) {
-        return Ok(Some(SemanticTokensResult::Tokens(SemanticTokens {
-            result_id: None,
-            data: semantic_tokens::Visitor::new(index).visit_schema(schema)?,
-        })));
+        return Ok(Some(
+            SemanticTokens {
+                result_id: None,
+                data: semantic_tokens::Visitor::new(index).visit_schema(schema)?,
+            }
+            .into(),
+        ));
     }
 
     Ok(None)

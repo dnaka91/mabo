@@ -5,14 +5,14 @@ use std::{collections::HashMap, net::Ipv4Addr};
 
 use anyhow::{bail, Result};
 use log::{as_debug, debug, error, info, warn};
-use lsp_server::{Connection, ErrorCode, Notification, Request, RequestId, Response};
+use lsp_server::{Connection, ErrorCode, ExtractError, Notification, Request, RequestId, Response};
 use lsp_types::{
     notification::{
         DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument,
         Initialized, Notification as LspNotification,
     },
-    request::{Request as LspRequest, SemanticTokensFullRequest, Shutdown},
-    InitializeParams, SemanticTokens, SemanticTokensResult,
+    request::{DocumentSymbolRequest, Request as LspRequest, SemanticTokensFullRequest, Shutdown},
+    DocumentSymbol, InitializeParams, SemanticTokens,
 };
 
 use self::{cli::Cli, client::Client};
@@ -22,6 +22,7 @@ mod cli;
 mod client;
 mod compile;
 mod config;
+mod document_symbols;
 mod handlers;
 mod logging;
 mod semantic_tokens;
@@ -80,25 +81,22 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
                     Shutdown::METHOD => {
                         warn!("should never reach this");
                     }
+                    DocumentSymbolRequest::METHOD => {
+                        handle_request::<DocumentSymbolRequest, _>(
+                            conn,
+                            &mut state,
+                            req,
+                            handlers::document_symbol,
+                            |value| value.unwrap_or(Vec::<DocumentSymbol>::default().into()),
+                        )?;
+                    }
                     SemanticTokensFullRequest::METHOD => {
-                        let (id, params) = cast_req::<SemanticTokensFullRequest>(req)?;
-                        let result = handlers::semantic_tokens_full(&mut state, params);
-
-                        conn.sender.send(
-                            match result {
-                                Ok(value) => Response::new_ok(
-                                    id,
-                                    value.unwrap_or(SemanticTokensResult::Tokens(
-                                        SemanticTokens::default(),
-                                    )),
-                                ),
-                                Err(e) => Response::new_err(
-                                    id,
-                                    ErrorCode::InternalError as _,
-                                    e.to_string(),
-                                ),
-                            }
-                            .into(),
+                        handle_request::<SemanticTokensFullRequest, _>(
+                            conn,
+                            &mut state,
+                            req,
+                            handlers::semantic_tokens_full,
+                            |value| value.unwrap_or(SemanticTokens::default().into()),
                         )?;
                     }
 
@@ -145,12 +143,54 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
     Ok(())
 }
 
-fn cast_req<R>(req: Request) -> Result<(RequestId, R::Params)>
+fn handle_request<T, R>(
+    conn: &Connection,
+    state: &mut GlobalState<'_>,
+    req: Request,
+    handler: fn(&mut GlobalState<'_>, T::Params) -> Result<T::Result>,
+    post_process: fn(T::Result) -> R,
+) -> Result<()>
+where
+    T: LspRequest,
+    R: serde::Serialize,
+{
+    let (id, params) = match cast_req::<T>(req) {
+        Ok(req) => req,
+        Err((e, id)) => {
+            return conn
+                .sender
+                .send(Response::new_err(id, ErrorCode::InvalidParams as _, e.to_string()).into())
+                .map_err(Into::into)
+        }
+    };
+
+    let result = handler(state, params);
+    conn.sender
+        .send(
+            match result {
+                Ok(value) => Response::new_ok(id, post_process(value)),
+                Err(e) => Response::new_err(id, ErrorCode::InternalError as _, e.to_string()),
+            }
+            .into(),
+        )
+        .map_err(Into::into)
+}
+
+fn cast_req<R>(req: Request) -> Result<(RequestId, R::Params), (ExtractError<Request>, RequestId)>
 where
     R: LspRequest,
     R::Params: serde::de::DeserializeOwned,
 {
-    req.extract(R::METHOD).map_err(Into::into)
+    match serde_json::from_value(req.params) {
+        Ok(params) => Ok((req.id, params)),
+        Err(error) => Err((
+            ExtractError::JsonError {
+                method: req.method,
+                error,
+            },
+            req.id,
+        )),
+    }
 }
 
 fn cast_notify<R>(notif: Notification) -> Result<R::Params>

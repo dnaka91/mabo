@@ -14,7 +14,11 @@ use lsp_types::{
 };
 use ropey::Rope;
 
-use crate::{compile, document_symbols, semantic_tokens, state::FileBuilder, GlobalState};
+use crate::{state::FileBuilder, GlobalState};
+
+mod compile;
+mod document_symbols;
+mod semantic_tokens;
 
 pub fn initialize(
     _state: &mut GlobalState<'_>,

@@ -8,8 +8,8 @@ use log::{as_debug, debug, error, info, warn};
 use lsp_server::{Connection, ErrorCode, ExtractError, Notification, Request, RequestId, Response};
 use lsp_types::{
     notification::{
-        DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument,
-        Initialized, Notification as LspNotification,
+        DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidDeleteFiles,
+        DidOpenTextDocument, Initialized, Notification as LspNotification,
     },
     request::{
         DocumentSymbolRequest, HoverRequest, Request as LspRequest, SemanticTokensFullRequest,
@@ -137,6 +137,9 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
                 }
                 DidCloseTextDocument::METHOD => {
                     handle_notify::<DidCloseTextDocument>(&mut state, notif, handlers::did_close);
+                }
+                DidDeleteFiles::METHOD => {
+                    handle_notify::<DidDeleteFiles>(&mut state, notif, handlers::did_delete);
                 }
                 DidChangeConfiguration::METHOD => {
                     handle_notify::<DidChangeConfiguration>(

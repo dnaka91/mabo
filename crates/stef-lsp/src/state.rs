@@ -22,7 +22,7 @@ pub struct GlobalState<'a> {
 pub struct File {
     rope: Rope,
     pub index: LineIndex,
-    content: String,
+    pub content: String,
     #[borrows(index, content)]
     #[covariant]
     pub schema: Result<Schema<'this>, Diagnostic>,

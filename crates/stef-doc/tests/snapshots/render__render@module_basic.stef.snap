@@ -31,6 +31,7 @@ input_file: crates/stef-parser/tests/inputs/module_basic.stef
         <a class="text-lg name-module" href="a/index.html">a</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>
@@ -106,6 +107,7 @@ input_file: crates/stef-parser/tests/inputs/module_basic.stef
         <a class="text-lg name-struct" href="struct.Sample.html">Sample</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>
@@ -173,6 +175,7 @@ input_file: crates/stef-parser/tests/inputs/module_basic.stef
         <a class="text-lg name-enum" href="enum.Sample.html">Sample</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>

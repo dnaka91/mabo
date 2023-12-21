@@ -41,6 +41,7 @@ input_file: crates/stef-parser/tests/inputs/enum_min_ws.stef
         <a class="text-lg name-enum" href="enum.Sample.html">Sample</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>

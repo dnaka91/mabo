@@ -36,6 +36,7 @@ input_file: crates/stef-parser/tests/inputs/attribute_multi.stef
         <a class="text-lg name-struct" href="struct.Sample.html">Sample</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>

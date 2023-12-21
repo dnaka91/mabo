@@ -51,6 +51,7 @@ input_file: crates/stef-parser/tests/inputs/const_basic.stef
         <a class="text-lg name-const" href="constant.BOOL_TRUE.html">BOOL_TRUE</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -58,6 +59,7 @@ input_file: crates/stef-parser/tests/inputs/const_basic.stef
         <a class="text-lg name-const" href="constant.BOOL_FALSE.html">BOOL_FALSE</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -65,6 +67,7 @@ input_file: crates/stef-parser/tests/inputs/const_basic.stef
         <a class="text-lg name-const" href="constant.INT.html">INT</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -72,6 +75,7 @@ input_file: crates/stef-parser/tests/inputs/const_basic.stef
         <a class="text-lg name-const" href="constant.FLOAT.html">FLOAT</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -79,6 +83,7 @@ input_file: crates/stef-parser/tests/inputs/const_basic.stef
         <a class="text-lg name-const" href="constant.STRING.html">STRING</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -86,6 +91,7 @@ input_file: crates/stef-parser/tests/inputs/const_basic.stef
         <a class="text-lg name-const" href="constant.BYTES.html">BYTES</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>

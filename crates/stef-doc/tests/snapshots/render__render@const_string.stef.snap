@@ -51,6 +51,7 @@ input_file: crates/stef-parser/tests/inputs/const_string.stef
         <a class="text-lg name-const" href="constant.SIMPLE.html">SIMPLE</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -58,6 +59,7 @@ input_file: crates/stef-parser/tests/inputs/const_string.stef
         <a class="text-lg name-const" href="constant.NEWLINE_ESCAPE.html">NEWLINE_ESCAPE</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -65,6 +67,7 @@ input_file: crates/stef-parser/tests/inputs/const_string.stef
         <a class="text-lg name-const" href="constant.ESCAPES.html">ESCAPES</a>
       </td>
       <td>
+        
       </td>
     </tr>
     <tr>
@@ -72,6 +75,7 @@ input_file: crates/stef-parser/tests/inputs/const_string.stef
         <a class="text-lg name-const" href="constant.MULTILINE.html">MULTILINE</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>

@@ -17,9 +17,7 @@
         <a class="text-lg name-module" href="{{ m.name }}/index.html">{{ m.name }}</a>
       </td>
       <td>
-        {%- if !m.comment.0.is_empty() %}
-        {{ m.comment.0[0].value|markdown|trim|safe }}
-        {%- endif %}
+        {{ self::first_comment(m.comment)|markdown|trim|safe }}
       </td>
     </tr>
     {%- else %}
@@ -38,9 +36,7 @@
         <a class="text-lg name-struct" href="struct.{{ s.name }}.html">{{ s.name }}</a>
       </td>
       <td>
-        {%- if !s.comment.0.is_empty() %}
-        {{ s.comment.0[0].value|markdown|trim|safe }}
-        {%- endif %}
+        {{ self::first_comment(s.comment)|markdown|trim|safe }}
       </td>
     </tr>
     {%- else %}
@@ -59,9 +55,7 @@
         <a class="text-lg name-enum" href="enum.{{ e.name }}.html">{{ e.name }}</a>
       </td>
       <td>
-        {%- if !e.comment.0.is_empty() %}
-        {{ e.comment.0[0].value|markdown|trim|safe }}
-        {%- endif %}
+        {{ self::first_comment(e.comment)|markdown|trim|safe }}
       </td>
     </tr>
     {%- else %}
@@ -80,9 +74,7 @@
         <a class="text-lg name-alias" href="alias.{{ a.name }}.html">{{ a.name }}</a>
       </td>
       <td>
-        {%- if !a.comment.0.is_empty() %}
-        {{ a.comment.0[0].value|markdown|trim|safe }}
-        {%- endif %}
+        {{ self::first_comment(a.comment)|markdown|trim|safe }}
       </td>
     </tr>
     {%- else %}
@@ -101,9 +93,7 @@
         <a class="text-lg name-const" href="constant.{{ c.name }}.html">{{ c.name }}</a>
       </td>
       <td>
-        {%- if !c.comment.0.is_empty() %}
-        {{ c.comment.0[0].value|markdown|trim|safe }}
-        {%- endif %}
+        {{ self::first_comment(c.comment)|markdown|trim|safe }}
       </td>
     </tr>
     {%- else %}

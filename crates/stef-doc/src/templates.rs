@@ -74,8 +74,19 @@ impl Display for PathUp {
     }
 }
 
+fn first_comment(item: &Comment<'_>) -> String {
+    item.0
+        .iter()
+        .take_while(|line| !line.value.trim().is_empty())
+        .fold(String::new(), |mut acc, line| {
+            acc.push_str(line.value);
+            acc.push('\n');
+            acc
+        })
+}
+
 fn merge_comments(item: &Comment<'_>) -> String {
-    item.0.iter().fold(String::new(),|mut acc, line| {
+    item.0.iter().fold(String::new(), |mut acc, line| {
         acc.push_str(line.value);
         acc.push('\n');
         acc

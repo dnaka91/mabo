@@ -60,6 +60,7 @@ input_file: crates/stef-parser/tests/inputs/mixed.stef
         <a class="text-lg name-struct" href="struct.Address.html">Address</a>
       </td>
       <td>
+        
       </td>
     </tr>
   </table>
@@ -671,7 +672,8 @@ const MAX_AGE: u8 = 120;</pre>
         <a class="text-lg name-const" href="constant.MAX_DAY.html">MAX_DAY</a>
       </td>
       <td>
-        <p>Absolute maximum for a day, but might be even less depending</p>
+        <p>Absolute maximum for a day, but might be even less depending
+on the month.</p>
       </td>
     </tr>
   </table>

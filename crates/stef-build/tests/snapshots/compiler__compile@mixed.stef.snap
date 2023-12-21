@@ -1,0 +1,665 @@
+---
+source: crates/stef-build/tests/compiler.rs
+description: "/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+input_file: crates/stef-parser/tests/inputs/mixed.stef
+---
+#[allow(unused_imports)]
+use ::stef::buf::{Decode, Encode, Size};
+/// Basic user information.
+///
+/// Uses various other `structs` and `enums` to compose the information
+/// in a **type safe** way.
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct User {
+    pub name: FullName,
+    /// Physical address, might not be specified by the user.
+    pub address: Option<Address>,
+    pub age: u8,
+    pub birthday: birthday::DayOfBirth,
+}
+#[automatically_derived]
+impl ::stef::Encode for User {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                (self.name).encode(w);
+            },
+        );
+        ::stef::buf::encode_field_option(
+            w,
+            2,
+            &self.address,
+            |w, v| {
+                (v).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                ::stef::buf::encode_u8(w, self.age);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            4,
+            |w| {
+                (self.birthday).encode(w);
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for User {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut name: Option<FullName> = None;
+        let mut address: Option<Address> = None;
+        let mut age: Option<u8> = None;
+        let mut birthday: Option<birthday::DayOfBirth> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => name = Some(FullName::decode(r)?),
+                2 => address = Some(Address::decode(r)?),
+                3 => age = Some(::stef::buf::decode_u8(r)?),
+                4 => birthday = Some(birthday::DayOfBirth::decode(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            name: name
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("name"),
+                })?,
+            address,
+            age: age
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("age"),
+                })?,
+            birthday: birthday
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 4,
+                    name: Some("birthday"),
+                })?,
+        })
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for User {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { (self.name).size() })
+            + ::stef::buf::size_field_option(
+                2,
+                self.address.as_ref(),
+                |v| { (v).size() },
+            ) + ::stef::buf::size_field(3, || { ::stef::buf::size_u8(self.age) })
+            + ::stef::buf::size_field(4, || { (self.birthday).size() })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+    }
+}
+/// Full name of a user.
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct FullName {
+    pub first: String,
+    pub middle: Option<String>,
+    pub last: String,
+}
+#[automatically_derived]
+impl ::stef::Encode for FullName {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_string(w, &self.first);
+            },
+        );
+        ::stef::buf::encode_field_option(
+            w,
+            2,
+            &self.middle,
+            |w, v| {
+                ::stef::buf::encode_string(w, &v);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                ::stef::buf::encode_string(w, &self.last);
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for FullName {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut first: Option<String> = None;
+        let mut middle: Option<String> = None;
+        let mut last: Option<String> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => first = Some(::stef::buf::decode_string(r)?),
+                2 => middle = Some(::stef::buf::decode_string(r)?),
+                3 => last = Some(::stef::buf::decode_string(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            first: first
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("first"),
+                })?,
+            middle,
+            last: last
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("last"),
+                })?,
+        })
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for FullName {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { ::stef::buf::size_string(&self.first) })
+            + ::stef::buf::size_field_option(
+                2,
+                self.middle.as_ref(),
+                |v| { ::stef::buf::size_string(&v) },
+            ) + ::stef::buf::size_field(3, || { ::stef::buf::size_string(&self.last) })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+    }
+}
+/// Simple alias for convenience.
+///
+/// - Might be easier to remember.
+/// - Often referenced as this.
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
+pub type Name = FullName;
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Address {
+    /// Street name.
+    pub street: String,
+    /// Number of the house in the street.
+    pub house_no: HouseNumber,
+    pub city: String,
+}
+#[automatically_derived]
+impl ::stef::Encode for Address {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        ::stef::buf::encode_field(
+            w,
+            1,
+            |w| {
+                ::stef::buf::encode_string(w, &self.street);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            2,
+            |w| {
+                (self.house_no).encode(w);
+            },
+        );
+        ::stef::buf::encode_field(
+            w,
+            3,
+            |w| {
+                ::stef::buf::encode_string(w, &self.city);
+            },
+        );
+        ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for Address {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        let mut street: Option<String> = None;
+        let mut house_no: Option<HouseNumber> = None;
+        let mut city: Option<String> = None;
+        loop {
+            match ::stef::buf::decode_id(r)? {
+                ::stef::buf::END_MARKER => break,
+                1 => street = Some(::stef::buf::decode_string(r)?),
+                2 => house_no = Some(HouseNumber::decode(r)?),
+                3 => city = Some(::stef::buf::decode_string(r)?),
+                _ => continue,
+            }
+        }
+        Ok(Self {
+            street: street
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("street"),
+                })?,
+            house_no: house_no
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("house_no"),
+                })?,
+            city: city
+                .ok_or(::stef::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("city"),
+                })?,
+        })
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for Address {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        ::stef::buf::size_field(1, || { ::stef::buf::size_string(&self.street) })
+            + ::stef::buf::size_field(2, || { (self.house_no).size() })
+            + ::stef::buf::size_field(3, || { ::stef::buf::size_string(&self.city) })
+            + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+    }
+}
+/// The number on the house.
+///
+/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub enum HouseNumber {
+    /// Digit only number.
+    Digit(u16),
+    /// Mixed _number_ with characters like `1a`.
+    Text(String),
+}
+#[automatically_derived]
+impl ::stef::Encode for HouseNumber {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        match self {
+            Self::Digit(n0) => {
+                ::stef::buf::encode_id(w, 1);
+                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u16(w, *n0) });
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+            }
+            Self::Text(n0) => {
+                ::stef::buf::encode_id(w, 2);
+                ::stef::buf::encode_field(
+                    w,
+                    1,
+                    |w| { ::stef::buf::encode_string(w, &*n0) },
+                );
+                ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+            }
+        }
+    }
+}
+#[automatically_derived]
+impl ::stef::Decode for HouseNumber {
+    #[allow(clippy::too_many_lines)]
+    fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+        match ::stef::buf::decode_id(r)? {
+            1 => {
+                let mut n0: Option<u16> = None;
+                loop {
+                    match ::stef::buf::decode_id(r)? {
+                        ::stef::buf::END_MARKER => break,
+                        1 => n0 = Some(::stef::buf::decode_u16(r)?),
+                        _ => continue,
+                    }
+                }
+                Ok(
+                    Self::Digit(
+                        n0
+                            .ok_or(::stef::buf::Error::MissingField {
+                                id: 1,
+                                name: None,
+                            })?,
+                    ),
+                )
+            }
+            2 => {
+                let mut n0: Option<String> = None;
+                loop {
+                    match ::stef::buf::decode_id(r)? {
+                        ::stef::buf::END_MARKER => break,
+                        1 => n0 = Some(::stef::buf::decode_string(r)?),
+                        _ => continue,
+                    }
+                }
+                Ok(
+                    Self::Text(
+                        n0
+                            .ok_or(::stef::buf::Error::MissingField {
+                                id: 1,
+                                name: None,
+                            })?,
+                    ),
+                )
+            }
+            id => Err(::stef::buf::Error::UnknownVariant(id)),
+        }
+    }
+}
+#[automatically_derived]
+impl ::stef::buf::Size for HouseNumber {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        match self {
+            Self::Digit(n0) => {
+                ::stef::buf::size_id(1)
+                    + ::stef::buf::size_field(1, || { ::stef::buf::size_u16(*n0) })
+                    + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+            }
+            Self::Text(n0) => {
+                ::stef::buf::size_id(2)
+                    + ::stef::buf::size_field(1, || { ::stef::buf::size_string(&*n0) })
+                    + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+            }
+        }
+    }
+}
+/// Probably the max age of a human, currently.
+#[allow(dead_code)]
+pub const MAX_AGE: u8 = 120;
+/// Details for defining birthdays.
+pub mod birthday {
+    #[allow(unused_imports)]
+    use ::stef::buf::{Decode, Encode, Size};
+    /// As the name suggests, specifies details about birthdays.
+    #[derive(Clone, Debug, PartialEq)]
+    #[allow(clippy::module_name_repetitions, clippy::option_option)]
+    pub enum DayOfBirth {
+        Specific { year: u16, month: Month, day: u8 },
+        /// The user didn't want to say.
+        Secret {
+            /// Optional info from the user about why they didn't want to
+            /// reveal their birthday.
+            reason: Option<String>,
+        },
+        /// We never asked and nobody knows.
+        Unknown,
+    }
+    #[automatically_derived]
+    impl ::stef::Encode for DayOfBirth {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::semicolon_if_nothing_returned,
+            clippy::too_many_lines,
+        )]
+        fn encode(&self, w: &mut impl ::stef::BufMut) {
+            match self {
+                Self::Specific { year, month, day } => {
+                    ::stef::buf::encode_id(w, 1);
+                    ::stef::buf::encode_field(
+                        w,
+                        1,
+                        |w| { ::stef::buf::encode_u16(w, *year) },
+                    );
+                    ::stef::buf::encode_field(w, 2, |w| { (*month).encode(w) });
+                    ::stef::buf::encode_field(
+                        w,
+                        3,
+                        |w| { ::stef::buf::encode_u8(w, *day) },
+                    );
+                    ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+                }
+                Self::Secret { reason } => {
+                    ::stef::buf::encode_id(w, 2);
+                    ::stef::buf::encode_field_option(w, 1, &reason);
+                    ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
+                }
+                Self::Unknown => {
+                    ::stef::buf::encode_id(w, 3);
+                }
+            }
+        }
+    }
+    #[automatically_derived]
+    impl ::stef::Decode for DayOfBirth {
+        #[allow(clippy::too_many_lines)]
+        fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+            match ::stef::buf::decode_id(r)? {
+                1 => {
+                    let mut year: Option<u16> = None;
+                    let mut month: Option<Month> = None;
+                    let mut day: Option<u8> = None;
+                    loop {
+                        match ::stef::buf::decode_id(r)? {
+                            ::stef::buf::END_MARKER => break,
+                            1 => year = Some(::stef::buf::decode_u16(r)?),
+                            2 => month = Some(Month::decode(r)?),
+                            3 => day = Some(::stef::buf::decode_u8(r)?),
+                            _ => continue,
+                        }
+                    }
+                    Ok(Self::Specific {
+                        year: year
+                            .ok_or(::stef::buf::Error::MissingField {
+                                id: 1,
+                                name: Some("year"),
+                            })?,
+                        month: month
+                            .ok_or(::stef::buf::Error::MissingField {
+                                id: 2,
+                                name: Some("month"),
+                            })?,
+                        day: day
+                            .ok_or(::stef::buf::Error::MissingField {
+                                id: 3,
+                                name: Some("day"),
+                            })?,
+                    })
+                }
+                2 => {
+                    let mut reason: Option<String> = None;
+                    loop {
+                        match ::stef::buf::decode_id(r)? {
+                            ::stef::buf::END_MARKER => break,
+                            1 => reason = Some(::stef::buf::decode_string(r)?),
+                            _ => continue,
+                        }
+                    }
+                    Ok(Self::Secret { reason })
+                }
+                3 => Ok(Self::Unknown),
+                id => Err(::stef::buf::Error::UnknownVariant(id)),
+            }
+        }
+    }
+    #[automatically_derived]
+    impl ::stef::buf::Size for DayOfBirth {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::semicolon_if_nothing_returned,
+            clippy::too_many_lines,
+        )]
+        fn size(&self) -> usize {
+            match self {
+                Self::Specific { year, month, day } => {
+                    ::stef::buf::size_id(1)
+                        + ::stef::buf::size_field(1, || { ::stef::buf::size_u16(*year) })
+                        + ::stef::buf::size_field(2, || { (*month).size() })
+                        + ::stef::buf::size_field(3, || { ::stef::buf::size_u8(*day) })
+                        + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+                }
+                Self::Secret { reason } => {
+                    ::stef::buf::size_id(2)
+                        + ::stef::buf::size_field_option(1, reason.as_ref())
+                        + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+                }
+                Self::Unknown => ::stef::buf::size_id(3),
+            }
+        }
+    }
+    /// Let's assume we only have details of people born **after** this year.
+    #[allow(dead_code)]
+    pub const MIN_YEAR: u16 = 1900;
+    /// Absolute maximum for a day, but might be even less depending
+    /// on the month.
+    #[allow(dead_code)]
+    pub const MAX_DAY: u8 = 31;
+    /// The month of the year.
+    #[derive(Clone, Debug, PartialEq)]
+    #[allow(clippy::module_name_repetitions, clippy::option_option)]
+    pub enum Month {
+        January,
+        February,
+        March,
+        April,
+        May,
+        June,
+        July,
+        August,
+        September,
+        October,
+        November,
+        December,
+    }
+    #[automatically_derived]
+    impl ::stef::Encode for Month {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::semicolon_if_nothing_returned,
+            clippy::too_many_lines,
+        )]
+        fn encode(&self, w: &mut impl ::stef::BufMut) {
+            match self {
+                Self::January => {
+                    ::stef::buf::encode_id(w, 1);
+                }
+                Self::February => {
+                    ::stef::buf::encode_id(w, 2);
+                }
+                Self::March => {
+                    ::stef::buf::encode_id(w, 3);
+                }
+                Self::April => {
+                    ::stef::buf::encode_id(w, 4);
+                }
+                Self::May => {
+                    ::stef::buf::encode_id(w, 5);
+                }
+                Self::June => {
+                    ::stef::buf::encode_id(w, 6);
+                }
+                Self::July => {
+                    ::stef::buf::encode_id(w, 7);
+                }
+                Self::August => {
+                    ::stef::buf::encode_id(w, 8);
+                }
+                Self::September => {
+                    ::stef::buf::encode_id(w, 9);
+                }
+                Self::October => {
+                    ::stef::buf::encode_id(w, 10);
+                }
+                Self::November => {
+                    ::stef::buf::encode_id(w, 11);
+                }
+                Self::December => {
+                    ::stef::buf::encode_id(w, 12);
+                }
+            }
+        }
+    }
+    #[automatically_derived]
+    impl ::stef::Decode for Month {
+        #[allow(clippy::too_many_lines)]
+        fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
+            match ::stef::buf::decode_id(r)? {
+                1 => Ok(Self::January),
+                2 => Ok(Self::February),
+                3 => Ok(Self::March),
+                4 => Ok(Self::April),
+                5 => Ok(Self::May),
+                6 => Ok(Self::June),
+                7 => Ok(Self::July),
+                8 => Ok(Self::August),
+                9 => Ok(Self::September),
+                10 => Ok(Self::October),
+                11 => Ok(Self::November),
+                12 => Ok(Self::December),
+                id => Err(::stef::buf::Error::UnknownVariant(id)),
+            }
+        }
+    }
+    #[automatically_derived]
+    impl ::stef::buf::Size for Month {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::semicolon_if_nothing_returned,
+            clippy::too_many_lines,
+        )]
+        fn size(&self) -> usize {
+            match self {
+                Self::January => ::stef::buf::size_id(1),
+                Self::February => ::stef::buf::size_id(2),
+                Self::March => ::stef::buf::size_id(3),
+                Self::April => ::stef::buf::size_id(4),
+                Self::May => ::stef::buf::size_id(5),
+                Self::June => ::stef::buf::size_id(6),
+                Self::July => ::stef::buf::size_id(7),
+                Self::August => ::stef::buf::size_id(8),
+                Self::September => ::stef::buf::size_id(9),
+                Self::October => ::stef::buf::size_id(10),
+                Self::November => ::stef::buf::size_id(11),
+                Self::December => ::stef::buf::size_id(12),
+            }
+        }
+    }
+}
+

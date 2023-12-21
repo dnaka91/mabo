@@ -1,0 +1,102 @@
+---
+source: crates/stef-doc/tests/render.rs
+description: "#[deprecated=\"don't use\",compress]\n#[validate(in_range(min=100,max=200),non_empty)]\nstruct Sample"
+input_file: crates/stef-parser/tests/inputs/attributes_min_ws.stef
+---
+--- attributes_min_ws/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>attributes_min_ws - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema attributes_min_ws</h2>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.Sample.html">Sample</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- attributes_min_ws/struct.Sample.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>Sample - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">attributes_min_ws</a>::<span class="name-struct">Sample</span>
+  </h2>
+  <pre class="item-definition my-2">#[deprecated = &quot;don&#x27;t use&quot;, compress, validate(in_range(min = 100, max = 200), non_empty)]
+struct Sample
+</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+</div>
+
+    </main>
+  </body>
+</html>

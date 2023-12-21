@@ -77,12 +77,18 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
                         enums::parse_name.map_err(Cause::from),
                     )),
                 )),
-            ),
+            )
+                .with_recognized()
+                .with_span(),
             ';',
         )),
     )
     .parse_next(input)
-    .map(|(segments, element)| Import { segments, element })
+    .map(|(((segments, element), full), range)| Import {
+        full: (full, range).into(),
+        segments,
+        element,
+    })
     .map_err(|e| {
         e.map(|cause| ParseError {
             at: location::from_until(*input, start, [';']),

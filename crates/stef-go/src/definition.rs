@@ -76,7 +76,7 @@ fn render_definition<'a>(buf: &mut String, definition: &'a Definition<'_>) -> Op
             .unwrap();
         }
         Definition::Enum(e) => writeln!(buf, "{}", RenderEnum(e)).unwrap(),
-        Definition::TypeAlias(a) => write!(buf, "{}", RenderAlias(a)).unwrap(),
+        Definition::TypeAlias(a) => writeln!(buf, "{}", RenderAlias(a)).unwrap(),
         Definition::Const(c) => write!(buf, "{}", RenderConst(c)).unwrap(),
         Definition::Import(_) => {}
     }
@@ -405,7 +405,7 @@ struct RenderAlias<'a>(&'a TypeAlias<'a>);
 
 impl Display for RenderAlias<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
+        writeln!(
             f,
             "{}type {} {}",
             RenderComment {

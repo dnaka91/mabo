@@ -1,2 +1,13 @@
 {
+  "editor.quickSuggestions": {
+    "other": "on",
+    "strings": "on"
+  },
+  "files.associations": {
+    "**/templates/**/*.html": "jinja-html",
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.includeLanguages": {
+    "jinja-html": "html"
+  }
 }

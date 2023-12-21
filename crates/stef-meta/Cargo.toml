@@ -1,0 +1,16 @@
+[package]
+name = "stef-meta"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+stef-parser = { path = "../stef-parser" }
+
+[lints]
+workspace = true

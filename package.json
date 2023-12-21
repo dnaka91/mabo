@@ -1,5 +1,9 @@
 {
   "name": "stef",
   "private": true,
-  "workspaces": ["book/highlight", "vscode-extension"]
+  "workspaces": [
+    "book/highlight",
+    "crates/stef-doc",
+    "vscode-extension"
+  ]
 }

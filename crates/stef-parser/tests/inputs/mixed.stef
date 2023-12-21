@@ -1,0 +1,89 @@
+/// Basic user information.
+///
+/// Uses various other `structs` and `enums` to compose the information
+/// in a **type safe** way.
+struct User {
+    name: FullName @1,
+    /// Physical address, might not be specified by the user.
+    address: option<Address> @2,
+    age: u8 @3,
+    birthday: birthday::DayOfBirth @4,
+}
+
+/// Full name of a user.
+struct FullName {
+    first: string @1,
+    middle: option<string> @2,
+    last: string @3,
+}
+
+/// Simple alias for convenience.
+///
+/// - Might be easier to remember.
+/// - Often referenced as this.
+type Name = FullName;
+
+struct Address {
+    /// Street name.
+    street: string @1,
+    /// Number of the house in the street.
+    house_no: HouseNumber @2,
+    city: string @3,
+}
+
+/// The number on the house.
+///
+/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).
+enum HouseNumber {
+    /// Digit only number.
+    Digit(u16 @1) @1,
+    /// Mixed _number_ with characters like `1a`.
+    Text(string @1) @2,
+}
+
+/// Probably the max age of a human, currently.
+const MAX_AGE: u8 = 120;
+
+
+/// Details for defining birthdays.
+mod birthday {
+    /// As the name suggests, specifies details about birthdays.
+    enum DayOfBirth {
+        Specific {
+            year: u16 @1,
+            month: Month @2,
+            day: u8 @3,
+        } @1,
+        /// The user didn't want to say.
+        Secret {
+            /// Optional info from the user about why they didn't want to
+            /// reveal their birthday.
+            reason: option<string> @1,
+        } @2,
+        /// We never asked and nobody knows.
+        Unknown @3,
+    }
+
+    /// Let's assume we only have details of people born **after** this year.
+    const MIN_YEAR: u16 = 1900;
+
+    /// Absolute maximum for a day, but might be even less depending
+    /// on the month.
+    const MAX_DAY: u8 = 31;
+
+    /// The month of the year.
+    enum Month {
+        January @1,
+        February @2,
+        March @3,
+        April @4,
+        May @5,
+        June @6,
+        July @7,
+        August @8,
+        September @9,
+        October @10,
+        November @11,
+        December @12,
+    }
+}

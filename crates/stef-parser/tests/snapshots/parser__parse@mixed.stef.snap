@@ -1,0 +1,1479 @@
+---
+source: crates/stef-parser/tests/parser.rs
+description: "/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+input_file: crates/stef-parser/tests/inputs/mixed.stef
+---
+Schema {
+    path: Some(
+        "mixed.stef",
+    ),
+    source: "/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}\n",
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "Basic user information.",
+                            span: Span {
+                                start: 0,
+                                end: 27,
+                            },
+                        },
+                        CommentLine {
+                            value: "",
+                            span: Span {
+                                start: 28,
+                                end: 31,
+                            },
+                        },
+                        CommentLine {
+                            value: "Uses various other `structs` and `enums` to compose the information",
+                            span: Span {
+                                start: 32,
+                                end: 103,
+                            },
+                        },
+                        CommentLine {
+                            value: "in a **type safe** way.",
+                            span: Span {
+                                start: 104,
+                                end: 131,
+                            },
+                        },
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "User",
+                    span: Span {
+                        start: 139,
+                        end: 143,
+                    },
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "name",
+                                span: Span {
+                                    start: 150,
+                                    end: 154,
+                                },
+                            },
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "FullName",
+                                            span: Span {
+                                                start: 156,
+                                                end: 164,
+                                            },
+                                        },
+                                        generics: [],
+                                    },
+                                ),
+                                span: Span {
+                                    start: 156,
+                                    end: 164,
+                                },
+                            },
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 165,
+                                    end: 167,
+                                },
+                            },
+                            span: Span {
+                                start: 150,
+                                end: 167,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Physical address, might not be specified by the user.",
+                                        span: Span {
+                                            start: 173,
+                                            end: 230,
+                                        },
+                                    },
+                                ],
+                            ),
+                            name: Name {
+                                value: "address",
+                                span: Span {
+                                    start: 235,
+                                    end: 242,
+                                },
+                            },
+                            ty: Type {
+                                value: Option(
+                                    Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "Address",
+                                                    span: Span {
+                                                        start: 251,
+                                                        end: 258,
+                                                    },
+                                                },
+                                                generics: [],
+                                            },
+                                        ),
+                                        span: Span {
+                                            start: 251,
+                                            end: 258,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 244,
+                                    end: 259,
+                                },
+                            },
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 260,
+                                    end: 262,
+                                },
+                            },
+                            span: Span {
+                                start: 231,
+                                end: 262,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "age",
+                                span: Span {
+                                    start: 268,
+                                    end: 271,
+                                },
+                            },
+                            ty: Type {
+                                value: U8,
+                                span: Span {
+                                    start: 273,
+                                    end: 275,
+                                },
+                            },
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 276,
+                                    end: 278,
+                                },
+                            },
+                            span: Span {
+                                start: 268,
+                                end: 278,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "birthday",
+                                span: Span {
+                                    start: 284,
+                                    end: 292,
+                                },
+                            },
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [
+                                            Name {
+                                                value: "birthday",
+                                                span: Span {
+                                                    start: 294,
+                                                    end: 302,
+                                                },
+                                            },
+                                        ],
+                                        name: Name {
+                                            value: "DayOfBirth",
+                                            span: Span {
+                                                start: 304,
+                                                end: 314,
+                                            },
+                                        },
+                                        generics: [],
+                                    },
+                                ),
+                                span: Span {
+                                    start: 294,
+                                    end: 314,
+                                },
+                            },
+                            id: Id {
+                                value: 4,
+                                span: Span {
+                                    start: 315,
+                                    end: 317,
+                                },
+                            },
+                            span: Span {
+                                start: 284,
+                                end: 317,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+        Struct(
+            Struct {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "Full name of a user.",
+                            span: Span {
+                                start: 322,
+                                end: 346,
+                            },
+                        },
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "FullName",
+                    span: Span {
+                        start: 354,
+                        end: 362,
+                    },
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "first",
+                                span: Span {
+                                    start: 369,
+                                    end: 374,
+                                },
+                            },
+                            ty: Type {
+                                value: String,
+                                span: Span {
+                                    start: 376,
+                                    end: 382,
+                                },
+                            },
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 383,
+                                    end: 385,
+                                },
+                            },
+                            span: Span {
+                                start: 369,
+                                end: 385,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "middle",
+                                span: Span {
+                                    start: 391,
+                                    end: 397,
+                                },
+                            },
+                            ty: Type {
+                                value: Option(
+                                    Type {
+                                        value: String,
+                                        span: Span {
+                                            start: 406,
+                                            end: 412,
+                                        },
+                                    },
+                                ),
+                                span: Span {
+                                    start: 399,
+                                    end: 413,
+                                },
+                            },
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 414,
+                                    end: 416,
+                                },
+                            },
+                            span: Span {
+                                start: 391,
+                                end: 416,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "last",
+                                span: Span {
+                                    start: 422,
+                                    end: 426,
+                                },
+                            },
+                            ty: Type {
+                                value: String,
+                                span: Span {
+                                    start: 428,
+                                    end: 434,
+                                },
+                            },
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 435,
+                                    end: 437,
+                                },
+                            },
+                            span: Span {
+                                start: 422,
+                                end: 437,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+        TypeAlias(
+            TypeAlias {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "Simple alias for convenience.",
+                            span: Span {
+                                start: 442,
+                                end: 475,
+                            },
+                        },
+                        CommentLine {
+                            value: "",
+                            span: Span {
+                                start: 476,
+                                end: 479,
+                            },
+                        },
+                        CommentLine {
+                            value: "- Might be easier to remember.",
+                            span: Span {
+                                start: 480,
+                                end: 514,
+                            },
+                        },
+                        CommentLine {
+                            value: "- Often referenced as this.",
+                            span: Span {
+                                start: 515,
+                                end: 546,
+                            },
+                        },
+                    ],
+                ),
+                name: Name {
+                    value: "Name",
+                    span: Span {
+                        start: 552,
+                        end: 556,
+                    },
+                },
+                generics: Generics(
+                    [],
+                ),
+                target: Type {
+                    value: External(
+                        ExternalType {
+                            path: [],
+                            name: Name {
+                                value: "FullName",
+                                span: Span {
+                                    start: 559,
+                                    end: 567,
+                                },
+                            },
+                            generics: [],
+                        },
+                    ),
+                    span: Span {
+                        start: 559,
+                        end: 567,
+                    },
+                },
+            },
+        ),
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "Address",
+                    span: Span {
+                        start: 577,
+                        end: 584,
+                    },
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Street name.",
+                                        span: Span {
+                                            start: 591,
+                                            end: 607,
+                                        },
+                                    },
+                                ],
+                            ),
+                            name: Name {
+                                value: "street",
+                                span: Span {
+                                    start: 612,
+                                    end: 618,
+                                },
+                            },
+                            ty: Type {
+                                value: String,
+                                span: Span {
+                                    start: 620,
+                                    end: 626,
+                                },
+                            },
+                            id: Id {
+                                value: 1,
+                                span: Span {
+                                    start: 627,
+                                    end: 629,
+                                },
+                            },
+                            span: Span {
+                                start: 608,
+                                end: 629,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Number of the house in the street.",
+                                        span: Span {
+                                            start: 635,
+                                            end: 673,
+                                        },
+                                    },
+                                ],
+                            ),
+                            name: Name {
+                                value: "house_no",
+                                span: Span {
+                                    start: 678,
+                                    end: 686,
+                                },
+                            },
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "HouseNumber",
+                                            span: Span {
+                                                start: 688,
+                                                end: 699,
+                                            },
+                                        },
+                                        generics: [],
+                                    },
+                                ),
+                                span: Span {
+                                    start: 688,
+                                    end: 699,
+                                },
+                            },
+                            id: Id {
+                                value: 2,
+                                span: Span {
+                                    start: 700,
+                                    end: 702,
+                                },
+                            },
+                            span: Span {
+                                start: 674,
+                                end: 702,
+                            },
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "city",
+                                span: Span {
+                                    start: 708,
+                                    end: 712,
+                                },
+                            },
+                            ty: Type {
+                                value: String,
+                                span: Span {
+                                    start: 714,
+                                    end: 720,
+                                },
+                            },
+                            id: Id {
+                                value: 3,
+                                span: Span {
+                                    start: 721,
+                                    end: 723,
+                                },
+                            },
+                            span: Span {
+                                start: 708,
+                                end: 723,
+                            },
+                        },
+                    ],
+                ),
+            },
+        ),
+        Enum(
+            Enum {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "The number on the house.",
+                            span: Span {
+                                start: 728,
+                                end: 756,
+                            },
+                        },
+                        CommentLine {
+                            value: "",
+                            span: Span {
+                                start: 757,
+                                end: 760,
+                            },
+                        },
+                        CommentLine {
+                            value: "More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).",
+                            span: Span {
+                                start: 761,
+                                end: 853,
+                            },
+                        },
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "HouseNumber",
+                    span: Span {
+                        start: 859,
+                        end: 870,
+                    },
+                },
+                generics: Generics(
+                    [],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [
+                                CommentLine {
+                                    value: "Digit only number.",
+                                    span: Span {
+                                        start: 877,
+                                        end: 899,
+                                    },
+                                },
+                            ],
+                        ),
+                        name: Name {
+                            value: "Digit",
+                            span: Span {
+                                start: 904,
+                                end: 909,
+                            },
+                        },
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: Type {
+                                        value: U16,
+                                        span: Span {
+                                            start: 910,
+                                            end: 913,
+                                        },
+                                    },
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 914,
+                                            end: 916,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 910,
+                                        end: 916,
+                                    },
+                                },
+                            ],
+                        ),
+                        id: Id {
+                            value: 1,
+                            span: Span {
+                                start: 918,
+                                end: 920,
+                            },
+                        },
+                        span: Span {
+                            start: 900,
+                            end: 920,
+                        },
+                    },
+                    Variant {
+                        comment: Comment(
+                            [
+                                CommentLine {
+                                    value: "Mixed _number_ with characters like `1a`.",
+                                    span: Span {
+                                        start: 926,
+                                        end: 971,
+                                    },
+                                },
+                            ],
+                        ),
+                        name: Name {
+                            value: "Text",
+                            span: Span {
+                                start: 976,
+                                end: 980,
+                            },
+                        },
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: Type {
+                                        value: String,
+                                        span: Span {
+                                            start: 981,
+                                            end: 987,
+                                        },
+                                    },
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 988,
+                                            end: 990,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 981,
+                                        end: 990,
+                                    },
+                                },
+                            ],
+                        ),
+                        id: Id {
+                            value: 2,
+                            span: Span {
+                                start: 992,
+                                end: 994,
+                            },
+                        },
+                        span: Span {
+                            start: 972,
+                            end: 994,
+                        },
+                    },
+                ],
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "Probably the max age of a human, currently.",
+                            span: Span {
+                                start: 999,
+                                end: 1046,
+                            },
+                        },
+                    ],
+                ),
+                name: Name {
+                    value: "MAX_AGE",
+                    span: Span {
+                        start: 1053,
+                        end: 1060,
+                    },
+                },
+                ty: Type {
+                    value: U8,
+                    span: Span {
+                        start: 1062,
+                        end: 1064,
+                    },
+                },
+                value: Literal {
+                    value: Int(
+                        120,
+                    ),
+                    span: Span {
+                        start: 1067,
+                        end: 1070,
+                    },
+                },
+            },
+        ),
+        Module(
+            Module {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "Details for defining birthdays.",
+                            span: Span {
+                                start: 1074,
+                                end: 1109,
+                            },
+                        },
+                    ],
+                ),
+                name: Name {
+                    value: "birthday",
+                    span: Span {
+                        start: 1114,
+                        end: 1122,
+                    },
+                },
+                definitions: [
+                    Enum(
+                        Enum {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "As the name suggests, specifies details about birthdays.",
+                                        span: Span {
+                                            start: 1129,
+                                            end: 1189,
+                                        },
+                                    },
+                                ],
+                            ),
+                            attributes: Attributes(
+                                [],
+                            ),
+                            name: Name {
+                                value: "DayOfBirth",
+                                span: Span {
+                                    start: 1199,
+                                    end: 1209,
+                                },
+                            },
+                            generics: Generics(
+                                [],
+                            ),
+                            variants: [
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "Specific",
+                                        span: Span {
+                                            start: 1220,
+                                            end: 1228,
+                                        },
+                                    },
+                                    fields: Named(
+                                        [
+                                            NamedField {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "year",
+                                                    span: Span {
+                                                        start: 1243,
+                                                        end: 1247,
+                                                    },
+                                                },
+                                                ty: Type {
+                                                    value: U16,
+                                                    span: Span {
+                                                        start: 1249,
+                                                        end: 1252,
+                                                    },
+                                                },
+                                                id: Id {
+                                                    value: 1,
+                                                    span: Span {
+                                                        start: 1253,
+                                                        end: 1255,
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: 1243,
+                                                    end: 1255,
+                                                },
+                                            },
+                                            NamedField {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "month",
+                                                    span: Span {
+                                                        start: 1269,
+                                                        end: 1274,
+                                                    },
+                                                },
+                                                ty: Type {
+                                                    value: External(
+                                                        ExternalType {
+                                                            path: [],
+                                                            name: Name {
+                                                                value: "Month",
+                                                                span: Span {
+                                                                    start: 1276,
+                                                                    end: 1281,
+                                                                },
+                                                            },
+                                                            generics: [],
+                                                        },
+                                                    ),
+                                                    span: Span {
+                                                        start: 1276,
+                                                        end: 1281,
+                                                    },
+                                                },
+                                                id: Id {
+                                                    value: 2,
+                                                    span: Span {
+                                                        start: 1282,
+                                                        end: 1284,
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: 1269,
+                                                    end: 1284,
+                                                },
+                                            },
+                                            NamedField {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "day",
+                                                    span: Span {
+                                                        start: 1298,
+                                                        end: 1301,
+                                                    },
+                                                },
+                                                ty: Type {
+                                                    value: U8,
+                                                    span: Span {
+                                                        start: 1303,
+                                                        end: 1305,
+                                                    },
+                                                },
+                                                id: Id {
+                                                    value: 3,
+                                                    span: Span {
+                                                        start: 1306,
+                                                        end: 1308,
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: 1298,
+                                                    end: 1308,
+                                                },
+                                            },
+                                        ],
+                                    ),
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 1320,
+                                            end: 1322,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1220,
+                                        end: 1322,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [
+                                            CommentLine {
+                                                value: "The user didn't want to say.",
+                                                span: Span {
+                                                    start: 1332,
+                                                    end: 1364,
+                                                },
+                                            },
+                                        ],
+                                    ),
+                                    name: Name {
+                                        value: "Secret",
+                                        span: Span {
+                                            start: 1373,
+                                            end: 1379,
+                                        },
+                                    },
+                                    fields: Named(
+                                        [
+                                            NamedField {
+                                                comment: Comment(
+                                                    [
+                                                        CommentLine {
+                                                            value: "Optional info from the user about why they didn't want to",
+                                                            span: Span {
+                                                                start: 1394,
+                                                                end: 1455,
+                                                            },
+                                                        },
+                                                        CommentLine {
+                                                            value: "reveal their birthday.",
+                                                            span: Span {
+                                                                start: 1468,
+                                                                end: 1494,
+                                                            },
+                                                        },
+                                                    ],
+                                                ),
+                                                name: Name {
+                                                    value: "reason",
+                                                    span: Span {
+                                                        start: 1507,
+                                                        end: 1513,
+                                                    },
+                                                },
+                                                ty: Type {
+                                                    value: Option(
+                                                        Type {
+                                                            value: String,
+                                                            span: Span {
+                                                                start: 1522,
+                                                                end: 1528,
+                                                            },
+                                                        },
+                                                    ),
+                                                    span: Span {
+                                                        start: 1515,
+                                                        end: 1529,
+                                                    },
+                                                },
+                                                id: Id {
+                                                    value: 1,
+                                                    span: Span {
+                                                        start: 1530,
+                                                        end: 1532,
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: 1495,
+                                                    end: 1532,
+                                                },
+                                            },
+                                        ],
+                                    ),
+                                    id: Id {
+                                        value: 2,
+                                        span: Span {
+                                            start: 1544,
+                                            end: 1546,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1365,
+                                        end: 1546,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [
+                                            CommentLine {
+                                                value: "We never asked and nobody knows.",
+                                                span: Span {
+                                                    start: 1556,
+                                                    end: 1592,
+                                                },
+                                            },
+                                        ],
+                                    ),
+                                    name: Name {
+                                        value: "Unknown",
+                                        span: Span {
+                                            start: 1601,
+                                            end: 1608,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 3,
+                                        span: Span {
+                                            start: 1609,
+                                            end: 1611,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1593,
+                                        end: 1611,
+                                    },
+                                },
+                            ],
+                        },
+                    ),
+                    Const(
+                        Const {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Let's assume we only have details of people born **after** this year.",
+                                        span: Span {
+                                            start: 1624,
+                                            end: 1697,
+                                        },
+                                    },
+                                ],
+                            ),
+                            name: Name {
+                                value: "MIN_YEAR",
+                                span: Span {
+                                    start: 1708,
+                                    end: 1716,
+                                },
+                            },
+                            ty: Type {
+                                value: U16,
+                                span: Span {
+                                    start: 1718,
+                                    end: 1721,
+                                },
+                            },
+                            value: Literal {
+                                value: Int(
+                                    1900,
+                                ),
+                                span: Span {
+                                    start: 1724,
+                                    end: 1728,
+                                },
+                            },
+                        },
+                    ),
+                    Const(
+                        Const {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Absolute maximum for a day, but might be even less depending",
+                                        span: Span {
+                                            start: 1735,
+                                            end: 1799,
+                                        },
+                                    },
+                                    CommentLine {
+                                        value: "on the month.",
+                                        span: Span {
+                                            start: 1804,
+                                            end: 1821,
+                                        },
+                                    },
+                                ],
+                            ),
+                            name: Name {
+                                value: "MAX_DAY",
+                                span: Span {
+                                    start: 1832,
+                                    end: 1839,
+                                },
+                            },
+                            ty: Type {
+                                value: U8,
+                                span: Span {
+                                    start: 1841,
+                                    end: 1843,
+                                },
+                            },
+                            value: Literal {
+                                value: Int(
+                                    31,
+                                ),
+                                span: Span {
+                                    start: 1846,
+                                    end: 1848,
+                                },
+                            },
+                        },
+                    ),
+                    Enum(
+                        Enum {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "The month of the year.",
+                                        span: Span {
+                                            start: 1855,
+                                            end: 1881,
+                                        },
+                                    },
+                                ],
+                            ),
+                            attributes: Attributes(
+                                [],
+                            ),
+                            name: Name {
+                                value: "Month",
+                                span: Span {
+                                    start: 1891,
+                                    end: 1896,
+                                },
+                            },
+                            generics: Generics(
+                                [],
+                            ),
+                            variants: [
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "January",
+                                        span: Span {
+                                            start: 1907,
+                                            end: 1914,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 1,
+                                        span: Span {
+                                            start: 1915,
+                                            end: 1917,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1907,
+                                        end: 1917,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "February",
+                                        span: Span {
+                                            start: 1927,
+                                            end: 1935,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 2,
+                                        span: Span {
+                                            start: 1936,
+                                            end: 1938,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1927,
+                                        end: 1938,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "March",
+                                        span: Span {
+                                            start: 1948,
+                                            end: 1953,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 3,
+                                        span: Span {
+                                            start: 1954,
+                                            end: 1956,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1948,
+                                        end: 1956,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "April",
+                                        span: Span {
+                                            start: 1966,
+                                            end: 1971,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 4,
+                                        span: Span {
+                                            start: 1972,
+                                            end: 1974,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1966,
+                                        end: 1974,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "May",
+                                        span: Span {
+                                            start: 1984,
+                                            end: 1987,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 5,
+                                        span: Span {
+                                            start: 1988,
+                                            end: 1990,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 1984,
+                                        end: 1990,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "June",
+                                        span: Span {
+                                            start: 2000,
+                                            end: 2004,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 6,
+                                        span: Span {
+                                            start: 2005,
+                                            end: 2007,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2000,
+                                        end: 2007,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "July",
+                                        span: Span {
+                                            start: 2017,
+                                            end: 2021,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 7,
+                                        span: Span {
+                                            start: 2022,
+                                            end: 2024,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2017,
+                                        end: 2024,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "August",
+                                        span: Span {
+                                            start: 2034,
+                                            end: 2040,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 8,
+                                        span: Span {
+                                            start: 2041,
+                                            end: 2043,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2034,
+                                        end: 2043,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "September",
+                                        span: Span {
+                                            start: 2053,
+                                            end: 2062,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 9,
+                                        span: Span {
+                                            start: 2063,
+                                            end: 2065,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2053,
+                                        end: 2065,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "October",
+                                        span: Span {
+                                            start: 2075,
+                                            end: 2082,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 10,
+                                        span: Span {
+                                            start: 2083,
+                                            end: 2086,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2075,
+                                        end: 2086,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "November",
+                                        span: Span {
+                                            start: 2096,
+                                            end: 2104,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 11,
+                                        span: Span {
+                                            start: 2105,
+                                            end: 2108,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2096,
+                                        end: 2108,
+                                    },
+                                },
+                                Variant {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "December",
+                                        span: Span {
+                                            start: 2118,
+                                            end: 2126,
+                                        },
+                                    },
+                                    fields: Unit,
+                                    id: Id {
+                                        value: 12,
+                                        span: Span {
+                                            start: 2127,
+                                            end: 2130,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: 2118,
+                                        end: 2130,
+                                    },
+                                },
+                            ],
+                        },
+                    ),
+                ],
+            },
+        ),
+    ],
+}

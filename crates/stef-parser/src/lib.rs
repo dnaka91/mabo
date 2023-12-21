@@ -461,6 +461,12 @@ impl Print for TypeAlias<'_> {
     }
 }
 
+impl Display for TypeAlias<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.print(f, 0)
+    }
+}
+
 /// Possible kinds in which a the fields of a struct or enum variant can be represented.
 #[derive(Debug, Eq, PartialEq)]
 pub enum Fields<'a> {
@@ -1031,6 +1037,12 @@ impl Print for Const<'_> {
     }
 }
 
+impl Display for Const<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.print(f, 0)
+    }
+}
+
 /// In-schema definition of a literal value, together with a span into the schema to mark where it
 /// is defined.
 #[derive(Clone, Debug, PartialEq)]
@@ -1092,6 +1104,7 @@ impl Display for LiteralValue {
 /// Import declaration for an external schema.
 #[derive(Debug, PartialEq)]
 pub struct Import<'a> {
+    pub full: Name<'a>,
     /// Individual elements that form the import path.
     pub segments: Vec<Name<'a>>,
     /// Optional final element that allows to fully import the type, making it look as it would be
@@ -1101,7 +1114,9 @@ pub struct Import<'a> {
 
 impl Print for Import<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
-        let Self { segments, element } = self;
+        let Self {
+            segments, element, ..
+        } = self;
 
         Self::indent(f, level)?;
         f.write_str("use ")?;

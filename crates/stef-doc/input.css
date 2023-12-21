@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-main-200 text-main-800 dark:bg-main-800 dark:text-main-200;
+    }
+
+    main {
+        @apply container max-w-6xl px-12 py-4;
+    }
+
+    a {
+        @apply hover:underline;
+    }
+
+    table {
+        @apply table-auto border-collapse;
+    }
+
+    h1 {
+        @apply text-3xl font-bold;
+    }
+
+    h2 {
+        @apply text-2xl font-bold;
+    }
+
+    h3 {
+        @apply text-xl font-bold;
+    }
+
+    h4 {
+        @apply text-lg font-bold;
+    }
+}
+
+@layer components {
+    .markdown {
+        @apply markdown-neutral dark:markdown-invert max-w-none;
+    }
+
+    .name-module {
+        @apply text-black dark:text-white;
+    }
+
+    .name-struct {
+        @apply text-sky-600 dark:text-sky-400;
+    }
+
+    .name-enum {
+        @apply text-sky-600 dark:text-sky-400;
+    }
+
+    .name-variant {
+        @apply text-teal-600 dark:text-teal-400;
+    }
+
+    .name-alias {
+        @apply text-lime-600 dark:text-lime-400;
+    }
+
+    .name-const {
+        @apply text-orange-600 dark:text-orange-400;
+    }
+
+    .field-definition {
+        @apply mt-2 p-2 bg-main-300/50 dark:bg-main-700/50 rounded-sm;
+    }
+
+    .field-name {
+        @apply text-red-600 dark:text-red-400;
+    }
+
+    .field-type {
+        @apply text-purple-600 dark:text-purple-400;
+    }
+
+    .field-id {
+        @apply text-amber-600 dark:text-amber-400;
+    }
+
+    .section {
+        @apply rounded-sm bg-main-100/50 dark:bg-main-900/50 p-2 mt-2;
+    }
+
+    .item-definition {
+        @apply p-2 bg-main-300/50 dark:bg-main-700/50 rounded-sm overflow-x-auto;
+    }
+}

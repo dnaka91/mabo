@@ -186,7 +186,11 @@ fn compile_const(
     }
 }
 
-fn compile_import(Import { segments, element }: &Import<'_>) -> TokenStream {
+fn compile_import(
+    Import {
+        segments, element, ..
+    }: &Import<'_>,
+) -> TokenStream {
     let segments = segments.iter().enumerate().map(|(i, segment)| {
         let segment = Ident::new(segment.get(), Span::call_site());
         if i > 0 {

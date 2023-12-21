@@ -20,6 +20,7 @@ missing_docs = "warn"
 [workspace.lints.clippy]
 all = "deny"
 pedantic = "warn"
+clone_on_ref_ptr = "warn"
 
 [workspace.dependencies]
 clap = { version = "4.4.11", features = ["derive", "wrap_help"] }

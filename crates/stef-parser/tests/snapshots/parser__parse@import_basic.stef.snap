@@ -11,6 +11,13 @@ Schema {
     definitions: [
         Import(
             Import {
+                full: Name {
+                    value: "other::schema::Sample",
+                    span: Span {
+                        start: 4,
+                        end: 25,
+                    },
+                },
                 segments: [
                     Name {
                         value: "other",
@@ -40,6 +47,13 @@ Schema {
         ),
         Import(
             Import {
+                full: Name {
+                    value: "second::submodule",
+                    span: Span {
+                        start: 31,
+                        end: 48,
+                    },
+                },
                 segments: [
                     Name {
                         value: "second",

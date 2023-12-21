@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h2>Schema {{ name }}</h2>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+    {%- for def in definitions %}
+    {%- match def %}
+    {%- when Definition::Module(m) %}
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-module" href="{{ m.name }}/index.html">{{ m.name }}</a>
+      </td>
+      <td>
+        {%- if !m.comment.0.is_empty() %}
+        {{ m.comment.0[0].value|markdown|trim|safe }}
+        {%- endif %}
+      </td>
+    </tr>
+    {%- else %}
+    {%- endmatch %}
+    {%- endfor %}
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+    {%- for def in definitions %}
+    {%- match def %}
+    {%- when Definition::Struct(s) %}
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.{{ s.name }}.html">{{ s.name }}</a>
+      </td>
+      <td>
+        {%- if !s.comment.0.is_empty() %}
+        {{ s.comment.0[0].value|markdown|trim|safe }}
+        {%- endif %}
+      </td>
+    </tr>
+    {%- else %}
+    {%- endmatch %}
+    {%- endfor %}
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+    {%- for def in definitions %}
+    {%- match def %}
+    {%- when Definition::Enum(e) %}
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-enum" href="enum.{{ e.name }}.html">{{ e.name }}</a>
+      </td>
+      <td>
+        {%- if !e.comment.0.is_empty() %}
+        {{ e.comment.0[0].value|markdown|trim|safe }}
+        {%- endif %}
+      </td>
+    </tr>
+    {%- else %}
+    {%- endmatch %}
+    {%- endfor %}
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+    {%- for def in definitions %}
+    {%- match def %}
+    {%- when Definition::TypeAlias(a) %}
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-alias" href="alias.{{ a.name }}.html">{{ a.name }}</a>
+      </td>
+      <td>
+        {%- if !a.comment.0.is_empty() %}
+        {{ a.comment.0[0].value|markdown|trim|safe }}
+        {%- endif %}
+      </td>
+    </tr>
+    {%- else %}
+    {%- endmatch %}
+    {%- endfor %}
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+    {%- for def in definitions %}
+    {%- match def %}
+    {%- when Definition::Const(c) %}
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.{{ c.name }}.html">{{ c.name }}</a>
+      </td>
+      <td>
+        {%- if !c.comment.0.is_empty() %}
+        {{ c.comment.0[0].value|markdown|trim|safe }}
+        {%- endif %}
+      </td>
+    </tr>
+    {%- else %}
+    {%- endmatch %}
+    {%- endfor %}
+  </table>
+</div>
+{%- endblock %}

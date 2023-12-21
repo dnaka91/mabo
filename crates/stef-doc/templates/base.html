@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {% let prefix = "../".repeat(path.len()) %}
+    <link rel="stylesheet" href="{{ prefix }}assets/style.css" />
+
+    <title>{% block title %}{{ title }}{% endblock %} - Stef</title>
+  </head>
+  <body>
+    <nav>
+      {%- block sidebar %}{% endblock %}
+    </nav>
+    <main>
+      {%- block content %}{% endblock %}
+    </main>
+  </body>
+</html>

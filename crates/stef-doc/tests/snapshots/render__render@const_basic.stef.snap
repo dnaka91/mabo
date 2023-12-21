@@ -1,0 +1,287 @@
+---
+source: crates/stef-doc/tests/render.rs
+description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];"
+input_file: crates/stef-parser/tests/inputs/const_basic.stef
+---
+--- const_basic/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>const_basic - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema const_basic</h2>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.BOOL_TRUE.html">BOOL_TRUE</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.BOOL_FALSE.html">BOOL_FALSE</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.INT.html">INT</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.FLOAT.html">FLOAT</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.STRING.html">STRING</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.BYTES.html">BYTES</a>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- const_basic/constant.BOOL_TRUE.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>BOOL_TRUE - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_basic</a>::<span class="name-const">BOOL_TRUE</span>
+  </h2>
+  <pre class="item-definition my-2">const BOOL_TRUE: bool = true;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_basic/constant.BOOL_FALSE.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>BOOL_FALSE - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_basic</a>::<span class="name-const">BOOL_FALSE</span>
+  </h2>
+  <pre class="item-definition my-2">const BOOL_FALSE: bool = false;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_basic/constant.INT.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>INT - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_basic</a>::<span class="name-const">INT</span>
+  </h2>
+  <pre class="item-definition my-2">const INT: u32 = 100;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_basic/constant.FLOAT.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>FLOAT - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_basic</a>::<span class="name-const">FLOAT</span>
+  </h2>
+  <pre class="item-definition my-2">const FLOAT: f64 = 5.5;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_basic/constant.STRING.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>STRING - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_basic</a>::<span class="name-const">STRING</span>
+  </h2>
+  <pre class="item-definition my-2">const STRING: string = &quot;value&quot;;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_basic/constant.BYTES.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>BYTES - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_basic</a>::<span class="name-const">BYTES</span>
+  </h2>
+  <pre class="item-definition my-2">const BYTES: bytes = [1, 2, 3];</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>

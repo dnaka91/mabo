@@ -1104,6 +1104,7 @@ impl Display for LiteralValue {
 /// Import declaration for an external schema.
 #[derive(Debug, PartialEq)]
 pub struct Import<'a> {
+    /// Full import path as it was found in the original schema file.
     pub full: Name<'a>,
     /// Individual elements that form the import path.
     pub segments: Vec<Name<'a>>,

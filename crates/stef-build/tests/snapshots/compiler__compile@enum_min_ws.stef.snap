@@ -15,7 +15,7 @@ pub enum Sample<T> {
 #[automatically_derived]
 impl<T> ::stef::Encode for Sample<T>
 where
-    T: ::stef::buf::Encode,
+    T: ::stef::buf::Encode + ::stef::buf::Size,
 {
     #[allow(
         clippy::borrow_deref_ref,
@@ -25,28 +25,44 @@ where
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         match self {
             Self::One => {
-                ::stef::buf::encode_id(w, 1);
+                ::stef::buf::encode_variant_id(w, ::stef::VariantId::new(1));
             }
             Self::Two(n0, n1, n2) => {
-                ::stef::buf::encode_id(w, 2);
-                ::stef::buf::encode_field(w, 1, |w| { ::stef::buf::encode_u32(w, *n0) });
-                ::stef::buf::encode_field(w, 2, |w| { ::stef::buf::encode_u64(w, *n1) });
-                ::stef::buf::encode_field(w, 3, |w| { (*n2).encode(w) });
+                ::stef::buf::encode_variant_id(w, ::stef::VariantId::new(2));
+                ::stef::buf::encode_field(
+                    w,
+                    ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
+                    |w| { ::stef::buf::encode_u32(w, *n0) },
+                );
+                ::stef::buf::encode_field(
+                    w,
+                    ::stef::FieldId::new(2, ::stef::FieldEncoding::Varint),
+                    |w| { ::stef::buf::encode_u64(w, *n1) },
+                );
+                ::stef::buf::encode_field(
+                    w,
+                    ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
+                    |w| { (*n2).encode(w) },
+                );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
             Self::Three { field1, field2, field3 } => {
-                ::stef::buf::encode_id(w, 3);
+                ::stef::buf::encode_variant_id(w, ::stef::VariantId::new(3));
                 ::stef::buf::encode_field(
                     w,
-                    1,
+                    ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
                     |w| { ::stef::buf::encode_u32(w, *field1) },
                 );
                 ::stef::buf::encode_field(
                     w,
-                    2,
+                    ::stef::FieldId::new(2, ::stef::FieldEncoding::Fixed1),
                     |w| { ::stef::buf::encode_bool(w, *field2) },
                 );
-                ::stef::buf::encode_field(w, 3, |w| { (*field3).encode(w) });
+                ::stef::buf::encode_field(
+                    w,
+                    ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
+                    |w| { (*field3).encode(w) },
+                );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
         }
@@ -59,19 +75,20 @@ where
 {
     #[allow(clippy::too_many_lines)]
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-        match ::stef::buf::decode_id(r)? {
+        match ::stef::buf::decode_variant_id(r)?.value {
             1 => Ok(Self::One),
             2 => {
                 let mut n0: Option<u32> = None;
                 let mut n1: Option<u64> = None;
                 let mut n2: Option<T> = None;
                 loop {
-                    match ::stef::buf::decode_id(r)? {
+                    let id = ::stef::buf::decode_id(r)?;
+                    match id.value {
                         ::stef::buf::END_MARKER => break,
                         1 => n0 = Some(::stef::buf::decode_u32(r)?),
                         2 => n1 = Some(::stef::buf::decode_u64(r)?),
                         3 => n2 = Some(T::decode(r)?),
-                        _ => continue,
+                        _ => ::stef::buf::decode_skip(r, id.encoding)?,
                     }
                 }
                 Ok(
@@ -99,12 +116,13 @@ where
                 let mut field2: Option<bool> = None;
                 let mut field3: Option<T> = None;
                 loop {
-                    match ::stef::buf::decode_id(r)? {
+                    let id = ::stef::buf::decode_id(r)?;
+                    match id.value {
                         ::stef::buf::END_MARKER => break,
                         1 => field1 = Some(::stef::buf::decode_u32(r)?),
                         2 => field2 = Some(::stef::buf::decode_bool(r)?),
                         3 => field3 = Some(T::decode(r)?),
-                        _ => continue,
+                        _ => ::stef::buf::decode_skip(r, id.encoding)?,
                     }
                 }
                 Ok(Self::Three {

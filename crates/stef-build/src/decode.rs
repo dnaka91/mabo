@@ -29,10 +29,11 @@ pub(super) fn compile_struct(
             #field_vars
 
             loop {
-                match ::stef::buf::decode_id(r)? {
+                let id = ::stef::buf::decode_id(r)?;
+                match id.value {
                     ::stef::buf::END_MARKER => break,
                     #field_matches
-                    _ => continue,
+                    _ => ::stef::buf::decode_skip(r, id.encoding)?,
                 }
             }
 
@@ -70,7 +71,7 @@ pub(super) fn compile_enum(
         impl #generics ::stef::Decode for #name #generics #generics_where {
             #[allow(clippy::too_many_lines)]
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-                match ::stef::buf::decode_id(r)? {
+                match ::stef::buf::decode_variant_id(r)?.value {
                     #(#variants,)*
                     id => Err(::stef::buf::Error::UnknownVariant(id)),
                 }
@@ -103,10 +104,11 @@ fn compile_variant(
                 #field_vars
 
                 loop {
-                    match ::stef::buf::decode_id(r)? {
+                    let id = ::stef::buf::decode_id(r)?;
+                    match id.value {
                         ::stef::buf::END_MARKER => break,
                         #field_matches
-                        _ => continue,
+                        _ => ::stef::buf::decode_skip(r, id.encoding)?,
                     }
                 }
 
@@ -162,6 +164,7 @@ fn compile_field_matches(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                         } else {
                             ty
                         },
+                        true,
                     );
 
                     quote! { #id => #name = Some(#ty?) }
@@ -184,6 +187,7 @@ fn compile_field_matches(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                         } else {
                             ty
                         },
+                        true,
                     );
 
                     quote! { #id => #name = Some(#ty?) }
@@ -253,7 +257,7 @@ fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream
 }
 
 #[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
-fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
+fn compile_data_type(opts: &Opts, ty: &Type<'_>, root: bool) -> TokenStream {
     match &ty.value {
         DataType::Bool => quote! { ::stef::buf::decode_bool(r) },
         DataType::U8 => quote! { ::stef::buf::decode_u8(r) },
@@ -274,20 +278,20 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
             BytesType::Bytes => quote! { ::stef::buf::decode_bytes_bytes(r) },
         },
         DataType::Vec(ty) => {
-            let ty = compile_data_type(opts, ty);
+            let ty = compile_data_type(opts, ty, false);
             quote! { ::stef::buf::decode_vec(r, |r| { #ty }) }
         }
         DataType::HashMap(kv) => {
-            let ty_k = compile_data_type(opts, &kv.0);
-            let ty_v = compile_data_type(opts, &kv.1);
+            let ty_k = compile_data_type(opts, &kv.0, false);
+            let ty_v = compile_data_type(opts, &kv.1, false);
             quote! { ::stef::buf::decode_hash_map(r, |r| { #ty_k }, |r| { #ty_v }) }
         }
         DataType::HashSet(ty) => {
-            let ty = compile_data_type(opts, ty);
+            let ty = compile_data_type(opts, ty, false);
             quote! { ::stef::buf::decode_hash_set(r, |r| { #ty }) }
         }
         DataType::Option(ty) => {
-            let ty = compile_data_type(opts, ty);
+            let ty = compile_data_type(opts, ty, false);
             quote! { ::stef::buf::decode_option(r, |r| { #ty }) }
         }
         DataType::NonZero(ty) => match &ty.value {
@@ -313,16 +317,16 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
                 }
             },
             DataType::Vec(ty) => {
-                let ty = compile_data_type(opts, ty);
+                let ty = compile_data_type(opts, ty, false);
                 quote! { ::stef::buf::decode_non_zero_vec(r, |r| { #ty }) }
             }
             DataType::HashMap(kv) => {
-                let ty_k = compile_data_type(opts, &kv.0);
-                let ty_v = compile_data_type(opts, &kv.1);
+                let ty_k = compile_data_type(opts, &kv.0, false);
+                let ty_v = compile_data_type(opts, &kv.1, false);
                 quote! { ::stef::buf::decode_non_zero_hash_map(r, |r| { #ty_k }, |r| { #ty_v }) }
             }
             DataType::HashSet(ty) => {
-                let ty = compile_data_type(opts, ty);
+                let ty = compile_data_type(opts, ty, false);
                 quote! { ::stef::buf::decode_non_zero_hash_set(r, |r| { #ty }) }
             }
             ty => todo!("compiler should catch invalid {ty:?} type"),
@@ -331,13 +335,17 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
         DataType::BoxBytes => quote! { Box::<[u8]>::decode(r) },
         DataType::Tuple(types) => match types.len() {
             2..=12 => {
-                let types = types.iter().map(|ty| compile_data_type(opts, ty));
-                quote! { { Ok::<_, ::stef::buf::Error>((#(#types?,)*)) } }
+                let types = types.iter().map(|ty| compile_data_type(opts, ty, false));
+                let length = root.then_some(quote! { ::stef::buf::decode_u64(r)?; });
+                quote! { {
+                    #length
+                    Ok::<_, ::stef::buf::Error>((#(#types?,)*))
+                } }
             }
             n => todo!("compiler should catch invalid tuple with {n} elements"),
         },
         DataType::Array(ty, _size) => {
-            let ty = compile_data_type(opts, ty);
+            let ty = compile_data_type(opts, ty, false);
             quote! { ::stef::buf::decode_array(r, |r| { #ty }) }
         }
         DataType::External(ExternalType {

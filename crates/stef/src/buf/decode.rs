@@ -8,7 +8,7 @@ use std::{
 
 pub use bytes::{Buf, Bytes};
 
-use crate::{varint, NonZero};
+use crate::{varint, FieldEncoding, FieldId, NonZero, VariantId};
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
@@ -19,6 +19,7 @@ pub enum Error {
     NonUtf8(std::string::FromUtf8Error),
     MissingField { id: u32, name: Option<&'static str> },
     UnknownVariant(u32),
+    UnknownEncoding(u32),
     Zero,
 }
 
@@ -108,10 +109,19 @@ pub fn decode_bytes_bytes(r: &mut impl Buf) -> Result<Bytes> {
 pub fn decode_vec<R, T, D>(r: &mut R, decode: D) -> Result<Vec<T>>
 where
     R: Buf,
-    D: Fn(&mut R) -> Result<T>,
+    D: Fn(&mut bytes::buf::Take<&mut R>) -> Result<T>,
 {
     let len = decode_u64(r)?;
-    (0..len).map(|_| decode(r)).collect()
+    ensure_size!(r, len as usize);
+
+    let mut vec = Vec::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() {
+        vec.push(decode(&mut r)?);
+    }
+
+    Ok(vec)
 }
 
 pub fn decode_hash_map<R, K, V, DK, DV>(
@@ -122,23 +132,39 @@ pub fn decode_hash_map<R, K, V, DK, DV>(
 where
     R: Buf,
     K: Hash + Eq,
-    DK: Fn(&mut R) -> Result<K>,
-    DV: Fn(&mut R) -> Result<V>,
+    DK: Fn(&mut bytes::buf::Take<&mut R>) -> Result<K>,
+    DV: Fn(&mut bytes::buf::Take<&mut R>) -> Result<V>,
 {
     let len = decode_u64(r)?;
-    (0..len)
-        .map(|_| Ok((decode_key(r)?, decode_value(r)?)))
-        .collect()
+    ensure_size!(r, len as usize);
+
+    let mut map = HashMap::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() {
+        map.insert(decode_key(&mut r)?, decode_value(&mut r)?);
+    }
+
+    Ok(map)
 }
 
 pub fn decode_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<HashSet<T>>
 where
     R: Buf,
     T: Hash + Eq,
-    D: Fn(&mut R) -> Result<T>,
+    D: Fn(&mut bytes::buf::Take<&mut R>) -> Result<T>,
 {
     let len = decode_u64(r)?;
-    (0..len).map(|_| decode(r)).collect()
+    ensure_size!(r, len as usize);
+
+    let mut set = HashSet::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() {
+        set.insert(decode(&mut r)?);
+    }
+
+    Ok(set)
 }
 
 pub fn decode_option<R, T, D>(r: &mut R, decode: D) -> Result<Option<T>>
@@ -158,24 +184,24 @@ pub fn decode_array<const N: usize, R, T, D>(r: &mut R, decode: D) -> Result<[T;
 where
     R: Buf,
     T: Debug,
-    D: Fn(&mut R) -> Result<T>,
+    D: Fn(&mut bytes::buf::Take<&mut R>) -> Result<T>,
 {
     let len = decode_u64(r)?;
-    if (len as usize) < N {
-        return Err(Error::InsufficientData);
+    ensure_size!(r, len as usize);
+
+    let mut vec = Vec::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() && vec.len() < N {
+        vec.push(decode(&mut r)?);
     }
 
-    let buf = (0..N).map(|_| decode(r)).collect::<Result<Vec<_>>>()?;
-
-    // read any remaining values, in case the old array definition was larger.
-    // still have to decode the values to advance the buffer accordingly.
-    for _ in N..len as usize {
-        decode(r)?;
-    }
+    // skip any remaining values, in case the old array definition was larger.
+    r.advance(r.remaining());
 
     // SAFETY: we can unwrap here, because we ensured the Vec exactly matches
     // with the length of the array.
-    Ok(buf.try_into().unwrap())
+    Ok(vec.try_into().unwrap())
 }
 
 macro_rules! ensure_not_empty {
@@ -230,15 +256,20 @@ pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
 pub fn decode_non_zero_vec<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<Vec<T>>>
 where
     R: Buf,
-    D: Fn(&mut R) -> Result<T>,
+    D: Fn(&mut bytes::buf::Take<&mut R>) -> Result<T>,
 {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
+    ensure_size!(r, len as usize);
 
-    (0..len)
-        .map(|_| decode(r))
-        .collect::<Result<_>>()
-        .map(|v| NonZero::<Vec<_>>::new(v).unwrap())
+    let mut vec = Vec::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() {
+        vec.push(decode(&mut r)?);
+    }
+
+    Ok(NonZero::<Vec<_>>::new(vec).unwrap())
 }
 
 pub fn decode_non_zero_hash_map<R, K, V, DK, DV>(
@@ -249,36 +280,83 @@ pub fn decode_non_zero_hash_map<R, K, V, DK, DV>(
 where
     R: Buf,
     K: Hash + Eq,
-    DK: Fn(&mut R) -> Result<K>,
-    DV: Fn(&mut R) -> Result<V>,
+    DK: Fn(&mut bytes::buf::Take<&mut R>) -> Result<K>,
+    DV: Fn(&mut bytes::buf::Take<&mut R>) -> Result<V>,
 {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
+    ensure_size!(r, len as usize);
 
-    (0..len)
-        .map(|_| Ok((decode_key(r)?, decode_value(r)?)))
-        .collect::<Result<_>>()
-        .map(|v| NonZero::<HashMap<_, _>>::new(v).unwrap())
+    let mut map = HashMap::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() {
+        map.insert(decode_key(&mut r)?, decode_value(&mut r)?);
+    }
+
+    Ok(NonZero::<HashMap<_, _>>::new(map).unwrap())
 }
 
 pub fn decode_non_zero_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<HashSet<T>>>
 where
     R: Buf,
     T: Hash + Eq,
-    D: Fn(&mut R) -> Result<T>,
+    D: Fn(&mut bytes::buf::Take<&mut R>) -> Result<T>,
 {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
+    ensure_size!(r, len as usize);
 
-    (0..len)
-        .map(|_| decode(r))
-        .collect::<Result<_>>()
-        .map(|v| NonZero::<HashSet<_>>::new(v).unwrap())
+    let mut set = HashSet::new();
+    let mut r = r.take(len as usize);
+
+    while r.has_remaining() {
+        set.insert(decode(&mut r)?);
+    }
+
+    Ok(NonZero::<HashSet<_>>::new(set).unwrap())
 }
 
-#[inline(always)]
-pub fn decode_id(r: &mut impl Buf) -> Result<u32> {
-    decode_u32(r)
+#[inline]
+pub fn decode_id(r: &mut impl Buf) -> Result<FieldId> {
+    decode_u32(r).and_then(|id| FieldId::from_u32(id).ok_or(Error::UnknownEncoding(id)))
+}
+
+#[inline]
+pub fn decode_variant_id(r: &mut impl Buf) -> Result<VariantId> {
+    decode_u32(r).map(VariantId::new)
+}
+
+pub fn decode_skip(r: &mut impl Buf, encoding: FieldEncoding) -> Result<()> {
+    match encoding {
+        FieldEncoding::Varint => loop {
+            ensure_size!(r, 1);
+            if r.get_u8() & 0x80 == 0 {
+                return Ok(());
+            }
+        },
+        FieldEncoding::LengthPrefixed => {
+            let len = decode_u64(r)? as usize;
+            ensure_size!(r, len);
+            r.advance(len);
+            Ok(())
+        }
+        FieldEncoding::Fixed1 => {
+            ensure_size!(r, 1);
+            r.advance(1);
+            Ok(())
+        }
+        FieldEncoding::Fixed4 => {
+            ensure_size!(r, 4);
+            r.advance(4);
+            Ok(())
+        }
+        FieldEncoding::Fixed8 => {
+            ensure_size!(r, 8);
+            r.advance(8);
+            Ok(())
+        }
+    }
 }
 
 pub trait Decode: Sized {
@@ -333,7 +411,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_vec(r, T::decode)
+        decode_vec(r, |r| T::decode(r))
     }
 }
 
@@ -344,7 +422,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_hash_map(r, K::decode, V::decode)
+        decode_hash_map(r, |r| K::decode(r), |r| V::decode(r))
     }
 }
 
@@ -354,7 +432,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_hash_set(r, T::decode)
+        decode_hash_set(r, |r| T::decode(r))
     }
 }
 
@@ -374,7 +452,7 @@ where
 {
     #[inline(always)]
     fn decode(r: &mut impl Buf) -> Result<Self> {
-        decode_array(r, T::decode)
+        decode_array(r, |r| T::decode(r))
     }
 }
 

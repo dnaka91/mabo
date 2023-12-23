@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 pub use bytes::{BufMut, Bytes};
 
-use crate::{varint, NonZero};
+use crate::{varint, FieldId, NonZero, VariantId};
 
 pub fn encode_bool(w: &mut impl BufMut, value: bool) {
     w.put_u8(value.into());
@@ -54,29 +54,39 @@ pub fn encode_bytes_bytes(w: &mut impl BufMut, value: &Bytes) {
     encode_bytes_std(w, value);
 }
 
-pub fn encode_vec<W, T, E>(w: &mut W, vec: &[T], encode: E)
+pub fn encode_vec<W, T, S, E>(w: &mut W, vec: &[T], size: S, encode: E)
 where
     W: BufMut,
+    S: Fn(&T) -> usize,
     E: Fn(&mut W, &T),
 {
-    encode_u64(w, vec.len() as u64);
+    encode_u64(w, vec.iter().map(size).sum::<usize>() as u64);
 
     for value in vec {
         encode(w, value);
     }
 }
 
-pub fn encode_hash_map<W, K, V, EK, EV>(
+pub fn encode_hash_map<W, K, V, SK, SV, EK, EV>(
     w: &mut W,
     map: &HashMap<K, V>,
+    size_key: SK,
+    size_value: SV,
     encode_key: EK,
     encode_value: EV,
 ) where
     W: BufMut,
+    SK: Fn(&K) -> usize,
+    SV: Fn(&V) -> usize,
     EK: Fn(&mut W, &K),
     EV: Fn(&mut W, &V),
 {
-    encode_u64(w, map.len() as u64);
+    encode_u64(
+        w,
+        map.iter()
+            .map(|(k, v)| size_key(k) + size_value(v))
+            .sum::<usize>() as u64,
+    );
 
     for (key, value) in map {
         encode_key(w, key);
@@ -84,12 +94,13 @@ pub fn encode_hash_map<W, K, V, EK, EV>(
     }
 }
 
-pub fn encode_hash_set<W, T, E>(w: &mut W, set: &HashSet<T>, encode: E)
+pub fn encode_hash_set<W, T, S, E>(w: &mut W, set: &HashSet<T>, size: S, encode: E)
 where
     W: BufMut,
+    S: Fn(&T) -> usize,
     E: Fn(&mut W, &T),
 {
-    encode_u64(w, set.len() as u64);
+    encode_u64(w, set.iter().map(size).sum::<usize>() as u64);
 
     for value in set {
         encode(w, value);
@@ -109,12 +120,13 @@ where
     }
 }
 
-pub fn encode_array<const N: usize, W, T, E>(w: &mut W, array: &[T; N], encode: E)
+pub fn encode_array<const N: usize, W, T, S, E>(w: &mut W, array: &[T; N], size: S, encode: E)
 where
     W: BufMut,
+    S: Fn(&T) -> usize,
     E: Fn(&mut W, &T),
 {
-    encode_u64(w, N as u64);
+    encode_u64(w, array.iter().map(size).sum::<usize>() as u64);
 
     for value in array {
         encode(w, value);
@@ -122,12 +134,28 @@ where
 }
 
 #[inline(always)]
-pub fn encode_id(w: &mut impl BufMut, id: u32) {
-    encode_u32(w, id);
+pub fn encode_tuple<W, S, E>(w: &mut W, size: S, encode: E)
+where
+    W: BufMut,
+    S: Fn() -> usize,
+    E: Fn(&mut W),
+{
+    encode_u64(w, size() as u64);
+    encode(w);
 }
 
 #[inline(always)]
-pub fn encode_field<W, E>(w: &mut W, id: u32, encode: E)
+pub fn encode_id(w: &mut impl BufMut, id: FieldId) {
+    encode_u32(w, id.into_u32());
+}
+
+#[inline(always)]
+pub fn encode_variant_id(w: &mut impl BufMut, id: VariantId) {
+    encode_u32(w, id.value);
+}
+
+#[inline(always)]
+pub fn encode_field<W, E>(w: &mut W, id: FieldId, encode: E)
 where
     W: BufMut,
     E: Fn(&mut W),
@@ -137,7 +165,7 @@ where
 }
 
 #[inline(always)]
-pub fn encode_field_option<W, T, E>(w: &mut W, id: u32, option: &Option<T>, encode: E)
+pub fn encode_field_option<W, T, E>(w: &mut W, id: FieldId, option: &Option<T>, encode: E)
 where
     W: BufMut,
     E: Fn(&mut W, &T),
@@ -148,7 +176,7 @@ where
     }
 }
 
-pub trait Encode {
+pub trait Encode: super::Size {
     fn encode(&self, w: &mut impl BufMut);
 }
 
@@ -200,7 +228,7 @@ where
 {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        encode_vec(w, self, |w, v| v.encode(w));
+        encode_vec(w, self, T::size, |w, v| v.encode(w));
     }
 }
 
@@ -210,7 +238,7 @@ where
 {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        encode_vec(w, self, |w, v| v.encode(w));
+        encode_vec(w, self, T::size, |w, v| v.encode(w));
     }
 }
 
@@ -221,7 +249,14 @@ where
 {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        encode_hash_map(w, self, |w, k| k.encode(w), |w, v| v.encode(w));
+        encode_hash_map(
+            w,
+            self,
+            K::size,
+            V::size,
+            |w, k| k.encode(w),
+            |w, v| v.encode(w),
+        );
     }
 }
 
@@ -231,7 +266,7 @@ where
 {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        encode_hash_set(w, self, |w, v| v.encode(w));
+        encode_hash_set(w, self, T::size, |w, v| v.encode(w));
     }
 }
 
@@ -251,7 +286,7 @@ where
 {
     #[inline(always)]
     fn encode(&self, w: &mut impl BufMut) {
-        encode_array(w, self, |w, v| v.encode(w));
+        encode_array(w, self, T::size, |w, v| v.encode(w));
     }
 }
 

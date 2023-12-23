@@ -18,6 +18,78 @@ pub use buf::{Buf, BufMut, Bytes, Decode, Encode};
 pub mod buf;
 pub mod varint;
 
+#[derive(Clone, Copy)]
+pub struct FieldId {
+    pub value: u32,
+    pub encoding: FieldEncoding,
+}
+
+impl FieldId {
+    #[inline]
+    #[must_use]
+    pub const fn new(value: u32, encoding: FieldEncoding) -> Self {
+        Self { value, encoding }
+    }
+
+    #[must_use]
+    pub const fn from_u32(value: u32) -> Option<Self> {
+        let Some(encoding) = FieldEncoding::from_u32(value) else {
+            return None;
+        };
+        let value = value >> 3;
+
+        Some(Self { value, encoding })
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn into_u32(self) -> u32 {
+        self.value << 3 | self.encoding as u32
+    }
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+#[repr(u32)]
+pub enum FieldEncoding {
+    /// Variable-length integer.
+    Varint = 0,
+    /// Arbitrary content prefixed with its byte length.
+    LengthPrefixed = 1,
+    /// 1-byte fixed width data.
+    Fixed1 = 2,
+    /// 4-byte fixed width data.
+    Fixed4 = 3,
+    /// 8-byte fixed width data.
+    Fixed8 = 4,
+}
+
+impl FieldEncoding {
+    #[must_use]
+    pub const fn from_u32(value: u32) -> Option<Self> {
+        Some(match value & 0b111 {
+            0 => Self::Varint,
+            1 => Self::LengthPrefixed,
+            2 => Self::Fixed1,
+            3 => Self::Fixed4,
+            4 => Self::Fixed8,
+            _ => return None,
+        })
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct VariantId {
+    pub value: u32,
+}
+
+impl VariantId {
+    #[inline]
+    #[must_use]
+    pub fn new(value: u32) -> Self {
+        Self { value }
+    }
+}
+
 #[macro_export]
 macro_rules! include {
     ($name:literal) => {

@@ -1,5 +1,9 @@
 #![allow(missing_docs, clippy::missing_errors_doc)]
 
+mod evolution {
+    stef::include!("evolution");
+}
+
 mod sample {
     stef::include!("sample");
 }
@@ -120,7 +124,7 @@ mod tests {
 
     use stef::{Decode, Encode};
 
-    use super::sample;
+    use super::{evolution, sample};
 
     fn roundtrip<T: Debug + PartialEq + Decode + Encode>(value: &T) {
         let mut buf = Vec::new();
@@ -129,6 +133,21 @@ mod tests {
 
         let value2 = T::decode(&mut &*buf).unwrap();
         assert_eq!(*value, value2);
+    }
+
+    #[test]
+    fn evolution() {
+        let mut buf = Vec::new();
+        evolution::Version2 {
+            field1: 5,
+            field2: "Test".to_owned(),
+        }
+        .encode(&mut buf);
+
+        println!("{}: {buf:?}", std::any::type_name::<evolution::Version2>());
+
+        let value = evolution::Version1::decode(&mut &*buf).unwrap();
+        assert_eq!(5, value.field1);
     }
 
     #[test]

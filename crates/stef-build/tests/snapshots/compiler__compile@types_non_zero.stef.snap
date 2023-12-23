@@ -35,95 +35,96 @@ impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::Fixed1),
             |w| {
                 ::stef::buf::encode_u8(w, self.f01.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            2,
+            ::stef::FieldId::new(2, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u16(w, self.f02.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            3,
+            ::stef::FieldId::new(3, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u32(w, self.f03.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            4,
+            ::stef::FieldId::new(4, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u64(w, self.f04.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            5,
+            ::stef::FieldId::new(5, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u128(w, self.f05.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            6,
+            ::stef::FieldId::new(6, ::stef::FieldEncoding::Fixed1),
             |w| {
                 ::stef::buf::encode_i8(w, self.f06.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            7,
+            ::stef::FieldId::new(7, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_i16(w, self.f07.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            8,
+            ::stef::FieldId::new(8, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_i32(w, self.f08.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            9,
+            ::stef::FieldId::new(9, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_i64(w, self.f09.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            10,
+            ::stef::FieldId::new(10, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_i128(w, self.f10.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            11,
+            ::stef::FieldId::new(11, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_string(w, &self.f11.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            12,
+            ::stef::FieldId::new(12, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_bytes_std(w, &self.f12.get());
             },
         );
         ::stef::buf::encode_field(
             w,
-            13,
+            ::stef::FieldId::new(13, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
                     &self.f13.get(),
+                    |v| { ::stef::buf::size_string(&v) },
                     |w, v| {
                         ::stef::buf::encode_string(w, &v);
                     },
@@ -132,11 +133,13 @@ impl ::stef::Encode for Sample {
         );
         ::stef::buf::encode_field(
             w,
-            14,
+            ::stef::FieldId::new(14, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
                     &self.f14.get(),
+                    |k| { ::stef::buf::size_string(&k) },
+                    |v| { ::stef::buf::size_bytes_std(&v) },
                     |w, k| {
                         ::stef::buf::encode_string(w, &k);
                     },
@@ -148,11 +151,12 @@ impl ::stef::Encode for Sample {
         );
         ::stef::buf::encode_field(
             w,
-            15,
+            ::stef::FieldId::new(15, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
                     &self.f15.get(),
+                    |v| { ::stef::buf::size_string(&v) },
                     |w, v| {
                         ::stef::buf::encode_string(w, &v);
                     },
@@ -182,7 +186,8 @@ impl ::stef::Decode for Sample {
         let mut f14: Option<::stef::NonZeroHashMap<String, Vec<u8>>> = None;
         let mut f15: Option<::stef::NonZeroHashSet<String>> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => f01 = Some(::stef::buf::decode_non_zero_u8(r)?),
                 2 => f02 = Some(::stef::buf::decode_non_zero_u16(r)?),
@@ -221,7 +226,7 @@ impl ::stef::Decode for Sample {
                         )?,
                     );
                 }
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(Self {

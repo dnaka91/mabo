@@ -20,14 +20,14 @@ impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u32(w, self.0);
             },
         );
         ::stef::buf::encode_field(
             w,
-            2,
+            ::stef::FieldId::new(2, ::stef::FieldEncoding::Fixed1),
             |w| {
                 ::stef::buf::encode_bool(w, self.1);
             },
@@ -42,11 +42,12 @@ impl ::stef::Decode for Sample {
         let mut n0: Option<u32> = None;
         let mut n1: Option<bool> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => n0 = Some(::stef::buf::decode_u32(r)?),
                 2 => n1 = Some(::stef::buf::decode_bool(r)?),
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(

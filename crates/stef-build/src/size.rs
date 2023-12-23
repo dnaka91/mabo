@@ -279,7 +279,7 @@ fn is_copy(ty: &DataType<'_>) -> bool {
 }
 
 #[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
-fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStream {
+pub(crate) fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStream {
     match &ty.value {
         DataType::Bool => quote! { ::stef::buf::size_bool(#name) },
         DataType::U8 => quote! { ::stef::buf::size_u8(#name) },

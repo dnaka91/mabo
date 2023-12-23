@@ -24,28 +24,41 @@ impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u32(w, self.field1);
             },
         );
         ::stef::buf::encode_field(
             w,
-            2,
+            ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_bytes_std(w, &self.field2);
             },
         );
         ::stef::buf::encode_field(
             w,
-            3,
+            ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_bool(w, self.field3.0);
-                ::stef::buf::encode_array(
+                ::stef::buf::encode_tuple(
                     w,
-                    &&(self.field3.1),
-                    |w, v| {
-                        ::stef::buf::encode_i16(w, *v);
+                    || {
+                        ::stef::buf::size_bool(self.field3.0)
+                            + ::stef::buf::size_array(
+                                &&(self.field3.1),
+                                |v| { ::stef::buf::size_i16(*v) },
+                            )
+                    },
+                    |w| {
+                        ::stef::buf::encode_bool(w, self.field3.0);
+                        ::stef::buf::encode_array(
+                            w,
+                            &&(self.field3.1),
+                            |v| { ::stef::buf::size_i16(*v) },
+                            |w, v| {
+                                ::stef::buf::encode_i16(w, *v);
+                            },
+                        );
                     },
                 );
             },
@@ -61,13 +74,15 @@ impl ::stef::Decode for Sample {
         let mut field2: Option<Vec<u8>> = None;
         let mut field3: Option<(bool, [i16; 4])> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => field1 = Some(::stef::buf::decode_u32(r)?),
                 2 => field2 = Some(::stef::buf::decode_bytes_std(r)?),
                 3 => {
                     field3 = Some(
                         {
+                            ::stef::buf::decode_u64(r)?;
                             Ok::<
                                 _,
                                 ::stef::buf::Error,
@@ -81,7 +96,7 @@ impl ::stef::Decode for Sample {
                         }?,
                     );
                 }
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(Self {

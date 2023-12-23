@@ -21,11 +21,23 @@ impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
                     &self.value,
+                    |v| {
+                        ::stef::buf::size_option(
+                            v.as_ref(),
+                            |v| {
+                                ::stef::buf::size_hash_map(
+                                    &v.get(),
+                                    |k| { ::stef::buf::size_i64(*k) },
+                                    |v| { ::stef::buf::size_string(&v) },
+                                )
+                            },
+                        )
+                    },
                     |w, v| {
                         ::stef::buf::encode_option(
                             w,
@@ -34,6 +46,8 @@ impl ::stef::Encode for Sample {
                                 ::stef::buf::encode_hash_map(
                                     w,
                                     &v.get(),
+                                    |k| { ::stef::buf::size_i64(*k) },
+                                    |v| { ::stef::buf::size_string(&v) },
                                     |w, k| {
                                         ::stef::buf::encode_i64(w, *k);
                                     },
@@ -56,7 +70,8 @@ impl ::stef::Decode for Sample {
     fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
         let mut value: Option<Vec<Option<::stef::NonZeroHashMap<i64, Box<str>>>>> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => {
                     value = Some(
@@ -77,7 +92,7 @@ impl ::stef::Decode for Sample {
                         )?,
                     );
                 }
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(Self {

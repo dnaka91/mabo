@@ -25,11 +25,12 @@ impl ::stef::Encode for Sample {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
                     &self.f1,
+                    |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
                     },
@@ -38,11 +39,13 @@ impl ::stef::Encode for Sample {
         );
         ::stef::buf::encode_field(
             w,
-            2,
+            ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
                     &self.f2,
+                    |k| { ::stef::buf::size_u32(*k) },
+                    |v| { ::stef::buf::size_string(&v) },
                     |w, k| {
                         ::stef::buf::encode_u32(w, *k);
                     },
@@ -54,11 +57,12 @@ impl ::stef::Encode for Sample {
         );
         ::stef::buf::encode_field(
             w,
-            3,
+            ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
                     &self.f3,
+                    |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
                     },
@@ -67,7 +71,7 @@ impl ::stef::Encode for Sample {
         );
         ::stef::buf::encode_field_option(
             w,
-            4,
+            ::stef::FieldId::new(4, ::stef::FieldEncoding::Varint),
             &self.f4,
             |w, v| {
                 ::stef::buf::encode_u32(w, *v);
@@ -75,7 +79,7 @@ impl ::stef::Encode for Sample {
         );
         ::stef::buf::encode_field(
             w,
-            5,
+            ::stef::FieldId::new(5, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u32(w, self.f5.get());
             },
@@ -93,7 +97,8 @@ impl ::stef::Decode for Sample {
         let mut f4: Option<u32> = None;
         let mut f5: Option<::std::num::NonZeroU32> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => {
                     f1 = Some(
@@ -119,7 +124,7 @@ impl ::stef::Decode for Sample {
                 }
                 4 => f4 = Some(::stef::buf::decode_u32(r)?),
                 5 => f5 = Some(::stef::buf::decode_non_zero_u32(r)?),
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(Self {
@@ -207,11 +212,12 @@ impl ::stef::Encode for SampleUnnamed {
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
                     &self.0,
+                    |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
                     },
@@ -220,11 +226,13 @@ impl ::stef::Encode for SampleUnnamed {
         );
         ::stef::buf::encode_field(
             w,
-            2,
+            ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
                     &self.1,
+                    |k| { ::stef::buf::size_u32(*k) },
+                    |v| { ::stef::buf::size_string(&v) },
                     |w, k| {
                         ::stef::buf::encode_u32(w, *k);
                     },
@@ -236,11 +244,12 @@ impl ::stef::Encode for SampleUnnamed {
         );
         ::stef::buf::encode_field(
             w,
-            3,
+            ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
                     &self.2,
+                    |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
                     },
@@ -249,7 +258,7 @@ impl ::stef::Encode for SampleUnnamed {
         );
         ::stef::buf::encode_field_option(
             w,
-            4,
+            ::stef::FieldId::new(4, ::stef::FieldEncoding::Varint),
             &self.3,
             |w, v| {
                 ::stef::buf::encode_u32(w, *v);
@@ -257,7 +266,7 @@ impl ::stef::Encode for SampleUnnamed {
         );
         ::stef::buf::encode_field(
             w,
-            5,
+            ::stef::FieldId::new(5, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u32(w, self.4.get());
             },
@@ -275,7 +284,8 @@ impl ::stef::Decode for SampleUnnamed {
         let mut n3: Option<u32> = None;
         let mut n4: Option<::std::num::NonZeroU32> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => {
                     n0 = Some(
@@ -301,7 +311,7 @@ impl ::stef::Decode for SampleUnnamed {
                 }
                 4 => n3 = Some(::stef::buf::decode_u32(r)?),
                 5 => n4 = Some(::stef::buf::decode_non_zero_u32(r)?),
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(

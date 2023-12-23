@@ -68,16 +68,21 @@ mod tests {
     #[test]
     fn non_zero_vec_valid() {
         let mut buf = Vec::new();
-        encode_vec(&mut buf, &[1, 2, 3], |w, v| encode_u32(w, *v));
-        assert!(decode_non_zero_vec(&mut &*buf, decode_u32).is_ok());
+        encode_vec(
+            &mut buf,
+            &[1, 2, 3],
+            |v| size_u32(*v),
+            |w, v| encode_u32(w, *v),
+        );
+        assert!(decode_non_zero_vec(&mut &*buf, |r| decode_u32(r)).is_ok());
     }
 
     #[test]
     fn non_zero_vec_invalid() {
         let mut buf = Vec::new();
-        encode_vec(&mut buf, &[], |w, v| encode_u32(w, *v));
+        encode_vec(&mut buf, &[], |v| size_u32(*v), |w, v| encode_u32(w, *v));
         assert!(matches!(
-            decode_non_zero_vec(&mut &*buf, decode_u32),
+            decode_non_zero_vec(&mut &*buf, |r| decode_u32(r)),
             Err(Error::Zero),
         ));
     }
@@ -88,10 +93,14 @@ mod tests {
         encode_hash_map(
             &mut buf,
             &HashMap::from_iter([(1, true), (2, false)]),
+            |k| size_u32(*k),
+            |v| size_bool(*v),
             |w, k| encode_u32(w, *k),
             |w, v| encode_bool(w, *v),
         );
-        assert!(decode_non_zero_hash_map(&mut &*buf, decode_u32, decode_bool).is_ok());
+        assert!(
+            decode_non_zero_hash_map(&mut &*buf, |r| decode_u32(r), |r| decode_bool(r)).is_ok()
+        );
     }
 
     #[test]
@@ -100,11 +109,13 @@ mod tests {
         encode_hash_map(
             &mut buf,
             &HashMap::new(),
+            |k| size_u32(*k),
+            |v| size_bool(*v),
             |w, k| encode_u32(w, *k),
             |w, v| encode_bool(w, *v),
         );
         assert!(matches!(
-            decode_non_zero_hash_map(&mut &*buf, decode_u32, decode_bool),
+            decode_non_zero_hash_map(&mut &*buf, |r| decode_u32(r), |r| decode_bool(r)),
             Err(Error::Zero),
         ));
     }
@@ -112,18 +123,28 @@ mod tests {
     #[test]
     fn non_zero_hash_set_valid() {
         let mut buf = Vec::new();
-        encode_hash_set(&mut buf, &HashSet::from_iter([1, 2, 3]), |w, v| {
-            encode_u32(w, *v);
-        });
-        assert!(decode_non_zero_hash_set(&mut &*buf, decode_u32).is_ok());
+        encode_hash_set(
+            &mut buf,
+            &HashSet::from_iter([1, 2, 3]),
+            |v| size_u32(*v),
+            |w, v| {
+                encode_u32(w, *v);
+            },
+        );
+        assert!(decode_non_zero_hash_set(&mut &*buf, |r| decode_u32(r)).is_ok());
     }
 
     #[test]
     fn non_zero_hash_set_invalid() {
         let mut buf = Vec::new();
-        encode_hash_set(&mut buf, &HashSet::new(), |w, v| encode_u32(w, *v));
+        encode_hash_set(
+            &mut buf,
+            &HashSet::new(),
+            |v| size_u32(*v),
+            |w, v| encode_u32(w, *v),
+        );
         assert!(matches!(
-            decode_non_zero_hash_set(&mut &*buf, decode_u32),
+            decode_non_zero_hash_set(&mut &*buf, |r| decode_u32(r)),
             Err(Error::Zero),
         ));
     }

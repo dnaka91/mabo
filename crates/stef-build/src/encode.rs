@@ -51,14 +51,16 @@ fn compile_struct_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                     let name = proc_macro2::Ident::new(name.get(), Span::call_site());
 
                     if let DataType::Option(ty) = &ty.value {
-                        let ty = compile_data_type(opts, ty, if is_copy(&ty.value) {
+                        let (enc, ty) = compile_data_type(opts, ty, if is_copy(&ty.value) {
                             quote! { *v }
                         } else {
                             quote! { v }
-                        });
+                        }, true);
+                        let id = quote! { ::stef::FieldId::new(#id, #enc) };
                         quote! { ::stef::buf::encode_field_option(w, #id, &self.#name, |w, v| { #ty; }); }
                     } else {
-                        let ty = compile_data_type(opts, ty, quote! { self.#name });
+                        let (enc, ty) = compile_data_type(opts, ty, quote! { self.#name }, true);
+                        let id = quote! { ::stef::FieldId::new(#id, #enc) };
                         quote! { ::stef::buf::encode_field(w, #id, |w| { #ty; }); }
                     }
                 },
@@ -78,14 +80,16 @@ fn compile_struct_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                     let idx = proc_macro2::Literal::usize_unsuffixed(idx);
 
                     if let DataType::Option(ty) = &ty.value {
-                        let ty = compile_data_type(opts, ty, if is_copy(&ty.value) {
+                        let (enc, ty) = compile_data_type(opts, ty, if is_copy(&ty.value) {
                             quote! { *v }
                         } else {
                             quote! { v }
-                        });
+                        }, true);
+                        let id = quote !{ ::stef::FieldId::new(#id, #enc) };
                         quote! { ::stef::buf::encode_field_option(w, #id, &self.#idx, |w, v| { #ty; }); }
                     }else{
-                        let ty = compile_data_type(opts, ty, quote! { self.#idx });
+                        let (enc, ty) = compile_data_type(opts, ty, quote! { self.#idx }, true);
+                        let id = quote !{ ::stef::FieldId::new(#id, #enc) };
                         quote! { ::stef::buf::encode_field(w, #id, |w| { #ty; }); }
                     }
                 });
@@ -141,6 +145,7 @@ fn compile_variant(
     }: &Variant<'_>,
 ) -> TokenStream {
     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
+    let id = quote! { ::stef::VariantId::new(#id) };
     let name = Ident::new(name.get(), Span::call_site());
     let fields_body = compile_variant_fields(opts, fields);
 
@@ -152,7 +157,7 @@ fn compile_variant(
 
             quote! {
                 Self::#name{ #(#field_names,)* } => {
-                    ::stef::buf::encode_id(w, #id);
+                    ::stef::buf::encode_variant_id(w, #id);
                     #fields_body
                 }
             }
@@ -165,14 +170,14 @@ fn compile_variant(
 
             quote! {
                 Self::#name(#(#field_names,)*) => {
-                    ::stef::buf::encode_id(w, #id);
+                    ::stef::buf::encode_variant_id(w, #id);
                     #fields_body
                 }
             }
         }
         Fields::Unit => quote! {
             Self::#name => {
-                ::stef::buf::encode_id(w, #id);
+                ::stef::buf::encode_variant_id(w, #id);
                 #fields_body
             }
         },
@@ -196,7 +201,8 @@ fn compile_variant_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                     if matches!(ty.value, DataType::Option(_)) {
                         quote! { ::stef::buf::encode_field_option(w, #id, &#name); }
                     } else {
-                        let ty = compile_data_type(opts, ty, quote! { *#name });
+                        let (enc, ty) = compile_data_type(opts, ty, quote! { *#name }, true);
+                        let id = quote! { ::stef::FieldId::new(#id, #enc) };
                         quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                     }
                 },
@@ -214,7 +220,8 @@ fn compile_variant_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
                 .map(|(idx, UnnamedField { ty, id, .. })| {
                     let id = proc_macro2::Literal::u32_unsuffixed(id.get());
                     let name = Ident::new(&format!("n{idx}"), Span::call_site());
-                    let ty = compile_data_type(opts, ty, quote! { *#name });
+                    let (enc, ty) = compile_data_type(opts, ty, quote! { *#name }, true);
+                    let id = quote! { ::stef::FieldId::new(#id, #enc) };
 
                     quote! { ::stef::buf::encode_field(w, #id, |w| { #ty }); }
                 });
@@ -238,7 +245,7 @@ fn compile_generics(Generics(types): &Generics<'_>) -> (TokenStream, TokenStream
 
             (
                 quote! { <#(#types,)*> },
-                quote! { where #(#types2: ::stef::buf::Encode,)* },
+                quote! { where #(#types2: ::stef::buf::Encode + ::stef::buf::Size,)* },
             )
         })
         .unwrap_or_default()
@@ -264,30 +271,81 @@ fn is_copy(ty: &DataType<'_>) -> bool {
 }
 
 #[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
-fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStream {
+fn compile_data_type(
+    opts: &Opts,
+    ty: &Type<'_>,
+    name: TokenStream,
+    root: bool,
+) -> (TokenStream, TokenStream) {
     match &ty.value {
-        DataType::Bool => quote! { ::stef::buf::encode_bool(w, #name) },
-        DataType::U8 => quote! { ::stef::buf::encode_u8(w, #name) },
-        DataType::U16 => quote! { ::stef::buf::encode_u16(w, #name) },
-        DataType::U32 => quote! { ::stef::buf::encode_u32(w, #name) },
-        DataType::U64 => quote! { ::stef::buf::encode_u64(w, #name) },
-        DataType::U128 => quote! { ::stef::buf::encode_u128(w, #name) },
-        DataType::I8 => quote! { ::stef::buf::encode_i8(w, #name) },
-        DataType::I16 => quote! { ::stef::buf::encode_i16(w, #name) },
-        DataType::I32 => quote! { ::stef::buf::encode_i32(w, #name) },
-        DataType::I64 => quote! { ::stef::buf::encode_i64(w, #name) },
-        DataType::I128 => quote! { ::stef::buf::encode_i128(w, #name) },
-        DataType::F32 => quote! { ::stef::buf::encode_f32(w, #name) },
-        DataType::F64 => quote! { ::stef::buf::encode_f64(w, #name) },
-        DataType::String | DataType::StringRef | DataType::BoxString => {
-            quote! { ::stef::buf::encode_string(w, &#name) }
-        }
+        DataType::Bool => (
+            quote! { ::stef::FieldEncoding::Fixed1 },
+            quote! { ::stef::buf::encode_bool(w, #name) },
+        ),
+        DataType::U8 => (
+            quote! { ::stef::FieldEncoding::Fixed1 },
+            quote! { ::stef::buf::encode_u8(w, #name) },
+        ),
+        DataType::U16 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_u16(w, #name) },
+        ),
+        DataType::U32 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_u32(w, #name) },
+        ),
+        DataType::U64 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_u64(w, #name) },
+        ),
+        DataType::U128 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_u128(w, #name) },
+        ),
+        DataType::I8 => (
+            quote! { ::stef::FieldEncoding::Fixed1 },
+            quote! { ::stef::buf::encode_i8(w, #name) },
+        ),
+        DataType::I16 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_i16(w, #name) },
+        ),
+        DataType::I32 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_i32(w, #name) },
+        ),
+        DataType::I64 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_i64(w, #name) },
+        ),
+        DataType::I128 => (
+            quote! { ::stef::FieldEncoding::Varint },
+            quote! { ::stef::buf::encode_i128(w, #name) },
+        ),
+        DataType::F32 => (
+            quote! { ::stef::FieldEncoding::Fixed4 },
+            quote! { ::stef::buf::encode_f32(w, #name) },
+        ),
+        DataType::F64 => (
+            quote! { ::stef::FieldEncoding::Fixed8 },
+            quote! { ::stef::buf::encode_f64(w, #name) },
+        ),
+        DataType::String | DataType::StringRef | DataType::BoxString => (
+            quote! { ::stef::FieldEncoding::LengthPrefixed },
+            quote! { ::stef::buf::encode_string(w, &#name) },
+        ),
         DataType::Bytes | DataType::BytesRef | DataType::BoxBytes => match opts.bytes_type {
-            BytesType::VecU8 => quote! { ::stef::buf::encode_bytes_std(w, &#name) },
-            BytesType::Bytes => quote! { ::stef::buf::encode_bytes_bytes(w, &#name) },
+            BytesType::VecU8 => (
+                quote! { ::stef::FieldEncoding::LengthPrefixed },
+                quote! { ::stef::buf::encode_bytes_std(w, &#name) },
+            ),
+            BytesType::Bytes => (
+                quote! { ::stef::FieldEncoding::LengthPrefixed },
+                quote! { ::stef::buf::encode_bytes_bytes(w, &#name) },
+            ),
         },
         DataType::Vec(ty) => {
-            let ty = compile_data_type(
+            let size = super::size::compile_data_type(
                 opts,
                 ty,
                 if is_copy(&ty.value) {
@@ -296,10 +354,22 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                     quote! { v }
                 },
             );
-            quote! { ::stef::buf::encode_vec(w, &#name, |w, v| { #ty; }) }
+            let (_, encode) = compile_data_type(
+                opts,
+                ty,
+                if is_copy(&ty.value) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+                false,
+            );
+            (quote! { ::stef::FieldEncoding::LengthPrefixed }, {
+                quote! { ::stef::buf::encode_vec(w, &#name, |v| { #size }, |w, v| { #encode; }) }
+            })
         }
         DataType::HashMap(kv) => {
-            let ty_k = compile_data_type(
+            let size_k = super::size::compile_data_type(
                 opts,
                 &kv.0,
                 if is_copy(&kv.0.value) {
@@ -308,7 +378,7 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                     quote! { k }
                 },
             );
-            let ty_v = compile_data_type(
+            let size_v = super::size::compile_data_type(
                 opts,
                 &kv.1,
                 if is_copy(&kv.1.value) {
@@ -317,10 +387,42 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                     quote! { v }
                 },
             );
-            quote! { ::stef::buf::encode_hash_map(w, &#name, |w, k| { #ty_k; }, |w, v| { #ty_v; }) }
+            let (_, encode_k) = compile_data_type(
+                opts,
+                &kv.0,
+                if is_copy(&kv.0.value) {
+                    quote! { *k }
+                } else {
+                    quote! { k }
+                },
+                false,
+            );
+            let (_, encode_v) = compile_data_type(
+                opts,
+                &kv.1,
+                if is_copy(&kv.1.value) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+                false,
+            );
+            (
+                quote! { ::stef::FieldEncoding::LengthPrefixed },
+                quote! {
+                    ::stef::buf::encode_hash_map(
+                        w,
+                        &#name,
+                        |k| { #size_k },
+                        |v| { #size_v },
+                        |w, k| { #encode_k; },
+                        |w, v| { #encode_v; },
+                    )
+                },
+            )
         }
         DataType::HashSet(ty) => {
-            let ty = compile_data_type(
+            let size = super::size::compile_data_type(
                 opts,
                 ty,
                 if is_copy(&ty.value) {
@@ -329,10 +431,23 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                     quote! { v }
                 },
             );
-            quote! { ::stef::buf::encode_hash_set(w, &#name, |w, v| { #ty; }) }
+            let (_, encode) = compile_data_type(
+                opts,
+                ty,
+                if is_copy(&ty.value) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+                false,
+            );
+            (
+                quote! { ::stef::FieldEncoding::LengthPrefixed },
+                quote! { ::stef::buf::encode_hash_set(w, &#name, |v| { #size }, |w, v| { #encode; }) },
+            )
         }
         DataType::Option(ty) => {
-            let ty = compile_data_type(
+            let (_, encode) = compile_data_type(
                 opts,
                 ty,
                 if is_copy(&ty.value) {
@@ -340,33 +455,68 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                 } else {
                     quote! { v }
                 },
+                false,
             );
-            quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #ty; }) }
+            (
+                quote! { ::stef::FieldEncoding::LengthPrefixed },
+                quote! { ::stef::buf::encode_option(w, &#name, |w, v| { #encode; }) },
+            )
         }
         DataType::NonZero(ty) => match &ty.value {
-            DataType::U8 => quote! { ::stef::buf::encode_u8(w, #name.get()) },
-            DataType::U16 => quote! { ::stef::buf::encode_u16(w, #name.get()) },
-            DataType::U32 => quote! { ::stef::buf::encode_u32(w, #name.get()) },
-            DataType::U64 => quote! { ::stef::buf::encode_u64(w, #name.get()) },
-            DataType::U128 => quote! { ::stef::buf::encode_u128(w, #name.get()) },
-            DataType::I8 => quote! { ::stef::buf::encode_i8(w, #name.get()) },
-            DataType::I16 => quote! { ::stef::buf::encode_i16(w, #name.get()) },
-            DataType::I32 => quote! { ::stef::buf::encode_i32(w, #name.get()) },
-            DataType::I64 => quote! { ::stef::buf::encode_i64(w, #name.get()) },
-            DataType::I128 => quote! { ::stef::buf::encode_i128(w, #name.get()) },
+            DataType::U8 => (
+                quote! { ::stef::FieldEncoding::Fixed1 },
+                quote! { ::stef::buf::encode_u8(w, #name.get()) },
+            ),
+            DataType::U16 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_u16(w, #name.get()) },
+            ),
+            DataType::U32 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_u32(w, #name.get()) },
+            ),
+            DataType::U64 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_u64(w, #name.get()) },
+            ),
+            DataType::U128 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_u128(w, #name.get()) },
+            ),
+            DataType::I8 => (
+                quote! { ::stef::FieldEncoding::Fixed1 },
+                quote! { ::stef::buf::encode_i8(w, #name.get()) },
+            ),
+            DataType::I16 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_i16(w, #name.get()) },
+            ),
+            DataType::I32 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_i32(w, #name.get()) },
+            ),
+            DataType::I64 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_i64(w, #name.get()) },
+            ),
+            DataType::I128 => (
+                quote! { ::stef::FieldEncoding::Varint },
+                quote! { ::stef::buf::encode_i128(w, #name.get()) },
+            ),
             DataType::String
             | DataType::StringRef
             | DataType::Bytes
             | DataType::BytesRef
             | DataType::Vec(_)
             | DataType::HashMap(_)
-            | DataType::HashSet(_) => compile_data_type(opts, ty, quote! { #name.get() }),
+            | DataType::HashSet(_) => compile_data_type(opts, ty, quote! { #name.get() }, false),
             ty => todo!("compiler should catch invalid {ty:?} type"),
         },
         DataType::Tuple(types) => match types.len() {
             2..=12 => {
-                let types = types.iter().enumerate().map(|(idx, ty)| {
+                let encode = types.iter().enumerate().map(|(idx, ty)| {
                     let idx = proc_macro2::Literal::usize_unsuffixed(idx);
+
                     compile_data_type(
                         opts,
                         ty,
@@ -375,14 +525,37 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                         } else {
                             quote! { &(#name.#idx) }
                         },
+                        false,
                     )
+                    .1
                 });
-                quote! { #(#types;)* }
+                (
+                    quote! { ::stef::FieldEncoding::LengthPrefixed },
+                    if root {
+                        let size = types.iter().enumerate().map(|(idx, ty)| {
+                            let idx = proc_macro2::Literal::usize_unsuffixed(idx);
+
+                            super::size::compile_data_type(
+                                opts,
+                                ty,
+                                if is_copy(&ty.value) {
+                                    quote! { #name.#idx }
+                                } else {
+                                    quote! { &(#name.#idx) }
+                                },
+                            )
+                        });
+
+                        quote! { ::stef::buf::encode_tuple(w, || { #(#size)+* }, |w| { #(#encode;)* }) }
+                    } else {
+                        quote! { #(#encode;)* }
+                    },
+                )
             }
             n => todo!("compiler should catch invalid tuple with {n} elements"),
         },
         DataType::Array(ty, _size) => {
-            let ty = compile_data_type(
+            let size = super::size::compile_data_type(
                 opts,
                 ty,
                 if is_copy(&ty.value) {
@@ -391,10 +564,24 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStre
                     quote! { v }
                 },
             );
-            quote! { ::stef::buf::encode_array(w, &#name, |w, v| { #ty; }) }
+            let (_, encode) = compile_data_type(
+                opts,
+                ty,
+                if is_copy(&ty.value) {
+                    quote! { *v }
+                } else {
+                    quote! { v }
+                },
+                false,
+            );
+            (
+                quote! { ::stef::FieldEncoding::LengthPrefixed },
+                quote! { ::stef::buf::encode_array(w, &#name, |v| { #size }, |w, v| { #encode; }) },
+            )
         }
-        DataType::External(_) => {
-            quote! { (#name).encode(w) }
-        }
+        DataType::External(_) => (
+            quote! { ::stef::FieldEncoding::LengthPrefixed },
+            quote! { (#name).encode(w) },
+        ),
     }
 }

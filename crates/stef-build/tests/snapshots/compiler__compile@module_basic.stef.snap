@@ -27,7 +27,7 @@ pub mod a {
             fn encode(&self, w: &mut impl ::stef::BufMut) {
                 match self {
                     Self::One => {
-                        ::stef::buf::encode_id(w, 1);
+                        ::stef::buf::encode_variant_id(w, ::stef::VariantId::new(1));
                     }
                 }
             }
@@ -36,7 +36,7 @@ pub mod a {
         impl ::stef::Decode for Sample {
             #[allow(clippy::too_many_lines)]
             fn decode(r: &mut impl ::stef::Buf) -> ::stef::buf::Result<Self> {
-                match ::stef::buf::decode_id(r)? {
+                match ::stef::buf::decode_variant_id(r)?.value {
                     1 => Ok(Self::One),
                     id => Err(::stef::buf::Error::UnknownVariant(id)),
                 }
@@ -73,14 +73,14 @@ pub mod a {
         fn encode(&self, w: &mut impl ::stef::BufMut) {
             ::stef::buf::encode_field(
                 w,
-                1,
+                ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
                 |w| {
                     ::stef::buf::encode_u32(w, self.value);
                 },
             );
             ::stef::buf::encode_field(
                 w,
-                2,
+                ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
                 |w| {
                     (self.inner).encode(w);
                 },
@@ -95,11 +95,12 @@ pub mod a {
             let mut value: Option<u32> = None;
             let mut inner: Option<b::Sample> = None;
             loop {
-                match ::stef::buf::decode_id(r)? {
+                let id = ::stef::buf::decode_id(r)?;
+                match id.value {
                     ::stef::buf::END_MARKER => break,
                     1 => value = Some(::stef::buf::decode_u32(r)?),
                     2 => inner = Some(b::Sample::decode(r)?),
-                    _ => continue,
+                    _ => ::stef::buf::decode_skip(r, id.encoding)?,
                 }
             }
             Ok(Self {

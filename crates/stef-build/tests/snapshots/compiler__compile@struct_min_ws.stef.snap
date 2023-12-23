@@ -15,7 +15,7 @@ pub struct Sample<T> {
 #[automatically_derived]
 impl<T> ::stef::Encode for Sample<T>
 where
-    T: ::stef::buf::Encode,
+    T: ::stef::buf::Encode + ::stef::buf::Size,
 {
     #[allow(
         clippy::borrow_deref_ref,
@@ -26,21 +26,21 @@ where
     fn encode(&self, w: &mut impl ::stef::BufMut) {
         ::stef::buf::encode_field(
             w,
-            1,
+            ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
             |w| {
                 ::stef::buf::encode_u32(w, self.a);
             },
         );
         ::stef::buf::encode_field(
             w,
-            2,
+            ::stef::FieldId::new(2, ::stef::FieldEncoding::Fixed1),
             |w| {
                 ::stef::buf::encode_bool(w, self.b);
             },
         );
         ::stef::buf::encode_field(
             w,
-            3,
+            ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 (self.c).encode(w);
             },
@@ -59,12 +59,13 @@ where
         let mut b: Option<bool> = None;
         let mut c: Option<T> = None;
         loop {
-            match ::stef::buf::decode_id(r)? {
+            let id = ::stef::buf::decode_id(r)?;
+            match id.value {
                 ::stef::buf::END_MARKER => break,
                 1 => a = Some(::stef::buf::decode_u32(r)?),
                 2 => b = Some(::stef::buf::decode_bool(r)?),
                 3 => c = Some(T::decode(r)?),
-                _ => continue,
+                _ => ::stef::buf::decode_skip(r, id.encoding)?,
             }
         }
         Ok(Self {

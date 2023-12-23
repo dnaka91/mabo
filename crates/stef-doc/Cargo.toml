@@ -10,7 +10,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-anyhow = "1.0.75"
+anyhow.workspace = true
 askama = { version = "0.12.1", default-features = false, features = ["markdown"] }
 heck = "0.4.1"
 stef-meta = { path = "../stef-meta" }

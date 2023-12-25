@@ -1,3 +1,5 @@
+/// Schema with a bit of everything, to try out more complex scenarios.
+
 /// Basic user information.
 ///
 /// Uses various other `structs` and `enums` to compose the information

@@ -8,6 +8,9 @@ Schema {
         "struct_min_ws.stef",
     ),
     source: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

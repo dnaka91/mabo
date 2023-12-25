@@ -1,6 +1,6 @@
 use winnow::{
-    ascii::{multispace0, space0},
-    combinator::{fail, peek, preceded, repeat, terminated},
+    ascii::{multispace0, newline, space0},
+    combinator::{fail, opt, peek, preceded, repeat, terminated},
     dispatch,
     error::ParserError,
     prelude::*,
@@ -50,15 +50,19 @@ pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, Pars
 
     trace(
         "schema",
-        terminated(
-            repeat(0.., parse_definition.map_err(Into::into)),
-            multispace0,
+        (
+            opt(terminated(ws(comments::parse.map_err(Into::into)), newline)),
+            terminated(
+                repeat(0.., parse_definition.map_err(Into::into)),
+                multispace0,
+            ),
         ),
     )
     .parse_next(input)
-    .map(|definitions| Schema {
+    .map(|(comment, definitions)| Schema {
         path: None,
         source,
+        comment: comment.unwrap_or_default(),
         definitions,
     })
 }

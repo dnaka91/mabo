@@ -5,6 +5,9 @@
 {% block content %}
 <div class="section">
   <h2>Schema {{ name }}</h2>
+  <div class="markdown pl-6">
+    {{ self::merge_comments(comment)|markdown|trim|safe }}
+  </div>
 </div>
 <div class="section">
   <h3>Modules</h3>

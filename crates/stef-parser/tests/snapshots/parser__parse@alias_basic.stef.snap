@@ -8,6 +8,9 @@ Schema {
         "alias_basic.stef",
     ),
     source: "/// Sample type alias.\ntype Sample = u32;\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         TypeAlias(
             TypeAlias {

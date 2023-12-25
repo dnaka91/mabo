@@ -8,6 +8,9 @@ Schema {
         "attribute_single.stef",
     ),
     source: "#[deprecated = \"don't use\"]\nstruct Sample\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

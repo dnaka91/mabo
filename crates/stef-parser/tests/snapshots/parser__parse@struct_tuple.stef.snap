@@ -8,6 +8,9 @@ Schema {
         "struct_tuple.stef",
     ),
     source: "/// Basic struct.\nstruct Sample(u32 @1, bool @2)\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

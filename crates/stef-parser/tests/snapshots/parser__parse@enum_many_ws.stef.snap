@@ -8,6 +8,9 @@ Schema {
         "enum_many_ws.stef",
     ),
     source: "\n /// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n       Two  (   u32   @1,     u64     @2)    @2,\n\n            Three     {\n\n                    field1:    u32      @1,\n\n                    field2:    bool     @2,\n\n            }    @3,\n\n }\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Enum(
             Enum {

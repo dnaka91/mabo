@@ -8,6 +8,9 @@ Schema {
         "import_basic.stef",
     ),
     source: "use other::schema::Sample;\nuse second::submodule;\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Import(
             Import {

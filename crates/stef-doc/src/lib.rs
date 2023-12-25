@@ -38,7 +38,10 @@ pub struct Output<'a> {
 pub fn render_schema<'a>(
     _opts: &'a Opts,
     Schema {
-        path, definitions, ..
+        path,
+        comment,
+        definitions,
+        ..
     }: &'a Schema<'_>,
 ) -> Result<Output<'a>> {
     let name = path
@@ -52,6 +55,7 @@ pub fn render_schema<'a>(
         content: templates::Index {
             name,
             path: &path,
+            comment,
             definitions,
         }
         .render()?,

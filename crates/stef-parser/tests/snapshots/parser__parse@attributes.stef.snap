@@ -8,6 +8,9 @@ Schema {
         "attributes.stef",
     ),
     source: "#[deprecated = \"don't use\", compress]\n#[validate(\n    in_range(min = 100, max = 200),\n    non_empty,\n)]\nstruct Sample\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

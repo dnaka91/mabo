@@ -32,6 +32,7 @@ fn parse_schema_diagnostic(index: &LineIndex, e: &ParseSchemaError) -> Diagnosti
         ParseSchemaCause::Parser(_, at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
         }
+        ParseSchemaCause::Comment(e) => parse_comment_diagnostic(index, e),
         ParseSchemaCause::Definition(e) => parse_definition_diagnostic(index, e),
     }
 }

@@ -8,6 +8,9 @@ Schema {
         "attribute_unit.stef",
     ),
     source: "#[deprecated]\nstruct Sample\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

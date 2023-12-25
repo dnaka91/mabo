@@ -8,6 +8,9 @@ Schema {
         "types_nested.stef",
     ),
     source: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

@@ -12,6 +12,7 @@ use stef_parser::{Comment, Const, Definition, Enum, Fields, Module, Struct, Type
 pub struct Index<'a> {
     pub name: &'a str,
     pub path: &'a [Rc<str>],
+    pub comment: &'a Comment<'a>,
     pub definitions: &'a [Definition<'a>],
 }
 

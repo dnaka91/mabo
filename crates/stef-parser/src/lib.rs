@@ -112,6 +112,8 @@ pub struct Schema<'a> {
     pub path: Option<PathBuf>,
     /// Original source code form which this schema was parsed.
     pub source: &'a str,
+    /// Optional schema-level comment.
+    pub comment: Comment<'a>,
     /// List of all the definitions that make up the schema.
     pub definitions: Vec<Definition<'a>>,
 }
@@ -146,6 +148,10 @@ impl<'a> Schema<'a> {
 
 impl Display for Schema<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if !self.comment.0.is_empty() {
+            writeln!(f, "{}", self.comment)?;
+        }
+
         for definition in &self.definitions {
             writeln!(f, "{definition}")?;
         }

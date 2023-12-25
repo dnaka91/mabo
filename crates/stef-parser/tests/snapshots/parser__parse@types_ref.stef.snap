@@ -8,6 +8,9 @@ Schema {
         "types_ref.stef",
     ),
     source: "struct Sample {\n    basic: Test123 @1,\n    with_generics: KeyValue<u32, bool> @2,\n}\n\nenum Test123 {\n    Value @1,\n}\n\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Struct(
             Struct {

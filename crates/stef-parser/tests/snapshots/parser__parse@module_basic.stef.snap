@@ -8,6 +8,9 @@ Schema {
         "module_basic.stef",
     ),
     source: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}\n",
+    comment: Comment(
+        [],
+    ),
     definitions: [
         Module(
             Module {

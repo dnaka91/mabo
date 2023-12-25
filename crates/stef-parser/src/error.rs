@@ -80,6 +80,8 @@ impl Diagnostic for ParseSchemaError {
 pub enum ParseSchemaCause {
     Parser(ErrorKind, usize),
     #[diagnostic(transparent)]
+    Comment(ParseCommentError),
+    #[diagnostic(transparent)]
     Definition(ParseDefinitionError),
 }
 
@@ -87,6 +89,7 @@ impl Error for ParseSchemaCause {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             Self::Parser(kind, _) => kind.source(),
+            Self::Comment(inner) => inner.source(),
             Self::Definition(inner) => inner.source(),
         }
     }
@@ -96,8 +99,15 @@ impl Display for ParseSchemaCause {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Parser(kind, _) => kind.fmt(f),
+            Self::Comment(inner) => inner.fmt(f),
             Self::Definition(inner) => inner.fmt(f),
         }
+    }
+}
+
+impl From<ParseCommentError> for ParseSchemaCause {
+    fn from(value: ParseCommentError) -> Self {
+        Self::Comment(value)
     }
 }
 

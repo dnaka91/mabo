@@ -19,26 +19,14 @@ Schema {
                 ),
                 name: Name {
                     value: "SIMPLE",
-                    span: Span {
-                        start: 6,
-                        end: 12,
-                    },
                 },
                 ty: Type {
                     value: String,
-                    span: Span {
-                        start: 14,
-                        end: 20,
-                    },
                 },
                 value: Literal {
                     value: String(
                         "value",
                     ),
-                    span: Span {
-                        start: 23,
-                        end: 30,
-                    },
                 },
             },
         ),
@@ -49,26 +37,14 @@ Schema {
                 ),
                 name: Name {
                     value: "NEWLINE_ESCAPE",
-                    span: Span {
-                        start: 39,
-                        end: 53,
-                    },
                 },
                 ty: Type {
                     value: String,
-                    span: Span {
-                        start: 55,
-                        end: 61,
-                    },
                 },
                 value: Literal {
                     value: String(
                         "one two three",
                     ),
-                    span: Span {
-                        start: 64,
-                        end: 93,
-                    },
                 },
             },
         ),
@@ -79,26 +55,14 @@ Schema {
                 ),
                 name: Name {
                     value: "ESCAPES",
-                    span: Span {
-                        start: 102,
-                        end: 109,
-                    },
                 },
                 ty: Type {
                     value: String,
-                    span: Span {
-                        start: 111,
-                        end: 117,
-                    },
                 },
                 value: Literal {
                     value: String(
                         "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
                     ),
-                    span: Span {
-                        start: 120,
-                        end: 213,
-                    },
                 },
             },
         ),
@@ -109,26 +73,14 @@ Schema {
                 ),
                 name: Name {
                     value: "MULTILINE",
-                    span: Span {
-                        start: 222,
-                        end: 231,
-                    },
                 },
                 ty: Type {
                     value: String,
-                    span: Span {
-                        start: 233,
-                        end: 239,
-                    },
                 },
                 value: Literal {
                     value: String(
                         "a\n    b\n    c\n",
                     ),
-                    span: Span {
-                        start: 242,
-                        end: 258,
-                    },
                 },
             },
         ),

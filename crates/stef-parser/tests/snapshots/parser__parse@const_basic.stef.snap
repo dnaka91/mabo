@@ -19,26 +19,14 @@ Schema {
                 ),
                 name: Name {
                     value: "BOOL_TRUE",
-                    span: Span {
-                        start: 6,
-                        end: 15,
-                    },
                 },
                 ty: Type {
                     value: Bool,
-                    span: Span {
-                        start: 17,
-                        end: 21,
-                    },
                 },
                 value: Literal {
                     value: Bool(
                         true,
                     ),
-                    span: Span {
-                        start: 24,
-                        end: 28,
-                    },
                 },
             },
         ),
@@ -49,26 +37,14 @@ Schema {
                 ),
                 name: Name {
                     value: "BOOL_FALSE",
-                    span: Span {
-                        start: 36,
-                        end: 46,
-                    },
                 },
                 ty: Type {
                     value: Bool,
-                    span: Span {
-                        start: 48,
-                        end: 52,
-                    },
                 },
                 value: Literal {
                     value: Bool(
                         false,
                     ),
-                    span: Span {
-                        start: 55,
-                        end: 60,
-                    },
                 },
             },
         ),
@@ -79,26 +55,14 @@ Schema {
                 ),
                 name: Name {
                     value: "INT",
-                    span: Span {
-                        start: 68,
-                        end: 71,
-                    },
                 },
                 ty: Type {
                     value: U32,
-                    span: Span {
-                        start: 73,
-                        end: 76,
-                    },
                 },
                 value: Literal {
                     value: Int(
                         100,
                     ),
-                    span: Span {
-                        start: 79,
-                        end: 82,
-                    },
                 },
             },
         ),
@@ -109,26 +73,14 @@ Schema {
                 ),
                 name: Name {
                     value: "FLOAT",
-                    span: Span {
-                        start: 90,
-                        end: 95,
-                    },
                 },
                 ty: Type {
                     value: F64,
-                    span: Span {
-                        start: 97,
-                        end: 100,
-                    },
                 },
                 value: Literal {
                     value: Float(
                         5.5,
                     ),
-                    span: Span {
-                        start: 103,
-                        end: 106,
-                    },
                 },
             },
         ),
@@ -139,26 +91,14 @@ Schema {
                 ),
                 name: Name {
                     value: "STRING",
-                    span: Span {
-                        start: 114,
-                        end: 120,
-                    },
                 },
                 ty: Type {
                     value: String,
-                    span: Span {
-                        start: 122,
-                        end: 128,
-                    },
                 },
                 value: Literal {
                     value: String(
                         "value",
                     ),
-                    span: Span {
-                        start: 131,
-                        end: 138,
-                    },
                 },
             },
         ),
@@ -169,17 +109,9 @@ Schema {
                 ),
                 name: Name {
                     value: "BYTES",
-                    span: Span {
-                        start: 146,
-                        end: 151,
-                    },
                 },
                 ty: Type {
                     value: Bytes,
-                    span: Span {
-                        start: 153,
-                        end: 158,
-                    },
                 },
                 value: Literal {
                     value: Bytes(
@@ -189,10 +121,6 @@ Schema {
                             3,
                         ],
                     ),
-                    span: Span {
-                        start: 161,
-                        end: 170,
-                    },
                 },
             },
         ),

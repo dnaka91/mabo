@@ -27,10 +27,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 21,
-                        end: 27,
-                    },
                 },
                 generics: Generics(
                     [],

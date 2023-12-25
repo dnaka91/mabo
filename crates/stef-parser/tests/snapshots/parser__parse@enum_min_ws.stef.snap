@@ -22,19 +22,11 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 5,
-                        end: 11,
-                    },
                 },
                 generics: Generics(
                     [
                         Name {
                             value: "T",
-                            span: Span {
-                                start: 12,
-                                end: 13,
-                            },
                         },
                     ],
                 ),
@@ -45,22 +37,10 @@ Schema {
                         ),
                         name: Name {
                             value: "One",
-                            span: Span {
-                                start: 15,
-                                end: 18,
-                            },
                         },
                         fields: Unit,
                         id: Id {
                             value: 1,
-                            span: Span {
-                                start: 18,
-                                end: 20,
-                            },
-                        },
-                        span: Span {
-                            start: 15,
-                            end: 20,
                         },
                     },
                     Variant {
@@ -69,51 +49,23 @@ Schema {
                         ),
                         name: Name {
                             value: "Two",
-                            span: Span {
-                                start: 21,
-                                end: 24,
-                            },
                         },
                         fields: Unnamed(
                             [
                                 UnnamedField {
                                     ty: Type {
                                         value: U32,
-                                        span: Span {
-                                            start: 25,
-                                            end: 28,
-                                        },
                                     },
                                     id: Id {
                                         value: 1,
-                                        span: Span {
-                                            start: 28,
-                                            end: 30,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 25,
-                                        end: 30,
                                     },
                                 },
                                 UnnamedField {
                                     ty: Type {
                                         value: U64,
-                                        span: Span {
-                                            start: 31,
-                                            end: 34,
-                                        },
                                     },
                                     id: Id {
                                         value: 2,
-                                        span: Span {
-                                            start: 34,
-                                            end: 36,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 31,
-                                        end: 36,
                                     },
                                 },
                                 UnnamedField {
@@ -123,43 +75,19 @@ Schema {
                                                 path: [],
                                                 name: Name {
                                                     value: "T",
-                                                    span: Span {
-                                                        start: 37,
-                                                        end: 38,
-                                                    },
                                                 },
                                                 generics: [],
                                             },
                                         ),
-                                        span: Span {
-                                            start: 37,
-                                            end: 38,
-                                        },
                                     },
                                     id: Id {
                                         value: 3,
-                                        span: Span {
-                                            start: 38,
-                                            end: 40,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 37,
-                                        end: 40,
                                     },
                                 },
                             ],
                         ),
                         id: Id {
                             value: 2,
-                            span: Span {
-                                start: 41,
-                                end: 43,
-                            },
-                        },
-                        span: Span {
-                            start: 21,
-                            end: 43,
                         },
                     },
                     Variant {
@@ -168,10 +96,6 @@ Schema {
                         ),
                         name: Name {
                             value: "Three",
-                            span: Span {
-                                start: 44,
-                                end: 49,
-                            },
                         },
                         fields: Named(
                             [
@@ -181,28 +105,12 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "field1",
-                                        span: Span {
-                                            start: 50,
-                                            end: 56,
-                                        },
                                     },
                                     ty: Type {
                                         value: U32,
-                                        span: Span {
-                                            start: 57,
-                                            end: 60,
-                                        },
                                     },
                                     id: Id {
                                         value: 1,
-                                        span: Span {
-                                            start: 60,
-                                            end: 62,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 50,
-                                        end: 62,
                                     },
                                 },
                                 NamedField {
@@ -211,28 +119,12 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "field2",
-                                        span: Span {
-                                            start: 63,
-                                            end: 69,
-                                        },
                                     },
                                     ty: Type {
                                         value: Bool,
-                                        span: Span {
-                                            start: 70,
-                                            end: 74,
-                                        },
                                     },
                                     id: Id {
                                         value: 2,
-                                        span: Span {
-                                            start: 74,
-                                            end: 76,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 63,
-                                        end: 76,
                                     },
                                 },
                                 NamedField {
@@ -241,10 +133,6 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "field3",
-                                        span: Span {
-                                            start: 77,
-                                            end: 83,
-                                        },
                                     },
                                     ty: Type {
                                         value: External(
@@ -252,43 +140,19 @@ Schema {
                                                 path: [],
                                                 name: Name {
                                                     value: "T",
-                                                    span: Span {
-                                                        start: 84,
-                                                        end: 85,
-                                                    },
                                                 },
                                                 generics: [],
                                             },
                                         ),
-                                        span: Span {
-                                            start: 84,
-                                            end: 85,
-                                        },
                                     },
                                     id: Id {
                                         value: 3,
-                                        span: Span {
-                                            start: 85,
-                                            end: 87,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 77,
-                                        end: 87,
                                     },
                                 },
                             ],
                         ),
                         id: Id {
                             value: 3,
-                            span: Span {
-                                start: 88,
-                                end: 90,
-                            },
-                        },
-                        span: Span {
-                            start: 44,
-                            end: 90,
                         },
                     },
                 ],

@@ -22,10 +22,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 7,
-                        end: 13,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -38,28 +34,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f01",
-                                span: Span {
-                                    start: 20,
-                                    end: 23,
-                                },
                             },
                             ty: Type {
                                 value: Bool,
-                                span: Span {
-                                    start: 25,
-                                    end: 29,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 30,
-                                    end: 32,
-                                },
-                            },
-                            span: Span {
-                                start: 20,
-                                end: 32,
                             },
                         },
                         NamedField {
@@ -68,28 +48,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f02",
-                                span: Span {
-                                    start: 38,
-                                    end: 41,
-                                },
                             },
                             ty: Type {
                                 value: U8,
-                                span: Span {
-                                    start: 43,
-                                    end: 45,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 46,
-                                    end: 48,
-                                },
-                            },
-                            span: Span {
-                                start: 38,
-                                end: 48,
                             },
                         },
                         NamedField {
@@ -98,28 +62,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f03",
-                                span: Span {
-                                    start: 54,
-                                    end: 57,
-                                },
                             },
                             ty: Type {
                                 value: U16,
-                                span: Span {
-                                    start: 59,
-                                    end: 62,
-                                },
                             },
                             id: Id {
                                 value: 3,
-                                span: Span {
-                                    start: 63,
-                                    end: 65,
-                                },
-                            },
-                            span: Span {
-                                start: 54,
-                                end: 65,
                             },
                         },
                         NamedField {
@@ -128,28 +76,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f04",
-                                span: Span {
-                                    start: 71,
-                                    end: 74,
-                                },
                             },
                             ty: Type {
                                 value: U32,
-                                span: Span {
-                                    start: 76,
-                                    end: 79,
-                                },
                             },
                             id: Id {
                                 value: 4,
-                                span: Span {
-                                    start: 80,
-                                    end: 82,
-                                },
-                            },
-                            span: Span {
-                                start: 71,
-                                end: 82,
                             },
                         },
                         NamedField {
@@ -158,28 +90,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f05",
-                                span: Span {
-                                    start: 88,
-                                    end: 91,
-                                },
                             },
                             ty: Type {
                                 value: U64,
-                                span: Span {
-                                    start: 93,
-                                    end: 96,
-                                },
                             },
                             id: Id {
                                 value: 5,
-                                span: Span {
-                                    start: 97,
-                                    end: 99,
-                                },
-                            },
-                            span: Span {
-                                start: 88,
-                                end: 99,
                             },
                         },
                         NamedField {
@@ -188,28 +104,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f06",
-                                span: Span {
-                                    start: 105,
-                                    end: 108,
-                                },
                             },
                             ty: Type {
                                 value: U128,
-                                span: Span {
-                                    start: 110,
-                                    end: 114,
-                                },
                             },
                             id: Id {
                                 value: 6,
-                                span: Span {
-                                    start: 115,
-                                    end: 117,
-                                },
-                            },
-                            span: Span {
-                                start: 105,
-                                end: 117,
                             },
                         },
                         NamedField {
@@ -218,28 +118,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f07",
-                                span: Span {
-                                    start: 123,
-                                    end: 126,
-                                },
                             },
                             ty: Type {
                                 value: I8,
-                                span: Span {
-                                    start: 128,
-                                    end: 130,
-                                },
                             },
                             id: Id {
                                 value: 7,
-                                span: Span {
-                                    start: 131,
-                                    end: 133,
-                                },
-                            },
-                            span: Span {
-                                start: 123,
-                                end: 133,
                             },
                         },
                         NamedField {
@@ -248,28 +132,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f08",
-                                span: Span {
-                                    start: 139,
-                                    end: 142,
-                                },
                             },
                             ty: Type {
                                 value: I16,
-                                span: Span {
-                                    start: 144,
-                                    end: 147,
-                                },
                             },
                             id: Id {
                                 value: 8,
-                                span: Span {
-                                    start: 148,
-                                    end: 150,
-                                },
-                            },
-                            span: Span {
-                                start: 139,
-                                end: 150,
                             },
                         },
                         NamedField {
@@ -278,28 +146,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f09",
-                                span: Span {
-                                    start: 156,
-                                    end: 159,
-                                },
                             },
                             ty: Type {
                                 value: I32,
-                                span: Span {
-                                    start: 161,
-                                    end: 164,
-                                },
                             },
                             id: Id {
                                 value: 9,
-                                span: Span {
-                                    start: 165,
-                                    end: 167,
-                                },
-                            },
-                            span: Span {
-                                start: 156,
-                                end: 167,
                             },
                         },
                         NamedField {
@@ -308,28 +160,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f10",
-                                span: Span {
-                                    start: 173,
-                                    end: 176,
-                                },
                             },
                             ty: Type {
                                 value: I64,
-                                span: Span {
-                                    start: 178,
-                                    end: 181,
-                                },
                             },
                             id: Id {
                                 value: 10,
-                                span: Span {
-                                    start: 182,
-                                    end: 185,
-                                },
-                            },
-                            span: Span {
-                                start: 173,
-                                end: 185,
                             },
                         },
                         NamedField {
@@ -338,28 +174,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f11",
-                                span: Span {
-                                    start: 191,
-                                    end: 194,
-                                },
                             },
                             ty: Type {
                                 value: I128,
-                                span: Span {
-                                    start: 196,
-                                    end: 200,
-                                },
                             },
                             id: Id {
                                 value: 11,
-                                span: Span {
-                                    start: 201,
-                                    end: 204,
-                                },
-                            },
-                            span: Span {
-                                start: 191,
-                                end: 204,
                             },
                         },
                         NamedField {
@@ -368,28 +188,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f12",
-                                span: Span {
-                                    start: 210,
-                                    end: 213,
-                                },
                             },
                             ty: Type {
                                 value: F32,
-                                span: Span {
-                                    start: 215,
-                                    end: 218,
-                                },
                             },
                             id: Id {
                                 value: 12,
-                                span: Span {
-                                    start: 219,
-                                    end: 222,
-                                },
-                            },
-                            span: Span {
-                                start: 210,
-                                end: 222,
                             },
                         },
                         NamedField {
@@ -398,28 +202,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f13",
-                                span: Span {
-                                    start: 228,
-                                    end: 231,
-                                },
                             },
                             ty: Type {
                                 value: F64,
-                                span: Span {
-                                    start: 233,
-                                    end: 236,
-                                },
                             },
                             id: Id {
                                 value: 13,
-                                span: Span {
-                                    start: 237,
-                                    end: 240,
-                                },
-                            },
-                            span: Span {
-                                start: 228,
-                                end: 240,
                             },
                         },
                         NamedField {
@@ -428,28 +216,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f14",
-                                span: Span {
-                                    start: 246,
-                                    end: 249,
-                                },
                             },
                             ty: Type {
                                 value: String,
-                                span: Span {
-                                    start: 251,
-                                    end: 257,
-                                },
                             },
                             id: Id {
                                 value: 14,
-                                span: Span {
-                                    start: 258,
-                                    end: 261,
-                                },
-                            },
-                            span: Span {
-                                start: 246,
-                                end: 261,
                             },
                         },
                         NamedField {
@@ -458,28 +230,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f15",
-                                span: Span {
-                                    start: 267,
-                                    end: 270,
-                                },
                             },
                             ty: Type {
                                 value: StringRef,
-                                span: Span {
-                                    start: 272,
-                                    end: 279,
-                                },
                             },
                             id: Id {
                                 value: 15,
-                                span: Span {
-                                    start: 280,
-                                    end: 283,
-                                },
-                            },
-                            span: Span {
-                                start: 267,
-                                end: 283,
                             },
                         },
                         NamedField {
@@ -488,28 +244,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f16",
-                                span: Span {
-                                    start: 289,
-                                    end: 292,
-                                },
                             },
                             ty: Type {
                                 value: Bytes,
-                                span: Span {
-                                    start: 294,
-                                    end: 299,
-                                },
                             },
                             id: Id {
                                 value: 16,
-                                span: Span {
-                                    start: 300,
-                                    end: 303,
-                                },
-                            },
-                            span: Span {
-                                start: 289,
-                                end: 303,
                             },
                         },
                         NamedField {
@@ -518,28 +258,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f17",
-                                span: Span {
-                                    start: 309,
-                                    end: 312,
-                                },
                             },
                             ty: Type {
                                 value: BytesRef,
-                                span: Span {
-                                    start: 314,
-                                    end: 320,
-                                },
                             },
                             id: Id {
                                 value: 17,
-                                span: Span {
-                                    start: 321,
-                                    end: 324,
-                                },
-                            },
-                            span: Span {
-                                start: 309,
-                                end: 324,
                             },
                         },
                         NamedField {
@@ -548,28 +272,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f18",
-                                span: Span {
-                                    start: 330,
-                                    end: 333,
-                                },
                             },
                             ty: Type {
                                 value: BoxString,
-                                span: Span {
-                                    start: 335,
-                                    end: 346,
-                                },
                             },
                             id: Id {
                                 value: 18,
-                                span: Span {
-                                    start: 347,
-                                    end: 350,
-                                },
-                            },
-                            span: Span {
-                                start: 330,
-                                end: 350,
                             },
                         },
                         NamedField {
@@ -578,28 +286,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "f19",
-                                span: Span {
-                                    start: 356,
-                                    end: 359,
-                                },
                             },
                             ty: Type {
                                 value: BoxBytes,
-                                span: Span {
-                                    start: 361,
-                                    end: 371,
-                                },
                             },
                             id: Id {
                                 value: 19,
-                                span: Span {
-                                    start: 372,
-                                    end: 375,
-                                },
-                            },
-                            span: Span {
-                                start: 356,
-                                end: 375,
                             },
                         },
                         NamedField {
@@ -608,52 +300,24 @@ Schema {
                             ),
                             name: Name {
                                 value: "f20",
-                                span: Span {
-                                    start: 381,
-                                    end: 384,
-                                },
                             },
                             ty: Type {
                                 value: Tuple(
                                     [
                                         Type {
                                             value: U32,
-                                            span: Span {
-                                                start: 387,
-                                                end: 390,
-                                            },
                                         },
                                         Type {
                                             value: U32,
-                                            span: Span {
-                                                start: 392,
-                                                end: 395,
-                                            },
                                         },
                                         Type {
                                             value: U32,
-                                            span: Span {
-                                                start: 397,
-                                                end: 400,
-                                            },
                                         },
                                     ],
                                 ),
-                                span: Span {
-                                    start: 386,
-                                    end: 401,
-                                },
                             },
                             id: Id {
                                 value: 20,
-                                span: Span {
-                                    start: 402,
-                                    end: 405,
-                                },
-                            },
-                            span: Span {
-                                start: 381,
-                                end: 405,
                             },
                         },
                         NamedField {
@@ -662,37 +326,17 @@ Schema {
                             ),
                             name: Name {
                                 value: "f21",
-                                span: Span {
-                                    start: 411,
-                                    end: 414,
-                                },
                             },
                             ty: Type {
                                 value: Array(
                                     Type {
                                         value: U32,
-                                        span: Span {
-                                            start: 417,
-                                            end: 420,
-                                        },
                                     },
                                     12,
                                 ),
-                                span: Span {
-                                    start: 416,
-                                    end: 425,
-                                },
                             },
                             id: Id {
                                 value: 21,
-                                span: Span {
-                                    start: 426,
-                                    end: 429,
-                                },
-                            },
-                            span: Span {
-                                start: 411,
-                                end: 429,
                             },
                         },
                     ],

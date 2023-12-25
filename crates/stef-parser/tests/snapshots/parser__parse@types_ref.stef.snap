@@ -22,10 +22,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 7,
-                        end: 13,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -38,10 +34,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "basic",
-                                span: Span {
-                                    start: 20,
-                                    end: 25,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -49,29 +41,13 @@ Schema {
                                         path: [],
                                         name: Name {
                                             value: "Test123",
-                                            span: Span {
-                                                start: 27,
-                                                end: 34,
-                                            },
                                         },
                                         generics: [],
                                     },
                                 ),
-                                span: Span {
-                                    start: 27,
-                                    end: 34,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 35,
-                                    end: 37,
-                                },
-                            },
-                            span: Span {
-                                start: 20,
-                                end: 37,
                             },
                         },
                         NamedField {
@@ -80,10 +56,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "with_generics",
-                                span: Span {
-                                    start: 43,
-                                    end: 56,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -91,44 +63,20 @@ Schema {
                                         path: [],
                                         name: Name {
                                             value: "KeyValue",
-                                            span: Span {
-                                                start: 58,
-                                                end: 66,
-                                            },
                                         },
                                         generics: [
                                             Type {
                                                 value: U32,
-                                                span: Span {
-                                                    start: 67,
-                                                    end: 70,
-                                                },
                                             },
                                             Type {
                                                 value: Bool,
-                                                span: Span {
-                                                    start: 72,
-                                                    end: 76,
-                                                },
                                             },
                                         ],
                                     },
                                 ),
-                                span: Span {
-                                    start: 58,
-                                    end: 77,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 78,
-                                    end: 80,
-                                },
-                            },
-                            span: Span {
-                                start: 43,
-                                end: 80,
                             },
                         },
                     ],
@@ -145,10 +93,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Test123",
-                    span: Span {
-                        start: 90,
-                        end: 97,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -160,22 +104,10 @@ Schema {
                         ),
                         name: Name {
                             value: "Value",
-                            span: Span {
-                                start: 104,
-                                end: 109,
-                            },
                         },
                         fields: Unit,
                         id: Id {
                             value: 1,
-                            span: Span {
-                                start: 110,
-                                end: 112,
-                            },
-                        },
-                        span: Span {
-                            start: 104,
-                            end: 112,
                         },
                     },
                 ],
@@ -191,26 +123,14 @@ Schema {
                 ),
                 name: Name {
                     value: "KeyValue",
-                    span: Span {
-                        start: 124,
-                        end: 132,
-                    },
                 },
                 generics: Generics(
                     [
                         Name {
                             value: "K",
-                            span: Span {
-                                start: 133,
-                                end: 134,
-                            },
                         },
                         Name {
                             value: "V",
-                            span: Span {
-                                start: 136,
-                                end: 137,
-                            },
                         },
                     ],
                 ),
@@ -222,10 +142,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "key",
-                                span: Span {
-                                    start: 145,
-                                    end: 148,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -233,29 +149,13 @@ Schema {
                                         path: [],
                                         name: Name {
                                             value: "K",
-                                            span: Span {
-                                                start: 150,
-                                                end: 151,
-                                            },
                                         },
                                         generics: [],
                                     },
                                 ),
-                                span: Span {
-                                    start: 150,
-                                    end: 151,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 152,
-                                    end: 154,
-                                },
-                            },
-                            span: Span {
-                                start: 145,
-                                end: 154,
                             },
                         },
                         NamedField {
@@ -264,10 +164,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "value",
-                                span: Span {
-                                    start: 160,
-                                    end: 165,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -275,29 +171,13 @@ Schema {
                                         path: [],
                                         name: Name {
                                             value: "V",
-                                            span: Span {
-                                                start: 167,
-                                                end: 168,
-                                            },
                                         },
                                         generics: [],
                                     },
                                 ),
-                                span: Span {
-                                    start: 167,
-                                    end: 168,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 169,
-                                    end: 171,
-                                },
-                            },
-                            span: Span {
-                                start: 160,
-                                end: 171,
                             },
                         },
                     ],

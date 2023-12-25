@@ -26,10 +26,6 @@ Schema {
                                     value: String(
                                         "don't use",
                                     ),
-                                    span: Span {
-                                        start: 13,
-                                        end: 24,
-                                    },
                                 },
                             ),
                         },
@@ -52,10 +48,6 @@ Schema {
                                                             value: Int(
                                                                 100,
                                                             ),
-                                                            span: Span {
-                                                                start: 59,
-                                                                end: 62,
-                                                            },
                                                         },
                                                     ),
                                                 },
@@ -66,10 +58,6 @@ Schema {
                                                             value: Int(
                                                                 200,
                                                             ),
-                                                            span: Span {
-                                                                start: 67,
-                                                                end: 70,
-                                                            },
                                                         },
                                                     ),
                                                 },
@@ -87,10 +75,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 91,
-                        end: 97,
-                    },
                 },
                 generics: Generics(
                     [],

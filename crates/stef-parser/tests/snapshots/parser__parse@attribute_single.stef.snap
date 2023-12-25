@@ -26,10 +26,6 @@ Schema {
                                     value: String(
                                         "don't use",
                                     ),
-                                    span: Span {
-                                        start: 15,
-                                        end: 26,
-                                    },
                                 },
                             ),
                         },
@@ -37,10 +33,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 35,
-                        end: 41,
-                    },
                 },
                 generics: Generics(
                     [],

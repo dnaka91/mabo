@@ -18,10 +18,6 @@ Schema {
                     [
                         CommentLine {
                             value: "Basic struct.",
-                            span: Span {
-                                start: 0,
-                                end: 17,
-                            },
                         },
                     ],
                 ),
@@ -30,10 +26,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Sample",
-                    span: Span {
-                        start: 25,
-                        end: 31,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -43,41 +35,17 @@ Schema {
                         UnnamedField {
                             ty: Type {
                                 value: U32,
-                                span: Span {
-                                    start: 32,
-                                    end: 35,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 36,
-                                    end: 38,
-                                },
-                            },
-                            span: Span {
-                                start: 32,
-                                end: 38,
                             },
                         },
                         UnnamedField {
                             ty: Type {
                                 value: Bool,
-                                span: Span {
-                                    start: 40,
-                                    end: 44,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 45,
-                                    end: 47,
-                                },
-                            },
-                            span: Span {
-                                start: 39,
-                                end: 47,
                             },
                         },
                     ],

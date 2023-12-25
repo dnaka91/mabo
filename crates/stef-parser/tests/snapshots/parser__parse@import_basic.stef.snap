@@ -16,34 +16,18 @@ Schema {
             Import {
                 full: Name {
                     value: "other::schema::Sample",
-                    span: Span {
-                        start: 4,
-                        end: 25,
-                    },
                 },
                 segments: [
                     Name {
                         value: "other",
-                        span: Span {
-                            start: 4,
-                            end: 9,
-                        },
                     },
                     Name {
                         value: "schema",
-                        span: Span {
-                            start: 11,
-                            end: 17,
-                        },
                     },
                 ],
                 element: Some(
                     Name {
                         value: "Sample",
-                        span: Span {
-                            start: 19,
-                            end: 25,
-                        },
                     },
                 ),
             },
@@ -52,25 +36,13 @@ Schema {
             Import {
                 full: Name {
                     value: "second::submodule",
-                    span: Span {
-                        start: 31,
-                        end: 48,
-                    },
                 },
                 segments: [
                     Name {
                         value: "second",
-                        span: Span {
-                            start: 31,
-                            end: 37,
-                        },
                     },
                     Name {
                         value: "submodule",
-                        span: Span {
-                            start: 39,
-                            end: 48,
-                        },
                     },
                 ],
                 element: None,

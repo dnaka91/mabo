@@ -12,10 +12,6 @@ Schema {
         [
             CommentLine {
                 value: "Schema with a bit of everything, to try out more complex scenarios.",
-                span: Span {
-                    start: 0,
-                    end: 71,
-                },
             },
         ],
     ),
@@ -26,31 +22,15 @@ Schema {
                     [
                         CommentLine {
                             value: "Basic user information.",
-                            span: Span {
-                                start: 73,
-                                end: 100,
-                            },
                         },
                         CommentLine {
                             value: "",
-                            span: Span {
-                                start: 101,
-                                end: 104,
-                            },
                         },
                         CommentLine {
                             value: "Uses various other `structs` and `enums` to compose the information",
-                            span: Span {
-                                start: 105,
-                                end: 176,
-                            },
                         },
                         CommentLine {
                             value: "in a **type safe** way.",
-                            span: Span {
-                                start: 177,
-                                end: 204,
-                            },
                         },
                     ],
                 ),
@@ -59,10 +39,6 @@ Schema {
                 ),
                 name: Name {
                     value: "User",
-                    span: Span {
-                        start: 212,
-                        end: 216,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -75,10 +51,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "name",
-                                span: Span {
-                                    start: 223,
-                                    end: 227,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -86,29 +58,13 @@ Schema {
                                         path: [],
                                         name: Name {
                                             value: "FullName",
-                                            span: Span {
-                                                start: 229,
-                                                end: 237,
-                                            },
                                         },
                                         generics: [],
                                     },
                                 ),
-                                span: Span {
-                                    start: 229,
-                                    end: 237,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 238,
-                                    end: 240,
-                                },
-                            },
-                            span: Span {
-                                start: 223,
-                                end: 240,
                             },
                         },
                         NamedField {
@@ -116,19 +72,11 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "Physical address, might not be specified by the user.",
-                                        span: Span {
-                                            start: 246,
-                                            end: 303,
-                                        },
                                     },
                                 ],
                             ),
                             name: Name {
                                 value: "address",
-                                span: Span {
-                                    start: 308,
-                                    end: 315,
-                                },
                             },
                             ty: Type {
                                 value: Option(
@@ -138,35 +86,15 @@ Schema {
                                                 path: [],
                                                 name: Name {
                                                     value: "Address",
-                                                    span: Span {
-                                                        start: 324,
-                                                        end: 331,
-                                                    },
                                                 },
                                                 generics: [],
                                             },
                                         ),
-                                        span: Span {
-                                            start: 324,
-                                            end: 331,
-                                        },
                                     },
                                 ),
-                                span: Span {
-                                    start: 317,
-                                    end: 332,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 333,
-                                    end: 335,
-                                },
-                            },
-                            span: Span {
-                                start: 304,
-                                end: 335,
                             },
                         },
                         NamedField {
@@ -175,28 +103,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "age",
-                                span: Span {
-                                    start: 341,
-                                    end: 344,
-                                },
                             },
                             ty: Type {
                                 value: U8,
-                                span: Span {
-                                    start: 346,
-                                    end: 348,
-                                },
                             },
                             id: Id {
                                 value: 3,
-                                span: Span {
-                                    start: 349,
-                                    end: 351,
-                                },
-                            },
-                            span: Span {
-                                start: 341,
-                                end: 351,
                             },
                         },
                         NamedField {
@@ -205,10 +117,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "birthday",
-                                span: Span {
-                                    start: 357,
-                                    end: 365,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -216,37 +124,17 @@ Schema {
                                         path: [
                                             Name {
                                                 value: "birthday",
-                                                span: Span {
-                                                    start: 367,
-                                                    end: 375,
-                                                },
                                             },
                                         ],
                                         name: Name {
                                             value: "DayOfBirth",
-                                            span: Span {
-                                                start: 377,
-                                                end: 387,
-                                            },
                                         },
                                         generics: [],
                                     },
                                 ),
-                                span: Span {
-                                    start: 367,
-                                    end: 387,
-                                },
                             },
                             id: Id {
                                 value: 4,
-                                span: Span {
-                                    start: 388,
-                                    end: 390,
-                                },
-                            },
-                            span: Span {
-                                start: 357,
-                                end: 390,
                             },
                         },
                     ],
@@ -259,10 +147,6 @@ Schema {
                     [
                         CommentLine {
                             value: "Full name of a user.",
-                            span: Span {
-                                start: 395,
-                                end: 419,
-                            },
                         },
                     ],
                 ),
@@ -271,10 +155,6 @@ Schema {
                 ),
                 name: Name {
                     value: "FullName",
-                    span: Span {
-                        start: 427,
-                        end: 435,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -287,28 +167,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "first",
-                                span: Span {
-                                    start: 442,
-                                    end: 447,
-                                },
                             },
                             ty: Type {
                                 value: String,
-                                span: Span {
-                                    start: 449,
-                                    end: 455,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 456,
-                                    end: 458,
-                                },
-                            },
-                            span: Span {
-                                start: 442,
-                                end: 458,
                             },
                         },
                         NamedField {
@@ -317,36 +181,16 @@ Schema {
                             ),
                             name: Name {
                                 value: "middle",
-                                span: Span {
-                                    start: 464,
-                                    end: 470,
-                                },
                             },
                             ty: Type {
                                 value: Option(
                                     Type {
                                         value: String,
-                                        span: Span {
-                                            start: 479,
-                                            end: 485,
-                                        },
                                     },
                                 ),
-                                span: Span {
-                                    start: 472,
-                                    end: 486,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 487,
-                                    end: 489,
-                                },
-                            },
-                            span: Span {
-                                start: 464,
-                                end: 489,
                             },
                         },
                         NamedField {
@@ -355,28 +199,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "last",
-                                span: Span {
-                                    start: 495,
-                                    end: 499,
-                                },
                             },
                             ty: Type {
                                 value: String,
-                                span: Span {
-                                    start: 501,
-                                    end: 507,
-                                },
                             },
                             id: Id {
                                 value: 3,
-                                span: Span {
-                                    start: 508,
-                                    end: 510,
-                                },
-                            },
-                            span: Span {
-                                start: 495,
-                                end: 510,
                             },
                         },
                     ],
@@ -389,40 +217,20 @@ Schema {
                     [
                         CommentLine {
                             value: "Simple alias for convenience.",
-                            span: Span {
-                                start: 515,
-                                end: 548,
-                            },
                         },
                         CommentLine {
                             value: "",
-                            span: Span {
-                                start: 549,
-                                end: 552,
-                            },
                         },
                         CommentLine {
                             value: "- Might be easier to remember.",
-                            span: Span {
-                                start: 553,
-                                end: 587,
-                            },
                         },
                         CommentLine {
                             value: "- Often referenced as this.",
-                            span: Span {
-                                start: 588,
-                                end: 619,
-                            },
                         },
                     ],
                 ),
                 name: Name {
                     value: "Name",
-                    span: Span {
-                        start: 625,
-                        end: 629,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -433,18 +241,10 @@ Schema {
                             path: [],
                             name: Name {
                                 value: "FullName",
-                                span: Span {
-                                    start: 632,
-                                    end: 640,
-                                },
                             },
                             generics: [],
                         },
                     ),
-                    span: Span {
-                        start: 632,
-                        end: 640,
-                    },
                 },
             },
         ),
@@ -458,10 +258,6 @@ Schema {
                 ),
                 name: Name {
                     value: "Address",
-                    span: Span {
-                        start: 650,
-                        end: 657,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -473,37 +269,17 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "Street name.",
-                                        span: Span {
-                                            start: 664,
-                                            end: 680,
-                                        },
                                     },
                                 ],
                             ),
                             name: Name {
                                 value: "street",
-                                span: Span {
-                                    start: 685,
-                                    end: 691,
-                                },
                             },
                             ty: Type {
                                 value: String,
-                                span: Span {
-                                    start: 693,
-                                    end: 699,
-                                },
                             },
                             id: Id {
                                 value: 1,
-                                span: Span {
-                                    start: 700,
-                                    end: 702,
-                                },
-                            },
-                            span: Span {
-                                start: 681,
-                                end: 702,
                             },
                         },
                         NamedField {
@@ -511,19 +287,11 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "Number of the house in the street.",
-                                        span: Span {
-                                            start: 708,
-                                            end: 746,
-                                        },
                                     },
                                 ],
                             ),
                             name: Name {
                                 value: "house_no",
-                                span: Span {
-                                    start: 751,
-                                    end: 759,
-                                },
                             },
                             ty: Type {
                                 value: External(
@@ -531,29 +299,13 @@ Schema {
                                         path: [],
                                         name: Name {
                                             value: "HouseNumber",
-                                            span: Span {
-                                                start: 761,
-                                                end: 772,
-                                            },
                                         },
                                         generics: [],
                                     },
                                 ),
-                                span: Span {
-                                    start: 761,
-                                    end: 772,
-                                },
                             },
                             id: Id {
                                 value: 2,
-                                span: Span {
-                                    start: 773,
-                                    end: 775,
-                                },
-                            },
-                            span: Span {
-                                start: 747,
-                                end: 775,
                             },
                         },
                         NamedField {
@@ -562,28 +314,12 @@ Schema {
                             ),
                             name: Name {
                                 value: "city",
-                                span: Span {
-                                    start: 781,
-                                    end: 785,
-                                },
                             },
                             ty: Type {
                                 value: String,
-                                span: Span {
-                                    start: 787,
-                                    end: 793,
-                                },
                             },
                             id: Id {
                                 value: 3,
-                                span: Span {
-                                    start: 794,
-                                    end: 796,
-                                },
-                            },
-                            span: Span {
-                                start: 781,
-                                end: 796,
                             },
                         },
                     ],
@@ -596,24 +332,12 @@ Schema {
                     [
                         CommentLine {
                             value: "The number on the house.",
-                            span: Span {
-                                start: 801,
-                                end: 829,
-                            },
                         },
                         CommentLine {
                             value: "",
-                            span: Span {
-                                start: 830,
-                                end: 833,
-                            },
                         },
                         CommentLine {
                             value: "More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).",
-                            span: Span {
-                                start: 834,
-                                end: 926,
-                            },
                         },
                     ],
                 ),
@@ -622,10 +346,6 @@ Schema {
                 ),
                 name: Name {
                     value: "HouseNumber",
-                    span: Span {
-                        start: 932,
-                        end: 943,
-                    },
                 },
                 generics: Generics(
                     [],
@@ -636,54 +356,26 @@ Schema {
                             [
                                 CommentLine {
                                     value: "Digit only number.",
-                                    span: Span {
-                                        start: 950,
-                                        end: 972,
-                                    },
                                 },
                             ],
                         ),
                         name: Name {
                             value: "Digit",
-                            span: Span {
-                                start: 977,
-                                end: 982,
-                            },
                         },
                         fields: Unnamed(
                             [
                                 UnnamedField {
                                     ty: Type {
                                         value: U16,
-                                        span: Span {
-                                            start: 983,
-                                            end: 986,
-                                        },
                                     },
                                     id: Id {
                                         value: 1,
-                                        span: Span {
-                                            start: 987,
-                                            end: 989,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 983,
-                                        end: 989,
                                     },
                                 },
                             ],
                         ),
                         id: Id {
                             value: 1,
-                            span: Span {
-                                start: 991,
-                                end: 993,
-                            },
-                        },
-                        span: Span {
-                            start: 973,
-                            end: 993,
                         },
                     },
                     Variant {
@@ -691,54 +383,26 @@ Schema {
                             [
                                 CommentLine {
                                     value: "Mixed _number_ with characters like `1a`.",
-                                    span: Span {
-                                        start: 999,
-                                        end: 1044,
-                                    },
                                 },
                             ],
                         ),
                         name: Name {
                             value: "Text",
-                            span: Span {
-                                start: 1049,
-                                end: 1053,
-                            },
                         },
                         fields: Unnamed(
                             [
                                 UnnamedField {
                                     ty: Type {
                                         value: String,
-                                        span: Span {
-                                            start: 1054,
-                                            end: 1060,
-                                        },
                                     },
                                     id: Id {
                                         value: 1,
-                                        span: Span {
-                                            start: 1061,
-                                            end: 1063,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 1054,
-                                        end: 1063,
                                     },
                                 },
                             ],
                         ),
                         id: Id {
                             value: 2,
-                            span: Span {
-                                start: 1065,
-                                end: 1067,
-                            },
-                        },
-                        span: Span {
-                            start: 1045,
-                            end: 1067,
                         },
                     },
                 ],
@@ -750,35 +414,19 @@ Schema {
                     [
                         CommentLine {
                             value: "Probably the max age of a human, currently.",
-                            span: Span {
-                                start: 1072,
-                                end: 1119,
-                            },
                         },
                     ],
                 ),
                 name: Name {
                     value: "MAX_AGE",
-                    span: Span {
-                        start: 1126,
-                        end: 1133,
-                    },
                 },
                 ty: Type {
                     value: U8,
-                    span: Span {
-                        start: 1135,
-                        end: 1137,
-                    },
                 },
                 value: Literal {
                     value: Int(
                         120,
                     ),
-                    span: Span {
-                        start: 1140,
-                        end: 1143,
-                    },
                 },
             },
         ),
@@ -788,19 +436,11 @@ Schema {
                     [
                         CommentLine {
                             value: "Details for defining birthdays.",
-                            span: Span {
-                                start: 1147,
-                                end: 1182,
-                            },
                         },
                     ],
                 ),
                 name: Name {
                     value: "birthday",
-                    span: Span {
-                        start: 1187,
-                        end: 1195,
-                    },
                 },
                 definitions: [
                     Enum(
@@ -809,10 +449,6 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "As the name suggests, specifies details about birthdays.",
-                                        span: Span {
-                                            start: 1202,
-                                            end: 1262,
-                                        },
                                     },
                                 ],
                             ),
@@ -821,10 +457,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "DayOfBirth",
-                                span: Span {
-                                    start: 1272,
-                                    end: 1282,
-                                },
                             },
                             generics: Generics(
                                 [],
@@ -836,10 +468,6 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "Specific",
-                                        span: Span {
-                                            start: 1293,
-                                            end: 1301,
-                                        },
                                     },
                                     fields: Named(
                                         [
@@ -849,28 +477,12 @@ Schema {
                                                 ),
                                                 name: Name {
                                                     value: "year",
-                                                    span: Span {
-                                                        start: 1316,
-                                                        end: 1320,
-                                                    },
                                                 },
                                                 ty: Type {
                                                     value: U16,
-                                                    span: Span {
-                                                        start: 1322,
-                                                        end: 1325,
-                                                    },
                                                 },
                                                 id: Id {
                                                     value: 1,
-                                                    span: Span {
-                                                        start: 1326,
-                                                        end: 1328,
-                                                    },
-                                                },
-                                                span: Span {
-                                                    start: 1316,
-                                                    end: 1328,
                                                 },
                                             },
                                             NamedField {
@@ -879,10 +491,6 @@ Schema {
                                                 ),
                                                 name: Name {
                                                     value: "month",
-                                                    span: Span {
-                                                        start: 1342,
-                                                        end: 1347,
-                                                    },
                                                 },
                                                 ty: Type {
                                                     value: External(
@@ -890,29 +498,13 @@ Schema {
                                                             path: [],
                                                             name: Name {
                                                                 value: "Month",
-                                                                span: Span {
-                                                                    start: 1349,
-                                                                    end: 1354,
-                                                                },
                                                             },
                                                             generics: [],
                                                         },
                                                     ),
-                                                    span: Span {
-                                                        start: 1349,
-                                                        end: 1354,
-                                                    },
                                                 },
                                                 id: Id {
                                                     value: 2,
-                                                    span: Span {
-                                                        start: 1355,
-                                                        end: 1357,
-                                                    },
-                                                },
-                                                span: Span {
-                                                    start: 1342,
-                                                    end: 1357,
                                                 },
                                             },
                                             NamedField {
@@ -921,42 +513,18 @@ Schema {
                                                 ),
                                                 name: Name {
                                                     value: "day",
-                                                    span: Span {
-                                                        start: 1371,
-                                                        end: 1374,
-                                                    },
                                                 },
                                                 ty: Type {
                                                     value: U8,
-                                                    span: Span {
-                                                        start: 1376,
-                                                        end: 1378,
-                                                    },
                                                 },
                                                 id: Id {
                                                     value: 3,
-                                                    span: Span {
-                                                        start: 1379,
-                                                        end: 1381,
-                                                    },
-                                                },
-                                                span: Span {
-                                                    start: 1371,
-                                                    end: 1381,
                                                 },
                                             },
                                         ],
                                     ),
                                     id: Id {
                                         value: 1,
-                                        span: Span {
-                                            start: 1393,
-                                            end: 1395,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 1293,
-                                        end: 1395,
                                     },
                                 },
                                 Variant {
@@ -964,19 +532,11 @@ Schema {
                                         [
                                             CommentLine {
                                                 value: "The user didn't want to say.",
-                                                span: Span {
-                                                    start: 1405,
-                                                    end: 1437,
-                                                },
                                             },
                                         ],
                                     ),
                                     name: Name {
                                         value: "Secret",
-                                        span: Span {
-                                            start: 1446,
-                                            end: 1452,
-                                        },
                                     },
                                     fields: Named(
                                         [
@@ -985,66 +545,30 @@ Schema {
                                                     [
                                                         CommentLine {
                                                             value: "Optional info from the user about why they didn't want to",
-                                                            span: Span {
-                                                                start: 1467,
-                                                                end: 1528,
-                                                            },
                                                         },
                                                         CommentLine {
                                                             value: "reveal their birthday.",
-                                                            span: Span {
-                                                                start: 1541,
-                                                                end: 1567,
-                                                            },
                                                         },
                                                     ],
                                                 ),
                                                 name: Name {
                                                     value: "reason",
-                                                    span: Span {
-                                                        start: 1580,
-                                                        end: 1586,
-                                                    },
                                                 },
                                                 ty: Type {
                                                     value: Option(
                                                         Type {
                                                             value: String,
-                                                            span: Span {
-                                                                start: 1595,
-                                                                end: 1601,
-                                                            },
                                                         },
                                                     ),
-                                                    span: Span {
-                                                        start: 1588,
-                                                        end: 1602,
-                                                    },
                                                 },
                                                 id: Id {
                                                     value: 1,
-                                                    span: Span {
-                                                        start: 1603,
-                                                        end: 1605,
-                                                    },
-                                                },
-                                                span: Span {
-                                                    start: 1568,
-                                                    end: 1605,
                                                 },
                                             },
                                         ],
                                     ),
                                     id: Id {
                                         value: 2,
-                                        span: Span {
-                                            start: 1617,
-                                            end: 1619,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 1438,
-                                        end: 1619,
                                     },
                                 },
                                 Variant {
@@ -1052,31 +576,15 @@ Schema {
                                         [
                                             CommentLine {
                                                 value: "We never asked and nobody knows.",
-                                                span: Span {
-                                                    start: 1629,
-                                                    end: 1665,
-                                                },
                                             },
                                         ],
                                     ),
                                     name: Name {
                                         value: "Unknown",
-                                        span: Span {
-                                            start: 1674,
-                                            end: 1681,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 3,
-                                        span: Span {
-                                            start: 1682,
-                                            end: 1684,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 1666,
-                                        end: 1684,
                                     },
                                 },
                             ],
@@ -1088,35 +596,19 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "Let's assume we only have details of people born **after** this year.",
-                                        span: Span {
-                                            start: 1697,
-                                            end: 1770,
-                                        },
                                     },
                                 ],
                             ),
                             name: Name {
                                 value: "MIN_YEAR",
-                                span: Span {
-                                    start: 1781,
-                                    end: 1789,
-                                },
                             },
                             ty: Type {
                                 value: U16,
-                                span: Span {
-                                    start: 1791,
-                                    end: 1794,
-                                },
                             },
                             value: Literal {
                                 value: Int(
                                     1900,
                                 ),
-                                span: Span {
-                                    start: 1797,
-                                    end: 1801,
-                                },
                             },
                         },
                     ),
@@ -1126,42 +618,22 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "Absolute maximum for a day, but might be even less depending",
-                                        span: Span {
-                                            start: 1808,
-                                            end: 1872,
-                                        },
                                     },
                                     CommentLine {
                                         value: "on the month.",
-                                        span: Span {
-                                            start: 1877,
-                                            end: 1894,
-                                        },
                                     },
                                 ],
                             ),
                             name: Name {
                                 value: "MAX_DAY",
-                                span: Span {
-                                    start: 1905,
-                                    end: 1912,
-                                },
                             },
                             ty: Type {
                                 value: U8,
-                                span: Span {
-                                    start: 1914,
-                                    end: 1916,
-                                },
                             },
                             value: Literal {
                                 value: Int(
                                     31,
                                 ),
-                                span: Span {
-                                    start: 1919,
-                                    end: 1921,
-                                },
                             },
                         },
                     ),
@@ -1171,10 +643,6 @@ Schema {
                                 [
                                     CommentLine {
                                         value: "The month of the year.",
-                                        span: Span {
-                                            start: 1928,
-                                            end: 1954,
-                                        },
                                     },
                                 ],
                             ),
@@ -1183,10 +651,6 @@ Schema {
                             ),
                             name: Name {
                                 value: "Month",
-                                span: Span {
-                                    start: 1964,
-                                    end: 1969,
-                                },
                             },
                             generics: Generics(
                                 [],
@@ -1198,22 +662,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "January",
-                                        span: Span {
-                                            start: 1980,
-                                            end: 1987,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 1,
-                                        span: Span {
-                                            start: 1988,
-                                            end: 1990,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 1980,
-                                        end: 1990,
                                     },
                                 },
                                 Variant {
@@ -1222,22 +674,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "February",
-                                        span: Span {
-                                            start: 2000,
-                                            end: 2008,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 2,
-                                        span: Span {
-                                            start: 2009,
-                                            end: 2011,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2000,
-                                        end: 2011,
                                     },
                                 },
                                 Variant {
@@ -1246,22 +686,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "March",
-                                        span: Span {
-                                            start: 2021,
-                                            end: 2026,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 3,
-                                        span: Span {
-                                            start: 2027,
-                                            end: 2029,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2021,
-                                        end: 2029,
                                     },
                                 },
                                 Variant {
@@ -1270,22 +698,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "April",
-                                        span: Span {
-                                            start: 2039,
-                                            end: 2044,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 4,
-                                        span: Span {
-                                            start: 2045,
-                                            end: 2047,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2039,
-                                        end: 2047,
                                     },
                                 },
                                 Variant {
@@ -1294,22 +710,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "May",
-                                        span: Span {
-                                            start: 2057,
-                                            end: 2060,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 5,
-                                        span: Span {
-                                            start: 2061,
-                                            end: 2063,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2057,
-                                        end: 2063,
                                     },
                                 },
                                 Variant {
@@ -1318,22 +722,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "June",
-                                        span: Span {
-                                            start: 2073,
-                                            end: 2077,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 6,
-                                        span: Span {
-                                            start: 2078,
-                                            end: 2080,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2073,
-                                        end: 2080,
                                     },
                                 },
                                 Variant {
@@ -1342,22 +734,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "July",
-                                        span: Span {
-                                            start: 2090,
-                                            end: 2094,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 7,
-                                        span: Span {
-                                            start: 2095,
-                                            end: 2097,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2090,
-                                        end: 2097,
                                     },
                                 },
                                 Variant {
@@ -1366,22 +746,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "August",
-                                        span: Span {
-                                            start: 2107,
-                                            end: 2113,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 8,
-                                        span: Span {
-                                            start: 2114,
-                                            end: 2116,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2107,
-                                        end: 2116,
                                     },
                                 },
                                 Variant {
@@ -1390,22 +758,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "September",
-                                        span: Span {
-                                            start: 2126,
-                                            end: 2135,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 9,
-                                        span: Span {
-                                            start: 2136,
-                                            end: 2138,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2126,
-                                        end: 2138,
                                     },
                                 },
                                 Variant {
@@ -1414,22 +770,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "October",
-                                        span: Span {
-                                            start: 2148,
-                                            end: 2155,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 10,
-                                        span: Span {
-                                            start: 2156,
-                                            end: 2159,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2148,
-                                        end: 2159,
                                     },
                                 },
                                 Variant {
@@ -1438,22 +782,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "November",
-                                        span: Span {
-                                            start: 2169,
-                                            end: 2177,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 11,
-                                        span: Span {
-                                            start: 2178,
-                                            end: 2181,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2169,
-                                        end: 2181,
                                     },
                                 },
                                 Variant {
@@ -1462,22 +794,10 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "December",
-                                        span: Span {
-                                            start: 2191,
-                                            end: 2199,
-                                        },
                                     },
                                     fields: Unit,
                                     id: Id {
                                         value: 12,
-                                        span: Span {
-                                            start: 2200,
-                                            end: 2203,
-                                        },
-                                    },
-                                    span: Span {
-                                        start: 2191,
-                                        end: 2203,
                                     },
                                 },
                             ],

@@ -24,6 +24,7 @@ use std::{
 
 pub use miette::{Diagnostic, LabeledSpan};
 use miette::{IntoDiagnostic, NamedSource, Result};
+use stef_derive::Debug;
 use winnow::Parser;
 
 use self::error::ParseSchemaError;

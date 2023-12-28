@@ -8,6 +8,7 @@ use stef_compiler::simplify::{
 use super::{decode, encode, size};
 use crate::{BytesType, Opts};
 
+/// Take a single schema and convert it into Rust source code.
 #[must_use]
 pub fn compile_schema(opts: &Opts, Schema { definitions, .. }: &Schema<'_>) -> TokenStream {
     let definitions = definitions.iter().map(|def| compile_definition(opts, def));

@@ -25,6 +25,10 @@ mod error;
 ///   schema.
 /// - Lastly, the not-found types from the first steps are checked for in the other schemas by
 ///   utilizing the imports from the second step.
+///
+/// # Errors
+///
+/// Will return `Err` if any of the resolution steps fails.
 pub fn schemas(values: &[(&str, &Schema<'_>)]) -> Result<(), Error> {
     let modules = values
         .iter()

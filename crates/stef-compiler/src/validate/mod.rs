@@ -63,6 +63,10 @@ impl From<DuplicateFieldName> for Error {
 /// - Fields names in structs or enum variants are unique.
 /// - Generic type parameters in a struct or enum are unique.
 /// - All generic type parameters are used.
+///
+/// # Errors
+///
+/// Will return `Err` if any of validation steps fails.
 pub fn schema(value: &Schema<'_>) -> Result<(), Error> {
     names::validate_names_in_module(&value.definitions)?;
     value.definitions.iter().try_for_each(definition)

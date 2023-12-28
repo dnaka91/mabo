@@ -1,5 +1,6 @@
+//! Language Server Protocol server implementation for Stef schemas.
+
 #![warn(clippy::expect_used, clippy::unwrap_used)]
-#![allow(missing_docs)]
 
 use std::{collections::HashMap, net::Ipv4Addr, time::Instant};
 

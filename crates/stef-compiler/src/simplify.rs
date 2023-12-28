@@ -14,7 +14,13 @@ pub struct Schema<'a> {
 }
 
 impl Schema<'_> {
-    /// Render the [JSON Schema](https://json-schema.org/draft-07/json-schema-release-notes) of the complete schema, which can help external tools to understand the structure or derive types from it.
+    /// Render the [JSON Schema](https://json-schema.org/draft-07/json-schema-release-notes) of the
+    /// complete schema, which can help external tools to understand the structure or derive types
+    /// from it.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if the schema fails to serialize as JSON string.
     #[cfg(feature = "json")]
     pub fn json_schema() -> serde_json::Result<String> {
         let schema = schemars::schema_for!(Schema<'_>);

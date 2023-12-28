@@ -1,4 +1,4 @@
-#![allow(missing_docs, clippy::missing_errors_doc)]
+//! Main command line interface for tooling support of Stef schema files.
 
 use std::{fs, process::ExitCode};
 

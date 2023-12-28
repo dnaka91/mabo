@@ -4,14 +4,17 @@ pub use bytes::{BufMut, Bytes};
 
 use crate::{varint, FieldId, NonZero, VariantId};
 
+/// Encode a Stef `bool` (`true` or `false`) value.
 pub fn encode_bool(w: &mut impl BufMut, value: bool) {
     w.put_u8(value.into());
 }
 
+/// Encode a Stef `u8` integer.
 pub fn encode_u8(w: &mut impl BufMut, value: u8) {
     w.put_u8(value);
 }
 
+/// Encode a Stef `i8` integer.
 pub fn encode_i8(w: &mut impl BufMut, value: i8) {
     w.put_i8(value);
 }
@@ -19,6 +22,7 @@ pub fn encode_i8(w: &mut impl BufMut, value: i8) {
 macro_rules! encode_int {
     ($ty:ty) => {
         paste::paste! {
+            #[doc = "Encode a Stef `" $ty "` integer."]
             pub fn [<encode_ $ty>](w: &mut impl BufMut, value: $ty) {
                 let (buf, len) = varint::[<encode_ $ty>](value);
                 w.put(&buf[..len]);
@@ -33,27 +37,33 @@ macro_rules! encode_int {
 encode_int!(u16, u32, u64, u128);
 encode_int!(i16, i32, i64, i128);
 
+/// Encode a Stef `f32` floating number.
 pub fn encode_f32(w: &mut impl BufMut, value: f32) {
     w.put_f32(value);
 }
 
+/// Encode a Stef `f64` floating number.
 pub fn encode_f64(w: &mut impl BufMut, value: f64) {
     w.put_f64(value);
 }
 
+/// Encode a UTF-8 encoded Stef `string`.
 pub fn encode_string(w: &mut impl BufMut, value: &str) {
     encode_bytes_std(w, value.as_bytes());
 }
 
+/// Encode a Stef `bytes` raw byte array (represented as default Rust byte slice).
 pub fn encode_bytes_std(w: &mut impl BufMut, value: &[u8]) {
     encode_u64(w, value.len() as u64);
     w.put(value);
 }
 
+/// Encode a Stef `bytes` raw byte array (represented as [`bytes::Bytes`] type).
 pub fn encode_bytes_bytes(w: &mut impl BufMut, value: &Bytes) {
     encode_bytes_std(w, value);
 }
 
+/// Encode a Stef `vec<T>` vector value.
 pub fn encode_vec<W, T, S, E>(w: &mut W, vec: &[T], size: S, encode: E)
 where
     W: BufMut,
@@ -67,6 +77,7 @@ where
     }
 }
 
+/// Encode a Stef `hash_map<K, V>` hash map value.
 pub fn encode_hash_map<W, K, V, SK, SV, EK, EV>(
     w: &mut W,
     map: &HashMap<K, V>,
@@ -94,6 +105,7 @@ pub fn encode_hash_map<W, K, V, SK, SV, EK, EV>(
     }
 }
 
+/// Encode a Stef `hash_set<T>` hash set value.
 pub fn encode_hash_set<W, T, S, E>(w: &mut W, set: &HashSet<T>, size: S, encode: E)
 where
     W: BufMut,
@@ -107,6 +119,7 @@ where
     }
 }
 
+/// Encode a Stef `option<T>` option value.
 pub fn encode_option<W, T, E>(w: &mut W, option: &Option<T>, encode: E)
 where
     W: BufMut,
@@ -120,6 +133,7 @@ where
     }
 }
 
+/// Encode a Stef `[T; N]` array value.
 pub fn encode_array<const N: usize, W, T, S, E>(w: &mut W, array: &[T; N], size: S, encode: E)
 where
     W: BufMut,
@@ -133,6 +147,7 @@ where
     }
 }
 
+/// Encode a Stef `(T1, T2, ...)` tuple value.
 #[inline(always)]
 pub fn encode_tuple<W, S, E>(w: &mut W, size: S, encode: E)
 where
@@ -144,16 +159,19 @@ where
     encode(w);
 }
 
+/// Encode a Stef field identifier.
 #[inline(always)]
 pub fn encode_id(w: &mut impl BufMut, id: FieldId) {
     encode_u32(w, id.into_u32());
 }
 
+/// Encode a Stef enum variant identifier.
 #[inline(always)]
 pub fn encode_variant_id(w: &mut impl BufMut, id: VariantId) {
     encode_u32(w, id.value);
 }
 
+/// Encode a required Stef struct or enum field.
 #[inline(always)]
 pub fn encode_field<W, E>(w: &mut W, id: FieldId, encode: E)
 where
@@ -164,6 +182,7 @@ where
     encode(w);
 }
 
+/// Encode an optional Stef struct or enum field.
 #[inline(always)]
 pub fn encode_field_option<W, T, E>(w: &mut W, id: FieldId, option: &Option<T>, encode: E)
 where
@@ -176,7 +195,9 @@ where
     }
 }
 
+/// Values that can encode themselves in the Stef format.
 pub trait Encode: super::Size {
+    /// Write the encoded data in the provided buffer.
     fn encode(&self, w: &mut impl BufMut);
 }
 

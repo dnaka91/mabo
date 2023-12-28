@@ -1,6 +1,6 @@
-#![allow(missing_docs, clippy::missing_errors_doc, clippy::missing_panics_doc)]
+//! Code generator crate for Rust projects that can be used in `build.rs` build scripts.
 
-use std::{convert::AsRef, fmt::Debug, path::PathBuf};
+use std::{convert::AsRef, env, fmt::Debug, fs, path::PathBuf};
 
 use miette::Report;
 use stef_parser::Schema;
@@ -13,37 +13,89 @@ mod definition;
 mod encode;
 mod size;
 
+/// Shorthand for the standard result type, that defaults to the crate level's [`Error`] type.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
+/// Errors that can happen when generating Rust source code from Stef schema files.
 #[derive(Error)]
 pub enum Error {
+    /// The required OUT_DIR env var doesn't exist.
+    #[error("missing OUT_DIR environment variable")]
+    NoOutDir,
+    /// One of the user-provided glob patterns is invalid.
     #[error("failed to parse the glob pattern {glob:?}")]
     Pattern {
+        /// Source error of the problem.
         #[source]
         source: glob::PatternError,
+        /// The problematic pattern.
         glob: String,
     },
+    /// Failed to iterate over the matching files for a pattern.
     #[error("failed to read files of a glob pattern")]
     Glob {
+        /// Source error of the problem.
         #[source]
         source: glob::GlobError,
     },
+    /// The file name resulting from a glob pattern didn't produce a usable file path.
+    #[error("failed to get the file name from a found file path")]
+    NoFileName,
+    /// The file name wasn't valid UTF-8.
+    #[error("the file name was not encoded in valid UTF-8")]
+    NonUtf8FileName,
+    /// Failed to create the output directory for generated Rust source files.
     #[error("failed creating output directory at {path:?}")]
     Create {
+        /// Source error of the problem.
         #[source]
         source: std::io::Error,
+        /// The output directory path.
         path: PathBuf,
     },
+    /// Failed to read one of the schema files.
     #[error("failed reading schema file at {file:?}")]
     Read {
+        /// Source error of the problem.
         #[source]
         source: std::io::Error,
+        /// The problematic file.
         file: PathBuf,
     },
+    /// Failed to parse a Stef schema.
     #[error("failed parsing schema from {file:?}:\n{report:?}")]
-    Parse { report: Report, file: PathBuf },
+    Parse {
+        /// Detailed report about the problem.
+        report: Report,
+        /// The problematic schema file.
+        file: PathBuf,
+    },
+    /// Failed to compile a Stef schema.
     #[error("failed compiling schema from {file:?}:\n{report:?}")]
-    Compile { report: Report, file: PathBuf },
+    Compile {
+        /// Detailed report about the problem.
+        report: Report,
+        /// The problematic schema file.
+        file: PathBuf,
+    },
+    /// The code generator produced Rust code that isn't valid.
+    #[error("failed to generate valid Rust code")]
+    InvalidCode {
+        /// Source error of the problem.
+        #[source]
+        source: syn::Error,
+        /// The invalid Rust source code.
+        code: String,
+    },
+    /// Failed to write a generated Rust source file.
+    #[error("failed writing Rust source file to {file:?}")]
+    Write {
+        /// Source error of the problem.
+        #[source]
+        source: std::io::Error,
+        /// The problematic file.
+        file: PathBuf,
+    },
 }
 
 impl Debug for Error {
@@ -52,36 +104,49 @@ impl Debug for Error {
     }
 }
 
+/// Instance of the compiler, which is responsible to generate Rust source code from schema files.
 #[derive(Default)]
 pub struct Compiler {
+    /// The data type to use for Stef's `bytes` type.
     bytes_type: BytesType,
 }
 
+/// The data type to use for Stef's `bytes` type, that is used throughout all generated schemas.
 #[derive(Clone, Copy, Default)]
 pub enum BytesType {
+    /// Use the default `Vec<u8>` type from Rust's stdlib.
     #[default]
     VecU8,
+    /// Use the [`bytes::Bytes`](https://docs.rs/bytes/latest/bytes/struct.Bytes.html) type.
     Bytes,
 }
 
+/// Additional options to adjust the behavior of the Rust code generator.
 #[derive(Default)]
 pub struct Opts {
     bytes_type: BytesType,
 }
 
 impl Compiler {
+    /// Change the type that is used to represent Stef `bytes` byte arrays.
     #[must_use]
     pub fn with_bytes_type(mut self, value: BytesType) -> Self {
         self.bytes_type = value;
         self
     }
 
+    /// Compile the given list of Stef schema files (glob patterns) into Rust source code.
+    ///
+    /// # Errors
+    ///
+    /// Will return an `Err` if any of the various cases happen, which are described in the
+    /// [`Error`] type.
     pub fn compile(&self, schemas: &[impl AsRef<str>]) -> Result<()> {
         init_miette();
 
-        let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("stef");
+        let out_dir = PathBuf::from(env::var_os("OUT_DIR").ok_or(Error::NoOutDir)?).join("stef");
 
-        std::fs::create_dir_all(&out_dir).map_err(|source| Error::Create {
+        fs::create_dir_all(&out_dir).map_err(|source| Error::Create {
             source,
             path: out_dir.clone(),
         })?;
@@ -96,7 +161,7 @@ impl Compiler {
             })? {
                 let path = schema.map_err(|e| Error::Glob { source: e })?;
 
-                let input = std::fs::read_to_string(&path).map_err(|source| Error::Read {
+                let input = fs::read_to_string(&path).map_err(|source| Error::Read {
                     source,
                     file: path.clone(),
                 })?;
@@ -106,7 +171,11 @@ impl Compiler {
         }
 
         for (path, input) in &inputs {
-            let stem = path.file_stem().unwrap().to_str().unwrap();
+            let stem = path
+                .file_stem()
+                .ok_or(Error::NoFileName)?
+                .to_str()
+                .ok_or(Error::NonUtf8FileName)?;
 
             let schema = Schema::parse(input, Some(path)).map_err(|e| Error::Parse {
                 report: Report::new(e),
@@ -138,13 +207,19 @@ impl Compiler {
         for (stem, schema) in validated {
             let schema = stef_compiler::simplify_schema(schema);
             let code = definition::compile_schema(&opts, &schema);
-            let code = prettyplease::unparse(
-                &syn::parse2(code.clone()).unwrap_or_else(|_| panic!("{code}")),
-            );
+            let code = prettyplease::unparse(&syn::parse2(code.clone()).map_err(|source| {
+                Error::InvalidCode {
+                    source,
+                    code: code.to_string(),
+                }
+            })?);
 
             let out_file = out_dir.join(format!("{stem}.rs",));
 
-            std::fs::write(out_file, code).unwrap();
+            fs::write(&out_file, code).map_err(|source| Error::Write {
+                source,
+                file: out_file,
+            })?;
         }
 
         Ok(())

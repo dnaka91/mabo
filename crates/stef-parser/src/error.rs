@@ -4,7 +4,7 @@
 //! The root element is the [`ParseSchemaError`], which forms a tree of errors down to a specific
 //! error that caused parsing to fail.
 
-#![allow(missing_docs, clippy::module_name_repetitions)]
+#![allow(clippy::module_name_repetitions)]
 
 use std::{
     error::Error,
@@ -27,6 +27,7 @@ pub use crate::parser::{
 #[derive(Debug)]
 pub struct ParseSchemaError {
     pub(crate) source_code: NamedSource,
+    /// Specific cause of the error.
     pub cause: ParseSchemaCause,
 }
 
@@ -76,11 +77,15 @@ impl Diagnostic for ParseSchemaError {
     }
 }
 
+/// Specific cause that gives more details about the origin of the error.
 #[derive(Debug, Diagnostic)]
 pub enum ParseSchemaCause {
+    /// Non-specific general parser error.
     Parser(ErrorKind, usize),
+    /// Root-level comment for the schema is invalid.
     #[diagnostic(transparent)]
     Comment(ParseCommentError),
+    /// Single schema definition is invalid.
     #[diagnostic(transparent)]
     Definition(ParseDefinitionError),
 }
@@ -133,21 +138,30 @@ where
 /// Reason why a single definition was invalid.
 #[derive(Debug, Diagnostic)]
 pub enum ParseDefinitionError {
+    /// Non-specific general parser error.
     Parser(ErrorKind, usize),
+    /// Invalid comment section.
     #[diagnostic(transparent)]
     Comment(ParseCommentError),
+    /// Invalid element attribute.
     #[diagnostic(transparent)]
     Attribute(ParseAttributeError),
+    /// Invalid module definition.
     #[diagnostic(transparent)]
     Module(ParseModuleError),
+    /// Invalid struct definition.
     #[diagnostic(transparent)]
     Struct(ParseStructError),
+    /// Invalid enum definition.
     #[diagnostic(transparent)]
     Enum(ParseEnumError),
+    /// Invalid const definition.
     #[diagnostic(transparent)]
     Const(ParseConstError),
+    /// Invalid alias definition.
     #[diagnostic(transparent)]
     Alias(ParseAliasError),
+    /// Invalid import definition.
     #[diagnostic(transparent)]
     Import(ParseImportError),
 }

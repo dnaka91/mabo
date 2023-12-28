@@ -18,7 +18,7 @@
 //! stef_compiler::resolve_schemas(&[("test", &schema)]).unwrap();
 //! ```
 
-#![allow(clippy::missing_errors_doc, clippy::module_name_repetitions)]
+#![allow(clippy::module_name_repetitions)]
 
 pub use resolve::schemas as resolve_schemas;
 pub use simplify::schema as simplify_schema;

@@ -7,6 +7,8 @@ use crate::{varint, NonZero};
 macro_rules! size_fixed {
     ($ty:ty => $size:literal) => {
         paste::paste! {
+            #[doc = "Calculate the size of a Stef `" $ty "`"]
+            /// fixed value which is always the same, regardless of the value itself.
             #[inline(always)]
             #[must_use]
             pub const fn [<size_ $ty>](_: $ty) -> usize {
@@ -30,6 +32,8 @@ size_fixed!(
 macro_rules! size_int {
     ($ty:ty) => {
         paste::paste! {
+            #[doc = "Calculate the size of a Stef `" $ty "` integer, "]
+            /// which varies as it is encoded as a _Varint_.
             #[must_use]
             pub const fn [<size_ $ty>](value: $ty) -> usize {
                 varint::[<size_ $ty>](value)
@@ -44,20 +48,24 @@ macro_rules! size_int {
 size_int!(u16, u32, u64, u128);
 size_int!(i16, i32, i64, i128);
 
+/// Calculate the size of a UTF-8 encoded Stef `string`.
 #[must_use]
 pub const fn size_string(value: &str) -> usize {
     size_bytes_std(value.as_bytes())
 }
 
+/// Calculate the size of a Stef `bytes` raw byte array (represented as default Rust byte slice).
 #[must_use]
 pub const fn size_bytes_std(value: &[u8]) -> usize {
     size_u64(value.len() as u64) + value.len()
 }
 
+/// Calculate the size of a Stef `bytes` raw byte array (represented as [`bytes::Bytes`] type).
 pub const fn size_bytes_bytes(value: &Bytes) -> usize {
     size_u64(value.len() as u64) + value.len()
 }
 
+/// Calculate the size of a Stef `vec<T>` vector value.
 pub fn size_vec<T, S>(vec: &[T], size: S) -> usize
 where
     S: Fn(&T) -> usize,
@@ -65,6 +73,7 @@ where
     size_u64(vec.len() as u64) + vec.iter().map(size).sum::<usize>()
 }
 
+/// Calculate the size of a Stef `hash_map<K, V>` hash map value.
 pub fn size_hash_map<K, V, SK, SV>(map: &HashMap<K, V>, size_key: SK, size_value: SV) -> usize
 where
     SK: Fn(&K) -> usize,
@@ -77,6 +86,7 @@ where
             .sum::<usize>()
 }
 
+/// Calculate the size of a Stef `hash_set<T>` hash set value.
 pub fn size_hash_set<T, S>(set: &HashSet<T>, size: S) -> usize
 where
     S: Fn(&T) -> usize,
@@ -84,6 +94,7 @@ where
     size_u64(set.len() as u64) + set.iter().map(size).sum::<usize>()
 }
 
+/// Calculate the size of a Stef `option<T>` option value.
 pub fn size_option<T, S>(option: Option<&T>, size: S) -> usize
 where
     S: Fn(&T) -> usize,
@@ -91,6 +102,7 @@ where
     size_u8(0) + option.map_or(0, size)
 }
 
+/// Calculate the size of a Stef `[T; N]` array value.
 pub fn size_array<const N: usize, T, S>(array: &[T; N], size: S) -> usize
 where
     S: Fn(&T) -> usize,
@@ -98,12 +110,14 @@ where
     size_u64(N as u64) + array.iter().map(size).sum::<usize>()
 }
 
+/// Calculate the size of a Stef field or variant identifier.
 #[inline(always)]
 #[must_use]
 pub fn size_id(id: u32) -> usize {
     size_u32(id)
 }
 
+/// Calculate the size of a required Stef struct or enum field.
 #[inline(always)]
 pub fn size_field<S>(id: u32, size: S) -> usize
 where
@@ -112,6 +126,7 @@ where
     size_id(id) + size()
 }
 
+/// Calculate the size of an optional Stef struct or enum field.
 #[inline(always)]
 pub fn size_field_option<T, S>(id: u32, option: Option<&T>, size: S) -> usize
 where
@@ -120,7 +135,9 @@ where
     option.map_or(0, |value| size_id(id) + size(value))
 }
 
+/// Values that are able to calculate their encoded byte size, without actually encoding.
 pub trait Size {
+    /// Calculate the encoded byte size.
     fn size(&self) -> usize;
 }
 

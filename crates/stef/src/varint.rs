@@ -69,6 +69,7 @@ const fn max(a: usize, b: usize) -> usize {
 macro_rules! varint {
     ($ty:ty, $signed:ty) => {
         paste::paste! {
+            #[doc = "Encode a `" $ty "` as _Varint_."]
             #[inline]
             #[must_use]
             pub fn [<encode_ $ty>](mut value: $ty) -> ([u8; max_size::<$ty>()], usize) {
@@ -88,6 +89,12 @@ macro_rules! varint {
                 (buf, buf.len())
             }
 
+            #[doc = "Decode a _Varint_ back to a `" $ty "`."]
+            ///
+            /// # Errors
+            ///
+            /// Will return `Err` if the raw bytes don't contain an end marker within the possible
+            /// maximum byte count valid for the integer.
             #[inline]
             pub fn [<decode_ $ty>](buf: &[u8]) -> Result<($ty, usize), DecodeIntError> {
                 let mut value = 0;
@@ -102,23 +109,32 @@ macro_rules! varint {
                 Err(DecodeIntError)
             }
 
+            #[doc = "Calculate the byte size of a `" $ty "` encoded as _Varint_."]
             #[inline]
             #[must_use]
             pub const fn [<size_ $ty>](value: $ty) -> usize {
                 size::<$ty>(value.leading_zeros() as usize)
             }
 
+            #[doc = "Encode a `" $signed "` as _Varint_."]
             #[inline]
             #[must_use]
             pub fn [<encode_ $signed>](value: $signed) -> ([u8; max_size::<$ty>()], usize) {
                 [<encode_ $ty>]([<zigzag_encode_ $signed>](value))
             }
 
+            #[doc = "Decode a _Varint_ back to a `" $signed "`."]
+            ///
+            /// # Errors
+            ///
+            /// Will return `Err` if the raw bytes don't contain an end marker within the possible
+            /// maximum byte count valid for the integer.
             #[inline]
             pub fn [<decode_ $signed>](buf: &[u8]) -> Result<($signed, usize), DecodeIntError> {
                 [<decode_ $ty>](buf).map(|(v, b)| ([<zigzag_decode_ $signed>](v), b))
             }
 
+            #[doc = "Calculate the byte size of a `" $signed "` encoded as _Varint_."]
             #[inline]
             #[must_use]
             pub const fn [<size_ $signed>](value: $signed) -> usize {
@@ -175,6 +191,7 @@ macro_rules! varint {
 
 varint!((u16, i16), (u32, i32), (u64, i64), (u128, i128));
 
+/// Error that can happen when trying to decode a _Varint_ back into a regular integer.
 #[derive(Debug, Error)]
 #[error("input was lacking a final marker for the end of the integer data")]
 pub struct DecodeIntError;

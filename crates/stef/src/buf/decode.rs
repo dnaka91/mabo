@@ -8,33 +8,43 @@ use std::{
 
 pub use bytes::{Buf, Bytes};
 
-use crate::{varint, FieldEncoding, FieldId, NonZero, VariantId};
+use crate::{varint, FieldEncoding, FieldId, NonZero, NonZeroBytes, NonZeroString, VariantId};
 
+/// Result type alias for the decoding process, which defaults to the [`Error`] type for errors.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
-#[derive(Debug)]
+/// Error that can happen while trying to decode a Stef payload.
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
+    /// The passed buffer did not contain enough data to fully decode the payload.
+    #[error("not enough remaining data in the buffer to decode the value")]
     InsufficientData,
-    DecodeInt(varint::DecodeIntError),
-    NonUtf8(std::string::FromUtf8Error),
-    MissingField { id: u32, name: Option<&'static str> },
+    /// A _Varint_ integer failed to decode.
+    #[error("failed to decode a varint integer")]
+    DecodeInt(#[from] varint::DecodeIntError),
+    /// A string value was not encoded in valid UTF-8.
+    #[error("string is not valid UTF-8")]
+    NonUtf8(#[from] std::string::FromUtf8Error),
+    /// The field of a struct or enum non-optional in the schema, but is missing from the payload.
+    #[error("required field is missing from the payload")]
+    MissingField {
+        /// Identifier of the field.
+        id: u32,
+        /// Name of the field (if it is a named field).
+        name: Option<&'static str>,
+    },
+    /// An enum variant was found that does not exist in the schema.
+    #[error("encountered an unknown enum variant")]
     UnknownVariant(u32),
+    /// An unknown field encoding was found.
+    #[error("encountered an unknown field encoding")]
     UnknownEncoding(u32),
+    /// The value of a non-zero field was actually zero.
+    #[error("non-zero value was found to be zero")]
     Zero,
 }
 
-impl From<varint::DecodeIntError> for Error {
-    fn from(value: varint::DecodeIntError) -> Self {
-        Self::DecodeInt(value)
-    }
-}
-
-impl From<std::string::FromUtf8Error> for Error {
-    fn from(value: std::string::FromUtf8Error) -> Self {
-        Self::NonUtf8(value)
-    }
-}
-
+/// Special field identifier that marks the end of a struct or enum variant.
 pub const END_MARKER: u32 = 0;
 
 macro_rules! ensure_size {
@@ -45,16 +55,31 @@ macro_rules! ensure_size {
     };
 }
 
+/// Decode a Stef `bool` (`true` or `false`) value.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_bool(r: &mut impl Buf) -> Result<bool> {
     ensure_size!(r, 1);
     Ok(r.get_u8() != 0)
 }
 
+/// Decode a Stef `u8` integer.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_u8(r: &mut impl Buf) -> Result<u8> {
     ensure_size!(r, 1);
     Ok(r.get_u8())
 }
 
+/// Decode a Stef `i8` integer.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_i8(r: &mut impl Buf) -> Result<i8> {
     ensure_size!(r, 1);
     Ok(r.get_i8())
@@ -63,6 +88,12 @@ pub fn decode_i8(r: &mut impl Buf) -> Result<i8> {
 macro_rules! decode_int {
     ($ty:ty) => {
         paste::paste! {
+            #[doc = "Decode a Stef `" $ty "` integer."]
+            ///
+            /// # Errors
+            ///
+            /// Will return `Err` if the buffer does not have enough remaining data to read the
+            /// value, or the _Varint_ decoding fails due to a missing end marker.
             pub fn [<decode_ $ty>](r: &mut impl Buf) -> Result<$ty> {
                 let (value, consumed) = varint::[<decode_ $ty>](r.chunk())?;
                 r.advance(consumed);
@@ -78,20 +109,41 @@ macro_rules! decode_int {
 decode_int!(u16, u32, u64, u128);
 decode_int!(i16, i32, i64, i128);
 
+/// Decode a Stef `f32` floating number.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_f32(r: &mut impl Buf) -> Result<f32> {
     ensure_size!(r, 4);
     Ok(r.get_f32())
 }
 
+/// Decode a Stef `f64` floating number.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_f64(r: &mut impl Buf) -> Result<f64> {
     ensure_size!(r, 8);
     Ok(r.get_f64())
 }
 
+/// Decode a UTF-8 encoded Stef `string`.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// string is not valid UTF-8.
 pub fn decode_string(r: &mut impl Buf) -> Result<String> {
     String::from_utf8(decode_bytes_std(r)?).map_err(Into::into)
 }
 
+/// Decode a Stef `bytes` raw byte array (represented as default Rust byte vector).
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_bytes_std(r: &mut impl Buf) -> Result<Vec<u8>> {
     let len = decode_u64(r)?;
     ensure_size!(r, len as usize);
@@ -99,6 +151,11 @@ pub fn decode_bytes_std(r: &mut impl Buf) -> Result<Vec<u8>> {
     Ok(r.copy_to_bytes(len as usize).to_vec())
 }
 
+/// Decode a Stef `bytes` raw byte array (represented as [`bytes::Bytes`] type).
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value.
 pub fn decode_bytes_bytes(r: &mut impl Buf) -> Result<Bytes> {
     let len = decode_u64(r)?;
     ensure_size!(r, len as usize);
@@ -106,6 +163,12 @@ pub fn decode_bytes_bytes(r: &mut impl Buf) -> Result<Bytes> {
     Ok(r.copy_to_bytes(len as usize))
 }
 
+/// Decode a Stef `vec<T>` vector value.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// `T` type fails to decode.
 pub fn decode_vec<R, T, D>(r: &mut R, decode: D) -> Result<Vec<T>>
 where
     R: Buf,
@@ -124,6 +187,12 @@ where
     Ok(vec)
 }
 
+/// Decode a Stef `hash_map<K, V>` hash map value.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// `K`/`V` type fails to decode.
 pub fn decode_hash_map<R, K, V, DK, DV>(
     r: &mut R,
     decode_key: DK,
@@ -148,6 +217,12 @@ where
     Ok(map)
 }
 
+/// Decode a Stef `hash_set<T>` hash set value.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// `T` type fails to decode.
 pub fn decode_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<HashSet<T>>
 where
     R: Buf,
@@ -167,6 +242,12 @@ where
     Ok(set)
 }
 
+/// Decode a Stef `option<T>` option value.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// `T` type fails to decode.
 pub fn decode_option<R, T, D>(r: &mut R, decode: D) -> Result<Option<T>>
 where
     R: Buf,
@@ -180,6 +261,13 @@ where
     }
 }
 
+/// Decode a Stef `[T; N]` array value.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// `T` type fails to decode.
+#[allow(clippy::missing_panics_doc)]
 pub fn decode_array<const N: usize, R, T, D>(r: &mut R, decode: D) -> Result<[T; N]>
 where
     R: Buf,
@@ -215,6 +303,13 @@ macro_rules! ensure_not_empty {
 macro_rules! decode_non_zero_int {
     ($ty:ty) => {
         paste::paste! {
+            #[doc = "Decode a Stef `non_zero<" $ty ">` integer as [`NonZero" $ty:upper "`]."]
+            #[doc = "\n\n[`NonZero" $ty:upper "`]: core::num::NonZero" $ty:upper]
+            ///
+            /// # Errors
+            ///
+            /// Will return `Err` if the buffer does not have enough remaining data to read the
+            /// value, or the integer value is zero.
             pub fn [<decode_non_zero_ $ty>](
                 r: &mut impl Buf,
             ) -> Result<std::num::[<NonZero $ty:upper>]> {
@@ -231,13 +326,27 @@ macro_rules! decode_non_zero_int {
 decode_non_zero_int!(u8, u16, u32, u64, u128);
 decode_non_zero_int!(i8, i16, i32, i64, i128);
 
-pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZero<String>> {
+/// Decode a Stef `non_zero<string>`.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, the
+/// string is not valid UTF-8, or the string is empty.
+#[allow(clippy::missing_panics_doc)]
+pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZeroString> {
     String::from_utf8(decode_non_zero_bytes_std(r)?.into_inner())
-        .map(|v| NonZero::<String>::new(v).unwrap())
+        .map(|v| NonZeroString::new(v).unwrap())
         .map_err(Into::into)
 }
 
-pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZero<Vec<u8>>> {
+/// Decode a Stef `non_zero<bytes>` (represented as [`NonZeroBytes`]).
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// byte array is empty.
+#[allow(clippy::missing_panics_doc)]
+pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZeroBytes> {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
     ensure_size!(r, len as usize);
@@ -245,6 +354,13 @@ pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZero<Vec<u8>>> {
     Ok(NonZero::<Vec<_>>::new(r.copy_to_bytes(len as usize).to_vec()).unwrap())
 }
 
+/// Decode a Stef `non_zero<bytes>` (represented as [`NonZero`]<[`bytes::Bytes`]>).
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// byte array is empty.
+#[allow(clippy::missing_panics_doc)]
 pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
@@ -253,6 +369,13 @@ pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
     Ok(NonZero::<Bytes>::new(r.copy_to_bytes(len as usize)).unwrap())
 }
 
+/// Decode a Stef `non_zero<vec<T>>`.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, the
+/// collection is empty, or the `T` type fails to decode.
+#[allow(clippy::missing_panics_doc)]
 pub fn decode_non_zero_vec<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<Vec<T>>>
 where
     R: Buf,
@@ -272,6 +395,13 @@ where
     Ok(NonZero::<Vec<_>>::new(vec).unwrap())
 }
 
+/// Decode a Stef `non_zero<hash_map<K, V>>`.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, the
+/// collection is empty, or the `K`/`V` type fails to decode.
+#[allow(clippy::missing_panics_doc)]
 pub fn decode_non_zero_hash_map<R, K, V, DK, DV>(
     r: &mut R,
     decode_key: DK,
@@ -297,6 +427,13 @@ where
     Ok(NonZero::<HashMap<_, _>>::new(map).unwrap())
 }
 
+/// Decode a Stef `non_zero<hash_set<T>>`.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, the
+/// collection is empty, or the `T` type fails to decode.
+#[allow(clippy::missing_panics_doc)]
 pub fn decode_non_zero_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<HashSet<T>>>
 where
     R: Buf,
@@ -317,16 +454,35 @@ where
     Ok(NonZero::<HashSet<_>>::new(set).unwrap())
 }
 
+/// Decode a Stef field identifier.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, the
+/// value fails to decode or the identifier has an invalid field encoding.
 #[inline]
 pub fn decode_id(r: &mut impl Buf) -> Result<FieldId> {
     decode_u32(r).and_then(|id| FieldId::from_u32(id).ok_or(Error::UnknownEncoding(id)))
 }
 
+/// Decode a Stef enum variant identifier.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
+/// value fails to decode.
 #[inline]
 pub fn decode_variant_id(r: &mut impl Buf) -> Result<VariantId> {
     decode_u32(r).map(VariantId::new)
 }
 
+/// Decode a field, but skip over the value instead of fully decoding it.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to skip over the value, or
+/// the decoding of data in fails in the process. For example to skip a _Varint_, it still needs to
+/// decoded partially to find its end.
 pub fn decode_skip(r: &mut impl Buf, encoding: FieldEncoding) -> Result<()> {
     match encoding {
         FieldEncoding::Varint => loop {
@@ -359,7 +515,15 @@ pub fn decode_skip(r: &mut impl Buf, encoding: FieldEncoding) -> Result<()> {
     }
 }
 
+/// Values that can decode themselves from Stef encoded data.
 pub trait Decode: Sized {
+    /// Read the encoded data from the provided buffer.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if the buffer does not have enough remaining data to read the value, or,
+    /// depending on the defined data structure, due to several possible issues that can arise when
+    /// trying to decode.
     fn decode(r: &mut impl Buf) -> Result<Self>;
 }
 

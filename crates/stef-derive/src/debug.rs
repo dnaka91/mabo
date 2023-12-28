@@ -15,7 +15,7 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
 
     match derive.data {
         Data::Struct(data) => {
-            let fields= expand_fields(name, &data.fields);
+            let fields = expand_fields(&name, &data.fields);
 
             Ok(quote! {
                 impl #generics ::core::fmt::Debug for #ident #generics {
@@ -30,7 +30,7 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
         Data::Enum(data) => {
             let variants = data.variants.iter().map(|variant| {
                 let ident = &variant.ident;
-                let fields = expand_fields(Literal::string(&ident.to_string()), &variant.fields);
+                let fields = expand_fields(&Literal::string(&ident.to_string()), &variant.fields);
 
                 quote! {
                     Self::#ident #fields
@@ -51,7 +51,7 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
     }
 }
 
-fn expand_fields(name: Literal, fields: &Fields) -> TokenStream {
+fn expand_fields(name: &Literal, fields: &Fields) -> TokenStream {
     match fields {
         Fields::Named(fields) => {
             let names = fields.named.iter().map(|field| {

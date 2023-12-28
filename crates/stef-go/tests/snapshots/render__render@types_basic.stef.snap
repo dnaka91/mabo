@@ -34,7 +34,7 @@ type Sample struct {
 	F17 []byte
 	F18 string
 	F19 []byte
-	F20 stef.Tuple3[u32, u32, u32]
+	F20 stef.Tuple3[uint32, uint32, uint32]
 	F21 [12]uint32
 }
 
@@ -58,7 +58,7 @@ func NewSample(
 	f17 []byte,
 	f18 string,
 	f19 []byte,
-	f20 stef.Tuple3[u32, u32, u32],
+	f20 stef.Tuple3[uint32, uint32, uint32],
 	f21 [12]uint32,
 ) Sample {
 	return Sample{

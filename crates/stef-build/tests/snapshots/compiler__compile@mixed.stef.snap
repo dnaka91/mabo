@@ -1,6 +1,6 @@
 ---
 source: crates/stef-build/tests/compiler.rs
-description: "/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
 input_file: crates/stef-parser/tests/inputs/mixed.stef
 ---
 #[allow(unused_imports)]
@@ -22,38 +22,40 @@ pub struct User {
 impl ::stef::Encode for User {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { name, address, age, birthday } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.name).encode(w);
+                name.encode(w);
             },
         );
         ::stef::buf::encode_field_option(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
-            &self.address,
+            address,
             |w, v| {
-                (v).encode(w);
+                v.encode(w);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(3, ::stef::FieldEncoding::Fixed1),
             |w| {
-                ::stef::buf::encode_u8(w, self.age);
+                ::stef::buf::encode_u8(w, *age);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(4, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.birthday).encode(w);
+                birthday.encode(w);
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -102,18 +104,17 @@ impl ::stef::Decode for User {
 impl ::stef::buf::Size for User {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { (self.name).size() })
-            + ::stef::buf::size_field_option(
-                2,
-                self.address.as_ref(),
-                |v| { (v).size() },
-            ) + ::stef::buf::size_field(3, || { ::stef::buf::size_u8(self.age) })
-            + ::stef::buf::size_field(4, || { (self.birthday).size() })
+        let Self { name, address, age, birthday } = self;
+        ::stef::buf::size_field(1, || { name.size() })
+            + ::stef::buf::size_field_option(2, address.as_ref(), |v| { v.size() })
+            + ::stef::buf::size_field(3, || { ::stef::buf::size_u8(*age) })
+            + ::stef::buf::size_field(4, || { birthday.size() })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
@@ -129,31 +130,33 @@ pub struct FullName {
 impl ::stef::Encode for FullName {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { first, middle, last } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_string(w, &self.first);
+                ::stef::buf::encode_string(w, first);
             },
         );
         ::stef::buf::encode_field_option(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
-            &self.middle,
+            middle,
             |w, v| {
-                ::stef::buf::encode_string(w, &v);
+                ::stef::buf::encode_string(w, v);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_string(w, &self.last);
+                ::stef::buf::encode_string(w, last);
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -195,17 +198,19 @@ impl ::stef::Decode for FullName {
 impl ::stef::buf::Size for FullName {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { ::stef::buf::size_string(&self.first) })
+        let Self { first, middle, last } = self;
+        ::stef::buf::size_field(1, || { ::stef::buf::size_string(first) })
             + ::stef::buf::size_field_option(
                 2,
-                self.middle.as_ref(),
-                |v| { ::stef::buf::size_string(&v) },
-            ) + ::stef::buf::size_field(3, || { ::stef::buf::size_string(&self.last) })
+                middle.as_ref(),
+                |v| { ::stef::buf::size_string(v) },
+            ) + ::stef::buf::size_field(3, || { ::stef::buf::size_string(last) })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
@@ -228,30 +233,32 @@ pub struct Address {
 impl ::stef::Encode for Address {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { street, house_no, city } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_string(w, &self.street);
+                ::stef::buf::encode_string(w, street);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.house_no).encode(w);
+                house_no.encode(w);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_string(w, &self.city);
+                ::stef::buf::encode_string(w, city);
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -297,14 +304,16 @@ impl ::stef::Decode for Address {
 impl ::stef::buf::Size for Address {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { ::stef::buf::size_string(&self.street) })
-            + ::stef::buf::size_field(2, || { (self.house_no).size() })
-            + ::stef::buf::size_field(3, || { ::stef::buf::size_string(&self.city) })
+        let Self { street, house_no, city } = self;
+        ::stef::buf::size_field(1, || { ::stef::buf::size_string(street) })
+            + ::stef::buf::size_field(2, || { house_no.size() })
+            + ::stef::buf::size_field(3, || { ::stef::buf::size_string(city) })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
@@ -323,6 +332,7 @@ pub enum HouseNumber {
 impl ::stef::Encode for HouseNumber {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -333,7 +343,9 @@ impl ::stef::Encode for HouseNumber {
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
-                    |w| { ::stef::buf::encode_u16(w, *n0) },
+                    |w| {
+                        ::stef::buf::encode_u16(w, *n0);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -342,7 +354,9 @@ impl ::stef::Encode for HouseNumber {
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { ::stef::buf::encode_string(w, &*n0) },
+                    |w| {
+                        ::stef::buf::encode_string(w, n0);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -402,6 +416,7 @@ impl ::stef::Decode for HouseNumber {
 impl ::stef::buf::Size for HouseNumber {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -414,7 +429,7 @@ impl ::stef::buf::Size for HouseNumber {
             }
             Self::Text(n0) => {
                 ::stef::buf::size_id(2)
-                    + ::stef::buf::size_field(1, || { ::stef::buf::size_string(&*n0) })
+                    + ::stef::buf::size_field(1, || { ::stef::buf::size_string(n0) })
                     + ::stef::buf::size_u32(::stef::buf::END_MARKER)
             }
         }
@@ -445,6 +460,7 @@ pub mod birthday {
     impl ::stef::Encode for DayOfBirth {
         #[allow(
             clippy::borrow_deref_ref,
+            clippy::deref_addrof,
             clippy::semicolon_if_nothing_returned,
             clippy::too_many_lines,
         )]
@@ -455,23 +471,36 @@ pub mod birthday {
                     ::stef::buf::encode_field(
                         w,
                         ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
-                        |w| { ::stef::buf::encode_u16(w, *year) },
+                        |w| {
+                            ::stef::buf::encode_u16(w, *year);
+                        },
                     );
                     ::stef::buf::encode_field(
                         w,
                         ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
-                        |w| { (*month).encode(w) },
+                        |w| {
+                            month.encode(w);
+                        },
                     );
                     ::stef::buf::encode_field(
                         w,
                         ::stef::FieldId::new(3, ::stef::FieldEncoding::Fixed1),
-                        |w| { ::stef::buf::encode_u8(w, *day) },
+                        |w| {
+                            ::stef::buf::encode_u8(w, *day);
+                        },
                     );
                     ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                 }
                 Self::Secret { reason } => {
                     ::stef::buf::encode_variant_id(w, ::stef::VariantId::new(2));
-                    ::stef::buf::encode_field_option(w, 1, &reason);
+                    ::stef::buf::encode_field_option(
+                        w,
+                        ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
+                        reason,
+                        |w, v| {
+                            ::stef::buf::encode_string(w, v);
+                        },
+                    );
                     ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
                 }
                 Self::Unknown => {
@@ -538,6 +567,7 @@ pub mod birthday {
     impl ::stef::buf::Size for DayOfBirth {
         #[allow(
             clippy::borrow_deref_ref,
+            clippy::deref_addrof,
             clippy::semicolon_if_nothing_returned,
             clippy::too_many_lines,
         )]
@@ -546,14 +576,17 @@ pub mod birthday {
                 Self::Specific { year, month, day } => {
                     ::stef::buf::size_id(1)
                         + ::stef::buf::size_field(1, || { ::stef::buf::size_u16(*year) })
-                        + ::stef::buf::size_field(2, || { (*month).size() })
+                        + ::stef::buf::size_field(2, || { month.size() })
                         + ::stef::buf::size_field(3, || { ::stef::buf::size_u8(*day) })
                         + ::stef::buf::size_u32(::stef::buf::END_MARKER)
                 }
                 Self::Secret { reason } => {
                     ::stef::buf::size_id(2)
-                        + ::stef::buf::size_field_option(1, reason.as_ref())
-                        + ::stef::buf::size_u32(::stef::buf::END_MARKER)
+                        + ::stef::buf::size_field_option(
+                            1,
+                            reason.as_ref(),
+                            |v| { ::stef::buf::size_string(v) },
+                        ) + ::stef::buf::size_u32(::stef::buf::END_MARKER)
                 }
                 Self::Unknown => ::stef::buf::size_id(3),
             }
@@ -587,6 +620,7 @@ pub mod birthday {
     impl ::stef::Encode for Month {
         #[allow(
             clippy::borrow_deref_ref,
+            clippy::deref_addrof,
             clippy::semicolon_if_nothing_returned,
             clippy::too_many_lines,
         )]
@@ -656,6 +690,7 @@ pub mod birthday {
     impl ::stef::buf::Size for Month {
         #[allow(
             clippy::borrow_deref_ref,
+            clippy::deref_addrof,
             clippy::semicolon_if_nothing_returned,
             clippy::too_many_lines,
         )]

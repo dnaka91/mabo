@@ -442,7 +442,7 @@ impl Display for Variant<'_> {
 /// ```
 #[derive(Debug, Eq, PartialEq)]
 pub struct TypeAlias<'a> {
-    /// Optional comment.
+    /// Optional element-level comment.
     pub comment: Comment<'a>,
     /// Unique name of the type alias within the current scope.
     pub name: Name<'a>,
@@ -474,7 +474,7 @@ impl Display for TypeAlias<'_> {
     }
 }
 
-/// Possible kinds in which a the fields of a struct or enum variant can be represented.
+/// Possible kinds in which the fields of a struct or enum variant can be represented.
 #[derive(Debug, Eq, PartialEq)]
 pub enum Fields<'a> {
     /// List of named fields.

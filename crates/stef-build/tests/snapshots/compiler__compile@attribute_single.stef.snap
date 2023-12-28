@@ -12,11 +12,14 @@ pub struct Sample;
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
-    fn encode(&self, w: &mut impl ::stef::BufMut) {}
+    fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self = self;
+    }
 }
 #[automatically_derived]
 impl ::stef::Decode for Sample {
@@ -29,11 +32,13 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
+        let Self = self;
         0
     }
 }

@@ -1,8 +1,8 @@
 use std::fmt::{self, Display, Write};
 
-use stef_parser::{
-    Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Literal,
-    LiteralValue, Name, Schema, Struct, Type, TypeAlias, Variant,
+use stef_compiler::simplify::{
+    Const, Definition, Enum, ExternalType, Fields, Literal, Schema, Struct, Type, TypeAlias,
+    Variant,
 };
 
 use crate::{decode, encode, size, Opts, Output};
@@ -38,7 +38,7 @@ fn render_definition<'a>(buf: &mut String, definition: &'a Definition<'_>) -> Op
             let mut content = format!(
                 "{}{}",
                 RenderHeader,
-                RenderPackage(m.name.get(), Some(&m.comment))
+                RenderPackage(m.name, Some(&m.comment))
             );
 
             let modules = m
@@ -48,7 +48,7 @@ fn render_definition<'a>(buf: &mut String, definition: &'a Definition<'_>) -> Op
                 .collect();
 
             return Some(Output {
-                name: m.name.get(),
+                name: m.name,
                 content,
                 modules,
             });
@@ -97,7 +97,7 @@ impl Display for RenderHeader {
     }
 }
 
-struct RenderPackage<'a>(&'a str, Option<&'a Comment<'a>>);
+struct RenderPackage<'a>(&'a str, Option<&'a [&'a str]>);
 
 impl Display for RenderPackage<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -143,7 +143,7 @@ impl Display for RenderStruct<'_> {
 
 struct RenderNewFunc<'a, T> {
     name: T,
-    generics: &'a Generics<'a>,
+    generics: &'a [&'a str],
     fields: &'a Fields<'a>,
     filter_generics: bool,
 }
@@ -182,7 +182,7 @@ where
 }
 
 struct RenderGenerics<'a> {
-    generics: &'a Generics<'a>,
+    generics: &'a [&'a str],
     fields_filter: Option<&'a Fields<'a>>,
 }
 
@@ -190,12 +190,12 @@ impl Display for RenderGenerics<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.fields_filter {
             Some(fields) => {
-                if !self.generics.0.iter().any(|gen| uses_generic(gen, fields)) {
+                if !self.generics.iter().any(|gen| uses_generic(gen, fields)) {
                     return Ok(());
                 }
             }
             None => {
-                if self.generics.0.is_empty() {
+                if self.generics.is_empty() {
                     return Ok(());
                 }
             }
@@ -204,7 +204,6 @@ impl Display for RenderGenerics<'_> {
         f.write_char('[')?;
         for (i, value) in self
             .generics
-            .0
             .iter()
             .filter(|gen| match self.fields_filter {
                 Some(fields) => uses_generic(gen, fields),
@@ -222,7 +221,7 @@ impl Display for RenderGenerics<'_> {
 }
 
 pub(super) struct RenderGenericNames<'a> {
-    pub(super) generics: &'a Generics<'a>,
+    pub(super) generics: &'a [&'a str],
     pub(super) fields_filter: Option<&'a Fields<'a>>,
 }
 
@@ -230,12 +229,12 @@ impl Display for RenderGenericNames<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.fields_filter {
             Some(fields) => {
-                if !self.generics.0.iter().any(|gen| uses_generic(gen, fields)) {
+                if !self.generics.iter().any(|gen| uses_generic(gen, fields)) {
                     return Ok(());
                 }
             }
             None => {
-                if self.generics.0.is_empty() {
+                if self.generics.is_empty() {
                     return Ok(());
                 }
             }
@@ -244,7 +243,6 @@ impl Display for RenderGenericNames<'_> {
         f.write_char('[')?;
         for (i, value) in self
             .generics
-            .0
             .iter()
             .filter(|gen| match self.fields_filter {
                 Some(fields) => uses_generic(gen, fields),
@@ -284,43 +282,25 @@ struct RenderFields<'a>(&'a Fields<'a>);
 
 impl Display for RenderFields<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Fields::Named(named) => {
-                if named.is_empty() {
-                    write!(f, "struct{{}}")
-                } else {
-                    writeln!(f, "struct {{")?;
+        if self.0.fields.is_empty() {
+            write!(f, "struct{{}}")
+        } else {
+            writeln!(f, "struct {{")?;
 
-                    for field in named {
-                        writeln!(
-                            f,
-                            "{}\t{} {}",
-                            RenderComment {
-                                indent: 1,
-                                comment: &field.comment
-                            },
-                            heck::AsUpperCamelCase(&field.name),
-                            RenderType(&field.ty)
-                        )?;
-                    }
-
-                    write!(f, "}}")
-                }
+            for field in &*self.0.fields {
+                writeln!(
+                    f,
+                    "{}\t{} {}",
+                    RenderComment {
+                        indent: 1,
+                        comment: &field.comment
+                    },
+                    heck::AsUpperCamelCase(&field.name),
+                    RenderType(&field.ty)
+                )?;
             }
-            Fields::Unnamed(unnamed) => {
-                if unnamed.is_empty() {
-                    write!(f, "struct{{}}")
-                } else {
-                    writeln!(f, "struct {{")?;
 
-                    for (i, field) in unnamed.iter().enumerate() {
-                        writeln!(f, "\tF{i} {}", RenderType(&field.ty))?;
-                    }
-
-                    write!(f, "}}")
-                }
-            }
-            Fields::Unit => write!(f, "struct{{}}"),
+            write!(f, "}}")
         }
     }
 }
@@ -329,31 +309,17 @@ struct RenderParameters<'a>(&'a Fields<'a>);
 
 impl Display for RenderParameters<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Fields::Named(named) => {
-                if !named.is_empty() {
-                    writeln!(f)?;
-                }
+        if !self.0.fields.is_empty() {
+            writeln!(f)?;
+        }
 
-                for field in named {
-                    writeln!(
-                        f,
-                        "\t{} {},",
-                        heck::AsLowerCamelCase(&field.name),
-                        RenderType(&field.ty),
-                    )?;
-                }
-            }
-            Fields::Unnamed(unnamed) => {
-                if !unnamed.is_empty() {
-                    writeln!(f)?;
-                }
-
-                for (i, field) in unnamed.iter().enumerate() {
-                    writeln!(f, "\tf{i} {},", RenderType(&field.ty))?;
-                }
-            }
-            Fields::Unit => {}
+        for field in &*self.0.fields {
+            writeln!(
+                f,
+                "\t{} {},",
+                heck::AsLowerCamelCase(&field.name),
+                RenderType(&field.ty),
+            )?;
         }
 
         Ok(())
@@ -364,39 +330,21 @@ struct RenderConstructor<'a>(&'a Fields<'a>);
 
 impl Display for RenderConstructor<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Fields::Named(named) => {
-                if named.is_empty() {
-                    write!(f, "{{}}")
-                } else {
-                    writeln!(f, "{{")?;
+        if self.0.fields.is_empty() {
+            write!(f, "{{}}")
+        } else {
+            writeln!(f, "{{")?;
 
-                    for field in named {
-                        writeln!(
-                            f,
-                            "\t\t{}: {},",
-                            heck::AsUpperCamelCase(&field.name),
-                            heck::AsLowerCamelCase(&field.name)
-                        )?;
-                    }
-
-                    write!(f, "\t}}")
-                }
+            for field in &*self.0.fields {
+                writeln!(
+                    f,
+                    "\t\t{}: {},",
+                    heck::AsUpperCamelCase(&field.name),
+                    heck::AsLowerCamelCase(&field.name)
+                )?;
             }
-            Fields::Unnamed(unnamed) => {
-                if unnamed.is_empty() {
-                    write!(f, "{{}}")
-                } else {
-                    writeln!(f, "{{")?;
 
-                    for (i, _) in unnamed.iter().enumerate() {
-                        writeln!(f, "\t\tF{i}: f{i},")?;
-                    }
-
-                    write!(f, "\t}}")
-                }
-            }
-            Fields::Unit => write!(f, "{{}}"),
+            write!(f, "\t}}")
         }
     }
 }
@@ -420,13 +368,13 @@ impl Display for RenderAlias<'_> {
 
 struct RenderComment<'a> {
     indent: usize,
-    comment: &'a Comment<'a>,
+    comment: &'a [&'a str],
 }
 
 impl Display for RenderComment<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for line in &self.comment.0 {
-            writeln!(f, "{:\t<width$}// {}", "", line.value, width = self.indent)?;
+        for line in self.comment {
+            writeln!(f, "{:\t<width$}// {}", "", line, width = self.indent)?;
         }
 
         Ok(())
@@ -437,53 +385,53 @@ pub(super) struct RenderType<'a>(pub(super) &'a Type<'a>);
 
 impl Display for RenderType<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.0.value {
-            DataType::Bool => write!(f, "bool"),
-            DataType::U8 => write!(f, "uint8"),
-            DataType::U16 => write!(f, "uint16"),
-            DataType::U32 => write!(f, "uint32"),
-            DataType::U64 => write!(f, "uint64"),
-            DataType::U128 | DataType::I128 => write!(f, "*big.Int"),
-            DataType::I8 => write!(f, "int8"),
-            DataType::I16 => write!(f, "int16"),
-            DataType::I32 => write!(f, "int32"),
-            DataType::I64 => write!(f, "int64"),
-            DataType::F32 => write!(f, "float32"),
-            DataType::F64 => write!(f, "float64"),
-            DataType::String | DataType::StringRef | DataType::BoxString => write!(f, "string"),
-            DataType::Bytes | DataType::BytesRef | DataType::BoxBytes => write!(f, "[]byte"),
-            DataType::Vec(ty) => write!(f, "[]{}", RenderType(ty)),
-            DataType::HashMap(kv) => write!(f, "map[{}]{}", RenderType(&kv.0), RenderType(&kv.1)),
-            DataType::HashSet(ty) => write!(f, "map[{}]struct{{}}", RenderType(ty)),
-            DataType::Option(ty) => write!(f, "*{}", RenderType(ty)),
-            DataType::NonZero(ty) => match &ty.value {
-                DataType::U8 => write!(f, "stef.NonZeroU8"),
-                DataType::U16 => write!(f, "stef.NonZeroU16"),
-                DataType::U32 => write!(f, "stef.NonZeroU32"),
-                DataType::U64 => write!(f, "stef.NonZeroU64"),
-                DataType::U128 => write!(f, "stef.NonZeroU128"),
-                DataType::I8 => write!(f, "stef.NonZeroI8"),
-                DataType::I16 => write!(f, "stef.NonZeroI16"),
-                DataType::I32 => write!(f, "stef.NonZeroI32"),
-                DataType::I64 => write!(f, "stef.NonZeroI64"),
-                DataType::I128 => write!(f, "stef.NonZeroI128"),
-                DataType::F32 => write!(f, "stef.NonZeroF32"),
-                DataType::F64 => write!(f, "stef.NonZeroF64"),
-                DataType::String | DataType::StringRef => write!(f, "stef.NonZeroString"),
-                DataType::Bytes | DataType::BytesRef => write!(f, "stef.NonZeroBytes"),
-                DataType::Vec(ty) => write!(f, "stef.NonZeroVec[{}]", RenderType(ty)),
-                DataType::HashMap(kv) => write!(
+        match self.0 {
+            Type::Bool => write!(f, "bool"),
+            Type::U8 => write!(f, "uint8"),
+            Type::U16 => write!(f, "uint16"),
+            Type::U32 => write!(f, "uint32"),
+            Type::U64 => write!(f, "uint64"),
+            Type::U128 | Type::I128 => write!(f, "*big.Int"),
+            Type::I8 => write!(f, "int8"),
+            Type::I16 => write!(f, "int16"),
+            Type::I32 => write!(f, "int32"),
+            Type::I64 => write!(f, "int64"),
+            Type::F32 => write!(f, "float32"),
+            Type::F64 => write!(f, "float64"),
+            Type::String | Type::StringRef | Type::BoxString => write!(f, "string"),
+            Type::Bytes | Type::BytesRef | Type::BoxBytes => write!(f, "[]byte"),
+            Type::Vec(ty) => write!(f, "[]{}", RenderType(ty)),
+            Type::HashMap(kv) => write!(f, "map[{}]{}", RenderType(&kv.0), RenderType(&kv.1)),
+            Type::HashSet(ty) => write!(f, "map[{}]struct{{}}", RenderType(ty)),
+            Type::Option(ty) => write!(f, "*{}", RenderType(ty)),
+            Type::NonZero(ty) => match &**ty {
+                Type::U8 => write!(f, "stef.NonZeroU8"),
+                Type::U16 => write!(f, "stef.NonZeroU16"),
+                Type::U32 => write!(f, "stef.NonZeroU32"),
+                Type::U64 => write!(f, "stef.NonZeroU64"),
+                Type::U128 => write!(f, "stef.NonZeroU128"),
+                Type::I8 => write!(f, "stef.NonZeroI8"),
+                Type::I16 => write!(f, "stef.NonZeroI16"),
+                Type::I32 => write!(f, "stef.NonZeroI32"),
+                Type::I64 => write!(f, "stef.NonZeroI64"),
+                Type::I128 => write!(f, "stef.NonZeroI128"),
+                Type::F32 => write!(f, "stef.NonZeroF32"),
+                Type::F64 => write!(f, "stef.NonZeroF64"),
+                Type::String | Type::StringRef => write!(f, "stef.NonZeroString"),
+                Type::Bytes | Type::BytesRef => write!(f, "stef.NonZeroBytes"),
+                Type::Vec(ty) => write!(f, "stef.NonZeroVec[{}]", RenderType(ty)),
+                Type::HashMap(kv) => write!(
                     f,
                     "stef.NonZeroHashMap[{}, {}]",
                     RenderType(&kv.0),
                     RenderType(&kv.1)
                 ),
-                DataType::HashSet(ty) => write!(f, "stef.NonZeroHashSet[{}]", RenderType(ty)),
+                Type::HashSet(ty) => write!(f, "stef.NonZeroHashSet[{}]", RenderType(ty)),
                 ty => todo!("compiler should catch invalid {ty:?} type"),
             },
-            DataType::Tuple(types) => write!(f, "stef.Tuple{}{}", types.len(), Concat(types)),
-            DataType::Array(ty, size) => write!(f, "[{size}]{}", RenderType(ty)),
-            DataType::External(ExternalType {
+            Type::Tuple(types) => write!(f, "stef.Tuple{}{}", types.len(), Concat(types)),
+            Type::Array(ty, size) => write!(f, "[{size}]{}", RenderType(ty)),
+            Type::External(ExternalType {
                 path,
                 name,
                 generics,
@@ -512,32 +460,29 @@ struct RenderConstType<'a>(&'a Type<'a>);
 
 impl Display for RenderConstType<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.0.value {
-            DataType::Bool => write!(f, "bool"),
-            DataType::U8 => write!(f, "uint8"),
-            DataType::U16 => write!(f, "uint16"),
-            DataType::U32 => write!(f, "uint32"),
-            DataType::U64 => write!(f, "uint64"),
-            DataType::U128 | DataType::I128 => write!(f, "*big.Int"),
-            DataType::I8 => write!(f, "int8"),
-            DataType::I16 => write!(f, "int16"),
-            DataType::I32 => write!(f, "int32"),
-            DataType::I64 => write!(f, "int64"),
-            DataType::F32 => write!(f, "float32"),
-            DataType::F64 => write!(f, "float64"),
-            DataType::String | DataType::StringRef => write!(f, "string"),
-            DataType::Bytes | DataType::BytesRef => write!(f, "[]byte"),
+        match self.0 {
+            Type::Bool => write!(f, "bool"),
+            Type::U8 => write!(f, "uint8"),
+            Type::U16 => write!(f, "uint16"),
+            Type::U32 => write!(f, "uint32"),
+            Type::U64 => write!(f, "uint64"),
+            Type::U128 | Type::I128 => write!(f, "*big.Int"),
+            Type::I8 => write!(f, "int8"),
+            Type::I16 => write!(f, "int16"),
+            Type::I32 => write!(f, "int32"),
+            Type::I64 => write!(f, "int64"),
+            Type::F32 => write!(f, "float32"),
+            Type::F64 => write!(f, "float64"),
+            Type::String | Type::StringRef => write!(f, "string"),
+            Type::Bytes | Type::BytesRef => write!(f, "[]byte"),
             _ => panic!("invalid data type for const"),
         }
     }
 }
 
-struct Concat<'a, T>(&'a [T]);
+struct Concat<'a>(&'a [Type<'a>]);
 
-impl<T> Display for Concat<'_, T>
-where
-    T: Display,
-{
+impl Display for Concat<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.0.is_empty() {
             return Ok(());
@@ -548,7 +493,7 @@ where
             if i > 0 {
                 f.write_str(", ")?;
             }
-            value.fmt(f)?;
+            RenderType(value).fmt(f)?;
         }
         f.write_char(']')
     }
@@ -559,20 +504,20 @@ struct RenderConst<'a>(&'a Const<'a>);
 impl Display for RenderConst<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let kind = if matches!(
-            self.0.ty.value,
-            DataType::Bool
-                | DataType::U8
-                | DataType::U16
-                | DataType::U32
-                | DataType::U64
-                | DataType::I8
-                | DataType::I16
-                | DataType::I32
-                | DataType::I64
-                | DataType::F32
-                | DataType::F64
-                | DataType::String
-                | DataType::StringRef
+            self.0.ty,
+            Type::Bool
+                | Type::U8
+                | Type::U16
+                | Type::U32
+                | Type::U64
+                | Type::I8
+                | Type::I16
+                | Type::I32
+                | Type::I64
+                | Type::F32
+                | Type::F64
+                | Type::String
+                | Type::StringRef
         ) {
             "const"
         } else {
@@ -597,12 +542,12 @@ struct RenderLiteral<'a>(&'a Literal);
 
 impl Display for RenderLiteral<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.0.value {
-            LiteralValue::Bool(b) => write!(f, "{b}"),
-            LiteralValue::Int(i) => write!(f, "{i}"),
-            LiteralValue::Float(f2) => write!(f, "{f2}"),
-            LiteralValue::String(s) => write!(f, "{s:?}"),
-            LiteralValue::Bytes(b) => {
+        match &self.0 {
+            Literal::Bool(b) => write!(f, "{b}"),
+            Literal::Int(i) => write!(f, "{i}"),
+            Literal::Float(f2) => write!(f, "{f2}"),
+            Literal::String(s) => write!(f, "{s:?}"),
+            Literal::Bytes(b) => {
                 if b.is_empty() {
                     return Ok(());
                 }
@@ -647,7 +592,7 @@ impl Display for RenderEnum<'_> {
                 f,
                 "\n{}",
                 RenderEnumVariant {
-                    enum_name: self.0.name.get(),
+                    enum_name: self.0.name,
                     generics: &self.0.generics,
                     variant
                 }
@@ -660,7 +605,7 @@ impl Display for RenderEnum<'_> {
 
 struct RenderEnumVariant<'a> {
     enum_name: &'a str,
-    generics: &'a Generics<'a>,
+    generics: &'a [&'a str],
     variant: &'a Variant<'a>,
 }
 
@@ -730,50 +675,45 @@ impl Display for RenderEnumVariant<'_> {
     }
 }
 
-fn uses_generic(generic: &Name<'_>, fields: &Fields<'_>) -> bool {
+fn uses_generic(generic: &str, fields: &Fields<'_>) -> bool {
     fn visit_external(ty: &Type<'_>, visit: &impl Fn(&ExternalType<'_>) -> bool) -> bool {
-        match &ty.value {
-            DataType::Bool
-            | DataType::U8
-            | DataType::U16
-            | DataType::U32
-            | DataType::U64
-            | DataType::U128
-            | DataType::I8
-            | DataType::I16
-            | DataType::I32
-            | DataType::I64
-            | DataType::I128
-            | DataType::F32
-            | DataType::F64
-            | DataType::String
-            | DataType::StringRef
-            | DataType::Bytes
-            | DataType::BytesRef
-            | DataType::BoxString
-            | DataType::BoxBytes => false,
-            DataType::Vec(ty)
-            | DataType::HashSet(ty)
-            | DataType::Option(ty)
-            | DataType::NonZero(ty)
-            | DataType::Array(ty, _) => visit_external(ty, visit),
-            DataType::HashMap(kv) => visit_external(&kv.0, visit) || visit_external(&kv.1, visit),
-            DataType::Tuple(types) => types.iter().any(|ty| visit_external(ty, visit)),
-            DataType::External(ty) => visit(ty),
+        match ty {
+            Type::Bool
+            | Type::U8
+            | Type::U16
+            | Type::U32
+            | Type::U64
+            | Type::U128
+            | Type::I8
+            | Type::I16
+            | Type::I32
+            | Type::I64
+            | Type::I128
+            | Type::F32
+            | Type::F64
+            | Type::String
+            | Type::StringRef
+            | Type::Bytes
+            | Type::BytesRef
+            | Type::BoxString
+            | Type::BoxBytes => false,
+            Type::Vec(ty)
+            | Type::HashSet(ty)
+            | Type::Option(ty)
+            | Type::NonZero(ty)
+            | Type::Array(ty, _) => visit_external(ty, visit),
+            Type::HashMap(kv) => visit_external(&kv.0, visit) || visit_external(&kv.1, visit),
+            Type::Tuple(types) => types.iter().any(|ty| visit_external(ty, visit)),
+            Type::External(ty) => visit(ty),
         }
     }
 
     let matches = |ext: &ExternalType<'_>| {
-        ext.path.is_empty() && ext.generics.is_empty() && ext.name.get() == generic.get()
+        ext.path.is_empty() && ext.generics.is_empty() && ext.name == generic
     };
 
-    match fields {
-        Fields::Named(named) => named
-            .iter()
-            .any(|field| visit_external(&field.ty, &matches)),
-        Fields::Unnamed(unnamed) => unnamed
-            .iter()
-            .any(|field| visit_external(&field.ty, &matches)),
-        Fields::Unit => false,
-    }
+    fields
+        .fields
+        .iter()
+        .any(|field| visit_external(&field.ty, &matches))
 }

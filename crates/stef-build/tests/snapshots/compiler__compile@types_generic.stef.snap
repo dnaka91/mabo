@@ -18,18 +18,20 @@ pub struct Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { f1, f2, f3, f4, f5 } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
-                    &self.f1,
+                    f1,
                     |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
@@ -43,14 +45,14 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
-                    &self.f2,
+                    f2,
                     |k| { ::stef::buf::size_u32(*k) },
-                    |v| { ::stef::buf::size_string(&v) },
+                    |v| { ::stef::buf::size_string(v) },
                     |w, k| {
                         ::stef::buf::encode_u32(w, *k);
                     },
                     |w, v| {
-                        ::stef::buf::encode_string(w, &v);
+                        ::stef::buf::encode_string(w, v);
                     },
                 );
             },
@@ -61,7 +63,7 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
-                    &self.f3,
+                    f3,
                     |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
@@ -72,7 +74,7 @@ impl ::stef::Encode for Sample {
         ::stef::buf::encode_field_option(
             w,
             ::stef::FieldId::new(4, ::stef::FieldEncoding::Varint),
-            &self.f4,
+            f4,
             |w, v| {
                 ::stef::buf::encode_u32(w, *v);
             },
@@ -81,7 +83,7 @@ impl ::stef::Encode for Sample {
             w,
             ::stef::FieldId::new(5, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u32(w, self.f5.get());
+                ::stef::buf::encode_u32(w, f5.get());
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -156,39 +158,36 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
+        let Self { f1, f2, f3, f4, f5 } = self;
         ::stef::buf::size_field(
             1,
-            || { ::stef::buf::size_vec(&self.f1, |v| { ::stef::buf::size_u32(*v) }) },
+            || { ::stef::buf::size_vec(f1, |v| { ::stef::buf::size_u32(*v) }) },
         )
             + ::stef::buf::size_field(
                 2,
                 || {
                     ::stef::buf::size_hash_map(
-                        &self.f2,
+                        f2,
                         |k| { ::stef::buf::size_u32(*k) },
-                        |v| { ::stef::buf::size_string(&v) },
+                        |v| { ::stef::buf::size_string(v) },
                     )
                 },
             )
             + ::stef::buf::size_field(
                 3,
-                || {
-                    ::stef::buf::size_hash_set(
-                        &self.f3,
-                        |v| { ::stef::buf::size_u32(*v) },
-                    )
-                },
+                || { ::stef::buf::size_hash_set(f3, |v| { ::stef::buf::size_u32(*v) }) },
             )
             + ::stef::buf::size_field_option(
                 4,
-                self.f4.as_ref(),
+                f4.as_ref(),
                 |v| { ::stef::buf::size_u32(*v) },
-            ) + ::stef::buf::size_field(5, || { ::stef::buf::size_u32(self.f5.get()) })
+            ) + ::stef::buf::size_field(5, || { ::stef::buf::size_u32(f5.get()) })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
@@ -205,18 +204,20 @@ pub struct SampleUnnamed(
 impl ::stef::Encode for SampleUnnamed {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self(n0, n1, n2, n3, n4) = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
-                    &self.0,
+                    n0,
                     |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
@@ -230,14 +231,14 @@ impl ::stef::Encode for SampleUnnamed {
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
-                    &self.1,
+                    n1,
                     |k| { ::stef::buf::size_u32(*k) },
-                    |v| { ::stef::buf::size_string(&v) },
+                    |v| { ::stef::buf::size_string(v) },
                     |w, k| {
                         ::stef::buf::encode_u32(w, *k);
                     },
                     |w, v| {
-                        ::stef::buf::encode_string(w, &v);
+                        ::stef::buf::encode_string(w, v);
                     },
                 );
             },
@@ -248,7 +249,7 @@ impl ::stef::Encode for SampleUnnamed {
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
-                    &self.2,
+                    n2,
                     |v| { ::stef::buf::size_u32(*v) },
                     |w, v| {
                         ::stef::buf::encode_u32(w, *v);
@@ -259,7 +260,7 @@ impl ::stef::Encode for SampleUnnamed {
         ::stef::buf::encode_field_option(
             w,
             ::stef::FieldId::new(4, ::stef::FieldEncoding::Varint),
-            &self.3,
+            n3,
             |w, v| {
                 ::stef::buf::encode_u32(w, *v);
             },
@@ -268,7 +269,7 @@ impl ::stef::Encode for SampleUnnamed {
             w,
             ::stef::FieldId::new(5, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u32(w, self.4.get());
+                ::stef::buf::encode_u32(w, n4.get());
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -345,39 +346,36 @@ impl ::stef::Decode for SampleUnnamed {
 impl ::stef::buf::Size for SampleUnnamed {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
+        let Self(n0, n1, n2, n3, n4) = self;
         ::stef::buf::size_field(
             1,
-            || { ::stef::buf::size_vec(&self.0, |v| { ::stef::buf::size_u32(*v) }) },
+            || { ::stef::buf::size_vec(n0, |v| { ::stef::buf::size_u32(*v) }) },
         )
             + ::stef::buf::size_field(
                 2,
                 || {
                     ::stef::buf::size_hash_map(
-                        &self.1,
+                        n1,
                         |k| { ::stef::buf::size_u32(*k) },
-                        |v| { ::stef::buf::size_string(&v) },
+                        |v| { ::stef::buf::size_string(v) },
                     )
                 },
             )
             + ::stef::buf::size_field(
                 3,
-                || {
-                    ::stef::buf::size_hash_set(
-                        &self.2,
-                        |v| { ::stef::buf::size_u32(*v) },
-                    )
-                },
+                || { ::stef::buf::size_hash_set(n2, |v| { ::stef::buf::size_u32(*v) }) },
             )
             + ::stef::buf::size_field_option(
                 4,
-                self.3.as_ref(),
+                n3.as_ref(),
                 |v| { ::stef::buf::size_u32(*v) },
-            ) + ::stef::buf::size_field(5, || { ::stef::buf::size_u32(self.4.get()) })
+            ) + ::stef::buf::size_field(5, || { ::stef::buf::size_u32(n4.get()) })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }

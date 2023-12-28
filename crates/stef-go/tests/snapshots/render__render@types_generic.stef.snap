@@ -207,7 +207,7 @@ func (v *Sample) Size() int {
 			return buf.SizeU32(v)
 		})
 	})
-	size += buf.SizeFieldOption[uint32](4, &v.F4, func (v uint32) []byte {
+	size += buf.SizeFieldOption[uint32](4, &v.F4, func (v uint32) int {
 		return buf.SizeU32(v)
 	})
 	size += buf.SizeField(5, func() int {
@@ -218,26 +218,26 @@ func (v *Sample) Size() int {
 }
 
 type SampleUnnamed struct {
-	F0 []uint32
-	F1 map[uint32]string
-	F2 map[uint32]struct{}
-	F3 *uint32
-	F4 stef.NonZeroU32
+	N0 []uint32
+	N1 map[uint32]string
+	N2 map[uint32]struct{}
+	N3 *uint32
+	N4 stef.NonZeroU32
 }
 
 func NewSampleUnnamed(
-	f0 []uint32,
-	f1 map[uint32]string,
-	f2 map[uint32]struct{},
-	f3 *uint32,
-	f4 stef.NonZeroU32,
+	n0 []uint32,
+	n1 map[uint32]string,
+	n2 map[uint32]struct{},
+	n3 *uint32,
+	n4 stef.NonZeroU32,
 ) SampleUnnamed {
 	return SampleUnnamed{
-		F0: f0,
-		F1: f1,
-		F2: f2,
-		F3: f3,
-		F4: f4,
+		N0: n0,
+		N1: n1,
+		N2: n2,
+		N3: n3,
+		N4: n4,
 	}
 }
 
@@ -245,13 +245,13 @@ var _ buf.Encode = (*SampleUnnamed)(nil)
 
 func (v *SampleUnnamed) Encode(w []byte) []byte {
 	w = buf.EncodeField(w, 1, func (w []byte) []byte {
-		return buf.EncodeVec[uint32](w, v.F0, func(w []byte, v uint32) []byte {
+		return buf.EncodeVec[uint32](w, v.N0, func(w []byte, v uint32) []byte {
 			return buf.EncodeU32(w, v)
 		})
 	})
 	w = buf.EncodeField(w, 2, func (w []byte) []byte {
 		return buf.EncodeHashMap[uint32, string](
-			w, v.F1,
+			w, v.N1,
 			func(w []byte, k uint32) []byte {
 				return buf.EncodeU32(w, k)
 			},
@@ -261,15 +261,15 @@ func (v *SampleUnnamed) Encode(w []byte) []byte {
 		)
 	})
 	w = buf.EncodeField(w, 3, func (w []byte) []byte {
-		return buf.EncodeHashSet[uint32](w, v.F2, func(w []byte, v uint32) []byte {
+		return buf.EncodeHashSet[uint32](w, v.N2, func(w []byte, v uint32) []byte {
 			return buf.EncodeU32(w, v)
 		})
 	})
-	w = buf.EncodeFieldOption[uint32](w, 4, &v.F3, func (w []byte, v uint32) []byte {
+	w = buf.EncodeFieldOption[uint32](w, 4, &v.N3, func (w []byte, v uint32) []byte {
 		return buf.EncodeU32(w, v)
 	})
 	w = buf.EncodeField(w, 5, func (w []byte) []byte {
-		return buf.EncodeU32(w, v.F4.Get())
+		return buf.EncodeU32(w, v.N4.Get())
 	})
 	w = buf.EncodeU32(w, buf.EndMarker)
 	return w
@@ -278,11 +278,11 @@ func (v *SampleUnnamed) Encode(w []byte) []byte {
 var _ buf.Decode = (*SampleUnnamed)(nil)
 
 func (v *SampleUnnamed) Decode(r []byte) ([]byte, error) {
-	foundF0 := false
-	foundF1 := false
-	foundF2 := false
-	foundF3 := false
-	foundF4 := false
+	foundN0 := false
+	foundN1 := false
+	foundN2 := false
+	foundN3 := false
+	foundN4 := false
 
 	for len(r) > 0 {
 		r2, id, err := buf.DecodeID(r)
@@ -300,8 +300,8 @@ func (v *SampleUnnamed) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F0 = value
-				foundF0 = true
+				v.N0 = value
+				foundN0 = true
 			case 2:
 				r2, value, err := buf.DecodeHashMap[uint32, string](
 					r,
@@ -316,8 +316,8 @@ func (v *SampleUnnamed) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F1 = value
-				foundF1 = true
+				v.N1 = value
+				foundN1 = true
 			case 3:
 				r2, value, err := buf.DecodeHashSet[uint32](r, func(r []byte) ([]byte, uint32, error) {
 					return buf.DecodeU32(r)
@@ -326,8 +326,8 @@ func (v *SampleUnnamed) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F2 = value
-				foundF2 = true
+				v.N2 = value
+				foundN2 = true
 			case 4:
 				r2, value, err := buf.DecodeOption[uint32](r, func(r []byte) ([]byte, uint32, error) {
 					return buf.DecodeU32(r)
@@ -336,46 +336,46 @@ func (v *SampleUnnamed) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F3 = value
-				foundF3 = true
+				v.N3 = value
+				foundN3 = true
 			case 5:
 				r2, value, err := buf.DecodeNonZeroU32(r)
 				if err != nil {
 					return nil, err
 				}
 				r = r2
-				v.F4 = value
-				foundF4 = true
+				v.N4 = value
+				foundN4 = true
 			case buf.EndMarker:
 				break
 		}
 	}
 
-	if !foundF0 {
+	if !foundN0 {
 		return nil, buf.MissingFieldError{
 			ID:    1
 			Field: ""
 		}
 	}
-	if !foundF1 {
+	if !foundN1 {
 		return nil, buf.MissingFieldError{
 			ID:    2
 			Field: ""
 		}
 	}
-	if !foundF2 {
+	if !foundN2 {
 		return nil, buf.MissingFieldError{
 			ID:    3
 			Field: ""
 		}
 	}
-	if !foundF3 {
+	if !foundN3 {
 		return nil, buf.MissingFieldError{
 			ID:    4
 			Field: ""
 		}
 	}
-	if !foundF4 {
+	if !foundN4 {
 		return nil, buf.MissingFieldError{
 			ID:    5
 			Field: ""
@@ -390,13 +390,13 @@ var _ buf.Size = (*SampleUnnamed)(nil)
 func (v *SampleUnnamed) Size() int {
 	size := 0
 	size += buf.SizeField(1, func() int {
-		return buf.SizeVec[uint32](v.F0, func(v uint32) int {
+		return buf.SizeVec[uint32](v.N0, func(v uint32) int {
 			return buf.SizeU32(v)
 		})
 	})
 	size += buf.SizeField(2, func() int {
 		return buf.SizeHashMap[uint32, string](
-			v.F1,
+			v.N1,
 			func(k uint32) int {
 				return buf.SizeU32(k)
 			},
@@ -406,15 +406,15 @@ func (v *SampleUnnamed) Size() int {
 		)
 	})
 	size += buf.SizeField(3, func() int {
-		return buf.SizeHashSet[uint32](v.F2, func(v uint32) int {
+		return buf.SizeHashSet[uint32](v.N2, func(v uint32) int {
 			return buf.SizeU32(v)
 		})
 	})
-	size += buf.SizeFieldOption[uint32](4, &v.F3, func (v uint32) int {
+	size += buf.SizeFieldOption[uint32](4, &v.N3, func (v uint32) int {
 		return buf.SizeU32(v)
 	})
 	size += buf.SizeField(5, func() int {
-		return buf.SizeU32(v.F4.Get())
+		return buf.SizeU32(v.N4.Get())
 	})
 	size += buf.SizeU32(buf.EndMarker)
 	return size

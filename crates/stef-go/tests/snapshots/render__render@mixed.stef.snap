@@ -1,6 +1,6 @@
 ---
 source: crates/stef-go/tests/render.rs
-description: "/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
 input_file: crates/stef-parser/tests/inputs/mixed.stef
 ---
 --- sample.go
@@ -161,7 +161,7 @@ func (v *User) Size() int {
 	size += buf.SizeField(1, func() int {
 		return v.Name.Size()
 	})
-	size += buf.SizeFieldOption[Address](2, &v.Address, func (v Address) []byte {
+	size += buf.SizeFieldOption[Address](2, &v.Address, func (v Address) int {
 		return v.Size()
 	})
 	size += buf.SizeField(3, func() int {
@@ -284,7 +284,7 @@ func (v *FullName) Size() int {
 	size += buf.SizeField(1, func() int {
 		return buf.SizeString(v.First)
 	})
-	size += buf.SizeFieldOption[string](2, &v.Middle, func (v string) []byte {
+	size += buf.SizeFieldOption[string](2, &v.Middle, func (v string) int {
 		return buf.SizeString(v)
 	})
 	size += buf.SizeField(3, func() int {
@@ -434,16 +434,16 @@ type HouseNumber HouseNumberVariant
 
 // Digit only number.
 type HouseNumber_Digit struct {
-	F0 uint16
+	N0 uint16
 }
 
 func (v HouseNumber_Digit) sealed() {}
 
 func NewHouseNumber_Digit(
-	f0 uint16,
+	n0 uint16,
 ) HouseNumber_Digit {
 	return HouseNumber_Digit{
-		F0: f0,
+		N0: n0,
 	}
 }
 
@@ -451,7 +451,7 @@ var _ buf.Encode = (*HouseNumber_Digit)(nil)
 
 func (v *HouseNumber_Digit) Encode(w []byte) []byte {
 	w = buf.EncodeField(w, 1, func (w []byte) []byte {
-		return buf.EncodeU16(w, v.F0)
+		return buf.EncodeU16(w, v.N0)
 	})
 	w = buf.EncodeU32(w, buf.EndMarker)
 	return nil
@@ -460,7 +460,7 @@ func (v *HouseNumber_Digit) Encode(w []byte) []byte {
 var _ buf.Decode = (*HouseNumber_Digit)(nil)
 
 func (v *HouseNumber_Digit) Decode(r []byte) ([]byte, error) {
-	foundF0 := false
+	foundN0 := false
 
 	for len(r) > 0 {
 		r2, id, err := buf.DecodeID(r)
@@ -476,14 +476,14 @@ func (v *HouseNumber_Digit) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F0 = value
-				foundF0 = true
+				v.N0 = value
+				foundN0 = true
 			case buf.EndMarker:
 				break
 		}
 	}
 
-	if !foundF0 {
+	if !foundN0 {
 		return nil, buf.MissingFieldError{
 			ID:    1
 			Field: ""
@@ -498,7 +498,7 @@ var _ buf.Size = (*HouseNumber_Digit)(nil)
 func (v *HouseNumber_Digit) Size() int {
 	size := 0
 	size += buf.SizeField(1, func() int {
-		return buf.SizeU16(v.F0)
+		return buf.SizeU16(v.N0)
 	})
 	size += buf.SizeU32(buf.EndMarker)
 	return size
@@ -506,16 +506,16 @@ func (v *HouseNumber_Digit) Size() int {
 
 // Mixed _number_ with characters like `1a`.
 type HouseNumber_Text struct {
-	F0 string
+	N0 string
 }
 
 func (v HouseNumber_Text) sealed() {}
 
 func NewHouseNumber_Text(
-	f0 string,
+	n0 string,
 ) HouseNumber_Text {
 	return HouseNumber_Text{
-		F0: f0,
+		N0: n0,
 	}
 }
 
@@ -523,7 +523,7 @@ var _ buf.Encode = (*HouseNumber_Text)(nil)
 
 func (v *HouseNumber_Text) Encode(w []byte) []byte {
 	w = buf.EncodeField(w, 1, func (w []byte) []byte {
-		return buf.EncodeString(w, v.F0)
+		return buf.EncodeString(w, v.N0)
 	})
 	w = buf.EncodeU32(w, buf.EndMarker)
 	return nil
@@ -532,7 +532,7 @@ func (v *HouseNumber_Text) Encode(w []byte) []byte {
 var _ buf.Decode = (*HouseNumber_Text)(nil)
 
 func (v *HouseNumber_Text) Decode(r []byte) ([]byte, error) {
-	foundF0 := false
+	foundN0 := false
 
 	for len(r) > 0 {
 		r2, id, err := buf.DecodeID(r)
@@ -548,14 +548,14 @@ func (v *HouseNumber_Text) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F0 = value
-				foundF0 = true
+				v.N0 = value
+				foundN0 = true
 			case buf.EndMarker:
 				break
 		}
 	}
 
-	if !foundF0 {
+	if !foundN0 {
 		return nil, buf.MissingFieldError{
 			ID:    1
 			Field: ""
@@ -570,7 +570,7 @@ var _ buf.Size = (*HouseNumber_Text)(nil)
 func (v *HouseNumber_Text) Size() int {
 	size := 0
 	size += buf.SizeField(1, func() int {
-		return buf.SizeString(v.F0)
+		return buf.SizeString(v.N0)
 	})
 	size += buf.SizeU32(buf.EndMarker)
 	return size
@@ -784,7 +784,7 @@ var _ buf.Size = (*DayOfBirth_Secret)(nil)
 
 func (v *DayOfBirth_Secret) Size() int {
 	size := 0
-	size += buf.SizeFieldOption[string](1, &v.Reason, func (v string) []byte {
+	size += buf.SizeFieldOption[string](1, &v.Reason, func (v string) int {
 		return buf.SizeString(v)
 	})
 	size += buf.SizeU32(buf.EndMarker)

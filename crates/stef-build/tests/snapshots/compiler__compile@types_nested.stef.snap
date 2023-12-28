@@ -14,26 +14,28 @@ pub struct Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { value } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
                 ::stef::buf::encode_vec(
                     w,
-                    &self.value,
+                    value,
                     |v| {
                         ::stef::buf::size_option(
                             v.as_ref(),
                             |v| {
                                 ::stef::buf::size_hash_map(
-                                    &v.get(),
+                                    v.get(),
                                     |k| { ::stef::buf::size_i64(*k) },
-                                    |v| { ::stef::buf::size_string(&v) },
+                                    |v| { ::stef::buf::size_string(v) },
                                 )
                             },
                         )
@@ -41,18 +43,18 @@ impl ::stef::Encode for Sample {
                     |w, v| {
                         ::stef::buf::encode_option(
                             w,
-                            &v,
+                            v,
                             |w, v| {
                                 ::stef::buf::encode_hash_map(
                                     w,
-                                    &v.get(),
+                                    v.get(),
                                     |k| { ::stef::buf::size_i64(*k) },
-                                    |v| { ::stef::buf::size_string(&v) },
+                                    |v| { ::stef::buf::size_string(v) },
                                     |w, k| {
                                         ::stef::buf::encode_i64(w, *k);
                                     },
                                     |w, v| {
-                                        ::stef::buf::encode_string(w, &v);
+                                        ::stef::buf::encode_string(w, v);
                                     },
                                 );
                             },
@@ -108,24 +110,26 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
+        let Self { value } = self;
         ::stef::buf::size_field(
             1,
             || {
                 ::stef::buf::size_vec(
-                    &self.value,
+                    value,
                     |v| {
                         ::stef::buf::size_option(
                             v.as_ref(),
                             |v| {
                                 ::stef::buf::size_hash_map(
-                                    &v.get(),
+                                    v.get(),
                                     |k| { ::stef::buf::size_i64(*k) },
-                                    |v| { ::stef::buf::size_string(&v) },
+                                    |v| { ::stef::buf::size_string(v) },
                                 )
                             },
                         )

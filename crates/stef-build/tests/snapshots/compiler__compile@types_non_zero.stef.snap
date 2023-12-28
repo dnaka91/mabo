@@ -28,93 +28,111 @@ pub struct Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self {
+            f01,
+            f02,
+            f03,
+            f04,
+            f05,
+            f06,
+            f07,
+            f08,
+            f09,
+            f10,
+            f11,
+            f12,
+            f13,
+            f14,
+            f15,
+        } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::Fixed1),
             |w| {
-                ::stef::buf::encode_u8(w, self.f01.get());
+                ::stef::buf::encode_u8(w, f01.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u16(w, self.f02.get());
+                ::stef::buf::encode_u16(w, f02.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(3, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u32(w, self.f03.get());
+                ::stef::buf::encode_u32(w, f03.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(4, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u64(w, self.f04.get());
+                ::stef::buf::encode_u64(w, f04.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(5, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u128(w, self.f05.get());
+                ::stef::buf::encode_u128(w, f05.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(6, ::stef::FieldEncoding::Fixed1),
             |w| {
-                ::stef::buf::encode_i8(w, self.f06.get());
+                ::stef::buf::encode_i8(w, f06.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(7, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_i16(w, self.f07.get());
+                ::stef::buf::encode_i16(w, f07.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(8, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_i32(w, self.f08.get());
+                ::stef::buf::encode_i32(w, f08.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(9, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_i64(w, self.f09.get());
+                ::stef::buf::encode_i64(w, f09.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(10, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_i128(w, self.f10.get());
+                ::stef::buf::encode_i128(w, f10.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(11, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_string(w, &self.f11.get());
+                ::stef::buf::encode_string(w, f11.get());
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(12, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_bytes_std(w, &self.f12.get());
+                ::stef::buf::encode_bytes_std(w, f12.get());
             },
         );
         ::stef::buf::encode_field(
@@ -123,10 +141,10 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_vec(
                     w,
-                    &self.f13.get(),
-                    |v| { ::stef::buf::size_string(&v) },
+                    f13.get(),
+                    |v| { ::stef::buf::size_string(v) },
                     |w, v| {
-                        ::stef::buf::encode_string(w, &v);
+                        ::stef::buf::encode_string(w, v);
                     },
                 );
             },
@@ -137,14 +155,14 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_hash_map(
                     w,
-                    &self.f14.get(),
-                    |k| { ::stef::buf::size_string(&k) },
-                    |v| { ::stef::buf::size_bytes_std(&v) },
+                    f14.get(),
+                    |k| { ::stef::buf::size_string(k) },
+                    |v| { ::stef::buf::size_bytes_std(v) },
                     |w, k| {
-                        ::stef::buf::encode_string(w, &k);
+                        ::stef::buf::encode_string(w, k);
                     },
                     |w, v| {
-                        ::stef::buf::encode_bytes_std(w, &v);
+                        ::stef::buf::encode_bytes_std(w, v);
                     },
                 );
             },
@@ -155,10 +173,10 @@ impl ::stef::Encode for Sample {
             |w| {
                 ::stef::buf::encode_hash_set(
                     w,
-                    &self.f15.get(),
-                    |v| { ::stef::buf::size_string(&v) },
+                    f15.get(),
+                    |v| { ::stef::buf::size_string(v) },
                     |w, v| {
-                        ::stef::buf::encode_string(w, &v);
+                        ::stef::buf::encode_string(w, v);
                     },
                 );
             },
@@ -312,45 +330,54 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { ::stef::buf::size_u8(self.f01.get()) })
-            + ::stef::buf::size_field(2, || { ::stef::buf::size_u16(self.f02.get()) })
-            + ::stef::buf::size_field(3, || { ::stef::buf::size_u32(self.f03.get()) })
-            + ::stef::buf::size_field(4, || { ::stef::buf::size_u64(self.f04.get()) })
-            + ::stef::buf::size_field(5, || { ::stef::buf::size_u128(self.f05.get()) })
-            + ::stef::buf::size_field(6, || { ::stef::buf::size_i8(self.f06.get()) })
-            + ::stef::buf::size_field(7, || { ::stef::buf::size_i16(self.f07.get()) })
-            + ::stef::buf::size_field(8, || { ::stef::buf::size_i32(self.f08.get()) })
-            + ::stef::buf::size_field(9, || { ::stef::buf::size_i64(self.f09.get()) })
-            + ::stef::buf::size_field(10, || { ::stef::buf::size_i128(self.f10.get()) })
-            + ::stef::buf::size_field(
-                11,
-                || { ::stef::buf::size_string(&self.f11.get()) },
-            )
-            + ::stef::buf::size_field(
-                12,
-                || { ::stef::buf::size_bytes_std(&self.f12.get()) },
-            )
+        let Self {
+            f01,
+            f02,
+            f03,
+            f04,
+            f05,
+            f06,
+            f07,
+            f08,
+            f09,
+            f10,
+            f11,
+            f12,
+            f13,
+            f14,
+            f15,
+        } = self;
+        ::stef::buf::size_field(1, || { ::stef::buf::size_u8(f01.get()) })
+            + ::stef::buf::size_field(2, || { ::stef::buf::size_u16(f02.get()) })
+            + ::stef::buf::size_field(3, || { ::stef::buf::size_u32(f03.get()) })
+            + ::stef::buf::size_field(4, || { ::stef::buf::size_u64(f04.get()) })
+            + ::stef::buf::size_field(5, || { ::stef::buf::size_u128(f05.get()) })
+            + ::stef::buf::size_field(6, || { ::stef::buf::size_i8(f06.get()) })
+            + ::stef::buf::size_field(7, || { ::stef::buf::size_i16(f07.get()) })
+            + ::stef::buf::size_field(8, || { ::stef::buf::size_i32(f08.get()) })
+            + ::stef::buf::size_field(9, || { ::stef::buf::size_i64(f09.get()) })
+            + ::stef::buf::size_field(10, || { ::stef::buf::size_i128(f10.get()) })
+            + ::stef::buf::size_field(11, || { ::stef::buf::size_string(f11.get()) })
+            + ::stef::buf::size_field(12, || { ::stef::buf::size_bytes_std(f12.get()) })
             + ::stef::buf::size_field(
                 13,
                 || {
-                    ::stef::buf::size_vec(
-                        &self.f13.get(),
-                        |v| { ::stef::buf::size_string(&v) },
-                    )
+                    ::stef::buf::size_vec(f13.get(), |v| { ::stef::buf::size_string(v) })
                 },
             )
             + ::stef::buf::size_field(
                 14,
                 || {
                     ::stef::buf::size_hash_map(
-                        &self.f14.get(),
-                        |k| { ::stef::buf::size_string(&k) },
-                        |v| { ::stef::buf::size_bytes_std(&v) },
+                        f14.get(),
+                        |k| { ::stef::buf::size_string(k) },
+                        |v| { ::stef::buf::size_bytes_std(v) },
                     )
                 },
             )
@@ -358,8 +385,8 @@ impl ::stef::buf::Size for Sample {
                 15,
                 || {
                     ::stef::buf::size_hash_set(
-                        &self.f15.get(),
-                        |v| { ::stef::buf::size_string(&v) },
+                        f15.get(),
+                        |v| { ::stef::buf::size_string(v) },
                     )
                 },
             ) + ::stef::buf::size_u32(::stef::buf::END_MARKER)

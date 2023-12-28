@@ -1,8 +1,8 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
-use stef_parser::{
-    Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Import, Literal,
-    LiteralValue, Module, NamedField, Schema, Struct, Type, TypeAlias, UnnamedField, Variant,
+use stef_compiler::simplify::{
+    Const, Definition, Enum, ExternalType, Field, FieldKind, Fields, Import, Literal, Module,
+    Schema, Struct, Type, TypeAlias, Variant,
 };
 
 use super::{decode, encode, size};
@@ -64,7 +64,7 @@ fn compile_module(
     }: &Module<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name.get(), Span::call_site());
+    let name = Ident::new(name, Span::call_site());
     let definitions = definitions.iter().map(|def| compile_definition(opts, def));
 
     quote! {
@@ -82,22 +82,22 @@ fn compile_struct(
     opts: &Opts,
     Struct {
         comment,
-        attributes: _,
         name,
         generics,
         fields,
     }: &Struct<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name.get(), Span::call_site());
+    let name = Ident::new(name, Span::call_site());
     let generics = compile_generics(generics);
+    let semicolon = (fields.kind != FieldKind::Named).then_some(quote! {;});
     let fields = compile_fields(opts, fields, true);
 
     quote! {
         #comment
         #[derive(Clone, Debug, PartialEq)]
         #[allow(clippy::module_name_repetitions, clippy::option_option)]
-        pub struct #name #generics #fields
+        pub struct #name #generics #fields #semicolon
     }
 }
 
@@ -105,14 +105,13 @@ fn compile_enum(
     opts: &Opts,
     Enum {
         comment,
-        attributes: _,
         name,
         generics,
         variants,
     }: &Enum<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name.get(), Span::call_site());
+    let name = Ident::new(name, Span::call_site());
     let generics = compile_generics(generics);
     let variants = variants.iter().map(|v| compile_variant(opts, v));
 
@@ -136,7 +135,7 @@ fn compile_variant(
     }: &Variant<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name.get(), Span::call_site());
+    let name = Ident::new(name, Span::call_site());
     let fields = compile_fields(opts, fields, false);
 
     quote! {
@@ -155,7 +154,7 @@ fn compile_alias(
     }: &TypeAlias<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name.get(), Span::call_site());
+    let name = Ident::new(name, Span::call_site());
     let generics = compile_generics(generics);
     let target = compile_data_type(opts, target);
 
@@ -175,7 +174,7 @@ fn compile_const(
     }: &Const<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
-    let name = Ident::new(name.get(), Span::call_site());
+    let name = Ident::new(name, Span::call_site());
     let ty = compile_const_data_type(ty);
     let value = compile_literal(value);
 
@@ -192,7 +191,7 @@ fn compile_import(
     }: &Import<'_>,
 ) -> TokenStream {
     let segments = segments.iter().enumerate().map(|(i, segment)| {
-        let segment = Ident::new(segment.get(), Span::call_site());
+        let segment = Ident::new(segment, Span::call_site());
         if i > 0 {
             quote! {::#segment}
         } else {
@@ -200,7 +199,7 @@ fn compile_import(
         }
     });
     let element = element.as_ref().map(|element| {
-        let element = Ident::new(element.get(), Span::call_site());
+        let element = Ident::new(element, Span::call_site());
         quote! { ::#element}
     });
 
@@ -210,153 +209,133 @@ fn compile_import(
     }
 }
 
-fn compile_comment(Comment(lines): &Comment<'_>) -> TokenStream {
-    let lines = lines.iter().map(|line| format!(" {}", line.value));
+fn compile_comment(lines: &[&str]) -> TokenStream {
+    let lines = lines.iter().map(|line| format!(" {line}"));
     quote! { #(#[doc = #lines])* }
 }
 
-fn compile_generics(Generics(types): &Generics<'_>) -> Option<TokenStream> {
+fn compile_generics(types: &[&str]) -> Option<TokenStream> {
     (!types.is_empty()).then(|| {
-        let types = types
-            .iter()
-            .map(|ty| Ident::new(ty.get(), Span::call_site()));
+        let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
         quote! { <#(#types,)*> }
     })
 }
 
 fn compile_fields(opts: &Opts, fields: &Fields<'_>, for_struct: bool) -> TokenStream {
-    match fields {
-        Fields::Named(named) => {
-            let fields = named.iter().map(
-                |NamedField {
-                     comment, name, ty, ..
-                 }| {
-                    let comment = compile_comment(comment);
-                    let public = for_struct.then(|| quote! { pub });
-                    let name = Ident::new(name.get(), Span::call_site());
-                    let ty = compile_data_type(opts, ty);
-                    quote! {
-                        #comment
-                        #public #name: #ty
-                    }
-                },
-            );
+    let values = fields.fields.iter().map(
+        |Field {
+             comment, name, ty, ..
+         }| {
+            let public = for_struct.then(|| quote! { pub });
+            let ty = compile_data_type(opts, ty);
 
-            quote! { {
-                #(#fields,)*
-            } }
-        }
-        Fields::Unnamed(unnamed) => {
-            let fields = unnamed.iter().map(|UnnamedField { ty, .. }| {
-                let public = for_struct.then(|| quote! { pub });
-                let ty = compile_data_type(opts, ty);
+            if fields.kind == FieldKind::Named {
+                let comment = compile_comment(comment);
+                let name = Ident::new(name, Span::call_site());
+
+                quote! {
+                    #comment
+                    #public #name: #ty
+                }
+            } else {
                 quote! { #public #ty }
-            });
+            }
+        },
+    );
 
-            if for_struct {
-                quote! { (#(#fields,)*); }
-            } else {
-                quote! { (#(#fields,)*) }
-            }
-        }
-        Fields::Unit => {
-            if for_struct {
-                quote! { ; }
-            } else {
-                quote! {}
-            }
-        }
+    match fields.kind {
+        FieldKind::Named => quote! { {#(#values,)*} },
+        FieldKind::Unnamed => quote! { (#(#values,)*) },
+        FieldKind::Unit => quote! {},
     }
 }
 
 pub(super) fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
-    match &ty.value {
-        DataType::Bool => quote! { bool },
-        DataType::U8 => quote! { u8 },
-        DataType::U16 => quote! { u16 },
-        DataType::U32 => quote! { u32 },
-        DataType::U64 => quote! { u64 },
-        DataType::U128 => quote! { u128 },
-        DataType::I8 => quote! { i8 },
-        DataType::I16 => quote! { i16 },
-        DataType::I32 => quote! { i32 },
-        DataType::I64 => quote! { i64 },
-        DataType::I128 => quote! { i128 },
-        DataType::F32 => quote! { f32 },
-        DataType::F64 => quote! { f64 },
-        DataType::String | DataType::StringRef => quote! { String },
-        DataType::Bytes | DataType::BytesRef => match opts.bytes_type {
+    match &ty {
+        Type::Bool => quote! { bool },
+        Type::U8 => quote! { u8 },
+        Type::U16 => quote! { u16 },
+        Type::U32 => quote! { u32 },
+        Type::U64 => quote! { u64 },
+        Type::U128 => quote! { u128 },
+        Type::I8 => quote! { i8 },
+        Type::I16 => quote! { i16 },
+        Type::I32 => quote! { i32 },
+        Type::I64 => quote! { i64 },
+        Type::I128 => quote! { i128 },
+        Type::F32 => quote! { f32 },
+        Type::F64 => quote! { f64 },
+        Type::String | Type::StringRef => quote! { String },
+        Type::Bytes | Type::BytesRef => match opts.bytes_type {
             BytesType::VecU8 => quote! { Vec<u8> },
             BytesType::Bytes => quote! { ::stef::buf::Bytes },
         },
-        DataType::Vec(ty) => {
+        Type::Vec(ty) => {
             let ty = compile_data_type(opts, ty);
             quote! { Vec<#ty> }
         }
-        DataType::HashMap(kv) => {
+        Type::HashMap(kv) => {
             let k = compile_data_type(opts, &kv.0);
             let v = compile_data_type(opts, &kv.1);
             quote! { ::std::collections::HashMap<#k, #v> }
         }
-        DataType::HashSet(ty) => {
+        Type::HashSet(ty) => {
             let ty = compile_data_type(opts, ty);
             quote! { ::std::collections::HashSet<#ty> }
         }
-        DataType::Option(ty) => {
+        Type::Option(ty) => {
             let ty = compile_data_type(opts, ty);
             quote! { Option<#ty> }
         }
-        DataType::NonZero(ty) => match &ty.value {
-            DataType::U8 => quote! { ::std::num::NonZeroU8 },
-            DataType::U16 => quote! { ::std::num::NonZeroU16 },
-            DataType::U32 => quote! { ::std::num::NonZeroU32 },
-            DataType::U64 => quote! { ::std::num::NonZeroU64 },
-            DataType::U128 => quote! { ::std::num::NonZeroU128 },
-            DataType::I8 => quote! { ::std::num::NonZeroI8 },
-            DataType::I16 => quote! { ::std::num::NonZeroI16 },
-            DataType::I32 => quote! { ::std::num::NonZeroI32 },
-            DataType::I64 => quote! { ::std::num::NonZeroI64 },
-            DataType::I128 => quote! { ::std::num::NonZeroI128 },
-            DataType::String | DataType::StringRef => quote! { ::stef::NonZeroString },
-            DataType::Bytes | DataType::BytesRef => match opts.bytes_type {
+        Type::NonZero(ty) => match &**ty {
+            Type::U8 => quote! { ::std::num::NonZeroU8 },
+            Type::U16 => quote! { ::std::num::NonZeroU16 },
+            Type::U32 => quote! { ::std::num::NonZeroU32 },
+            Type::U64 => quote! { ::std::num::NonZeroU64 },
+            Type::U128 => quote! { ::std::num::NonZeroU128 },
+            Type::I8 => quote! { ::std::num::NonZeroI8 },
+            Type::I16 => quote! { ::std::num::NonZeroI16 },
+            Type::I32 => quote! { ::std::num::NonZeroI32 },
+            Type::I64 => quote! { ::std::num::NonZeroI64 },
+            Type::I128 => quote! { ::std::num::NonZeroI128 },
+            Type::String | Type::StringRef => quote! { ::stef::NonZeroString },
+            Type::Bytes | Type::BytesRef => match opts.bytes_type {
                 BytesType::VecU8 => quote! { ::stef::NonZeroBytes },
                 BytesType::Bytes => quote! { ::stef::NonZero<::stef::buf::Bytes> },
             },
-            DataType::Vec(ty) => {
+            Type::Vec(ty) => {
                 let ty = compile_data_type(opts, ty);
                 quote! { ::stef::NonZeroVec<#ty> }
             }
-            DataType::HashMap(kv) => {
+            Type::HashMap(kv) => {
                 let k = compile_data_type(opts, &kv.0);
                 let v = compile_data_type(opts, &kv.1);
                 quote! { ::stef::NonZeroHashMap<#k, #v> }
             }
-            DataType::HashSet(ty) => {
+            Type::HashSet(ty) => {
                 let ty = compile_data_type(opts, ty);
                 quote! { ::stef::NonZeroHashSet<#ty> }
             }
             ty => todo!("compiler should catch invalid {ty:?} type"),
         },
-        DataType::BoxString => quote! { Box<str> },
-        DataType::BoxBytes => quote! { Box<[u8]> },
-        DataType::Tuple(types) => {
+        Type::BoxString => quote! { Box<str> },
+        Type::BoxBytes => quote! { Box<[u8]> },
+        Type::Tuple(types) => {
             let types = types.iter().map(|ty| compile_data_type(opts, ty));
             quote! { (#(#types,)*) }
         }
-        DataType::Array(ty, size) => {
+        Type::Array(ty, size) => {
             let ty = compile_data_type(opts, ty);
             let size = proc_macro2::Literal::u32_unsuffixed(*size);
             quote! { [#ty; #size] }
         }
-        DataType::External(ExternalType {
+        Type::External(ExternalType {
             path,
             name,
             generics,
         }) => {
-            let path = path
-                .iter()
-                .map(|part| Ident::new(part.get(), Span::call_site()));
-            let name = Ident::new(name.get(), Span::call_site());
+            let path = path.iter().map(|part| Ident::new(part, Span::call_site()));
+            let name = Ident::new(name, Span::call_site());
             let generics = (!generics.is_empty()).then(|| {
                 let types = generics.iter().map(|ty| compile_data_type(opts, ty));
                 quote! { <#(#types,)*> }
@@ -370,32 +349,32 @@ pub(super) fn compile_data_type(opts: &Opts, ty: &Type<'_>) -> TokenStream {
 }
 
 fn compile_const_data_type(ty: &Type<'_>) -> TokenStream {
-    match &ty.value {
-        DataType::Bool => quote! { bool },
-        DataType::U8 => quote! { u8 },
-        DataType::U16 => quote! { u16 },
-        DataType::U32 => quote! { u32 },
-        DataType::U64 => quote! { u64 },
-        DataType::U128 => quote! { u128 },
-        DataType::I8 => quote! { i8 },
-        DataType::I16 => quote! { i16 },
-        DataType::I32 => quote! { i32 },
-        DataType::I64 => quote! { i64 },
-        DataType::I128 => quote! { i128 },
-        DataType::F32 => quote! { f32 },
-        DataType::F64 => quote! { f64 },
-        DataType::String | DataType::StringRef => quote! { &str },
-        DataType::Bytes | DataType::BytesRef => quote! { &[u8] },
+    match &ty {
+        Type::Bool => quote! { bool },
+        Type::U8 => quote! { u8 },
+        Type::U16 => quote! { u16 },
+        Type::U32 => quote! { u32 },
+        Type::U64 => quote! { u64 },
+        Type::U128 => quote! { u128 },
+        Type::I8 => quote! { i8 },
+        Type::I16 => quote! { i16 },
+        Type::I32 => quote! { i32 },
+        Type::I64 => quote! { i64 },
+        Type::I128 => quote! { i128 },
+        Type::F32 => quote! { f32 },
+        Type::F64 => quote! { f64 },
+        Type::String | Type::StringRef => quote! { &str },
+        Type::Bytes | Type::BytesRef => quote! { &[u8] },
         _ => panic!("invalid data type for const"),
     }
 }
 
 fn compile_literal(literal: &Literal) -> TokenStream {
-    match &literal.value {
-        LiteralValue::Bool(b) => quote! { #b },
-        LiteralValue::Int(i) => proc_macro2::Literal::i128_unsuffixed(*i).into_token_stream(),
-        LiteralValue::Float(f) => proc_macro2::Literal::f64_unsuffixed(*f).into_token_stream(),
-        LiteralValue::String(s) => proc_macro2::Literal::string(s).into_token_stream(),
-        LiteralValue::Bytes(b) => proc_macro2::Literal::byte_string(b).into_token_stream(),
+    match &literal {
+        Literal::Bool(b) => quote! { #b },
+        Literal::Int(i) => proc_macro2::Literal::i128_unsuffixed(*i).into_token_stream(),
+        Literal::Float(f) => proc_macro2::Literal::f64_unsuffixed(*f).into_token_stream(),
+        Literal::String(s) => proc_macro2::Literal::string(s).into_token_stream(),
+        Literal::Bytes(b) => proc_macro2::Literal::byte_string(b).into_token_stream(),
     }
 }

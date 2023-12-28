@@ -61,6 +61,10 @@ mod schemas {
         stef::include!("import_basic");
     }
 
+    mod mixed {
+        stef::include!("mixed");
+    }
+
     mod other {
         stef::include!("other");
     }

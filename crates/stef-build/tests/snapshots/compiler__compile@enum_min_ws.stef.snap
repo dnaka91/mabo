@@ -19,6 +19,7 @@ where
 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -32,17 +33,23 @@ where
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
-                    |w| { ::stef::buf::encode_u32(w, *n0) },
+                    |w| {
+                        ::stef::buf::encode_u32(w, *n0);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(2, ::stef::FieldEncoding::Varint),
-                    |w| { ::stef::buf::encode_u64(w, *n1) },
+                    |w| {
+                        ::stef::buf::encode_u64(w, *n1);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { (*n2).encode(w) },
+                    |w| {
+                        n2.encode(w);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -51,17 +58,23 @@ where
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
-                    |w| { ::stef::buf::encode_u32(w, *field1) },
+                    |w| {
+                        ::stef::buf::encode_u32(w, *field1);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(2, ::stef::FieldEncoding::Fixed1),
-                    |w| { ::stef::buf::encode_bool(w, *field2) },
+                    |w| {
+                        ::stef::buf::encode_bool(w, *field2);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(3, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { (*field3).encode(w) },
+                    |w| {
+                        field3.encode(w);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -154,6 +167,7 @@ where
 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -164,14 +178,14 @@ where
                 ::stef::buf::size_id(2)
                     + ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*n0) })
                     + ::stef::buf::size_field(2, || { ::stef::buf::size_u64(*n1) })
-                    + ::stef::buf::size_field(3, || { (*n2).size() })
+                    + ::stef::buf::size_field(3, || { n2.size() })
                     + ::stef::buf::size_u32(::stef::buf::END_MARKER)
             }
             Self::Three { field1, field2, field3 } => {
                 ::stef::buf::size_id(3)
                     + ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*field1) })
                     + ::stef::buf::size_field(2, || { ::stef::buf::size_bool(*field2) })
-                    + ::stef::buf::size_field(3, || { (*field3).size() })
+                    + ::stef::buf::size_field(3, || { field3.size() })
                     + ::stef::buf::size_u32(::stef::buf::END_MARKER)
             }
         }

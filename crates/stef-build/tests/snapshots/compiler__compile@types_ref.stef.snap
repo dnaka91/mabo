@@ -15,23 +15,25 @@ pub struct Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { basic, with_generics } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.basic).encode(w);
+                basic.encode(w);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.with_generics).encode(w);
+                with_generics.encode(w);
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -70,13 +72,15 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { (self.basic).size() })
-            + ::stef::buf::size_field(2, || { (self.with_generics).size() })
+        let Self { basic, with_generics } = self;
+        ::stef::buf::size_field(1, || { basic.size() })
+            + ::stef::buf::size_field(2, || { with_generics.size() })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }
@@ -89,6 +93,7 @@ pub enum Test123 {
 impl ::stef::Encode for Test123 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -114,6 +119,7 @@ impl ::stef::Decode for Test123 {
 impl ::stef::buf::Size for Test123 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -137,23 +143,25 @@ where
 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { key, value } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.key).encode(w);
+                key.encode(w);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                (self.value).encode(w);
+                value.encode(w);
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -200,13 +208,15 @@ where
 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { (self.key).size() })
-            + ::stef::buf::size_field(2, || { (self.value).size() })
+        let Self { key, value } = self;
+        ::stef::buf::size_field(1, || { key.size() })
+            + ::stef::buf::size_field(2, || { value.size() })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }

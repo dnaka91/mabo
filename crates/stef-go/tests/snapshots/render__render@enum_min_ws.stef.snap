@@ -63,22 +63,22 @@ func (v *Sample_One) Size() int {
 }
 
 type Sample_Two[T any] struct {
-	F0 uint32
-	F1 uint64
-	F2 T
+	N0 uint32
+	N1 uint64
+	N2 T
 }
 
 func (v Sample_Two[T]) sealed() {}
 
 func NewSample_Two[T any](
-	f0 uint32,
-	f1 uint64,
-	f2 T,
+	n0 uint32,
+	n1 uint64,
+	n2 T,
 ) Sample_Two[T] {
 	return Sample_Two[T]{
-		F0: f0,
-		F1: f1,
-		F2: f2,
+		N0: n0,
+		N1: n1,
+		N2: n2,
 	}
 }
 
@@ -86,13 +86,13 @@ var _ buf.Encode = (*Sample_Two[T])(nil)
 
 func (v *Sample_Two[T]) Encode(w []byte) []byte {
 	w = buf.EncodeField(w, 1, func (w []byte) []byte {
-		return buf.EncodeU32(w, v.F0)
+		return buf.EncodeU32(w, v.N0)
 	})
 	w = buf.EncodeField(w, 2, func (w []byte) []byte {
-		return buf.EncodeU64(w, v.F1)
+		return buf.EncodeU64(w, v.N1)
 	})
 	w = buf.EncodeField(w, 3, func (w []byte) []byte {
-		return v.F2.Encode(w)
+		return v.N2.Encode(w)
 	})
 	w = buf.EncodeU32(w, buf.EndMarker)
 	return nil
@@ -101,9 +101,9 @@ func (v *Sample_Two[T]) Encode(w []byte) []byte {
 var _ buf.Decode = (*Sample_Two[T])(nil)
 
 func (v *Sample_Two[T]) Decode(r []byte) ([]byte, error) {
-	foundF0 := false
-	foundF1 := false
-	foundF2 := false
+	foundN0 := false
+	foundN1 := false
+	foundN2 := false
 
 	for len(r) > 0 {
 		r2, id, err := buf.DecodeID(r)
@@ -119,16 +119,16 @@ func (v *Sample_Two[T]) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F0 = value
-				foundF0 = true
+				v.N0 = value
+				foundN0 = true
 			case 2:
 				r2, value, err := buf.DecodeU64(r)
 				if err != nil {
 					return nil, err
 				}
 				r = r2
-				v.F1 = value
-				foundF1 = true
+				v.N1 = value
+				foundN1 = true
 			case 3:
 				r2, value, err := func(r []byte) ([]byte, T, error) {
 					var value T
@@ -139,26 +139,26 @@ func (v *Sample_Two[T]) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F2 = value
-				foundF2 = true
+				v.N2 = value
+				foundN2 = true
 			case buf.EndMarker:
 				break
 		}
 	}
 
-	if !foundF0 {
+	if !foundN0 {
 		return nil, buf.MissingFieldError{
 			ID:    1
 			Field: ""
 		}
 	}
-	if !foundF1 {
+	if !foundN1 {
 		return nil, buf.MissingFieldError{
 			ID:    2
 			Field: ""
 		}
 	}
-	if !foundF2 {
+	if !foundN2 {
 		return nil, buf.MissingFieldError{
 			ID:    3
 			Field: ""
@@ -173,13 +173,13 @@ var _ buf.Size = (*Sample_Two[T])(nil)
 func (v *Sample_Two[T]) Size() int {
 	size := 0
 	size += buf.SizeField(1, func() int {
-		return buf.SizeU32(v.F0)
+		return buf.SizeU32(v.N0)
 	})
 	size += buf.SizeField(2, func() int {
-		return buf.SizeU64(v.F1)
+		return buf.SizeU64(v.N1)
 	})
 	size += buf.SizeField(3, func() int {
-		return v.F2.Size()
+		return v.N2.Size()
 	})
 	size += buf.SizeU32(buf.EndMarker)
 	return size

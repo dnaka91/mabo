@@ -17,23 +17,25 @@ pub struct Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { a, b } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u32(w, self.a);
+                ::stef::buf::encode_u32(w, *a);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::Fixed1),
             |w| {
-                ::stef::buf::encode_bool(w, self.b);
+                ::stef::buf::encode_bool(w, *b);
             },
         );
         ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -72,13 +74,15 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { ::stef::buf::size_u32(self.a) })
-            + ::stef::buf::size_field(2, || { ::stef::buf::size_bool(self.b) })
+        let Self { a, b } = self;
+        ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*a) })
+            + ::stef::buf::size_field(2, || { ::stef::buf::size_bool(*b) })
             + ::stef::buf::size_u32(::stef::buf::END_MARKER)
     }
 }

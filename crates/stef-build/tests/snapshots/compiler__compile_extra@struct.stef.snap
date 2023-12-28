@@ -17,23 +17,25 @@ pub struct Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn encode(&self, w: &mut impl ::stef::BufMut) {
+        let Self { field1, field2, field3 } = self;
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
             |w| {
-                ::stef::buf::encode_u32(w, self.field1);
+                ::stef::buf::encode_u32(w, *field1);
             },
         );
         ::stef::buf::encode_field(
             w,
             ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
             |w| {
-                ::stef::buf::encode_bytes_std(w, &self.field2);
+                ::stef::buf::encode_bytes_std(w, field2);
             },
         );
         ::stef::buf::encode_field(
@@ -43,17 +45,17 @@ impl ::stef::Encode for Sample {
                 ::stef::buf::encode_tuple(
                     w,
                     || {
-                        ::stef::buf::size_bool(self.field3.0)
+                        ::stef::buf::size_bool(*&field3.0)
                             + ::stef::buf::size_array(
-                                &&(self.field3.1),
+                                &field3.1,
                                 |v| { ::stef::buf::size_i16(*v) },
                             )
                     },
                     |w| {
-                        ::stef::buf::encode_bool(w, self.field3.0);
+                        ::stef::buf::encode_bool(w, *&field3.0);
                         ::stef::buf::encode_array(
                             w,
-                            &&(self.field3.1),
+                            &field3.1,
                             |v| { ::stef::buf::size_i16(*v) },
                             |w, v| {
                                 ::stef::buf::encode_i16(w, *v);
@@ -122,22 +124,21 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::explicit_auto_deref,
         clippy::needless_borrow,
         clippy::too_many_lines,
     )]
     fn size(&self) -> usize {
-        ::stef::buf::size_field(1, || { ::stef::buf::size_u32(self.field1) })
-            + ::stef::buf::size_field(
-                2,
-                || { ::stef::buf::size_bytes_std(&self.field2) },
-            )
+        let Self { field1, field2, field3 } = self;
+        ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*field1) })
+            + ::stef::buf::size_field(2, || { ::stef::buf::size_bytes_std(field2) })
             + ::stef::buf::size_field(
                 3,
                 || {
-                    ::stef::buf::size_bool(self.field3.0)
+                    ::stef::buf::size_bool(*&field3.0)
                         + ::stef::buf::size_array(
-                            &&(self.field3.1),
+                            &field3.1,
                             |v| { ::stef::buf::size_i16(*v) },
                         )
                 },

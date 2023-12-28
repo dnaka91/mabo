@@ -64,19 +64,19 @@ func (v *Sample_One) Size() int {
 }
 
 type Sample_Two[A any, B any] struct {
-	F0 A
-	F1 B
+	N0 A
+	N1 B
 }
 
 func (v Sample_Two[A, B]) sealed() {}
 
 func NewSample_Two[A any, B any](
-	f0 A,
-	f1 B,
+	n0 A,
+	n1 B,
 ) Sample_Two[A, B] {
 	return Sample_Two[A, B]{
-		F0: f0,
-		F1: f1,
+		N0: n0,
+		N1: n1,
 	}
 }
 
@@ -84,10 +84,10 @@ var _ buf.Encode = (*Sample_Two[A, B])(nil)
 
 func (v *Sample_Two[A, B]) Encode(w []byte) []byte {
 	w = buf.EncodeField(w, 1, func (w []byte) []byte {
-		return v.F0.Encode(w)
+		return v.N0.Encode(w)
 	})
 	w = buf.EncodeField(w, 2, func (w []byte) []byte {
-		return v.F1.Encode(w)
+		return v.N1.Encode(w)
 	})
 	w = buf.EncodeU32(w, buf.EndMarker)
 	return nil
@@ -96,8 +96,8 @@ func (v *Sample_Two[A, B]) Encode(w []byte) []byte {
 var _ buf.Decode = (*Sample_Two[A, B])(nil)
 
 func (v *Sample_Two[A, B]) Decode(r []byte) ([]byte, error) {
-	foundF0 := false
-	foundF1 := false
+	foundN0 := false
+	foundN1 := false
 
 	for len(r) > 0 {
 		r2, id, err := buf.DecodeID(r)
@@ -117,8 +117,8 @@ func (v *Sample_Two[A, B]) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F0 = value
-				foundF0 = true
+				v.N0 = value
+				foundN0 = true
 			case 2:
 				r2, value, err := func(r []byte) ([]byte, B, error) {
 					var value B
@@ -129,20 +129,20 @@ func (v *Sample_Two[A, B]) Decode(r []byte) ([]byte, error) {
 					return nil, err
 				}
 				r = r2
-				v.F1 = value
-				foundF1 = true
+				v.N1 = value
+				foundN1 = true
 			case buf.EndMarker:
 				break
 		}
 	}
 
-	if !foundF0 {
+	if !foundN0 {
 		return nil, buf.MissingFieldError{
 			ID:    1
 			Field: ""
 		}
 	}
-	if !foundF1 {
+	if !foundN1 {
 		return nil, buf.MissingFieldError{
 			ID:    2
 			Field: ""
@@ -157,10 +157,10 @@ var _ buf.Size = (*Sample_Two[A, B])(nil)
 func (v *Sample_Two[A, B]) Size() int {
 	size := 0
 	size += buf.SizeField(1, func() int {
-		return v.F0.Size()
+		return v.N0.Size()
 	})
 	size += buf.SizeField(2, func() int {
-		return v.F1.Size()
+		return v.N1.Size()
 	})
 	size += buf.SizeU32(buf.EndMarker)
 	return size

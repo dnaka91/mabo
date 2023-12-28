@@ -21,6 +21,7 @@ pub mod a {
         impl ::stef::Encode for Sample {
             #[allow(
                 clippy::borrow_deref_ref,
+                clippy::deref_addrof,
                 clippy::semicolon_if_nothing_returned,
                 clippy::too_many_lines,
             )]
@@ -46,6 +47,7 @@ pub mod a {
         impl ::stef::buf::Size for Sample {
             #[allow(
                 clippy::borrow_deref_ref,
+                clippy::deref_addrof,
                 clippy::semicolon_if_nothing_returned,
                 clippy::too_many_lines,
             )]
@@ -66,23 +68,25 @@ pub mod a {
     impl ::stef::Encode for Sample {
         #[allow(
             clippy::borrow_deref_ref,
+            clippy::deref_addrof,
             clippy::explicit_auto_deref,
             clippy::needless_borrow,
             clippy::too_many_lines,
         )]
         fn encode(&self, w: &mut impl ::stef::BufMut) {
+            let Self { value, inner } = self;
             ::stef::buf::encode_field(
                 w,
                 ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
                 |w| {
-                    ::stef::buf::encode_u32(w, self.value);
+                    ::stef::buf::encode_u32(w, *value);
                 },
             );
             ::stef::buf::encode_field(
                 w,
                 ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
                 |w| {
-                    (self.inner).encode(w);
+                    inner.encode(w);
                 },
             );
             ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -121,13 +125,15 @@ pub mod a {
     impl ::stef::buf::Size for Sample {
         #[allow(
             clippy::borrow_deref_ref,
+            clippy::deref_addrof,
             clippy::explicit_auto_deref,
             clippy::needless_borrow,
             clippy::too_many_lines,
         )]
         fn size(&self) -> usize {
-            ::stef::buf::size_field(1, || { ::stef::buf::size_u32(self.value) })
-                + ::stef::buf::size_field(2, || { (self.inner).size() })
+            let Self { value, inner } = self;
+            ::stef::buf::size_field(1, || { ::stef::buf::size_u32(*value) })
+                + ::stef::buf::size_field(2, || { inner.size() })
                 + ::stef::buf::size_u32(::stef::buf::END_MARKER)
         }
     }

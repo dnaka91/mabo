@@ -28,3 +28,12 @@ fn resolve_large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
 
     bencher.bench(|| stef_compiler::resolve_schemas(black_box(list)));
 }
+
+#[divan::bench(consts = [1, 10, 100, 1000])]
+fn simplify_large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
+    let schema = stef_benches::generate_schema(N);
+    let schema = stef_parser::Schema::parse(&schema, None).unwrap();
+    let _ = stef_compiler::simplify_schema(&schema);
+
+    bencher.bench(|| stef_compiler::simplify_schema(black_box(&schema)));
+}

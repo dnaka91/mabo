@@ -2,7 +2,7 @@
 
 use std::fmt::{self, Display};
 
-use stef_parser::{DataType, Fields, Generics, Struct, Type, Variant};
+use stef_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
 
 use crate::definition::{self, RenderGenericNames};
 
@@ -49,7 +49,7 @@ impl Display for RenderStruct<'_> {
 
 pub(super) struct RenderEnumVariant<'a> {
     pub(super) enum_name: &'a str,
-    pub(super) generics: &'a Generics<'a>,
+    pub(super) generics: &'a [&'a str],
     pub(super) variant: &'a Variant<'a>,
 }
 
@@ -98,18 +98,8 @@ struct RenderFieldVars<'a>(&'a Fields<'a>);
 
 impl Display for RenderFieldVars<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Fields::Named(named) => {
-                for field in named {
-                    writeln!(f, "\tfound{} := false", heck::AsUpperCamelCase(&field.name))?;
-                }
-            }
-            Fields::Unnamed(unnamed) => {
-                for (idx, _) in unnamed.iter().enumerate() {
-                    writeln!(f, "\tfoundF{idx} := false")?;
-                }
-            }
-            Fields::Unit => {}
+        for field in &*self.0.fields {
+            writeln!(f, "\tfound{} := false", heck::AsUpperCamelCase(&field.name))?;
         }
 
         Ok(())
@@ -120,28 +110,21 @@ struct RenderFoundChecks<'a>(&'a Fields<'a>);
 
 impl Display for RenderFoundChecks<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Fields::Named(named) => {
-                for field in named {
-                    writeln!(f, "\tif !found{} {{", heck::AsUpperCamelCase(&field.name))?;
-                    writeln!(f, "\t\treturn nil, buf.MissingFieldError{{")?;
-                    writeln!(f, "\t\t\tID:    {}", field.id.get())?;
-                    writeln!(f, "\t\t\tField: \"{}\"", &field.name)?;
-                    writeln!(f, "\t\t}}")?;
-                    writeln!(f, "\t}}")?;
+        for field in &*self.0.fields {
+            writeln!(f, "\tif !found{} {{", heck::AsUpperCamelCase(&field.name))?;
+            writeln!(f, "\t\treturn nil, buf.MissingFieldError{{")?;
+            writeln!(f, "\t\t\tID:    {}", field.id)?;
+            writeln!(
+                f,
+                "\t\t\tField: \"{}\"",
+                if self.0.kind == FieldKind::Named {
+                    &field.name
+                } else {
+                    ""
                 }
-            }
-            Fields::Unnamed(unnamed) => {
-                for (idx, field) in unnamed.iter().enumerate() {
-                    writeln!(f, "\tif !foundF{idx} {{")?;
-                    writeln!(f, "\t\treturn nil, buf.MissingFieldError{{")?;
-                    writeln!(f, "\t\t\tID:    {}", field.id.get())?;
-                    writeln!(f, "\t\t\tField: \"\"")?;
-                    writeln!(f, "\t\t}}")?;
-                    writeln!(f, "\t}}")?;
-                }
-            }
-            Fields::Unit => {}
+            )?;
+            writeln!(f, "\t\t}}")?;
+            writeln!(f, "\t}}")?;
         }
 
         Ok(())
@@ -152,54 +135,30 @@ struct RenderFields<'a>(&'a Fields<'a>);
 
 impl Display for RenderFields<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.0 {
-            Fields::Named(named) => {
-                for field in named {
-                    writeln!(f, "\t\t\tcase {}:", field.id.get())?;
-                    writeln!(
-                        f,
-                        "\t\t\t\tr2, value, err := {}",
-                        RenderType {
-                            ty: &field.ty,
-                            indent: 4
-                        }
-                    )?;
-                    writeln!(f, "\t\t\t\tif err != nil {{")?;
-                    writeln!(f, "\t\t\t\t\treturn nil, err")?;
-                    writeln!(f, "\t\t\t\t}}")?;
-                    writeln!(f, "\t\t\t\tr = r2")?;
-                    writeln!(
-                        f,
-                        "\t\t\t\tv.{} = value",
-                        heck::AsUpperCamelCase(&field.name)
-                    )?;
-                    writeln!(
-                        f,
-                        "\t\t\t\tfound{} = true",
-                        heck::AsUpperCamelCase(&field.name)
-                    )?;
+        for field in &*self.0.fields {
+            writeln!(f, "\t\t\tcase {}:", field.id)?;
+            writeln!(
+                f,
+                "\t\t\t\tr2, value, err := {}",
+                RenderType {
+                    ty: &field.ty,
+                    indent: 4
                 }
-            }
-            Fields::Unnamed(unnamed) => {
-                for (idx, field) in unnamed.iter().enumerate() {
-                    writeln!(f, "\t\t\tcase {}:", field.id.get())?;
-                    writeln!(
-                        f,
-                        "\t\t\t\tr2, value, err := {}",
-                        RenderType {
-                            ty: &field.ty,
-                            indent: 4
-                        }
-                    )?;
-                    writeln!(f, "\t\t\t\tif err != nil {{")?;
-                    writeln!(f, "\t\t\t\t\treturn nil, err")?;
-                    writeln!(f, "\t\t\t\t}}")?;
-                    writeln!(f, "\t\t\t\tr = r2")?;
-                    writeln!(f, "\t\t\t\tv.F{idx} = value")?;
-                    writeln!(f, "\t\t\t\tfoundF{idx} = true")?;
-                }
-            }
-            Fields::Unit => {}
+            )?;
+            writeln!(f, "\t\t\t\tif err != nil {{")?;
+            writeln!(f, "\t\t\t\t\treturn nil, err")?;
+            writeln!(f, "\t\t\t\t}}")?;
+            writeln!(f, "\t\t\t\tr = r2")?;
+            writeln!(
+                f,
+                "\t\t\t\tv.{} = value",
+                heck::AsUpperCamelCase(&field.name)
+            )?;
+            writeln!(
+                f,
+                "\t\t\t\tfound{} = true",
+                heck::AsUpperCamelCase(&field.name)
+            )?;
         }
 
         Ok(())
@@ -213,27 +172,27 @@ struct RenderType<'a> {
 
 impl Display for RenderType<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.ty.value {
-            DataType::Bool => write!(f, "buf.DecodeBool(r)"),
-            DataType::U8 => write!(f, "buf.DecodeU8(r)"),
-            DataType::U16 => write!(f, "buf.DecodeU16(r)"),
-            DataType::U32 => write!(f, "buf.DecodeU32(r)"),
-            DataType::U64 => write!(f, "buf.DecodeU64(r)"),
-            DataType::U128 => write!(f, "buf.DecodeU128(r)"),
-            DataType::I8 => write!(f, "buf.DecodeI8(r)"),
-            DataType::I16 => write!(f, "buf.DecodeI16(r)"),
-            DataType::I32 => write!(f, "buf.DecodeI32(r)"),
-            DataType::I64 => write!(f, "buf.DecodeI64(r)"),
-            DataType::I128 => write!(f, "buf.DecodeI128(r)"),
-            DataType::F32 => write!(f, "buf.DecodeF32(r)"),
-            DataType::F64 => write!(f, "buf.DecodeF64(r)"),
-            DataType::String | DataType::StringRef | DataType::BoxString => {
+        match self.ty {
+            Type::Bool => write!(f, "buf.DecodeBool(r)"),
+            Type::U8 => write!(f, "buf.DecodeU8(r)"),
+            Type::U16 => write!(f, "buf.DecodeU16(r)"),
+            Type::U32 => write!(f, "buf.DecodeU32(r)"),
+            Type::U64 => write!(f, "buf.DecodeU64(r)"),
+            Type::U128 => write!(f, "buf.DecodeU128(r)"),
+            Type::I8 => write!(f, "buf.DecodeI8(r)"),
+            Type::I16 => write!(f, "buf.DecodeI16(r)"),
+            Type::I32 => write!(f, "buf.DecodeI32(r)"),
+            Type::I64 => write!(f, "buf.DecodeI64(r)"),
+            Type::I128 => write!(f, "buf.DecodeI128(r)"),
+            Type::F32 => write!(f, "buf.DecodeF32(r)"),
+            Type::F64 => write!(f, "buf.DecodeF64(r)"),
+            Type::String | Type::StringRef | Type::BoxString => {
                 write!(f, "buf.DecodeString(r)")
             }
-            DataType::Bytes | DataType::BytesRef | DataType::BoxBytes => {
+            Type::Bytes | Type::BytesRef | Type::BoxBytes => {
                 write!(f, "buf.DecodeBytes(r)")
             }
-            DataType::Vec(ty) => {
+            Type::Vec(ty) => {
                 write!(
                     f,
                     "{}",
@@ -244,7 +203,7 @@ impl Display for RenderType<'_> {
                     }
                 )
             }
-            DataType::HashMap(kv) => {
+            Type::HashMap(kv) => {
                 write!(
                     f,
                     "{}",
@@ -255,7 +214,7 @@ impl Display for RenderType<'_> {
                     }
                 )
             }
-            DataType::HashSet(ty) => {
+            Type::HashSet(ty) => {
                 write!(
                     f,
                     "{}",
@@ -266,7 +225,7 @@ impl Display for RenderType<'_> {
                     }
                 )
             }
-            DataType::Option(ty) => {
+            Type::Option(ty) => {
                 write!(
                     f,
                     "{}",
@@ -277,20 +236,20 @@ impl Display for RenderType<'_> {
                     }
                 )
             }
-            DataType::NonZero(ty) => match &ty.value {
-                DataType::U8 => write!(f, "buf.DecodeNonZeroU8(r)"),
-                DataType::U16 => write!(f, "buf.DecodeNonZeroU16(r)"),
-                DataType::U32 => write!(f, "buf.DecodeNonZeroU32(r)"),
-                DataType::U64 => write!(f, "buf.DecodeNonZeroU64(r)"),
-                DataType::U128 => write!(f, "buf.DecodeNonZeroU128(r)"),
-                DataType::I8 => write!(f, "buf.DecodeNonZeroI8(r)"),
-                DataType::I16 => write!(f, "buf.DecodeNonZeroI16(r)"),
-                DataType::I32 => write!(f, "buf.DecodeNonZeroI32(r)"),
-                DataType::I64 => write!(f, "buf.DecodeNonZeroI64(r)"),
-                DataType::I128 => write!(f, "buf.DecodeNonZeroI128(r)"),
-                DataType::String | DataType::StringRef => write!(f, "buf.DecodeNonZeroString(r)"),
-                DataType::Bytes | DataType::BytesRef => write!(f, "buf.DecodeNonZeroBytes(r)"),
-                DataType::Vec(ty) => {
+            Type::NonZero(ty) => match &**ty {
+                Type::U8 => write!(f, "buf.DecodeNonZeroU8(r)"),
+                Type::U16 => write!(f, "buf.DecodeNonZeroU16(r)"),
+                Type::U32 => write!(f, "buf.DecodeNonZeroU32(r)"),
+                Type::U64 => write!(f, "buf.DecodeNonZeroU64(r)"),
+                Type::U128 => write!(f, "buf.DecodeNonZeroU128(r)"),
+                Type::I8 => write!(f, "buf.DecodeNonZeroI8(r)"),
+                Type::I16 => write!(f, "buf.DecodeNonZeroI16(r)"),
+                Type::I32 => write!(f, "buf.DecodeNonZeroI32(r)"),
+                Type::I64 => write!(f, "buf.DecodeNonZeroI64(r)"),
+                Type::I128 => write!(f, "buf.DecodeNonZeroI128(r)"),
+                Type::String | Type::StringRef => write!(f, "buf.DecodeNonZeroString(r)"),
+                Type::Bytes | Type::BytesRef => write!(f, "buf.DecodeNonZeroBytes(r)"),
+                Type::Vec(ty) => {
                     write!(
                         f,
                         "{}",
@@ -301,7 +260,7 @@ impl Display for RenderType<'_> {
                         }
                     )
                 }
-                DataType::HashMap(kv) => {
+                Type::HashMap(kv) => {
                     write!(
                         f,
                         "{}",
@@ -312,7 +271,7 @@ impl Display for RenderType<'_> {
                         }
                     )
                 }
-                DataType::HashSet(ty) => {
+                Type::HashSet(ty) => {
                     write!(
                         f,
                         "{}",
@@ -325,7 +284,7 @@ impl Display for RenderType<'_> {
                 }
                 ty => todo!("compiler should catch invalid {ty:?} type"),
             },
-            DataType::Tuple(types) => match types.len() {
+            Type::Tuple(types) => match types.len() {
                 n @ 2..=12 => {
                     writeln!(f, "func (r []byte) ([]byte, buf.Tuple{n}, error) {{")?;
                     for (idx, ty) in types.iter().enumerate() {
@@ -370,7 +329,7 @@ impl Display for RenderType<'_> {
                 }
                 n => todo!("compiler should catch invalid tuple with {n} elements"),
             },
-            DataType::Array(ty, size) => match *size {
+            Type::Array(ty, size) => match *size {
                 1..=32 => {
                     writeln!(
                         f,
@@ -391,7 +350,7 @@ impl Display for RenderType<'_> {
                 }
                 n => todo!("arrays with larger ({n}) sizes"),
             },
-            DataType::External(_) => {
+            Type::External(_) => {
                 writeln!(
                     f,
                     "func(r []byte) ([]byte, {}, error) {{",

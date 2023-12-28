@@ -21,8 +21,10 @@
 #![allow(clippy::missing_errors_doc, clippy::module_name_repetitions)]
 
 pub use resolve::schemas as resolve_schemas;
+pub use simplify::schema as simplify_schema;
 pub use validate::schema as validate_schema;
 
 mod highlight;
 pub mod resolve;
+pub mod simplify;
 pub mod validate;

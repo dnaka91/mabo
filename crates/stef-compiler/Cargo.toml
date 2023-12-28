@@ -12,6 +12,9 @@ license.workspace = true
 [dependencies]
 miette.workspace = true
 owo-colors.workspace = true
+schemars = { version = "0.8.16", optional = true }
+serde = { version = "1.0.193", features = ["derive"], optional = true }
+serde_json = { version = "1.0.108", optional = true }
 stef-parser = { path = "../stef-parser" }
 thiserror.workspace = true
 
@@ -21,6 +24,7 @@ miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]
 debug = []
+json = ["dep:schemars", "dep:serde", "dep:serde_json"]
 
 [lints]
 workspace = true

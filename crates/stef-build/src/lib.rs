@@ -136,8 +136,11 @@ impl Compiler {
         };
 
         for (stem, schema) in validated {
-            let code = definition::compile_schema(&opts, schema);
-            let code = prettyplease::unparse(&syn::parse2(code).unwrap());
+            let schema = stef_compiler::simplify_schema(schema);
+            let code = definition::compile_schema(&opts, &schema);
+            let code = prettyplease::unparse(
+                &syn::parse2(code.clone()).unwrap_or_else(|_| panic!("{code}")),
+            );
 
             let out_file = out_dir.join(format!("{stem}.rs",));
 

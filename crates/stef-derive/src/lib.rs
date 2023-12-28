@@ -9,8 +9,8 @@ use syn::{parse_macro_input, DeriveInput};
 
 mod attributes;
 mod cause;
-mod error;
 mod debug;
+mod error;
 
 #[proc_macro_derive(ParserError, attributes(err, rename))]
 pub fn parser_error(input: proc_macro::TokenStream) -> proc_macro::TokenStream {

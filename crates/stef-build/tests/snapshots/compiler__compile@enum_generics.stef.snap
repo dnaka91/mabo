@@ -23,6 +23,7 @@ where
 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -36,12 +37,16 @@ where
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { (*n0).encode(w) },
+                    |w| {
+                        n0.encode(w);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { (*n1).encode(w) },
+                    |w| {
+                        n1.encode(w);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -50,12 +55,16 @@ where
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { (*field1).encode(w) },
+                    |w| {
+                        field1.encode(w);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(2, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { (*field2).encode(w) },
+                    |w| {
+                        field2.encode(w);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -140,6 +149,7 @@ where
 {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -147,14 +157,14 @@ where
         match self {
             Self::One => ::stef::buf::size_id(1),
             Self::Two(n0, n1) => {
-                ::stef::buf::size_id(2) + ::stef::buf::size_field(1, || { (*n0).size() })
-                    + ::stef::buf::size_field(2, || { (*n1).size() })
+                ::stef::buf::size_id(2) + ::stef::buf::size_field(1, || { n0.size() })
+                    + ::stef::buf::size_field(2, || { n1.size() })
                     + ::stef::buf::size_u32(::stef::buf::END_MARKER)
             }
             Self::Three { field1, field2 } => {
                 ::stef::buf::size_id(3)
-                    + ::stef::buf::size_field(1, || { (*field1).size() })
-                    + ::stef::buf::size_field(2, || { (*field2).size() })
+                    + ::stef::buf::size_field(1, || { field1.size() })
+                    + ::stef::buf::size_field(2, || { field2.size() })
                     + ::stef::buf::size_u32(::stef::buf::END_MARKER)
             }
         }

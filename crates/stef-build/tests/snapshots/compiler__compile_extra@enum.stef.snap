@@ -17,6 +17,7 @@ pub enum Sample {
 impl ::stef::Encode for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -30,12 +31,16 @@ impl ::stef::Encode for Sample {
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::Varint),
-                    |w| { ::stef::buf::encode_u32(w, *n0) },
+                    |w| {
+                        ::stef::buf::encode_u32(w, *n0);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(2, ::stef::FieldEncoding::Fixed1),
-                    |w| { ::stef::buf::encode_u8(w, *n1) },
+                    |w| {
+                        ::stef::buf::encode_u8(w, *n1);
+                    },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
             }
@@ -44,7 +49,9 @@ impl ::stef::Encode for Sample {
                 ::stef::buf::encode_field(
                     w,
                     ::stef::FieldId::new(1, ::stef::FieldEncoding::LengthPrefixed),
-                    |w| { ::stef::buf::encode_string(w, &*field1) },
+                    |w| {
+                        ::stef::buf::encode_string(w, field1);
+                    },
                 );
                 ::stef::buf::encode_field(
                     w,
@@ -52,12 +59,12 @@ impl ::stef::Encode for Sample {
                     |w| {
                         ::stef::buf::encode_vec(
                             w,
-                            &*field2,
+                            field2,
                             |v| { ::stef::buf::size_bool(*v) },
                             |w, v| {
                                 ::stef::buf::encode_bool(w, *v);
                             },
-                        )
+                        );
                     },
                 );
                 ::stef::buf::encode_u32(w, ::stef::buf::END_MARKER);
@@ -138,6 +145,7 @@ impl ::stef::Decode for Sample {
 impl ::stef::buf::Size for Sample {
     #[allow(
         clippy::borrow_deref_ref,
+        clippy::deref_addrof,
         clippy::semicolon_if_nothing_returned,
         clippy::too_many_lines,
     )]
@@ -152,15 +160,12 @@ impl ::stef::buf::Size for Sample {
             }
             Self::Variant3 { field1, field2 } => {
                 ::stef::buf::size_id(3)
-                    + ::stef::buf::size_field(
-                        1,
-                        || { ::stef::buf::size_string(&*field1) },
-                    )
+                    + ::stef::buf::size_field(1, || { ::stef::buf::size_string(field1) })
                     + ::stef::buf::size_field(
                         2,
                         || {
                             ::stef::buf::size_vec(
-                                &*field2,
+                                field2,
                                 |v| { ::stef::buf::size_bool(*v) },
                             )
                         },

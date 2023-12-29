@@ -63,9 +63,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -93,9 +95,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -107,9 +111,11 @@ Schema {
                             ty: Type {
                                 value: U8,
                             },
-                            id: Id {
-                                value: 3,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -133,9 +139,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 4,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 4,
+                                },
+                            ),
                         },
                     ],
                 ),
@@ -171,9 +179,11 @@ Schema {
                             ty: Type {
                                 value: String,
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -189,9 +199,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -203,9 +215,11 @@ Schema {
                             ty: Type {
                                 value: String,
                             },
-                            id: Id {
-                                value: 3,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
                         },
                     ],
                 ),
@@ -278,9 +292,11 @@ Schema {
                             ty: Type {
                                 value: String,
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -304,9 +320,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -318,9 +336,11 @@ Schema {
                             ty: Type {
                                 value: String,
                             },
-                            id: Id {
-                                value: 3,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
                         },
                     ],
                 ),
@@ -368,15 +388,19 @@ Schema {
                                     ty: Type {
                                         value: U16,
                                     },
-                                    id: Id {
-                                        value: 1,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
                             ],
                         ),
-                        id: Id {
-                            value: 1,
-                        },
+                        id: Some(
+                            Id {
+                                value: 1,
+                            },
+                        ),
                     },
                     Variant {
                         comment: Comment(
@@ -395,15 +419,19 @@ Schema {
                                     ty: Type {
                                         value: String,
                                     },
-                                    id: Id {
-                                        value: 1,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
                             ],
                         ),
-                        id: Id {
-                            value: 2,
-                        },
+                        id: Some(
+                            Id {
+                                value: 2,
+                            },
+                        ),
                     },
                 ],
             },
@@ -481,9 +509,11 @@ Schema {
                                                 ty: Type {
                                                     value: U16,
                                                 },
-                                                id: Id {
-                                                    value: 1,
-                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 1,
+                                                    },
+                                                ),
                                             },
                                             NamedField {
                                                 comment: Comment(
@@ -503,9 +533,11 @@ Schema {
                                                         },
                                                     ),
                                                 },
-                                                id: Id {
-                                                    value: 2,
-                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 2,
+                                                    },
+                                                ),
                                             },
                                             NamedField {
                                                 comment: Comment(
@@ -517,15 +549,19 @@ Schema {
                                                 ty: Type {
                                                     value: U8,
                                                 },
-                                                id: Id {
-                                                    value: 3,
-                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 3,
+                                                    },
+                                                ),
                                             },
                                         ],
                                     ),
-                                    id: Id {
-                                        value: 1,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -561,15 +597,19 @@ Schema {
                                                         },
                                                     ),
                                                 },
-                                                id: Id {
-                                                    value: 1,
-                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 1,
+                                                    },
+                                                ),
                                             },
                                         ],
                                     ),
-                                    id: Id {
-                                        value: 2,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -583,9 +623,11 @@ Schema {
                                         value: "Unknown",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 3,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
                                 },
                             ],
                         },
@@ -664,9 +706,11 @@ Schema {
                                         value: "January",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 1,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -676,9 +720,11 @@ Schema {
                                         value: "February",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 2,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -688,9 +734,11 @@ Schema {
                                         value: "March",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 3,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -700,9 +748,11 @@ Schema {
                                         value: "April",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 4,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 4,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -712,9 +762,11 @@ Schema {
                                         value: "May",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 5,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 5,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -724,9 +776,11 @@ Schema {
                                         value: "June",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 6,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 6,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -736,9 +790,11 @@ Schema {
                                         value: "July",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 7,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 7,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -748,9 +804,11 @@ Schema {
                                         value: "August",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 8,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 8,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -760,9 +818,11 @@ Schema {
                                         value: "September",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 9,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 9,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -772,9 +832,11 @@ Schema {
                                         value: "October",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 10,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 10,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -784,9 +846,11 @@ Schema {
                                         value: "November",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 11,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 11,
+                                        },
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -796,9 +860,11 @@ Schema {
                                         value: "December",
                                     },
                                     fields: Unit,
-                                    id: Id {
-                                        value: 12,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 12,
+                                        },
+                                    ),
                                 },
                             ],
                         },

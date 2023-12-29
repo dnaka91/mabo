@@ -4,6 +4,8 @@ use miette::Diagnostic;
 use stef_parser::{Enum, Fields, Id, Spanned, Struct};
 use thiserror::Error;
 
+use crate::IdGenerator;
+
 /// Duplicate ID was encountered for two elements in the same scope.
 #[derive(Debug, Diagnostic, Error)]
 pub enum DuplicateId {
@@ -96,19 +98,23 @@ pub(crate) fn validate_struct_ids(value: &Struct<'_>) -> Result<(), DuplicateFie
 /// potential fields in a variant are unique (within that variant).
 pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
     let mut visited = HashMap::with_capacity(value.variants.len());
+    let mut id_gen = IdGenerator::new();
+
     value
         .variants
         .iter()
         .find_map(|variant| {
+            let id = id_gen.next_with_span(variant.id.as_ref(), || variant.span());
+
             visited
-                .insert(variant.id.get(), (variant.name.get(), variant.id.span()))
+                .insert(id.get(), (variant.name.get(), id.span()))
                 .map(|(other_name, other_span)| {
                     DuplicateVariantId {
-                        id: variant.id.clone(),
                         name: variant.name.get().to_owned(),
                         other_name: other_name.to_owned(),
                         first: other_span.into(),
-                        second: variant.id.span().into(),
+                        second: id.span().into(),
+                        id,
                     }
                     .into()
                 })
@@ -126,34 +132,42 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
     match value {
         Fields::Named(named) => {
             let mut visited = HashMap::with_capacity(named.len());
+            let mut id_gen = IdGenerator::new();
+
             named
                 .iter()
                 .find_map(|field| {
-                    visited
-                        .insert(field.id.get(), (field.name.get(), field.id.span()))
-                        .map(|(other_field, other_span)| DuplicateNamedFieldId {
-                            id: field.id.clone(),
+                    let id = id_gen.next_with_span(field.id.as_ref(), || field.span());
+
+                    visited.insert(id.get(), (field.name.get(), id.span())).map(
+                        |(other_field, other_span)| DuplicateNamedFieldId {
                             name: field.name.get().to_owned(),
                             other_name: other_field.to_owned(),
                             first: other_span.into(),
-                            second: field.id.span().into(),
-                        })
+                            second: id.span().into(),
+                            id,
+                        },
+                    )
                 })
                 .map_or(Ok(()), Err)?;
         }
         Fields::Unnamed(unnamed) => {
             let mut visited = HashMap::with_capacity(unnamed.len());
+            let mut id_gen = IdGenerator::new();
+
             unnamed
                 .iter()
                 .enumerate()
                 .find_map(|(pos, field)| {
-                    visited.insert(field.id.get(), (pos, field.id.span())).map(
+                    let id = id_gen.next_with_span(field.id.as_ref(), || field.span());
+
+                    visited.insert(id.get(), (pos, id.span())).map(
                         |(other_position, other_span)| DuplicateUnnamedFieldId {
-                            id: field.id.clone(),
                             position: pos + 1,
                             other_position: other_position + 1,
                             first: other_span.into(),
-                            second: field.id.span().into(),
+                            second: id.span().into(),
+                            id,
                         },
                     )
                 })

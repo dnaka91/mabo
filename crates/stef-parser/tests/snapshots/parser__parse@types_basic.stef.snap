@@ -38,9 +38,11 @@ Schema {
                             ty: Type {
                                 value: Bool,
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -52,9 +54,11 @@ Schema {
                             ty: Type {
                                 value: U8,
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -66,9 +70,11 @@ Schema {
                             ty: Type {
                                 value: U16,
                             },
-                            id: Id {
-                                value: 3,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -80,9 +86,11 @@ Schema {
                             ty: Type {
                                 value: U32,
                             },
-                            id: Id {
-                                value: 4,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 4,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -94,9 +102,11 @@ Schema {
                             ty: Type {
                                 value: U64,
                             },
-                            id: Id {
-                                value: 5,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 5,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -108,9 +118,11 @@ Schema {
                             ty: Type {
                                 value: U128,
                             },
-                            id: Id {
-                                value: 6,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 6,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -122,9 +134,11 @@ Schema {
                             ty: Type {
                                 value: I8,
                             },
-                            id: Id {
-                                value: 7,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 7,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -136,9 +150,11 @@ Schema {
                             ty: Type {
                                 value: I16,
                             },
-                            id: Id {
-                                value: 8,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 8,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -150,9 +166,11 @@ Schema {
                             ty: Type {
                                 value: I32,
                             },
-                            id: Id {
-                                value: 9,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 9,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -164,9 +182,11 @@ Schema {
                             ty: Type {
                                 value: I64,
                             },
-                            id: Id {
-                                value: 10,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 10,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -178,9 +198,11 @@ Schema {
                             ty: Type {
                                 value: I128,
                             },
-                            id: Id {
-                                value: 11,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 11,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -192,9 +214,11 @@ Schema {
                             ty: Type {
                                 value: F32,
                             },
-                            id: Id {
-                                value: 12,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 12,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -206,9 +230,11 @@ Schema {
                             ty: Type {
                                 value: F64,
                             },
-                            id: Id {
-                                value: 13,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 13,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -220,9 +246,11 @@ Schema {
                             ty: Type {
                                 value: String,
                             },
-                            id: Id {
-                                value: 14,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 14,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -234,9 +262,11 @@ Schema {
                             ty: Type {
                                 value: StringRef,
                             },
-                            id: Id {
-                                value: 15,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 15,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -248,9 +278,11 @@ Schema {
                             ty: Type {
                                 value: Bytes,
                             },
-                            id: Id {
-                                value: 16,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 16,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -262,9 +294,11 @@ Schema {
                             ty: Type {
                                 value: BytesRef,
                             },
-                            id: Id {
-                                value: 17,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 17,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -276,9 +310,11 @@ Schema {
                             ty: Type {
                                 value: BoxString,
                             },
-                            id: Id {
-                                value: 18,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 18,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -290,9 +326,11 @@ Schema {
                             ty: Type {
                                 value: BoxBytes,
                             },
-                            id: Id {
-                                value: 19,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 19,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -316,9 +354,11 @@ Schema {
                                     ],
                                 ),
                             },
-                            id: Id {
-                                value: 20,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 20,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -335,9 +375,11 @@ Schema {
                                     12,
                                 ),
                             },
-                            id: Id {
-                                value: 21,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 21,
+                                },
+                            ),
                         },
                     ],
                 ),

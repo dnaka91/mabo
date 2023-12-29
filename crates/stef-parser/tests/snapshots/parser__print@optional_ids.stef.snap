@@ -1,0 +1,24 @@
+---
+source: crates/stef-parser/tests/parser.rs
+description: "struct SampleNamed {\n    field1: u32,\n    field2: u32 @100,\n    field3: u32,\n}\n\nstruct SampleUnnamed(u32, u32 @100, u32)\n\nenum SampleEnum {\n    Named {\n        field1: u32,\n        field2: u32 @100,\n        field3: u32,\n    },\n    Unit @50,\n    Unnamed(u32, u32 @100, u32),\n}"
+input_file: crates/stef-parser/tests/inputs/optional_ids.stef
+---
+struct SampleNamed {
+    field1: u32,
+    field2: u32 @100,
+    field3: u32,
+}
+
+struct SampleUnnamed(u32, u32 @100, u32)
+
+enum SampleEnum {
+    Named {
+        field1: u32,
+        field2: u32 @100,
+        field3: u32,
+    },
+    Unit @50,
+    Unnamed(u32, u32 @100, u32),
+}
+
+

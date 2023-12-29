@@ -66,6 +66,11 @@
         "superType": "type"
       },
       {
+        "id": "identifier",
+        "description": "Style for struct/enum identifiers",
+        "superType": "number"
+      },
+      {
         "id": "typeAlias",
         "description": "Style for type aliases",
         "superType": "type"
@@ -86,6 +91,9 @@
           ],
           "builtinType": [
             "support.type.primitive.stef"
+          ],
+          "identifier": [
+            "constant.numeric.stef"
           ],
           "typeAlias": [
             "entity.name.type.declaration.stef"

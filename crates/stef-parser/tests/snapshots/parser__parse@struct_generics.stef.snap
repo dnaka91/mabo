@@ -57,9 +57,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -79,9 +81,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                     ],
                 ),

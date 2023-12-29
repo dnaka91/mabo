@@ -42,9 +42,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -60,9 +62,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -78,9 +82,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 3,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -96,9 +102,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 4,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 4,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -114,9 +122,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 5,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 5,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -132,9 +142,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 6,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 6,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -150,9 +162,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 7,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 7,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -168,9 +182,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 8,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 8,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -186,9 +202,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 9,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 9,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -204,9 +222,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 10,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 10,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -222,9 +242,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 11,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 11,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -240,9 +262,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 12,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 12,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -262,9 +286,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 13,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 13,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -289,9 +315,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 14,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 14,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -311,9 +339,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 15,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 15,
+                                },
+                            ),
                         },
                     ],
                 ),

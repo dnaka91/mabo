@@ -394,7 +394,7 @@ pub struct Variant<'a> {
     /// Fields of this variant, if any.
     pub fields: Fields<'a>,
     /// Identifier for this variant, that must be unique within the current enum.
-    pub id: Id,
+    pub id: Option<Id>,
     /// Source code location.
     span: Span,
 }
@@ -413,9 +413,12 @@ impl Print for Variant<'_> {
 
         Self::indent(f, level)?;
         f.write_str(name.get())?;
-
         fields.print(f, level)?;
-        write!(f, " {id},")
+        if let Some(id) = id {
+            write!(f, " {id},")
+        } else {
+            write!(f, ",")
+        }
     }
 }
 
@@ -545,7 +548,7 @@ pub struct NamedField<'a> {
     /// Data type that defines the shape of the contained data.
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
-    pub id: Id,
+    pub id: Option<Id>,
     /// Source code location.
     span: Span,
 }
@@ -563,7 +566,12 @@ impl Print for NamedField<'_> {
         comment.print(f, level)?;
 
         Self::indent(f, level)?;
-        write!(f, "{name}: {ty} {id}")
+
+        if let Some(id) = id {
+            write!(f, "{name}: {ty} {id}")
+        } else {
+            write!(f, "{name}: {ty}")
+        }
     }
 }
 
@@ -592,7 +600,7 @@ pub struct UnnamedField<'a> {
     /// Data type that defines the shape of the contained data.
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
-    pub id: Id,
+    pub id: Option<Id>,
     /// Source code location.
     span: Span,
 }
@@ -606,7 +614,11 @@ impl Spanned for UnnamedField<'_> {
 impl Display for UnnamedField<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self { ty, id, span: _ } = self;
-        write!(f, "{ty} {id}")
+        if let Some(id) = id {
+            write!(f, "{ty} {id}")
+        } else {
+            write!(f, "{ty}")
+        }
     }
 }
 

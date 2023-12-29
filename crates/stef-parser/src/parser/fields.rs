@@ -115,7 +115,7 @@ fn parse_unit(input: &mut Input<'_>) -> Result<(), Cause> {
 fn parse_unnamed_field<'i>(input: &mut Input<'i>) -> Result<UnnamedField<'i>, Cause> {
     (
         ws(types::parse.map_err(Cause::from)),
-        preceded(space0, cut_err(ids::parse.map_err(Cause::from))),
+        opt(preceded(space0, ids::parse.map_err(Cause::from))),
     )
         .with_span()
         .parse_next(input)
@@ -132,7 +132,7 @@ fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause>
         (
             delimited(space0, parse_field_name, ':'),
             preceded(space0, types::parse.map_err(Cause::from)),
-            preceded(space0, ids::parse.map_err(Cause::from)),
+            opt(preceded(space0, ids::parse.map_err(Cause::from))),
         )
             .with_span(),
     )

@@ -4,8 +4,8 @@ use anyhow::{ensure, Context, Result};
 use line_index::{LineIndex, TextSize, WideLineCol};
 use lsp_types::{SemanticToken, SemanticTokenModifier, SemanticTokenType};
 use stef_parser::{
-    Comment, Const, DataType, Definition, Enum, Fields, Generics, Literal, LiteralValue, Module,
-    NamedField, Schema, Span, Spanned, Struct, Type, TypeAlias, UnnamedField, Variant,
+    Comment, Const, DataType, Definition, Enum, Fields, Generics, Id, Literal, LiteralValue,
+    Module, NamedField, Schema, Span, Spanned, Struct, Type, TypeAlias, UnnamedField, Variant,
 };
 
 pub(crate) use self::{modifiers::TOKEN_MODIFIERS, types::TOKEN_TYPES};
@@ -55,6 +55,7 @@ define_semantic_token_types! {
     custom {
         (BOOLEAN, "boolean"),
         (BUILTIN_TYPE, "builtinType"),
+        (IDENTIFIER, "identifier"),
         (TYPE_ALIAS, "typeAlias"),
     }
 }
@@ -116,7 +117,7 @@ fn token_modifier_bitset(modifiers: &[SemanticTokenModifier]) -> u32 {
 pub struct Visitor<'a> {
     index: &'a LineIndex,
     tokens: Vec<SemanticToken>,
-    delta: (u32, u32),
+    delta: WideLineCol,
 }
 
 impl<'a> Visitor<'a> {
@@ -124,7 +125,7 @@ impl<'a> Visitor<'a> {
         Self {
             index,
             tokens: Vec::new(),
-            delta: (0, 0),
+            delta: WideLineCol { line: 0, col: 0 },
         }
     }
 
@@ -150,10 +151,10 @@ impl<'a> Visitor<'a> {
 
     fn lsl(&self, start: WideLineCol, end: WideLineCol) -> (u32, u32, u32) {
         (
-            start.line - self.delta.0,
+            start.line - self.delta.line,
             start.col
-                - if self.delta.0 == start.line {
-                    self.delta.1
+                - if self.delta.line == start.line {
+                    self.delta.col
                 } else {
                     0
                 },
@@ -177,7 +178,10 @@ impl<'a> Visitor<'a> {
             token_type: token_type_pos(token_type),
             token_modifiers_bitset: token_modifier_bitset(token_modifiers),
         });
-        self.delta = (start.line, start.col);
+        self.delta = WideLineCol {
+            line: start.line,
+            col: start.col,
+        };
 
         Ok(())
     }
@@ -242,7 +246,8 @@ impl<'a> Visitor<'a> {
     fn visit_variant(&mut self, item: &Variant<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.name, &types::ENUM_MEMBER, &[modifiers::DECLARATION])?;
-        self.visit_fields(&item.fields)
+        self.visit_fields(&item.fields)?;
+        self.visit_id(&item.id)
     }
 
     fn visit_fields(&mut self, item: &Fields<'_>) -> Result<()> {
@@ -266,11 +271,21 @@ impl<'a> Visitor<'a> {
     fn visit_named_field(&mut self, item: &NamedField<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.name, &types::PROPERTY, &[modifiers::DECLARATION])?;
-        self.visit_type(&item.ty)
+        self.visit_type(&item.ty)?;
+        self.visit_id(&item.id)
     }
 
     fn visit_unnamed_field(&mut self, item: &UnnamedField<'_>) -> Result<()> {
-        self.visit_type(&item.ty)
+        self.visit_type(&item.ty)?;
+        self.visit_id(&item.id)
+    }
+
+    fn visit_id(&mut self, item: &Option<Id>) -> Result<()> {
+        if let Some(id) = item {
+            self.add_span(id, &types::IDENTIFIER, &[])?;
+        }
+
+        Ok(())
     }
 
     fn visit_alias(&mut self, item: &TypeAlias<'_>) -> Result<()> {

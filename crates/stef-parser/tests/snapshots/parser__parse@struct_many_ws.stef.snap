@@ -46,9 +46,11 @@ Schema {
                             ty: Type {
                                 value: U32,
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -60,9 +62,11 @@ Schema {
                             ty: Type {
                                 value: Bool,
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -82,9 +86,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 3,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
                         },
                     ],
                 ),

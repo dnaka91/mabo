@@ -1,0 +1,492 @@
+---
+source: crates/stef-doc/tests/render.rs
+description: "struct SampleNamed {\n    field1: u32,\n    field2: u32 @100,\n    field3: u32,\n}\n\nstruct SampleUnnamed(u32, u32 @100, u32)\n\nenum SampleEnum {\n    Named {\n        field1: u32,\n        field2: u32 @100,\n        field3: u32,\n    },\n    Unit @50,\n    Unnamed(u32, u32 @100, u32),\n}"
+input_file: crates/stef-parser/tests/inputs/optional_ids.stef
+---
+--- optional_ids/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>optional_ids - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema optional_ids</h2>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.SampleNamed.html">SampleNamed</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.SampleUnnamed.html">SampleUnnamed</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-enum" href="enum.SampleEnum.html">SampleEnum</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- optional_ids/struct.SampleNamed.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>SampleNamed - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">optional_ids</a>::<span class="name-struct">SampleNamed</span>
+  </h2>
+  <pre class="item-definition my-2">struct SampleNamed {
+    field1: u32 @1,
+    field2: u32 @100,
+    field3: u32 @101,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">102</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">field1</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">field2</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@100</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">field3</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@101</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- optional_ids/struct.SampleUnnamed.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>SampleUnnamed - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">optional_ids</a>::<span class="name-struct">SampleUnnamed</span>
+  </h2>
+  <pre class="item-definition my-2">struct SampleUnnamed(u32 @1, u32 @100, u32 @101)</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">102</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">n0</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">n1</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@100</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">n2</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@101</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- optional_ids/enum.SampleEnum.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>SampleEnum - Stef</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Enum
+    <a href="index.html">optional_ids</a>::<span class="name-enum">SampleEnum</span>
+  </h2>
+  <pre class="item-definition my-2">enum SampleEnum {
+    Named {
+        field1: u32 @1,
+        field2: u32 @100,
+        field3: u32 @101,
+    } @1,
+    Unit @50,
+    Unnamed(u32 @1, u32 @100, u32 @101) @51,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Variants</h3>
+  <ul>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Named</span>
+        <span class="variant-id">@1</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+      <div class="pl-6">
+        <h4>Fields</h4>
+        <ul>
+          <li>
+            <code>
+              <span class="field-name">field1</span>:
+              <span class="field-type">u32</span>
+              <span class="field-id">@1</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u32</strong> <code>1..5</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <code>
+              <span class="field-name">field2</span>:
+              <span class="field-type">u32</span>
+              <span class="field-id">@100</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u32</strong> <code>1..5</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <code>
+              <span class="field-name">field3</span>:
+              <span class="field-type">u32</span>
+              <span class="field-id">@101</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u32</strong> <code>1..5</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Unit</span>
+        <span class="variant-id">@50</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Unnamed</span>
+        <span class="variant-id">@51</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+      <div class="pl-6">
+        <h4>Fields</h4>
+        <ul>
+          <li>
+            <code>
+              <span class="field-name">n0</span>:
+              <span class="field-type">u32</span>
+              <span class="field-id">@1</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u32</strong> <code>1..5</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <code>
+              <span class="field-name">n1</span>:
+              <span class="field-type">u32</span>
+              <span class="field-id">@100</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u32</strong> <code>1..5</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <code>
+              <span class="field-name">n2</span>:
+              <span class="field-type">u32</span>
+              <span class="field-id">@101</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u32</strong> <code>1..5</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>

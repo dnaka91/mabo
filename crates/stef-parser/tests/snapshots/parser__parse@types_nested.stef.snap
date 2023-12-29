@@ -59,9 +59,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                     ],
                 ),

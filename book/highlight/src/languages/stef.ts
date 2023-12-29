@@ -98,7 +98,17 @@ export function stef(hljs: HLJSApi): Language {
           4: "symbol",
           5: "punctuation",
         },
-        relevance: 2,
+        relevance: 4,
+      },
+      {
+        match: [/[a-z0-9_]+/, ":", /[a-zA-Z0-9_<>:,& ]+?/, /,?/],
+        scope: {
+          1: "attr",
+          2: "punctuation",
+          3: "type",
+          4: "punctuation",
+        },
+        relevance: 3,
       },
       {
         match: [/[a-zA-Z0-9_<>,& ]+/, /@\d+/, /,?/],
@@ -106,6 +116,14 @@ export function stef(hljs: HLJSApi): Language {
           1: "type",
           2: "symbol",
           3: "punctuation",
+        },
+        relevance: 2,
+      },
+      {
+        match: [/[a-zA-Z0-9_<>,& ]+?/, /,?/],
+        scope: {
+          1: "type",
+          2: "punctuation",
         },
         relevance: 1,
       },

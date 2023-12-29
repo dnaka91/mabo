@@ -52,9 +52,11 @@ Schema {
                             value: "One",
                         },
                         fields: Unit,
-                        id: Id {
-                            value: 1,
-                        },
+                        id: Some(
+                            Id {
+                                value: 1,
+                            },
+                        ),
                     },
                     Variant {
                         comment: Comment(
@@ -77,9 +79,11 @@ Schema {
                                             },
                                         ),
                                     },
-                                    id: Id {
-                                        value: 1,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
                                 UnnamedField {
                                     ty: Type {
@@ -93,15 +97,19 @@ Schema {
                                             },
                                         ),
                                     },
-                                    id: Id {
-                                        value: 2,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
                             ],
                         ),
-                        id: Id {
-                            value: 2,
-                        },
+                        id: Some(
+                            Id {
+                                value: 2,
+                            },
+                        ),
                     },
                     Variant {
                         comment: Comment(
@@ -130,9 +138,11 @@ Schema {
                                             },
                                         ),
                                     },
-                                    id: Id {
-                                        value: 1,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
                                 NamedField {
                                     comment: Comment(
@@ -152,15 +162,19 @@ Schema {
                                             },
                                         ),
                                     },
-                                    id: Id {
-                                        value: 2,
-                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
                             ],
                         ),
-                        id: Id {
-                            value: 3,
-                        },
+                        id: Some(
+                            Id {
+                                value: 3,
+                            },
+                        ),
                     },
                 ],
             },

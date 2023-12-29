@@ -1,0 +1,17 @@
+struct SampleNamed {
+    field1: u32,
+    field2: u32 @100,
+    field3: u32,
+}
+
+struct SampleUnnamed(u32, u32 @100, u32)
+
+enum SampleEnum {
+    Named {
+        field1: u32,
+        field2: u32 @100,
+        field3: u32,
+    },
+    Unit @50,
+    Unnamed(u32, u32 @100, u32),
+}

@@ -4,6 +4,8 @@
 
 use std::borrow::Cow;
 
+use crate::IdGenerator;
+
 /// Uppermost element, describing a single schema file.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Schema<'a> {
@@ -349,6 +351,8 @@ fn simplify_struct<'a>(item: &'a stef_parser::Struct<'_>) -> Struct<'a> {
 }
 
 fn simplify_enum<'a>(item: &'a stef_parser::Enum<'_>) -> Enum<'a> {
+    let mut id_gen = IdGenerator::new();
+
     Enum {
         source: item,
         comment: comment(&item.comment),
@@ -357,22 +361,27 @@ fn simplify_enum<'a>(item: &'a stef_parser::Enum<'_>) -> Enum<'a> {
         variants: item
             .variants
             .iter()
-            .map(|variant| simplify_variant(variant))
+            .map(|variant| simplify_variant(variant, &mut id_gen))
             .collect(),
     }
 }
 
-fn simplify_variant<'a>(item: &'a stef_parser::Variant<'_>) -> Variant<'a> {
+fn simplify_variant<'a>(
+    item: &'a stef_parser::Variant<'_>,
+    id_gen: &mut IdGenerator,
+) -> Variant<'a> {
     Variant {
         source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         fields: simplify_fields(&item.fields),
-        id: item.id.get(),
+        id: id_gen.next(item.id.as_ref()),
     }
 }
 
 fn simplify_fields<'a>(item: &'a stef_parser::Fields<'_>) -> Fields<'a> {
+    let mut id_gen = IdGenerator::new();
+
     match item {
         stef_parser::Fields::Named(named) => Fields {
             source: item,
@@ -383,7 +392,7 @@ fn simplify_fields<'a>(item: &'a stef_parser::Fields<'_>) -> Fields<'a> {
                     comment: comment(&field.comment),
                     name: field.name.get().into(),
                     ty: simplify_type(&field.ty),
-                    id: field.id.get(),
+                    id: id_gen.next(field.id.as_ref()),
                 })
                 .collect(),
             kind: FieldKind::Named,
@@ -398,7 +407,7 @@ fn simplify_fields<'a>(item: &'a stef_parser::Fields<'_>) -> Fields<'a> {
                     comment: Box::default(),
                     name: format!("n{i}").into(),
                     ty: simplify_type(&field.ty),
-                    id: field.id.get(),
+                    id: id_gen.next(field.id.as_ref()),
                 })
                 .collect(),
             kind: FieldKind::Unnamed,

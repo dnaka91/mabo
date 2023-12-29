@@ -46,9 +46,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -75,9 +77,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                     ],
                 ),
@@ -106,9 +110,11 @@ Schema {
                             value: "Value",
                         },
                         fields: Unit,
-                        id: Id {
-                            value: 1,
-                        },
+                        id: Some(
+                            Id {
+                                value: 1,
+                            },
+                        ),
                     },
                 ],
             },
@@ -154,9 +160,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 1,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -176,9 +184,11 @@ Schema {
                                     },
                                 ),
                             },
-                            id: Id {
-                                value: 2,
-                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
                         },
                     ],
                 ),

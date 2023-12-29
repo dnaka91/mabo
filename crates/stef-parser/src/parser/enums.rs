@@ -139,7 +139,7 @@ fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {
         (
             preceded(space0, parse_variant_name.with_span()),
             preceded(space0, fields::parse.map_err(Cause::from)),
-            preceded(space0, ids::parse.map_err(Cause::from)),
+            opt(preceded(space0, ids::parse.map_err(Cause::from))),
         )
             .with_span(),
     )

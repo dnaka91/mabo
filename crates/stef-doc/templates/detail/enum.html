@@ -11,7 +11,7 @@
     {%- endfor -%}
     <span class="name-enum">{{ item.name }}</span>
   </h2>
-  <pre class="item-definition my-2">{{ item }}</pre>
+  <pre class="item-definition my-2">{{ self.print_schema() }}</pre>
   <div class="markdown pl-6">
     {{ self::merge_comments(item.comment)|markdown|trim|safe }}
   </div>
@@ -21,27 +21,29 @@
   <ul>
     {%- for variant in item.variants %}
     <li class="field-definition">
-      <pre class="name-variant text-lg">{{ variant.name }}</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">{{ variant.name }}</span>
+        <span class="variant-id">@{{ variant.id }}</span>
+      </code>
       <div class="markdown pl-6">
         {{ self::merge_comments(variant.comment)|markdown|trim|safe }}
       </div>
+      {%- if variant.fields.kind != FieldKind::Unit %}
       <div class="pl-6">
-        {%- match variant.fields %}
-        {%- when Fields::Named(fields) %}
         <h4>Fields</h4>
         <ul>
-          {%- for field in fields %}
+          {%- for field in variant.fields.fields %}
           <li>
             <code>
               <span class="field-name">{{ field.name }}</span>:
-              <span class="field-type">{{ field.ty }}</span>
-              <span class="field-id">{{ field.id }}</span>
+              <span class="field-type">{{ PrintType(field.ty) }}</span>
+              <span class="field-id">@{{ field.id }}</span>
             </code>
             <div class="markdown pl-4">
               {{ self::merge_comments(field.comment)|markdown|trim|safe }}
             </div>
 
-            {%- match stef_meta::wire_size(field.ty.value) %}
+            {%- match stef_meta::wire_size(field.ty) %}
             {%- when Some(size) %}
             <div class="pl-4">
               <h4 class="my-2">Metadata</h4>
@@ -58,35 +60,8 @@
           </li>
           {%- endfor %}
         </ul>
-        {%- when Fields::Unnamed(fields) %}
-        <h4>Fields</h4>
-        <ul>
-          {%- for (i, field) in fields.iter().enumerate() %}
-          <li>
-            <code>
-              <span class="field-name">{{ i }}</span>:
-              <span class="field-type">{{ field.ty }}</span>
-              <span class="field-id">{{ field.id }}</span>
-            </code>
-          </li>
-
-          {%- match stef_meta::wire_size(field.ty.value) %}
-          {%- when Some(size) %}
-          <h4 class="my-2">Metadata</h4>
-          <div class="text-sm">
-            <p>The size range is:</p>
-            <div
-              class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-              {{ self::render_wire_size(size)|markdown|trim|indent(14)|safe }}
-            </div>
-          </div>
-          {%- when None %}
-          {%- endmatch %}
-          {%- endfor %}
-        </ul>
-        {%- when Fields::Unit %}
-        {%- endmatch %}
       </div>
+      {%- endif %}
     </li>
     {%- endfor %}
   </ul>

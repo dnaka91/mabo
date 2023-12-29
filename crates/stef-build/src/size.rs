@@ -7,10 +7,10 @@ use crate::{BytesType, Opts};
 pub(super) fn compile_struct(
     opts: &Opts,
     Struct {
-        comment: _,
         name,
         generics,
         fields,
+        ..
     }: &Struct<'_>,
 ) -> TokenStream {
     let names = fields
@@ -74,10 +74,10 @@ fn compile_struct_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
 pub(super) fn compile_enum(
     opts: &Opts,
     Enum {
-        comment: _,
         name,
         generics,
         variants,
+        ..
     }: &Enum<'_>,
 ) -> TokenStream {
     let name = Ident::new(name, Span::call_site());

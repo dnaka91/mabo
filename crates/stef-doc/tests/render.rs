@@ -29,6 +29,7 @@ fn render_schema() {
     glob!("inputs/*.stef", |path| {
         let input = fs::read_to_string(path).unwrap();
         let value = Schema::parse(input.as_str(), Some(&strip_path(path))).unwrap();
+        let value = stef_compiler::simplify_schema(&value);
         let value = stef_doc::render_schema(&Opts {}, &value).unwrap();
 
         let mut merged = String::new();

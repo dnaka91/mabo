@@ -3,10 +3,10 @@ use std::{fmt::Write, ops::Range};
 use anyhow::{Context, Result};
 use line_index::{LineIndex, TextSize, WideLineCol};
 use lsp_types::{Position, Range as LspRange};
-use stef_parser::{
-    Comment, Const, Definition, Enum, Fields, Module, NamedField, Schema, Span, Spanned, Struct,
-    TypeAlias, Variant,
+use stef_compiler::simplify::{
+    Const, Definition, Enum, Field, Fields, Module, ParserField, Schema, Struct, TypeAlias, Variant,
 };
+use stef_parser::{Span, Spanned};
 
 pub fn visit_schema(
     index: &LineIndex,
@@ -47,8 +47,8 @@ fn visit_definition(item: &Definition<'_>, position: usize) -> Option<(String, S
 }
 
 fn visit_module(item: &Module<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position))
-        .then(|| (fold_comment(&item.comment), item.name.span()))
+    (Range::from(item.source.name.span()).contains(&position))
+        .then(|| (fold_comment(&item.comment), item.source.name.span()))
         .or_else(|| {
             item.definitions
                 .iter()
@@ -57,7 +57,7 @@ fn visit_module(item: &Module<'_>, position: usize) -> Option<(String, Span)> {
 }
 
 fn visit_struct(item: &Struct<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position))
+    (Range::from(item.source.name.span()).contains(&position))
         .then(|| {
             let mut text = fold_comment(&item.comment);
 
@@ -65,13 +65,13 @@ fn visit_struct(item: &Struct<'_>, position: usize) -> Option<(String, Span)> {
                 let _ = writeln!(&mut text, "- next ID: `{next_id}`");
             }
 
-            (text, item.name.span())
+            (text, item.source.name.span())
         })
         .or_else(|| visit_fields(&item.fields, position))
 }
 
 fn visit_enum(item: &Enum<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position))
+    (Range::from(item.source.name.span()).contains(&position))
         .then(|| {
             let mut text = fold_comment(&item.comment);
 
@@ -81,7 +81,7 @@ fn visit_enum(item: &Enum<'_>, position: usize) -> Option<(String, Span)> {
                 stef_meta::next_variant_id(&item.variants)
             );
 
-            (text, item.name.span())
+            (text, item.source.name.span())
         })
         .or_else(|| {
             item.variants
@@ -91,7 +91,7 @@ fn visit_enum(item: &Enum<'_>, position: usize) -> Option<(String, Span)> {
 }
 
 fn visit_variant(item: &Variant<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position))
+    (Range::from(item.source.name.span()).contains(&position))
         .then(|| {
             let mut text = fold_comment(&item.comment);
 
@@ -99,49 +99,49 @@ fn visit_variant(item: &Variant<'_>, position: usize) -> Option<(String, Span)> 
                 let _ = writeln!(&mut text, "- next ID: `{next_id}`");
             }
 
-            (text, item.name.span())
+            (text, item.source.name.span())
         })
         .or_else(|| visit_fields(&item.fields, position))
 }
 
 fn visit_fields(item: &Fields<'_>, position: usize) -> Option<(String, Span)> {
-    if let Fields::Named(named) = item {
-        named
-            .iter()
-            .find_map(|field| visit_named_field(field, position))
-    } else {
-        None
-    }
+    item.fields
+        .iter()
+        .find_map(|field| visit_named_field(field, position))
 }
 
-fn visit_named_field(item: &NamedField<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position)).then(|| {
+fn visit_named_field(item: &Field<'_>, position: usize) -> Option<(String, Span)> {
+    let ParserField::Named(field) = item.source else {
+        return None;
+    };
+
+    (Range::from(field.name.span()).contains(&position)).then(|| {
         let mut text = fold_comment(&item.comment);
 
         let _ = write!(&mut text, "### Wire size\n\n");
-        if let Some(size) = stef_meta::wire_size(&item.ty.value) {
+        if let Some(size) = stef_meta::wire_size(&item.ty) {
             size.print(&mut text, 0);
         } else {
             let _ = write!(&mut text, "_unknown_");
         }
 
-        (text, item.name.span())
+        (text, field.name.span())
     })
 }
 
 fn visit_alias(item: &TypeAlias<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position))
-        .then(|| (fold_comment(&item.comment), item.name.span()))
+    (Range::from(item.source.name.span()).contains(&position))
+        .then(|| (fold_comment(&item.comment), item.source.name.span()))
 }
 
 fn visit_const(item: &Const<'_>, position: usize) -> Option<(String, Span)> {
-    (Range::from(item.name.span()).contains(&position))
-        .then(|| (fold_comment(&item.comment), item.name.span()))
+    (Range::from(item.source.name.span()).contains(&position))
+        .then(|| (fold_comment(&item.comment), item.source.name.span()))
 }
 
-fn fold_comment(comment: &Comment<'_>) -> String {
-    comment.0.iter().fold(String::new(), |mut acc, line| {
-        acc.push_str(line.value);
+fn fold_comment(comment: &[&str]) -> String {
+    comment.iter().fold(String::new(), |mut acc, line| {
+        acc.push_str(line);
         acc.push('\n');
         acc
     })

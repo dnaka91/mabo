@@ -104,8 +104,7 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
   <pre class="item-definition my-2">struct Sample {
     basic: Test123 @1,
     with_generics: KeyValue&lt;u32, bool&gt; @2,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -125,7 +124,7 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
         <span class="field-type">Test123</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
@@ -135,11 +134,12 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
         <span class="field-type">KeyValue&lt;u32, bool&gt;</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>
@@ -169,8 +169,7 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
   </h2>
   <pre class="item-definition my-2">enum Test123 {
     Value @1,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -179,11 +178,12 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
   <h3>Variants</h3>
   <ul>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Value</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Value</span>
+        <span class="variant-id">@1</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
   </ul>
@@ -218,8 +218,7 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
   <pre class="item-definition my-2">struct KeyValue&lt;K, V&gt; {
     key: K @1,
     value: V @2,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -239,7 +238,7 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
         <span class="field-type">K</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
@@ -249,11 +248,12 @@ input_file: crates/stef-parser/tests/inputs/types_ref.stef
         <span class="field-type">V</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>

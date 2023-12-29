@@ -85,8 +85,7 @@ input_file: crates/stef-parser/tests/inputs/alias_basic.stef
     Alias
     <a href="index.html">alias_basic</a>::<span class="name-alias">Sample</span>
   </h2>
-  <pre class="item-definition my-2">/// Sample type alias.
-type Sample = u32;</pre>
+  <pre class="item-definition my-2">type Sample = u32;</pre>
   <div class="markdown pl-6">
     <p>Sample type alias.</p>
   </div>

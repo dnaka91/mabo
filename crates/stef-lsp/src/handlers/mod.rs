@@ -223,7 +223,7 @@ pub fn hover(state: &mut GlobalState<'_>, params: HoverParams) -> Result<Option<
 
     Ok(
         if let Some((schema, index)) = state.files.get_mut(&uri).and_then(|file| {
-            file.borrow_schema()
+            file.borrow_simplified()
                 .as_ref()
                 .ok()
                 .zip(Some(file.borrow_index()))
@@ -338,6 +338,7 @@ fn create_file(uri: Url, text: String) -> state::File {
         index: LineIndex::new(&text),
         content: text,
         schema_builder: |index, schema| compile::compile(uri, schema, index),
+        simplified_builder: compile::simplify,
     }
     .build()
 }
@@ -357,6 +358,7 @@ fn update_file(
         index: LineIndex::new(&text),
         content: text,
         schema_builder: |index, schema| compile::compile(uri, schema, index),
+        simplified_builder: compile::simplify,
     }
     .build()
 }

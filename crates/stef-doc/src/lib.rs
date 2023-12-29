@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use askama::Template;
-use stef_parser::{Const, Definition, Enum, Module, Schema, Struct, TypeAlias};
+use stef_compiler::simplify::{Const, Definition, Enum, Module, Schema, Struct, TypeAlias};
 
 mod templates;
 
@@ -38,13 +38,13 @@ pub struct Output<'a> {
 pub fn render_schema<'a>(
     _opts: &'a Opts,
     Schema {
-        path,
+        source,
         comment,
         definitions,
-        ..
     }: &'a Schema<'_>,
 ) -> Result<Output<'a>> {
-    let name = path
+    let name = source
+        .path
         .as_ref()
         .and_then(|p| p.file_stem())
         .and_then(|p| p.to_str())
@@ -86,7 +86,7 @@ fn render_definition<'a>(
 fn render_module<'a>(item: &'a Module<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
     let path = {
         let mut path = path.to_vec();
-        path.push(item.name.get().into());
+        path.push(item.name.into());
         Rc::from(path)
     };
 
@@ -97,7 +97,7 @@ fn render_module<'a>(item: &'a Module<'_>, path: &Rc<[Rc<str>]>) -> Result<Outpu
             .iter()
             .filter_map(|def| render_definition(def, &path))
             .collect::<Result<_>>()?,
-        name: item.name.get(),
+        name: item.name,
         path,
         file: format!("{}/index.html", item.name),
     })
@@ -105,7 +105,7 @@ fn render_module<'a>(item: &'a Module<'_>, path: &Rc<[Rc<str>]>) -> Result<Outpu
 
 fn render_struct<'a>(item: &'a Struct<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
     Ok(Output {
-        name: item.name.get(),
+        name: item.name,
         path: Rc::clone(path),
         file: format!("struct.{}.html", item.name),
         content: templates::StructDetail { path, item }.render()?,
@@ -115,7 +115,7 @@ fn render_struct<'a>(item: &'a Struct<'_>, path: &Rc<[Rc<str>]>) -> Result<Outpu
 
 fn render_enum<'a>(item: &'a Enum<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
     Ok(Output {
-        name: item.name.get(),
+        name: item.name,
         path: Rc::clone(path),
         file: format!("enum.{}.html", item.name),
         content: templates::EnumDetail { path, item }.render()?,
@@ -125,7 +125,7 @@ fn render_enum<'a>(item: &'a Enum<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a
 
 fn render_alias<'a>(item: &'a TypeAlias<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
     Ok(Output {
-        name: item.name.get(),
+        name: item.name,
         path: Rc::clone(path),
         file: format!("alias.{}.html", item.name),
         content: templates::AliasDetail { path, item }.render()?,
@@ -135,7 +135,7 @@ fn render_alias<'a>(item: &'a TypeAlias<'_>, path: &Rc<[Rc<str>]>) -> Result<Out
 
 fn render_const<'a>(item: &'a Const<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
     Ok(Output {
-        name: item.name.get(),
+        name: item.name,
         path: Rc::clone(path),
         file: format!("constant.{}.html", item.name),
         content: templates::ConstDetail { path, item }.render()?,

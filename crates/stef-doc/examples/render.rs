@@ -31,6 +31,7 @@ fn main() {
 
         let input = fs::read_to_string(&path).unwrap();
         let value = Schema::parse(input.as_str(), Some(name)).unwrap();
+        let value = stef_compiler::simplify_schema(&value);
         let value = stef_doc::render_schema(&Opts {}, &value).unwrap();
 
         let out = out.join(name).with_extension("");

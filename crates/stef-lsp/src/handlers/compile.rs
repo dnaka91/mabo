@@ -17,7 +17,7 @@ pub fn compile<'a>(
     file: Url,
     schema: &'a str,
     index: &'_ LineIndex,
-) -> std::result::Result<Schema<'a>, Diagnostic> {
+) -> Result<Schema<'a>, Diagnostic> {
     let parsed =
         stef_parser::Schema::parse(schema, None).map_err(|e| parse_schema_diagnostic(index, &e))?;
 
@@ -25,6 +25,12 @@ pub fn compile<'a>(
         .map_err(|e| validate_schema_diagnostic(file, index, e))?;
 
     Ok(parsed)
+}
+
+pub fn simplify<'a>(
+    result: &'a Result<Schema<'a>, Diagnostic>,
+) -> Result<stef_compiler::simplify::Schema<'a>, &'a Diagnostic> {
+    result.as_ref().map(stef_compiler::simplify_schema)
 }
 
 fn parse_schema_diagnostic(index: &LineIndex, e: &ParseSchemaError) -> Diagnostic {

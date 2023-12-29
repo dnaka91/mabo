@@ -85,12 +85,10 @@ input_file: crates/stef-parser/tests/inputs/struct_generics.stef
     Struct
     <a href="index.html">struct_generics</a>::<span class="name-struct">KeyValue</span>
   </h2>
-  <pre class="item-definition my-2">/// Generic key-value pair.
-struct KeyValue&lt;K, V&gt; {
+  <pre class="item-definition my-2">struct KeyValue&lt;K, V&gt; {
     key: K @1,
     value: V @2,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>Generic key-value pair.</p>
   </div>
@@ -110,7 +108,7 @@ struct KeyValue&lt;K, V&gt; {
         <span class="field-type">K</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
@@ -120,11 +118,12 @@ struct KeyValue&lt;K, V&gt; {
         <span class="field-type">V</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>

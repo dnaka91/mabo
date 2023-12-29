@@ -18,7 +18,6 @@ pub struct GlobalState<'a> {
 }
 
 #[self_referencing(pub_extras)]
-#[derive(Debug)]
 pub struct File {
     rope: Rope,
     pub index: LineIndex,
@@ -26,6 +25,9 @@ pub struct File {
     #[borrows(index, content)]
     #[covariant]
     pub schema: Result<Schema<'this>, Diagnostic>,
+    #[borrows(schema)]
+    #[covariant]
+    pub simplified: Result<stef_compiler::simplify::Schema<'this>, &'this Diagnostic>,
 }
 
 impl GlobalState<'_> {

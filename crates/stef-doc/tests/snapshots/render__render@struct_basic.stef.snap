@@ -85,13 +85,10 @@ input_file: crates/stef-parser/tests/inputs/struct_basic.stef
     Struct
     <a href="index.html">struct_basic</a>::<span class="name-struct">Sample</span>
   </h2>
-  <pre class="item-definition my-2">/// Basic struct.
-struct Sample {
+  <pre class="item-definition my-2">struct Sample {
     a: u32 @1,
-    /// Second field
     b: bool @2,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>Basic struct.</p>
   </div>
@@ -111,15 +108,17 @@ struct Sample {
         <span class="field-type">u32</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>u32</strong> <code>1..5</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
         </div>
       </div>
     </li>
@@ -129,19 +128,22 @@ struct Sample {
         <span class="field-type">bool</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         <p>Second field</p>
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>bool</strong> <code>1</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>bool</strong> <code>1</code></p>
+          </div>
         </div>
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>

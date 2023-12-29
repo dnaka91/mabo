@@ -85,16 +85,14 @@ input_file: crates/stef-parser/tests/inputs/enum_generics.stef
     Enum
     <a href="index.html">enum_generics</a>::<span class="name-enum">Sample</span>
   </h2>
-  <pre class="item-definition my-2">/// Enum with generics.
-enum Sample&lt;A, B, C, D&gt; {
+  <pre class="item-definition my-2">enum Sample&lt;A, B, C, D&gt; {
     One @1,
     Two(A @1, B @2) @2,
     Three {
         field1: C @1,
         field2: D @2,
     } @3,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>Enum with generics.</p>
   </div>
@@ -103,15 +101,19 @@ enum Sample&lt;A, B, C, D&gt; {
   <h3>Variants</h3>
   <ul>
     <li class="field-definition">
-      <pre class="name-variant text-lg">One</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">One</span>
+        <span class="variant-id">@1</span>
+      </code>
       <div class="markdown pl-6">
         
       </div>
-      <div class="pl-6">
-      </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Two</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Two</span>
+        <span class="variant-id">@2</span>
+      </code>
       <div class="markdown pl-6">
         
       </div>
@@ -120,23 +122,32 @@ enum Sample&lt;A, B, C, D&gt; {
         <ul>
           <li>
             <code>
-              <span class="field-name">0</span>:
+              <span class="field-name">n0</span>:
               <span class="field-type">A</span>
               <span class="field-id">@1</span>
             </code>
+            <div class="markdown pl-4">
+              
+            </div>
           </li>
           <li>
             <code>
-              <span class="field-name">1</span>:
+              <span class="field-name">n1</span>:
               <span class="field-type">B</span>
               <span class="field-id">@2</span>
             </code>
+            <div class="markdown pl-4">
+              
+            </div>
           </li>
         </ul>
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Three</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Three</span>
+        <span class="variant-id">@3</span>
+      </code>
       <div class="markdown pl-6">
         
       </div>

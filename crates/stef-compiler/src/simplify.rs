@@ -7,6 +7,9 @@ use std::borrow::Cow;
 /// Uppermost element, describing a single schema file.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Schema<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Schema<'a>,
     /// Optional schema-level comment.
     pub comment: Box<[&'a str]>,
     /// List of all the definitions that make up the schema.
@@ -48,6 +51,9 @@ pub enum Definition<'a> {
 /// Scoping mechanism to categorize elements.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Module<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Module<'a>,
     /// Optional module-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique name of the module, within the current scope.
@@ -59,6 +65,9 @@ pub struct Module<'a> {
 /// Rust-ish struct.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Struct<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Struct<'a>,
     /// Optional struct-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique name for this struct (within its scope).
@@ -72,6 +81,9 @@ pub struct Struct<'a> {
 /// Rust-ish enum.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Enum<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Enum<'a>,
     /// Optional enum-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique name for this enum, within its current scope.
@@ -85,6 +97,9 @@ pub struct Enum<'a> {
 /// Single variant of an enum.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Variant<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Variant<'a>,
     /// Optional variant-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique for this variant, within the enum it belongs to.
@@ -98,6 +113,9 @@ pub struct Variant<'a> {
 /// Fields of a struct or enum that define its structure.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Fields<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Fields<'a>,
     /// List of contained fields.
     pub fields: Box<[Field<'a>]>,
     /// The way how the fields are defined, like named or unnamed.
@@ -107,6 +125,9 @@ pub struct Fields<'a> {
 /// Single unified field that might be named or unnamed.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Field<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: ParserField<'a>,
     /// Optional field-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique name for this field, within the current element.
@@ -115,6 +136,14 @@ pub struct Field<'a> {
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: u32,
+}
+
+/// Field from the [`stef_parser`] create, where a [`Field`] structure originates from.
+pub enum ParserField<'a> {
+    /// Named field.
+    Named(&'a stef_parser::NamedField<'a>),
+    /// Unnamed field
+    Unnamed(&'a stef_parser::UnnamedField<'a>),
 }
 
 /// Possible kinds in which the fields of a struct or enum variant can be represented.
@@ -132,6 +161,9 @@ pub enum FieldKind {
 /// Alias (re-name) from one type to another.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct TypeAlias<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::TypeAlias<'a>,
     /// Optional element-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique name of the type alias within the current scope.
@@ -145,6 +177,9 @@ pub struct TypeAlias<'a> {
 /// Declaration of a constant value.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Const<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Const<'a>,
     /// Optional element-level comment.
     pub comment: Box<[&'a str]>,
     /// Unique identifier of this constant.
@@ -173,6 +208,9 @@ pub enum Literal {
 /// Import declaration for an external schema.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
 pub struct Import<'a> {
+    /// Original parser element.
+    #[cfg_attr(feature = "json", serde(skip))]
+    pub source: &'a stef_parser::Import<'a>,
     /// Individual elements that form the import path.
     pub segments: Box<[&'a str]>,
     /// Optional final element that allows to fully import the type, making it look as it would be
@@ -259,6 +297,7 @@ pub struct ExternalType<'a> {
 #[must_use]
 pub fn schema<'a>(schema: &'a stef_parser::Schema<'_>) -> Schema<'a> {
     Schema {
+        source: schema,
         comment: comment(&schema.comment),
         definitions: definitions(&schema.definitions),
     }
@@ -292,6 +331,7 @@ fn definition<'a>(item: &'a stef_parser::Definition<'_>) -> Definition<'a> {
 
 fn simplify_module<'a>(item: &'a stef_parser::Module<'_>) -> Module<'a> {
     Module {
+        source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         definitions: definitions(&item.definitions),
@@ -300,6 +340,7 @@ fn simplify_module<'a>(item: &'a stef_parser::Module<'_>) -> Module<'a> {
 
 fn simplify_struct<'a>(item: &'a stef_parser::Struct<'_>) -> Struct<'a> {
     Struct {
+        source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         generics: generics(&item.generics),
@@ -309,6 +350,7 @@ fn simplify_struct<'a>(item: &'a stef_parser::Struct<'_>) -> Struct<'a> {
 
 fn simplify_enum<'a>(item: &'a stef_parser::Enum<'_>) -> Enum<'a> {
     Enum {
+        source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         generics: generics(&item.generics),
@@ -322,6 +364,7 @@ fn simplify_enum<'a>(item: &'a stef_parser::Enum<'_>) -> Enum<'a> {
 
 fn simplify_variant<'a>(item: &'a stef_parser::Variant<'_>) -> Variant<'a> {
     Variant {
+        source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         fields: simplify_fields(&item.fields),
@@ -332,9 +375,11 @@ fn simplify_variant<'a>(item: &'a stef_parser::Variant<'_>) -> Variant<'a> {
 fn simplify_fields<'a>(item: &'a stef_parser::Fields<'_>) -> Fields<'a> {
     match item {
         stef_parser::Fields::Named(named) => Fields {
+            source: item,
             fields: named
                 .iter()
                 .map(|field| Field {
+                    source: ParserField::Named(field),
                     comment: comment(&field.comment),
                     name: field.name.get().into(),
                     ty: simplify_type(&field.ty),
@@ -344,10 +389,12 @@ fn simplify_fields<'a>(item: &'a stef_parser::Fields<'_>) -> Fields<'a> {
             kind: FieldKind::Named,
         },
         stef_parser::Fields::Unnamed(unnamed) => Fields {
+            source: item,
             fields: unnamed
                 .iter()
                 .enumerate()
                 .map(|(i, field)| Field {
+                    source: ParserField::Unnamed(field),
                     comment: Box::default(),
                     name: format!("n{i}").into(),
                     ty: simplify_type(&field.ty),
@@ -357,6 +404,7 @@ fn simplify_fields<'a>(item: &'a stef_parser::Fields<'_>) -> Fields<'a> {
             kind: FieldKind::Unnamed,
         },
         stef_parser::Fields::Unit => Fields {
+            source: item,
             fields: Box::default(),
             kind: FieldKind::Unit,
         },
@@ -405,6 +453,7 @@ fn simplify_type<'a>(item: &'a stef_parser::Type<'_>) -> Type<'a> {
 
 fn simplify_alias<'a>(item: &'a stef_parser::TypeAlias<'_>) -> TypeAlias<'a> {
     TypeAlias {
+        source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         generics: generics(&item.generics),
@@ -414,6 +463,7 @@ fn simplify_alias<'a>(item: &'a stef_parser::TypeAlias<'_>) -> TypeAlias<'a> {
 
 fn simplify_const<'a>(item: &'a stef_parser::Const<'_>) -> Const<'a> {
     Const {
+        source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
         ty: simplify_type(&item.ty),
@@ -433,6 +483,7 @@ fn simplify_literal(item: &stef_parser::Literal) -> Literal {
 
 fn simplify_import<'a>(item: &'a stef_parser::Import<'_>) -> Import<'a> {
     Import {
+        source: item,
         segments: item.segments.iter().map(stef_parser::Name::get).collect(),
         element: item.element.as_ref().map(|element| element.get().into()),
     }

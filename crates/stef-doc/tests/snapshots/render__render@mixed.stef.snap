@@ -133,18 +133,12 @@ input_file: crates/stef-parser/tests/inputs/mixed.stef
     Struct
     <a href="index.html">mixed</a>::<span class="name-struct">User</span>
   </h2>
-  <pre class="item-definition my-2">/// Basic user information.
-/// 
-/// Uses various other `structs` and `enums` to compose the information
-/// in a **type safe** way.
-struct User {
+  <pre class="item-definition my-2">struct User {
     name: FullName @1,
-    /// Physical address, might not be specified by the user.
     address: option&lt;Address&gt; @2,
     age: u8 @3,
     birthday: birthday::DayOfBirth @4,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>Basic user information.</p>
 <p>Uses various other <code>structs</code> and <code>enums</code> to compose the information
@@ -166,7 +160,7 @@ in a <strong>type safe</strong> way.</p>
         <span class="field-type">FullName</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
@@ -176,18 +170,20 @@ in a <strong>type safe</strong> way.</p>
         <span class="field-type">option&lt;Address&gt;</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         <p>Physical address, might not be specified by the user.</p>
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>option</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>option</strong> <code>0..</code></p>
           <ul>
           <li>value: <em>unknown</em></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -197,15 +193,17 @@ in a <strong>type safe</strong> way.</p>
         <span class="field-type">u8</span>
         <span class="field-id">@3</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>u8</strong> <code>1</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u8</strong> <code>1</code></p>
+          </div>
         </div>
       </div>
     </li>
@@ -215,11 +213,12 @@ in a <strong>type safe</strong> way.</p>
         <span class="field-type">birthday::DayOfBirth</span>
         <span class="field-id">@4</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>
@@ -247,13 +246,11 @@ in a <strong>type safe</strong> way.</p>
     Struct
     <a href="index.html">mixed</a>::<span class="name-struct">FullName</span>
   </h2>
-  <pre class="item-definition my-2">/// Full name of a user.
-struct FullName {
+  <pre class="item-definition my-2">struct FullName {
     first: string @1,
     middle: option&lt;string&gt; @2,
     last: string @3,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>Full name of a user.</p>
   </div>
@@ -273,15 +270,17 @@ struct FullName {
         <span class="field-type">string</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>string</strong> <code>1..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
         </div>
       </div>
     </li>
@@ -291,18 +290,20 @@ struct FullName {
         <span class="field-type">option&lt;string&gt;</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>option</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>option</strong> <code>0..</code></p>
           <ul>
           <li>value: <strong>string</strong> <code>1..</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -312,19 +313,22 @@ struct FullName {
         <span class="field-type">string</span>
         <span class="field-id">@3</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>string</strong> <code>1..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
         </div>
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>
@@ -352,11 +356,7 @@ struct FullName {
     Alias
     <a href="index.html">mixed</a>::<span class="name-alias">Name</span>
   </h2>
-  <pre class="item-definition my-2">/// Simple alias for convenience.
-/// 
-/// - Might be easier to remember.
-/// - Often referenced as this.
-type Name = FullName;</pre>
+  <pre class="item-definition my-2">type Name = FullName;</pre>
   <div class="markdown pl-6">
     <p>Simple alias for convenience.</p>
 <ul>
@@ -393,13 +393,10 @@ type Name = FullName;</pre>
     <a href="index.html">mixed</a>::<span class="name-struct">Address</span>
   </h2>
   <pre class="item-definition my-2">struct Address {
-    /// Street name.
     street: string @1,
-    /// Number of the house in the street.
     house_no: HouseNumber @2,
     city: string @3,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -419,15 +416,17 @@ type Name = FullName;</pre>
         <span class="field-type">string</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         <p>Street name.</p>
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>string</strong> <code>1..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
         </div>
       </div>
     </li>
@@ -437,7 +436,7 @@ type Name = FullName;</pre>
         <span class="field-type">HouseNumber</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         <p>Number of the house in the street.</p>
       </div>
     </li>
@@ -447,19 +446,22 @@ type Name = FullName;</pre>
         <span class="field-type">string</span>
         <span class="field-id">@3</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>string</strong> <code>1..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
         </div>
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>
@@ -487,16 +489,10 @@ type Name = FullName;</pre>
     Enum
     <a href="index.html">mixed</a>::<span class="name-enum">HouseNumber</span>
   </h2>
-  <pre class="item-definition my-2">/// The number on the house.
-/// 
-/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).
-enum HouseNumber {
-    /// Digit only number.
+  <pre class="item-definition my-2">enum HouseNumber {
     Digit(u16 @1) @1,
-    /// Mixed _number_ with characters like `1a`.
     Text(string @1) @2,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>The number on the house.</p>
 <p>More details can be found at <a href="https://en.wikipedia.org/wiki/House_numbering">Wikipedia</a>.</p>
@@ -506,7 +502,10 @@ enum HouseNumber {
   <h3>Variants</h3>
   <ul>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Digit</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Digit</span>
+        <span class="variant-id">@1</span>
+      </code>
       <div class="markdown pl-6">
         <p>Digit only number.</p>
       </div>
@@ -515,24 +514,32 @@ enum HouseNumber {
         <ul>
           <li>
             <code>
-              <span class="field-name">0</span>:
+              <span class="field-name">n0</span>:
               <span class="field-type">u16</span>
               <span class="field-id">@1</span>
             </code>
-          </li>
-          <h4 class="my-2">Metadata</h4>
-          <div class="text-sm">
-            <p>The size range is:</p>
-            <div
-              class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-              <p><strong>u16</strong> <code>1..3</code></p>
+            <div class="markdown pl-4">
+              
             </div>
-          </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u16</strong> <code>1..3</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Text</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Text</span>
+        <span class="variant-id">@2</span>
+      </code>
       <div class="markdown pl-6">
         <p>Mixed <em>number</em> with characters like <code>1a</code>.</p>
       </div>
@@ -541,19 +548,24 @@ enum HouseNumber {
         <ul>
           <li>
             <code>
-              <span class="field-name">0</span>:
+              <span class="field-name">n0</span>:
               <span class="field-type">string</span>
               <span class="field-id">@1</span>
             </code>
-          </li>
-          <h4 class="my-2">Metadata</h4>
-          <div class="text-sm">
-            <p>The size range is:</p>
-            <div
-              class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-              <p><strong>string</strong> <code>1..</code></p>
+            <div class="markdown pl-4">
+              
             </div>
-          </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>string</strong> <code>1..</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
     </li>
@@ -586,8 +598,7 @@ enum HouseNumber {
     Constant
     <a href="index.html">mixed</a>::<span class="name-const">MAX_AGE</span>
   </h2>
-  <pre class="item-definition my-2">/// Probably the max age of a human, currently.
-const MAX_AGE: u8 = 120;</pre>
+  <pre class="item-definition my-2">const MAX_AGE: u8 = 120;</pre>
   <div class="markdown pl-6">
     <p>Probably the max age of a human, currently.</p>
   </div>
@@ -707,23 +718,17 @@ on the month.</p>
     Enum
     <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-enum">DayOfBirth</span>
   </h2>
-  <pre class="item-definition my-2">/// As the name suggests, specifies details about birthdays.
-enum DayOfBirth {
+  <pre class="item-definition my-2">enum DayOfBirth {
     Specific {
         year: u16 @1,
         month: Month @2,
         day: u8 @3,
     } @1,
-    /// The user didn&#x27;t want to say.
     Secret {
-        /// Optional info from the user about why they didn&#x27;t want to
-        /// reveal their birthday.
         reason: option&lt;string&gt; @1,
     } @2,
-    /// We never asked and nobody knows.
     Unknown @3,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>As the name suggests, specifies details about birthdays.</p>
   </div>
@@ -732,7 +737,10 @@ enum DayOfBirth {
   <h3>Variants</h3>
   <ul>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Specific</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Specific</span>
+        <span class="variant-id">@1</span>
+      </code>
       <div class="markdown pl-6">
         
       </div>
@@ -793,7 +801,10 @@ enum DayOfBirth {
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Secret</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Secret</span>
+        <span class="variant-id">@2</span>
+      </code>
       <div class="markdown pl-6">
         <p>The user didn't want to say.</p>
       </div>
@@ -828,11 +839,12 @@ reveal their birthday.</p>
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">Unknown</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">Unknown</span>
+        <span class="variant-id">@3</span>
+      </code>
       <div class="markdown pl-6">
         <p>We never asked and nobody knows.</p>
-      </div>
-      <div class="pl-6">
       </div>
     </li>
   </ul>
@@ -864,8 +876,7 @@ reveal their birthday.</p>
     Constant
     <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-const">MIN_YEAR</span>
   </h2>
-  <pre class="item-definition my-2">/// Let&#x27;s assume we only have details of people born **after** this year.
-const MIN_YEAR: u16 = 1900;</pre>
+  <pre class="item-definition my-2">const MIN_YEAR: u16 = 1900;</pre>
   <div class="markdown pl-6">
     <p>Let's assume we only have details of people born <strong>after</strong> this year.</p>
   </div>
@@ -897,9 +908,7 @@ const MIN_YEAR: u16 = 1900;</pre>
     Constant
     <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-const">MAX_DAY</span>
   </h2>
-  <pre class="item-definition my-2">/// Absolute maximum for a day, but might be even less depending
-/// on the month.
-const MAX_DAY: u8 = 31;</pre>
+  <pre class="item-definition my-2">const MAX_DAY: u8 = 31;</pre>
   <div class="markdown pl-6">
     <p>Absolute maximum for a day, but might be even less depending
 on the month.</p>
@@ -932,8 +941,7 @@ on the month.</p>
     Enum
     <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-enum">Month</span>
   </h2>
-  <pre class="item-definition my-2">/// The month of the year.
-enum Month {
+  <pre class="item-definition my-2">enum Month {
     January @1,
     February @2,
     March @3,
@@ -946,8 +954,7 @@ enum Month {
     October @10,
     November @11,
     December @12,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>The month of the year.</p>
   </div>
@@ -956,99 +963,111 @@ enum Month {
   <h3>Variants</h3>
   <ul>
     <li class="field-definition">
-      <pre class="name-variant text-lg">January</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">January</span>
+        <span class="variant-id">@1</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">February</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">February</span>
+        <span class="variant-id">@2</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">March</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">March</span>
+        <span class="variant-id">@3</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">April</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">April</span>
+        <span class="variant-id">@4</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">May</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">May</span>
+        <span class="variant-id">@5</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">June</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">June</span>
+        <span class="variant-id">@6</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">July</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">July</span>
+        <span class="variant-id">@7</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">August</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">August</span>
+        <span class="variant-id">@8</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">September</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">September</span>
+        <span class="variant-id">@9</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">October</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">October</span>
+        <span class="variant-id">@10</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">November</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">November</span>
+        <span class="variant-id">@11</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
     <li class="field-definition">
-      <pre class="name-variant text-lg">December</pre>
+      <code class="name-variant text-lg">
+        <span class="variant-name">December</span>
+        <span class="variant-id">@12</span>
+      </code>
       <div class="markdown pl-6">
         
-      </div>
-      <div class="pl-6">
       </div>
     </li>
   </ul>

@@ -7,10 +7,10 @@ use crate::{BytesType, Opts};
 pub(super) fn compile_struct(
     opts: &Opts,
     Struct {
-        comment: _,
         name,
         generics,
         fields,
+        ..
     }: &Struct<'_>,
 ) -> TokenStream {
     let names = fields
@@ -48,10 +48,10 @@ pub(super) fn compile_struct(
 pub(super) fn compile_enum(
     opts: &Opts,
     Enum {
-        comment: _,
         name,
         generics,
         variants,
+        ..
     }: &Enum<'_>,
 ) -> TokenStream {
     let name = Ident::new(name, Span::call_site());
@@ -79,11 +79,7 @@ pub(super) fn compile_enum(
 fn compile_variant(
     opts: &Opts,
     Variant {
-        comment: _,
-        name,
-        fields,
-        id,
-        ..
+        name, fields, id, ..
     }: &Variant<'_>,
 ) -> TokenStream {
     let id = proc_macro2::Literal::u32_unsuffixed(*id);

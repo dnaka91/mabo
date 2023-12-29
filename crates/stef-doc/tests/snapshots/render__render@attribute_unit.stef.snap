@@ -85,9 +85,7 @@ input_file: crates/stef-parser/tests/inputs/attribute_unit.stef
     Struct
     <a href="index.html">attribute_unit</a>::<span class="name-struct">Sample</span>
   </h2>
-  <pre class="item-definition my-2">#[deprecated]
-struct Sample
-</pre>
+  <pre class="item-definition my-2">struct Sample</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -99,6 +97,8 @@ struct Sample
 </div>
 <div class="section">
   <h3>Fields</h3>
+  <ul>
+  </ul>
 </div>
 
     </main>

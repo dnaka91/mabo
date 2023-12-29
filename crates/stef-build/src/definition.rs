@@ -62,6 +62,7 @@ fn compile_module(
         comment,
         name,
         definitions,
+        ..
     }: &Module<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
@@ -86,6 +87,7 @@ fn compile_struct(
         name,
         generics,
         fields,
+        ..
     }: &Struct<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
@@ -109,6 +111,7 @@ fn compile_enum(
         name,
         generics,
         variants,
+        ..
     }: &Enum<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
@@ -152,6 +155,7 @@ fn compile_alias(
         name,
         generics,
         target,
+        ..
     }: &TypeAlias<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
@@ -172,6 +176,7 @@ fn compile_const(
         name,
         ty,
         value,
+        ..
     }: &Const<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);

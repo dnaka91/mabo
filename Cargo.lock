@@ -1248,6 +1248,7 @@ dependencies = [
  "glob",
  "heck",
  "insta",
+ "stef-compiler",
  "stef-meta",
  "stef-parser",
 ]
@@ -1291,7 +1292,7 @@ dependencies = [
 name = "stef-meta"
 version = "0.1.0"
 dependencies = [
- "stef-parser",
+ "stef-compiler",
 ]
 
 [[package]]

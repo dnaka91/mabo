@@ -101,8 +101,7 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
     f13: non_zero&lt;vec&lt;string&gt;&gt; @13,
     f14: non_zero&lt;hash_map&lt;string, bytes&gt;&gt; @14,
     f15: non_zero&lt;hash_set&lt;string&gt;&gt; @15,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -122,18 +121,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;u8&gt;</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..2</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..2</code></p>
           <ul>
           <li>value: <strong>u8</strong> <code>1</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -143,18 +144,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;u16&gt;</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..4</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..4</code></p>
           <ul>
           <li>value: <strong>u16</strong> <code>1..3</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -164,18 +167,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;u32&gt;</span>
         <span class="field-id">@3</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..6</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..6</code></p>
           <ul>
           <li>value: <strong>u32</strong> <code>1..5</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -185,18 +190,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;u64&gt;</span>
         <span class="field-id">@4</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..11</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..11</code></p>
           <ul>
           <li>value: <strong>u64</strong> <code>1..10</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -206,18 +213,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;u128&gt;</span>
         <span class="field-id">@5</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..20</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..20</code></p>
           <ul>
           <li>value: <strong>u128</strong> <code>1..19</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -227,18 +236,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;i8&gt;</span>
         <span class="field-id">@6</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..2</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..2</code></p>
           <ul>
           <li>value: <strong>i8</strong> <code>1</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -248,18 +259,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;i16&gt;</span>
         <span class="field-id">@7</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..4</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..4</code></p>
           <ul>
           <li>value: <strong>i16</strong> <code>1..3</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -269,18 +282,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;i32&gt;</span>
         <span class="field-id">@8</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..6</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..6</code></p>
           <ul>
           <li>value: <strong>i32</strong> <code>1..5</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -290,18 +305,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;i64&gt;</span>
         <span class="field-id">@9</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..11</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..11</code></p>
           <ul>
           <li>value: <strong>i64</strong> <code>1..10</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -311,18 +328,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;i128&gt;</span>
         <span class="field-id">@10</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..20</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..20</code></p>
           <ul>
           <li>value: <strong>i128</strong> <code>1..19</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -332,18 +351,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;string&gt;</span>
         <span class="field-id">@11</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..</code></p>
           <ul>
           <li>value: <strong>string</strong> <code>1..</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -353,18 +374,20 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;bytes&gt;</span>
         <span class="field-id">@12</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..</code></p>
           <ul>
           <li>value: <strong>bytes</strong> <code>1..</code></li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -374,15 +397,16 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;vec&lt;string&gt;&gt;</span>
         <span class="field-id">@13</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..</code></p>
           <ul>
           <li>value: <strong>vec</strong> <code>1..</code>
           <ul>
@@ -391,6 +415,7 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
           </ul>
           </li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -400,15 +425,16 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;hash_map&lt;string, bytes&gt;&gt;</span>
         <span class="field-id">@14</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..</code></p>
           <ul>
           <li>value: <strong>hash_map</strong> <code>1..</code>
           <ul>
@@ -418,6 +444,7 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
           </ul>
           </li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
@@ -427,15 +454,16 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
         <span class="field-type">non_zero&lt;hash_set&lt;string&gt;&gt;</span>
         <span class="field-id">@15</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>non_zero</strong> <code>0..</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>non_zero</strong> <code>0..</code></p>
           <ul>
           <li>value: <strong>hash_set</strong> <code>1..</code>
           <ul>
@@ -444,10 +472,12 @@ input_file: crates/stef-parser/tests/inputs/types_non_zero.stef
           </ul>
           </li>
           </ul>
+          </div>
         </div>
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>

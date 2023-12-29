@@ -11,7 +11,7 @@
     {%- endfor -%}
     <span class="name-const">{{ item.name }}</span>
   </h2>
-  <pre class="item-definition my-2">{{ item }}</pre>
+  <pre class="item-definition my-2">{{ self.print_schema() }}</pre>
   <div class="markdown pl-6">
     {{ self::merge_comments(item.comment)|markdown|trim|safe }}
   </div>

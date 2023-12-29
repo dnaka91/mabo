@@ -85,13 +85,11 @@ input_file: crates/stef-parser/tests/inputs/struct_many_ws.stef
     Struct
     <a href="index.html">struct_many_ws</a>::<span class="name-struct">Sample</span>
   </h2>
-  <pre class="item-definition my-2">/// Some comment
-struct Sample&lt;T&gt; {
+  <pre class="item-definition my-2">struct Sample&lt;T&gt; {
     a: u32 @1,
     b: bool @2,
     c: T @3,
-}
-</pre>
+}</pre>
   <div class="markdown pl-6">
     <p>Some comment</p>
   </div>
@@ -111,15 +109,17 @@ struct Sample&lt;T&gt; {
         <span class="field-type">u32</span>
         <span class="field-id">@1</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>u32</strong> <code>1..5</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
         </div>
       </div>
     </li>
@@ -129,15 +129,17 @@ struct Sample&lt;T&gt; {
         <span class="field-type">bool</span>
         <span class="field-id">@2</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
-      <h4 class="my-2">Metadata</h4>
-      <div class="text-sm">
-        <p>The size range is:</p>
-        <div
-          class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-          <p><strong>bool</strong> <code>1</code></p>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>bool</strong> <code>1</code></p>
+          </div>
         </div>
       </div>
     </li>
@@ -147,11 +149,12 @@ struct Sample&lt;T&gt; {
         <span class="field-type">T</span>
         <span class="field-id">@3</span>
       </code>
-      <div class="markdown pl-6">
+      <div class="markdown pl-4">
         
       </div>
     </li>
   </ul>
+</div>
 
     </main>
   </body>

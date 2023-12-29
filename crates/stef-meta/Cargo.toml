@@ -10,7 +10,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-stef-parser = { path = "../stef-parser" }
+stef-compiler = { path = "../stef-compiler" }
 
 [lints]
 workspace = true

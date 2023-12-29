@@ -13,12 +13,13 @@ license.workspace = true
 anyhow.workspace = true
 askama = { version = "0.12.1", default-features = false, features = ["markdown"] }
 heck = "0.4.1"
+stef-compiler = { path = "../stef-compiler" }
 stef-meta = { path = "../stef-meta" }
-stef-parser = { path = "../stef-parser" }
 
 [dev-dependencies]
 glob.workspace = true
 insta.workspace = true
+stef-parser = { path = "../stef-parser" }
 
 [lints]
 workspace = true

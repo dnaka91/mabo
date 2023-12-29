@@ -85,9 +85,7 @@ input_file: crates/stef-parser/tests/inputs/struct_tuple.stef
     Struct
     <a href="index.html">struct_tuple</a>::<span class="name-struct">Sample</span>
   </h2>
-  <pre class="item-definition my-2">/// Basic struct.
-struct Sample(u32 @1, bool @2)
-</pre>
+  <pre class="item-definition my-2">struct Sample(u32 @1, bool @2)</pre>
   <div class="markdown pl-6">
     <p>Basic struct.</p>
   </div>
@@ -103,35 +101,46 @@ struct Sample(u32 @1, bool @2)
   <ul>
     <li class="field-definition">
       <code>
-        <span class="field-name">0</span>:
+        <span class="field-name">n0</span>:
         <span class="field-type">u32</span>
         <span class="field-id">@1</span>
       </code>
-    </li>
-    <h4 class="my-2">Metadata</h4>
-    <div class="text-sm">
-      <p>The size range is:</p>
-      <div
-        class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-        <p><strong>u32</strong> <code>1..5</code></p>
+      <div class="markdown pl-4">
+        
       </div>
-    </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
     <li class="field-definition">
       <code>
-        <span class="field-name">1</span>:
+        <span class="field-name">n1</span>:
         <span class="field-type">bool</span>
         <span class="field-id">@2</span>
       </code>
-    </li>
-    <h4 class="my-2">Metadata</h4>
-    <div class="text-sm">
-      <p>The size range is:</p>
-      <div
-        class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-        <p><strong>bool</strong> <code>1</code></p>
+      <div class="markdown pl-4">
+        
       </div>
-    </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>bool</strong> <code>1</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
   </ul>
+</div>
 
     </main>
   </body>

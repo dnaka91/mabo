@@ -2,7 +2,7 @@
   "name": "stef",
   "private": true,
   "workspaces": [
-    "book/highlight",
+    "book",
     "crates/stef-doc",
     "vscode-extension"
   ]

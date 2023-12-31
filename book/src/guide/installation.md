@@ -1,6 +1,6 @@
 # Installation
 
-<!-- toc -->
+[[toc]]
 
 ## Command Line Interface
 

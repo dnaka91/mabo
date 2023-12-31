@@ -1,6 +1,6 @@
 # Creating schemas
 
-<!-- toc -->
+[[toc]]
 
 ## Create the first schema
 
@@ -8,9 +8,7 @@ Lets jump right in and discover further details along the way.
 
 In the following sample we define a simple data structure that describes some details about a user. It holds information about a user's name and age.
 
-```stef
-{{#include creating/basic.stef}}
-```
+<<< creating/basic.stef
 
 Step by step we will disect this schema and explain each part:
 
@@ -27,7 +25,7 @@ It is important to understand built-in data types, as these are used constantly 
 
 As the name might imply, STEF tries to have a very strong typing system. Therefore, it has a rather large variety of types available.
 
-A full list of all available data types and more specifics can be found in the [schema reference](../schema/index.md).
+A full list of all available data types and more specifics can be found in the [schema reference](../reference/schema/).
 
 ### Basic types
 

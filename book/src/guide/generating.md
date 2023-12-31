@@ -1,10 +1,10 @@
 # Generating code
 
-<!-- toc -->
+[[toc]]
 
 ## Rust
 
-First, make sure you followed the [installation](./installation.md#rust) instructions, to setup the dependencies in your _Cargo.toml_ properly.
+First, make sure you followed the [installation](./installation#rust) instructions, to setup the dependencies in your _Cargo.toml_ properly.
 
 The main entry point is the `stef-build` crate, which you use as build script in your `build.rs` file. A basic setup looks like this, assuming you have a single schema under `src/sample.stef`:
 

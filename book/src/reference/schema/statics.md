@@ -1,0 +1,3 @@
+# Statics
+
+[[toc]]

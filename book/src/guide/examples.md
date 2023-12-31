@@ -1,5 +1,3 @@
 # Examples
 
-```stef
-{{#include examples/01.stef}}
-```
+<<< ./examples/01.stef

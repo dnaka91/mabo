@@ -1,0 +1,14 @@
+{
+  "name": "book",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "lint": "biome check --apply .vitepress/config.mjs src/**/*.md"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.4.1",
+    "vitepress": "^1.0.0-rc.34"
+  }
+}

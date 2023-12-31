@@ -52,7 +52,7 @@ format:
   gofmt -w {{files}}
 
 @format-kotlin +files:
-  ktlint -F --disabled_rules=filename {{files}}
+  ktlint -F {{files}}
 
 @format-typescript +files:
   prettier --log-level warn -w {{files}}
@@ -61,7 +61,7 @@ format:
   black -q {{files}}
 
 dev:
-  mdbook serve
+  bun run dev
 
 build:
-  mdbook build
+  bun run build

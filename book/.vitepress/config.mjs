@@ -33,8 +33,8 @@ export default defineConfig({
       pattern: "https://github.com/dnaka91/stef/edit/main/book/src/:path",
     },
     nav: [
-      { text: "Guide", link: "/guide/", activeMatch: "/guide/" },
-      { text: "Reference", link: "/reference/", activeMatch: "/reference/" },
+      { text: "Guide", link: "/guide/installation", activeMatch: "/guide/" },
+      { text: "Reference", link: "/reference/schema/", activeMatch: "/reference/" },
     ],
 
     sidebar: [

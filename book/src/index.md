@@ -12,10 +12,10 @@ hero:
   actions:
     - theme: brand
       text: User Guide
-      link: /guide/
+      link: /guide/installation
     - theme: alt
       text: Reference
-      link: /reference/
+      link: /reference/schema/
 
 features:
   - icon: 🦀

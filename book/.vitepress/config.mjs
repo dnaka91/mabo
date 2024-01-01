@@ -25,7 +25,7 @@ export default defineConfig({
       preserveSymlinks: true,
     },
   },
-  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/logo.svg" }]],
+  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/stef/logo.svg" }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: "/logo.svg",

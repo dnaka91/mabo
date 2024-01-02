@@ -5,8 +5,10 @@ import maboGrammar from "../../vscode-extension/syntaxes/mabo.tmLanguage.json";
 export default defineConfig({
   title: "mabo",
   description: "Strongly Typed Encoding Format",
+  appearance: "dark",
+  lastUpdated: true,
   srcDir: "src",
-  base: "/mabo",
+  base: "/mabo/",
   markdown: {
     theme: {
       dark: "one-dark-pro",
@@ -14,11 +16,15 @@ export default defineConfig({
     },
     languages: [
       {
-        ...maboGrammar,
+        // biome-ignore lint: the grammar is wrongly reported as incompatible
+        ...(maboGrammar as any),
         name: "mabo",
       },
     ],
     lineNumbers: true,
+    image: {
+      lazyLoading: true,
+    },
   },
   vite: {
     resolve: {
@@ -31,6 +37,7 @@ export default defineConfig({
     logo: "/logo.svg",
     editLink: {
       pattern: "https://github.com/dnaka91/mabo/edit/main/book/src/:path",
+      text: "Edit this page on GitHub",
     },
     nav: [
       { text: "Guide", link: "/guide/installation", activeMatch: "/guide/" },
@@ -112,11 +119,6 @@ export default defineConfig({
     footer: {
       message: "Released under the MIT License.",
       copyright: "Copyright © 2023-present Dominik Nakamura",
-    },
-
-    docFooter: {
-      prev: false,
-      next: false,
     },
 
     search: {

@@ -30,15 +30,10 @@ features:
 ---
 <style>
 :root {
-  --vp-c-brand-1: #E74D11;
-  --vp-c-brand-2: #E87917;
-  --vp-c-brand-3: #E8A41C;
-  --vp-c-brand-soft: #E9D022;
-
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--vp-c-brand-3) 30%, var(--vp-c-brand-1));
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, hwb(45 10% 10%) 30%, hwb(15 10% 10%));
 
-  --vp-home-hero-image-background-image: linear-gradient(-45deg, var(--vp-c-brand-3) 30%, var(--vp-c-brand-1) 70%);
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, hwb(45 10% 10%) 30%, hwb(15 10% 10%) 70%);
   --vp-home-hero-image-filter: blur(44px);
 }
 

@@ -5,7 +5,7 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "lint": "biome check --apply .vitepress/config.mjs src/**/*.md"
+    "lint": "biome check --apply .vitepress/config.mts src/**/*.md"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.4.1",

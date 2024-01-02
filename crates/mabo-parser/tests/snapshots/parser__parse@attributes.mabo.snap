@@ -1,0 +1,86 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "#[deprecated = \"don't use\", compress]\n#[validate(\n    in_range(min = 100, max = 200),\n    non_empty,\n)]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attributes.mabo
+---
+Schema {
+    path: Some(
+        "attributes.mabo",
+    ),
+    source: "#[deprecated = \"don't use\", compress]\n#[validate(\n    in_range(min = 100, max = 200),\n    non_empty,\n)]\nstruct Sample\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [
+                        Attribute {
+                            name: "deprecated",
+                            value: Single(
+                                Literal {
+                                    value: String(
+                                        "don't use",
+                                    ),
+                                },
+                            ),
+                        },
+                        Attribute {
+                            name: "compress",
+                            value: Unit,
+                        },
+                        Attribute {
+                            name: "validate",
+                            value: Multi(
+                                [
+                                    Attribute {
+                                        name: "in_range",
+                                        value: Multi(
+                                            [
+                                                Attribute {
+                                                    name: "min",
+                                                    value: Single(
+                                                        Literal {
+                                                            value: Int(
+                                                                100,
+                                                            ),
+                                                        },
+                                                    ),
+                                                },
+                                                Attribute {
+                                                    name: "max",
+                                                    value: Single(
+                                                        Literal {
+                                                            value: Int(
+                                                                200,
+                                                            ),
+                                                        },
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    },
+                                    Attribute {
+                                        name: "non_empty",
+                                        value: Unit,
+                                    },
+                                ],
+                            ),
+                        },
+                    ],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Unit,
+            },
+        ),
+    ],
+}

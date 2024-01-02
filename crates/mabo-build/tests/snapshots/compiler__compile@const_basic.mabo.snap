@@ -1,0 +1,20 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];"
+input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[allow(dead_code)]
+pub const BOOL_TRUE: bool = true;
+#[allow(dead_code)]
+pub const BOOL_FALSE: bool = false;
+#[allow(dead_code)]
+pub const INT: u32 = 100;
+#[allow(dead_code)]
+pub const FLOAT: f64 = 5.5;
+#[allow(dead_code)]
+pub const STRING: &str = "value";
+#[allow(dead_code)]
+pub const BYTES: &[u8] = b"\x01\x02\x03";
+

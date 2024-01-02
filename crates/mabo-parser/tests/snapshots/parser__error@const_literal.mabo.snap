@@ -1,0 +1,26 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "const VALUE: u32 = 1z;"
+input_file: crates/mabo-parser/tests/inputs/invalid/const_literal.mabo
+---
+mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseConstError.html)
+
+  × Failed to parse const declaration
+  ╰─▶ Unexpected character
+   ╭─[invalid/const_literal.mabo:1:1]
+ 1 │ const VALUE: u32 = 1z;
+   · ───────────┬──────────
+   ·            ╰── In this declaration
+   ╰────
+  help: Expected const declaration in the form `❬B❭const <NAME>: <type> = <literal>;❬B❭`
+
+Error: mabo::parse::const_def::char (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseConstCause.html#variant.UnexpectedChar)
+
+  × Unexpected character
+   ╭─[invalid/const_literal.mabo:1:1]
+ 1 │ const VALUE: u32 = 1z;
+   ·                     ▲
+   ·                     ╰── Problematic character
+   ╰────
+  help: Expected a `❬Y❭;❬Y❭` here
+

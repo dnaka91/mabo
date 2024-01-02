@@ -1,0 +1,30 @@
+[package]
+name = "mabo-parser"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[package.metadata.docs.rs]
+rustc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+miette.workspace = true
+owo-colors.workspace = true
+mabo-derive = { path = "../mabo-derive" }
+winnow = "0.5.31"
+
+[dev-dependencies]
+indoc.workspace = true
+insta.workspace = true
+miette = { workspace = true, features = ["fancy-no-backtrace"] }
+
+[features]
+debug = []
+
+[lints]
+workspace = true

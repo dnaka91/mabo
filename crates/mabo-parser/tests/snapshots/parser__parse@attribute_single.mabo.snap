@@ -1,0 +1,44 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "#[deprecated = \"don't use\"]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attribute_single.mabo
+---
+Schema {
+    path: Some(
+        "attribute_single.mabo",
+    ),
+    source: "#[deprecated = \"don't use\"]\nstruct Sample\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [
+                        Attribute {
+                            name: "deprecated",
+                            value: Single(
+                                Literal {
+                                    value: String(
+                                        "don't use",
+                                    ),
+                                },
+                            ),
+                        },
+                    ],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Unit,
+            },
+        ),
+    ],
+}

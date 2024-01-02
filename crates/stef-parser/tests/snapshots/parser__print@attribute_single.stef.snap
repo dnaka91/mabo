@@ -1,9 +1,0 @@
----
-source: crates/stef-parser/tests/parser.rs
-description: "#[deprecated = \"don't use\"]\nstruct Sample"
-input_file: crates/stef-parser/tests/inputs/attribute_single.stef
----
-#[deprecated = "don't use"]
-struct Sample
-
-

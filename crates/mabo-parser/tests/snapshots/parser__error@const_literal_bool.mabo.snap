@@ -1,0 +1,35 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "const VALUE: bool = truze;"
+input_file: crates/mabo-parser/tests/inputs/invalid/const_literal_bool.mabo
+---
+mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseConstError.html)
+
+  × Failed to parse const declaration
+  ├─▶ Failed to parse literal value
+  ╰─▶ error Tag
+   ╭─[invalid/const_literal_bool.mabo:1:1]
+ 1 │ const VALUE: bool = truze;
+   · ─────────────┬────────────
+   ·              ╰── In this declaration
+   ╰────
+  help: Expected const declaration in the form `❬B❭const <NAME>: <type> = <literal>;❬B❭`
+
+Error: mabo::parse::literal (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseLiteralError.html)
+
+  × Failed to parse literal value
+  ╰─▶ error Tag
+   ╭─[invalid/const_literal_bool.mabo:1:1]
+ 1 │ const VALUE: bool = truze;
+   ·                     ▲
+   ·                     ╰── In this declaration
+   ╰────
+  help: Expected literal value declaration in either of the forms:
+        `❬B❭true❬B❭` or `❬B❭false❬B❭` for booleans
+        `❬B❭1, 2, 3, ...❬B❭` for numbers
+        `❬B❭1.2, 1.0e5, ...❬B❭` for floating point numbers
+        `❬B❭"..."❬B❭` for strings
+        or `❬B❭[...]❬B❭` for bytes
+
+Error:   × error Tag
+

@@ -1,0 +1,19 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "enum Sample<T, T> {\n    One @1,\n    Two { value: T @1 } @2,\n}"
+input_file: crates/mabo-compiler/tests/inputs/validate/enum_gen_dup.mabo
+---
+  × invalid generic type found
+  ├─▶ duplicate generic type name found
+  ╰─▶ duplicate generic type name `T`
+   ╭─[enum_gen_dup.mabo:1:1]
+ 1 │ enum Sample<T, T> {
+   ·             ┬  ┬
+   ·             │  ╰── used here again
+   ·             ╰── first declared here
+ 2 │     One @1,
+ 3 │     Two { value: T @1 } @2,
+ 4 │ }
+   ╰────
+  help: the names of each generic type must be unique
+

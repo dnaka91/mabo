@@ -1,3 +1,3 @@
 # Examples
 
-<<< ./examples/01.stef
+<<< ./examples/01.mabo

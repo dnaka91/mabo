@@ -1,9 +1,0 @@
----
-source: crates/stef-parser/tests/parser.rs
-description: "#[deprecated=\"don't use\",compress]\n#[validate(in_range(min=100,max=200),non_empty)]\nstruct Sample"
-input_file: crates/stef-parser/tests/inputs/attributes_min_ws.stef
----
-#[deprecated = "don't use", compress, validate(in_range(min = 100, max = 200), non_empty)]
-struct Sample
-
-

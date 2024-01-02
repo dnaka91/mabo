@@ -26,7 +26,7 @@ A single field is defined as `name: type @id`, the name, its type and [ID]. Fiel
 
 Here is a basic named schema with two fields `field1` and `field2`. The first one is a 32-bit unsigned integer and assigned the ID 1. The second one is a 16-bit unsigned integer and assigned the ID 2.
 
-<<< structs/named.stef
+<<< structs/named.mabo
 
 ### Languages {#named-lang}
 
@@ -66,7 +66,7 @@ A single field is defined as `type @id`, the name and [ID].
 
 ### Schema {#unnamed-schema}
 
-<<< structs/unnamed.stef
+<<< structs/unnamed.mabo
 
 ### Languages {#unnamed-lang}
 
@@ -90,7 +90,7 @@ Instead, it's only the type that carries information.
 
 ### Schema {#unit-schema}
 
-<<< structs/unit.stef
+<<< structs/unit.mabo
 
 ### Languages {#unit-lang}
 
@@ -108,7 +108,7 @@ These samples describe how the schema would be defined in each language, when ge
 
 ### Schema {#generics-schema}
 
-<<< structs/generics.stef
+<<< structs/generics.mabo
 
 ### Languages {#generics-lang}
 

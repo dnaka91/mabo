@@ -1,0 +1,25 @@
+[package]
+name = "mabo-cli"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "mabo"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+color-eyre.workspace = true
+glob.workspace = true
+miette = { workspace = true, features = ["fancy-no-backtrace"] }
+mimalloc.workspace = true
+mabo-parser = { path = "../mabo-parser" }
+
+[lints]
+workspace = true

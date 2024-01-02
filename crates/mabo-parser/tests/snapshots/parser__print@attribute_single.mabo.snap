@@ -1,0 +1,9 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "#[deprecated = \"don't use\"]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attribute_single.mabo
+---
+#[deprecated = "don't use"]
+struct Sample
+
+

@@ -1,0 +1,18 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/enum_basic.mabo
+---
+/// Sample enum.
+enum Sample {
+    One @1,
+    /// Second variant
+    Two(u32 @1, u64 @2) @2,
+    Three {
+        field1: u32 @1,
+        /// Second field of third variant
+        field2: bool @2,
+    } @3,
+}
+
+

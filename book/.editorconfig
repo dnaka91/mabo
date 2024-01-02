@@ -1,2 +1,5 @@
+[*.{md,svg}]
+indent_size = 2
+
 [*.kt]
 ktlint_standard_filename = disabled

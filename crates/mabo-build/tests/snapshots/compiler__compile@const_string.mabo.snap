@@ -1,0 +1,16 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+input_file: crates/mabo-parser/tests/inputs/const_string.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[allow(dead_code)]
+pub const SIMPLE: &str = "value";
+#[allow(dead_code)]
+pub const NEWLINE_ESCAPE: &str = "one two three";
+#[allow(dead_code)]
+pub const ESCAPES: &str = "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ";
+#[allow(dead_code)]
+pub const MULTILINE: &str = "a\n    b\n    c\n";
+

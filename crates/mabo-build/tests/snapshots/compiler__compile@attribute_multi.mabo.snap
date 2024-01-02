@@ -1,0 +1,45 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "#[validate(min = 1, max = 100)]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attribute_multi.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample;
+#[automatically_derived]
+impl ::mabo::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::mabo::BufMut) {
+        let Self = self;
+    }
+}
+#[automatically_derived]
+impl ::mabo::Decode for Sample {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+        Ok(Self)
+    }
+}
+#[automatically_derived]
+impl ::mabo::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        let Self = self;
+        0
+    }
+}
+

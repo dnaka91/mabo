@@ -1,0 +1,9 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "#[deprecated]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attribute_unit.mabo
+---
+#[deprecated]
+struct Sample
+
+

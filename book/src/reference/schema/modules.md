@@ -4,10 +4,10 @@
 
 ## Schema
 
-<<< modules/basic.stef
+<<< modules/basic.mabo
 
 ## Nesting
 
 ### Schema {#nesting-schema}
 
-<<< modules/nesting.stef
+<<< modules/nesting.mabo

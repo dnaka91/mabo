@@ -1,0 +1,38 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "#[deprecated]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attribute_unit.mabo
+---
+Schema {
+    path: Some(
+        "attribute_unit.mabo",
+    ),
+    source: "#[deprecated]\nstruct Sample\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [
+                        Attribute {
+                            name: "deprecated",
+                            value: Unit,
+                        },
+                    ],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Unit,
+            },
+        ),
+    ],
+}

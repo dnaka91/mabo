@@ -1,0 +1,30 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "use datetime::timing::Timestamp;\n\nstruct Sample {\n    value: Timestamp<u32> @1,\n}"
+input_file: crates/mabo-compiler/tests/inputs/resolve/remote_gens_mismatch.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving type in remote modules
+  ╰─▶ the use side has ❬Y❭1❬Y❭ generic(s), mismatching with the declaration
+   ╭─[remote_gens_mismatch.mabo:1:1]
+ 1 │ use datetime::timing::Timestamp;
+ 2 │ 
+ 3 │ struct Sample {
+ 4 │     value: Timestamp<u32> @1,
+   ·            ────┬────
+   ·                ╰── used here
+ 5 │ }
+   ╰────
+  help: the amount of generics must always match
+
+Error:   × the declaration has ❬Y❭0❬Y❭ generic(s), mismatching with the use side
+    ╭─[resolve/datetime.mabo:7:1]
+  7 │ mod timing {
+  8 │     const UNIX_EPOCH: u64 = 0;
+  9 │ 
+ 10 │     struct Timestamp(u64 @1)
+    ·            ────┬────
+    ·                ╰── declared here
+ 11 │ }
+    ╰────
+

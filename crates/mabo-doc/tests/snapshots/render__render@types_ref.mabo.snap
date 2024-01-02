@@ -1,0 +1,260 @@
+---
+source: crates/mabo-doc/tests/render.rs
+description: "struct Sample {\n    basic: Test123 @1,\n    with_generics: KeyValue<u32, bool> @2,\n}\n\nenum Test123 {\n    Value @1,\n}\n\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_ref.mabo
+---
+--- types_ref/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>types_ref - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema types_ref</h2>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.Sample.html">Sample</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.KeyValue.html">KeyValue</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-enum" href="enum.Test123.html">Test123</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- types_ref/struct.Sample.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>Sample - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">types_ref</a>::<span class="name-struct">Sample</span>
+  </h2>
+  <pre class="item-definition my-2">struct Sample {
+    basic: Test123 @1,
+    with_generics: KeyValue&lt;u32, bool&gt; @2,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">3</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">basic</span>:
+        <span class="field-type">Test123</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">with_generics</span>:
+        <span class="field-type">KeyValue&lt;u32, bool&gt;</span>
+        <span class="field-id">@2</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- types_ref/enum.Test123.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>Test123 - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Enum
+    <a href="index.html">types_ref</a>::<span class="name-enum">Test123</span>
+  </h2>
+  <pre class="item-definition my-2">enum Test123 {
+    Value @1,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Variants</h3>
+  <ul>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Value</span>
+        <span class="variant-id">@1</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- types_ref/struct.KeyValue.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>KeyValue - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">types_ref</a>::<span class="name-struct">KeyValue</span>
+  </h2>
+  <pre class="item-definition my-2">struct KeyValue&lt;K, V&gt; {
+    key: K @1,
+    value: V @2,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">3</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">key</span>:
+        <span class="field-type">K</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">value</span>:
+        <span class="field-type">V</span>
+        <span class="field-id">@2</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>

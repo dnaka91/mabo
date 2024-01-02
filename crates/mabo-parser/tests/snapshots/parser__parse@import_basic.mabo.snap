@@ -1,0 +1,52 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "use other::schema::Sample;\nuse second::submodule;"
+input_file: crates/mabo-parser/tests/inputs/import_basic.mabo
+---
+Schema {
+    path: Some(
+        "import_basic.mabo",
+    ),
+    source: "use other::schema::Sample;\nuse second::submodule;\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Import(
+            Import {
+                full: Name {
+                    value: "other::schema::Sample",
+                },
+                segments: [
+                    Name {
+                        value: "other",
+                    },
+                    Name {
+                        value: "schema",
+                    },
+                ],
+                element: Some(
+                    Name {
+                        value: "Sample",
+                    },
+                ),
+            },
+        ),
+        Import(
+            Import {
+                full: Name {
+                    value: "second::submodule",
+                },
+                segments: [
+                    Name {
+                        value: "second",
+                    },
+                    Name {
+                        value: "submodule",
+                    },
+                ],
+                element: None,
+            },
+        ),
+    ],
+}

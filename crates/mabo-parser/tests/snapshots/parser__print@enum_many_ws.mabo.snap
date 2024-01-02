@@ -1,0 +1,16 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "/// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n       Two  (   u32   @1,     u64     @2)    @2,\n\n            Three     {\n\n                    field1:    u32      @1,\n\n                    field2:    bool     @2,\n\n            }    @3,\n\n }"
+input_file: crates/mabo-parser/tests/inputs/enum_many_ws.mabo
+---
+/// Sample enum.
+enum Sample {
+    One @1,
+    Two(u32 @1, u64 @2) @2,
+    Three {
+        field1: u32 @1,
+        field2: bool @2,
+    } @3,
+}
+
+

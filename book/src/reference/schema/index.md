@@ -1,6 +1,6 @@
 # Schema
 
-Schemas are an essential part of STEF. They define the structure of the data, and thus, how to en- and decode to or from the raw bytes.
+Schemas are an essential part of Mabo. They define the structure of the data, and thus, how to en- and decode to or from the raw bytes.
 
 [[toc]]
 

@@ -1,9 +1,9 @@
 {
-  "name": "stef",
+  "name": "mabo",
   "private": true,
   "workspaces": [
     "book",
-    "crates/stef-doc",
+    "crates/mabo-doc",
     "vscode-extension"
   ]
 }

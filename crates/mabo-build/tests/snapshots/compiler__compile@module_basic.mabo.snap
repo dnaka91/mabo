@@ -1,0 +1,141 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}"
+input_file: crates/mabo-parser/tests/inputs/module_basic.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+pub mod a {
+    #[allow(unused_imports)]
+    use ::mabo::buf::{Decode, Encode, Size};
+    /// Inner module
+    pub mod b {
+        #[allow(unused_imports)]
+        use ::mabo::buf::{Decode, Encode, Size};
+        #[derive(Clone, Debug, PartialEq)]
+        #[allow(clippy::module_name_repetitions, clippy::option_option)]
+        pub enum Sample {
+            One,
+        }
+        #[automatically_derived]
+        impl ::mabo::Encode for Sample {
+            #[allow(
+                clippy::borrow_deref_ref,
+                clippy::deref_addrof,
+                clippy::semicolon_if_nothing_returned,
+                clippy::too_many_lines,
+            )]
+            fn encode(&self, w: &mut impl ::mabo::BufMut) {
+                match self {
+                    Self::One => {
+                        ::mabo::buf::encode_variant_id(w, ::mabo::VariantId::new(1));
+                    }
+                }
+            }
+        }
+        #[automatically_derived]
+        impl ::mabo::Decode for Sample {
+            #[allow(clippy::too_many_lines)]
+            fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+                match ::mabo::buf::decode_variant_id(r)?.value {
+                    1 => Ok(Self::One),
+                    id => Err(::mabo::buf::Error::UnknownVariant(id)),
+                }
+            }
+        }
+        #[automatically_derived]
+        impl ::mabo::buf::Size for Sample {
+            #[allow(
+                clippy::borrow_deref_ref,
+                clippy::deref_addrof,
+                clippy::semicolon_if_nothing_returned,
+                clippy::too_many_lines,
+            )]
+            fn size(&self) -> usize {
+                match self {
+                    Self::One => ::mabo::buf::size_id(1),
+                }
+            }
+        }
+    }
+    #[derive(Clone, Debug, PartialEq)]
+    #[allow(clippy::module_name_repetitions, clippy::option_option)]
+    pub struct Sample {
+        pub value: u32,
+        pub inner: b::Sample,
+    }
+    #[automatically_derived]
+    impl ::mabo::Encode for Sample {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::deref_addrof,
+            clippy::explicit_auto_deref,
+            clippy::needless_borrow,
+            clippy::too_many_lines,
+        )]
+        fn encode(&self, w: &mut impl ::mabo::BufMut) {
+            let Self { value, inner } = self;
+            ::mabo::buf::encode_field(
+                w,
+                ::mabo::FieldId::new(1, ::mabo::FieldEncoding::Varint),
+                |w| {
+                    ::mabo::buf::encode_u32(w, *value);
+                },
+            );
+            ::mabo::buf::encode_field(
+                w,
+                ::mabo::FieldId::new(2, ::mabo::FieldEncoding::LengthPrefixed),
+                |w| {
+                    inner.encode(w);
+                },
+            );
+            ::mabo::buf::encode_u32(w, ::mabo::buf::END_MARKER);
+        }
+    }
+    #[automatically_derived]
+    impl ::mabo::Decode for Sample {
+        #[allow(clippy::type_complexity, clippy::too_many_lines)]
+        fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+            let mut value: Option<u32> = None;
+            let mut inner: Option<b::Sample> = None;
+            loop {
+                let id = ::mabo::buf::decode_id(r)?;
+                match id.value {
+                    ::mabo::buf::END_MARKER => break,
+                    1 => value = Some(::mabo::buf::decode_u32(r)?),
+                    2 => inner = Some(b::Sample::decode(r)?),
+                    _ => ::mabo::buf::decode_skip(r, id.encoding)?,
+                }
+            }
+            Ok(Self {
+                value: value
+                    .ok_or(::mabo::buf::Error::MissingField {
+                        id: 1,
+                        name: Some("value"),
+                    })?,
+                inner: inner
+                    .ok_or(::mabo::buf::Error::MissingField {
+                        id: 2,
+                        name: Some("inner"),
+                    })?,
+            })
+        }
+    }
+    #[automatically_derived]
+    impl ::mabo::buf::Size for Sample {
+        #[allow(
+            clippy::borrow_deref_ref,
+            clippy::deref_addrof,
+            clippy::explicit_auto_deref,
+            clippy::needless_borrow,
+            clippy::too_many_lines,
+        )]
+        fn size(&self) -> usize {
+            let Self { value, inner } = self;
+            ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*value) })
+                + ::mabo::buf::size_field(2, || { inner.size() })
+                + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+        }
+    }
+}
+

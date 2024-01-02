@@ -1,0 +1,13 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "/// Hello world!\nmod sample {}"
+input_file: crates/mabo-build/tests/inputs_extra/module.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+/// Hello world!
+pub mod sample {
+    #[allow(unused_imports)]
+    use ::mabo::buf::{Decode, Encode, Size};
+}
+

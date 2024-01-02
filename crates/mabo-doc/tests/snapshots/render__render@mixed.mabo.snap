@@ -1,0 +1,1078 @@
+---
+source: crates/mabo-doc/tests/render.rs
+description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+input_file: crates/mabo-parser/tests/inputs/mixed.mabo
+---
+--- mixed/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>mixed - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema mixed</h2>
+  <div class="markdown pl-6">
+    <p>Schema with a bit of everything, to try out more complex scenarios.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-module" href="birthday/index.html">birthday</a>
+      </td>
+      <td>
+        <p>Details for defining birthdays.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.User.html">User</a>
+      </td>
+      <td>
+        <p>Basic user information.</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.FullName.html">FullName</a>
+      </td>
+      <td>
+        <p>Full name of a user.</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.Address.html">Address</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-enum" href="enum.HouseNumber.html">HouseNumber</a>
+      </td>
+      <td>
+        <p>The number on the house.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-alias" href="alias.Name.html">Name</a>
+      </td>
+      <td>
+        <p>Simple alias for convenience.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.MAX_AGE.html">MAX_AGE</a>
+      </td>
+      <td>
+        <p>Probably the max age of a human, currently.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- mixed/struct.User.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>User - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">mixed</a>::<span class="name-struct">User</span>
+  </h2>
+  <pre class="item-definition my-2">struct User {
+    name: FullName @1,
+    address: option&lt;Address&gt; @2,
+    age: u8 @3,
+    birthday: birthday::DayOfBirth @4,
+}</pre>
+  <div class="markdown pl-6">
+    <p>Basic user information.</p>
+<p>Uses various other <code>structs</code> and <code>enums</code> to compose the information
+in a <strong>type safe</strong> way.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">5</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">name</span>:
+        <span class="field-type">FullName</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">address</span>:
+        <span class="field-type">option&lt;Address&gt;</span>
+        <span class="field-id">@2</span>
+      </code>
+      <div class="markdown pl-4">
+        <p>Physical address, might not be specified by the user.</p>
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>option</strong> <code>0..</code></p>
+          <ul>
+          <li>value: <em>unknown</em></li>
+          </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">age</span>:
+        <span class="field-type">u8</span>
+        <span class="field-id">@3</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u8</strong> <code>1</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">birthday</span>:
+        <span class="field-type">birthday::DayOfBirth</span>
+        <span class="field-id">@4</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/struct.FullName.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>FullName - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">mixed</a>::<span class="name-struct">FullName</span>
+  </h2>
+  <pre class="item-definition my-2">struct FullName {
+    first: string @1,
+    middle: option&lt;string&gt; @2,
+    last: string @3,
+}</pre>
+  <div class="markdown pl-6">
+    <p>Full name of a user.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">4</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">first</span>:
+        <span class="field-type">string</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">middle</span>:
+        <span class="field-type">option&lt;string&gt;</span>
+        <span class="field-id">@2</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>option</strong> <code>0..</code></p>
+          <ul>
+          <li>value: <strong>string</strong> <code>1..</code></li>
+          </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">last</span>:
+        <span class="field-type">string</span>
+        <span class="field-id">@3</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/alias.Name.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>Name - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Alias
+    <a href="index.html">mixed</a>::<span class="name-alias">Name</span>
+  </h2>
+  <pre class="item-definition my-2">type Name = FullName;</pre>
+  <div class="markdown pl-6">
+    <p>Simple alias for convenience.</p>
+<ul>
+<li>Might be easier to remember.</li>
+<li>Often referenced as this.</li>
+</ul>
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/struct.Address.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>Address - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">mixed</a>::<span class="name-struct">Address</span>
+  </h2>
+  <pre class="item-definition my-2">struct Address {
+    street: string @1,
+    house_no: HouseNumber @2,
+    city: string @3,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">4</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">street</span>:
+        <span class="field-type">string</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        <p>Street name.</p>
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">house_no</span>:
+        <span class="field-type">HouseNumber</span>
+        <span class="field-id">@2</span>
+      </code>
+      <div class="markdown pl-4">
+        <p>Number of the house in the street.</p>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">city</span>:
+        <span class="field-type">string</span>
+        <span class="field-id">@3</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/enum.HouseNumber.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>HouseNumber - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Enum
+    <a href="index.html">mixed</a>::<span class="name-enum">HouseNumber</span>
+  </h2>
+  <pre class="item-definition my-2">enum HouseNumber {
+    Digit(u16 @1) @1,
+    Text(string @1) @2,
+}</pre>
+  <div class="markdown pl-6">
+    <p>The number on the house.</p>
+<p>More details can be found at <a href="https://en.wikipedia.org/wiki/House_numbering">Wikipedia</a>.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Variants</h3>
+  <ul>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Digit</span>
+        <span class="variant-id">@1</span>
+      </code>
+      <div class="markdown pl-6">
+        <p>Digit only number.</p>
+      </div>
+      <div class="pl-6">
+        <h4>Fields</h4>
+        <ul>
+          <li>
+            <code>
+              <span class="field-name">n0</span>:
+              <span class="field-type">u16</span>
+              <span class="field-id">@1</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u16</strong> <code>1..3</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Text</span>
+        <span class="variant-id">@2</span>
+      </code>
+      <div class="markdown pl-6">
+        <p>Mixed <em>number</em> with characters like <code>1a</code>.</p>
+      </div>
+      <div class="pl-6">
+        <h4>Fields</h4>
+        <ul>
+          <li>
+            <code>
+              <span class="field-name">n0</span>:
+              <span class="field-type">string</span>
+              <span class="field-id">@1</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>string</strong> <code>1..</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/constant.MAX_AGE.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>MAX_AGE - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">mixed</a>::<span class="name-const">MAX_AGE</span>
+  </h2>
+  <pre class="item-definition my-2">const MAX_AGE: u8 = 120;</pre>
+  <div class="markdown pl-6">
+    <p>Probably the max age of a human, currently.</p>
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/birthday/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../../assets/style.css" />
+
+    <title>birthday - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Module
+    <a href="../index.html">mixed</a>::<span class="name-module">birthday</span>
+  </h2>
+  <div class="markdown pl-6">
+    <p>Details for defining birthdays.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-enum" href="enum.DayOfBirth.html">DayOfBirth</a>
+      </td>
+      <td>
+        <p>As the name suggests, specifies details about birthdays.</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-enum" href="enum.Month.html">Month</a>
+      </td>
+      <td>
+        <p>The month of the year.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.MIN_YEAR.html">MIN_YEAR</a>
+      </td>
+      <td>
+        <p>Let's assume we only have details of people born <strong>after</strong> this year.</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.MAX_DAY.html">MAX_DAY</a>
+      </td>
+      <td>
+        <p>Absolute maximum for a day, but might be even less depending
+on the month.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- mixed/birthday/enum.DayOfBirth.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../../assets/style.css" />
+
+    <title>DayOfBirth - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Enum
+    <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-enum">DayOfBirth</span>
+  </h2>
+  <pre class="item-definition my-2">enum DayOfBirth {
+    Specific {
+        year: u16 @1,
+        month: Month @2,
+        day: u8 @3,
+    } @1,
+    Secret {
+        reason: option&lt;string&gt; @1,
+    } @2,
+    Unknown @3,
+}</pre>
+  <div class="markdown pl-6">
+    <p>As the name suggests, specifies details about birthdays.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Variants</h3>
+  <ul>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Specific</span>
+        <span class="variant-id">@1</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+      <div class="pl-6">
+        <h4>Fields</h4>
+        <ul>
+          <li>
+            <code>
+              <span class="field-name">year</span>:
+              <span class="field-type">u16</span>
+              <span class="field-id">@1</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u16</strong> <code>1..3</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <code>
+              <span class="field-name">month</span>:
+              <span class="field-type">Month</span>
+              <span class="field-id">@2</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+          </li>
+          <li>
+            <code>
+              <span class="field-name">day</span>:
+              <span class="field-type">u8</span>
+              <span class="field-id">@3</span>
+            </code>
+            <div class="markdown pl-4">
+              
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>u8</strong> <code>1</code></p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Secret</span>
+        <span class="variant-id">@2</span>
+      </code>
+      <div class="markdown pl-6">
+        <p>The user didn't want to say.</p>
+      </div>
+      <div class="pl-6">
+        <h4>Fields</h4>
+        <ul>
+          <li>
+            <code>
+              <span class="field-name">reason</span>:
+              <span class="field-type">option&lt;string&gt;</span>
+              <span class="field-id">@1</span>
+            </code>
+            <div class="markdown pl-4">
+              <p>Optional info from the user about why they didn't want to
+reveal their birthday.</p>
+            </div>
+            <div class="pl-4">
+              <h4 class="my-2">Metadata</h4>
+              <div class="text-sm">
+                <p>The size range is:</p>
+                <div
+                  class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+                  <p><strong>option</strong> <code>0..</code></p>
+                <ul>
+                <li>value: <strong>string</strong> <code>1..</code></li>
+                </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">Unknown</span>
+        <span class="variant-id">@3</span>
+      </code>
+      <div class="markdown pl-6">
+        <p>We never asked and nobody knows.</p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/birthday/constant.MIN_YEAR.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../../assets/style.css" />
+
+    <title>MIN_YEAR - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-const">MIN_YEAR</span>
+  </h2>
+  <pre class="item-definition my-2">const MIN_YEAR: u16 = 1900;</pre>
+  <div class="markdown pl-6">
+    <p>Let's assume we only have details of people born <strong>after</strong> this year.</p>
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/birthday/constant.MAX_DAY.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../../assets/style.css" />
+
+    <title>MAX_DAY - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-const">MAX_DAY</span>
+  </h2>
+  <pre class="item-definition my-2">const MAX_DAY: u8 = 31;</pre>
+  <div class="markdown pl-6">
+    <p>Absolute maximum for a day, but might be even less depending
+on the month.</p>
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- mixed/birthday/enum.Month.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../../assets/style.css" />
+
+    <title>Month - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Enum
+    <a href="../index.html">mixed</a>::<a href="index.html">birthday</a>::<span class="name-enum">Month</span>
+  </h2>
+  <pre class="item-definition my-2">enum Month {
+    January @1,
+    February @2,
+    March @3,
+    April @4,
+    May @5,
+    June @6,
+    July @7,
+    August @8,
+    September @9,
+    October @10,
+    November @11,
+    December @12,
+}</pre>
+  <div class="markdown pl-6">
+    <p>The month of the year.</p>
+  </div>
+</div>
+<div class="section">
+  <h3>Variants</h3>
+  <ul>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">January</span>
+        <span class="variant-id">@1</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">February</span>
+        <span class="variant-id">@2</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">March</span>
+        <span class="variant-id">@3</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">April</span>
+        <span class="variant-id">@4</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">May</span>
+        <span class="variant-id">@5</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">June</span>
+        <span class="variant-id">@6</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">July</span>
+        <span class="variant-id">@7</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">August</span>
+        <span class="variant-id">@8</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">September</span>
+        <span class="variant-id">@9</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">October</span>
+        <span class="variant-id">@10</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">November</span>
+        <span class="variant-id">@11</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+    <li class="field-definition">
+      <code class="name-variant text-lg">
+        <span class="variant-name">December</span>
+        <span class="variant-id">@12</span>
+      </code>
+      <div class="markdown pl-6">
+        
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>

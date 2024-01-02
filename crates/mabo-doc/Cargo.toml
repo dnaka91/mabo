@@ -1,0 +1,25 @@
+[package]
+name = "mabo-doc"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+askama = { version = "0.12.1", default-features = false, features = ["markdown"] }
+heck = "0.4.1"
+mabo-compiler = { path = "../mabo-compiler" }
+mabo-meta = { path = "../mabo-meta" }
+
+[dev-dependencies]
+glob.workspace = true
+insta.workspace = true
+mabo-parser = { path = "../mabo-parser" }
+
+[lints]
+workspace = true

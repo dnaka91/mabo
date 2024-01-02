@@ -1,16 +1,16 @@
 check:
   #!/usr/bin/env fish
 
-  echo src/**/*.stef | xargs -n 1 -P 8 -- just check-stef
+  echo src/**/*.mabo | xargs -n 1 -P 8 -- just check-mabo
   echo src/**/*.rs   | xargs -n 1 -P 8 -- just check-rust
   echo src/**/*.go   | xargs -n 1 -P 8 -- just check-go
   echo src/**/*.kt   | xargs -n 1 -P 8 -- just check-kotlin
   echo src/**/*.ts   | xargs -n 1 -P 8 -- just check-typescript
   echo src/**/*.py   | xargs -n 1 -P 8 -- just check-python
 
-@check-stef file:
+@check-mabo file:
   echo checking {{file}}
-  cargo run --quiet --package stef-cli -- check {{file}}
+  cargo run --quiet --package mabo-cli -- check {{file}}
 
 @check-rust file:
   echo checking {{file}}
@@ -35,15 +35,15 @@ check:
 format:
   #!/usr/bin/env fish
 
-  just format-stef       src/**/*.stef
+  just format-mabo       src/**/*.mabo
   just format-rust       src/**/*.rs
   just format-go         src/**/*.go
   just format-kotlin     src/**/*.kt
   just format-typescript src/**/*.ts
   just format-python     src/**/*.py
 
-@format-stef +files:
-  cargo run --quiet --package stef-cli -- format {{files}}
+@format-mabo +files:
+  cargo run --quiet --package mabo-cli -- format {{files}}
 
 @format-rust +files:
   rustup run nightly rustfmt --edition 2021 {{files}}

@@ -1,13 +1,14 @@
 {
-  "name": "stef",
-  "displayName": "STEF",
+  "name": "mabo",
+  "displayName": "Mabo",
   "description": "",
   "version": "0.1.0",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/dnaka91/stef.git"
+    "url": "https://github.com/dnaka91/mabo.git"
   },
   "main": "./dist/extension.js",
+  "icon": "./images/logo.png",
   "engines": {
     "node": ">=21",
     "vscode": "^1.85.0"
@@ -18,28 +19,32 @@
   "contributes": {
     "languages": [
       {
-        "id": "stef",
+        "id": "mabo",
         "aliases": [
-          "STEF",
-          "stef"
+          "Mabo",
+          "mabo"
         ],
         "extensions": [
-          ".stef"
+          ".mabo"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "dark": "./images/file-icon.png",
+          "light": "./images/file-icon.png"
+        }
       }
     ],
     "grammars": [
       {
-        "language": "stef",
-        "scopeName": "source.stef",
-        "path": "./syntaxes/stef.tmLanguage.json"
+        "language": "mabo",
+        "scopeName": "source.mabo",
+        "path": "./syntaxes/mabo.tmLanguage.json"
       }
     ],
     "configuration": {
       "title": "Strongly Typed Encoding Format",
       "properties": {
-        "stef.maxNumberOfProblems": {
+        "mabo.maxNumberOfProblems": {
           "scope": "resource",
           "type": "number",
           "default": 100,
@@ -49,9 +54,9 @@
     },
     "commands": [
       {
-        "command": "stef.restart",
+        "command": "mabo.restart",
         "title": "Restart LSP Server",
-        "category": "Stef"
+        "category": "Mabo"
       }
     ],
     "semanticTokenTypes": [
@@ -84,22 +89,22 @@
     ],
     "semanticTokenScopes": [
       {
-        "language": "stef",
+        "language": "mabo",
         "scopes": {
           "boolean": [
-            "constant.language.boolean.stef"
+            "constant.language.boolean.mabo"
           ],
           "builtinType": [
-            "support.type.primitive.stef"
+            "support.type.primitive.mabo"
           ],
           "identifier": [
-            "constant.numeric.stef"
+            "constant.numeric.mabo"
           ],
           "typeAlias": [
-            "entity.name.type.declaration.stef"
+            "entity.name.type.declaration.mabo"
           ],
           "variable.constant": [
-            "variable.other.constant.stef"
+            "variable.other.constant.mabo"
           ]
         }
       }
@@ -113,7 +118,7 @@
     "watch": "bun run esbuild --watch",
     "build": "bun run esbuild --minify",
     "lint": "biome check --apply src/**/*.ts",
-    "syntaxes": "js-yaml syntaxes/stef.tmLanguage.yaml > syntaxes/stef.tmLanguage.json",
+    "syntaxes": "js-yaml syntaxes/mabo.tmLanguage.yaml > syntaxes/mabo.tmLanguage.json",
     "vscode:prepublish": "bun run syntaxes && bun run build",
     "package": "vsce package"
   },

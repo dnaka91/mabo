@@ -1,0 +1,18 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "struct Sample {\n    value: inner::Other @1,\n}\n\nmod inner {}"
+input_file: crates/mabo-compiler/tests/inputs/resolve/local_sub.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving type in local modules
+  ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭test::inner❬Y❭
+   ╭─[local_sub.mabo:1:1]
+ 1 │ struct Sample {
+ 2 │     value: inner::Other @1,
+   ·                   ──┬──
+   ·                     ╰── used here
+ 3 │ }
+ 4 │ 
+ 5 │ mod inner {}
+   ╰────
+

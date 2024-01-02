@@ -4,4 +4,4 @@
 
 ## Schema
 
-<<< references/basic.stef
+<<< references/basic.mabo

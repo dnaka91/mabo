@@ -1,0 +1,395 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "struct Sample {\n    f01: non_zero<u8> @1,\n    f02: non_zero<u16> @2,\n    f03: non_zero<u32> @3,\n    f04: non_zero<u64> @4,\n    f05: non_zero<u128> @5,\n    f06: non_zero<i8> @6,\n    f07: non_zero<i16> @7,\n    f08: non_zero<i32> @8,\n    f09: non_zero<i64> @9,\n    f10: non_zero<i128> @10,\n    f11: non_zero<string> @11,\n    f12: non_zero<bytes> @12,\n    f13: non_zero<vec<string>> @13,\n    f14: non_zero<hash_map<string, bytes>> @14,\n    f15: non_zero<hash_set<string>> @15,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_non_zero.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample {
+    pub f01: ::std::num::NonZeroU8,
+    pub f02: ::std::num::NonZeroU16,
+    pub f03: ::std::num::NonZeroU32,
+    pub f04: ::std::num::NonZeroU64,
+    pub f05: ::std::num::NonZeroU128,
+    pub f06: ::std::num::NonZeroI8,
+    pub f07: ::std::num::NonZeroI16,
+    pub f08: ::std::num::NonZeroI32,
+    pub f09: ::std::num::NonZeroI64,
+    pub f10: ::std::num::NonZeroI128,
+    pub f11: ::mabo::NonZeroString,
+    pub f12: ::mabo::NonZeroBytes,
+    pub f13: ::mabo::NonZeroVec<String>,
+    pub f14: ::mabo::NonZeroHashMap<String, Vec<u8>>,
+    pub f15: ::mabo::NonZeroHashSet<String>,
+}
+#[automatically_derived]
+impl ::mabo::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::mabo::BufMut) {
+        let Self {
+            f01,
+            f02,
+            f03,
+            f04,
+            f05,
+            f06,
+            f07,
+            f08,
+            f09,
+            f10,
+            f11,
+            f12,
+            f13,
+            f14,
+            f15,
+        } = self;
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(1, ::mabo::FieldEncoding::Fixed1),
+            |w| {
+                ::mabo::buf::encode_u8(w, f01.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(2, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_u16(w, f02.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(3, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_u32(w, f03.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(4, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_u64(w, f04.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(5, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_u128(w, f05.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(6, ::mabo::FieldEncoding::Fixed1),
+            |w| {
+                ::mabo::buf::encode_i8(w, f06.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(7, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_i16(w, f07.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(8, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_i32(w, f08.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(9, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_i64(w, f09.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(10, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_i128(w, f10.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(11, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                ::mabo::buf::encode_string(w, f11.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(12, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                ::mabo::buf::encode_bytes_std(w, f12.get());
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(13, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                ::mabo::buf::encode_vec(
+                    w,
+                    f13.get(),
+                    |v| { ::mabo::buf::size_string(v) },
+                    |w, v| {
+                        ::mabo::buf::encode_string(w, v);
+                    },
+                );
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(14, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                ::mabo::buf::encode_hash_map(
+                    w,
+                    f14.get(),
+                    |k| { ::mabo::buf::size_string(k) },
+                    |v| { ::mabo::buf::size_bytes_std(v) },
+                    |w, k| {
+                        ::mabo::buf::encode_string(w, k);
+                    },
+                    |w, v| {
+                        ::mabo::buf::encode_bytes_std(w, v);
+                    },
+                );
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(15, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                ::mabo::buf::encode_hash_set(
+                    w,
+                    f15.get(),
+                    |v| { ::mabo::buf::size_string(v) },
+                    |w, v| {
+                        ::mabo::buf::encode_string(w, v);
+                    },
+                );
+            },
+        );
+        ::mabo::buf::encode_u32(w, ::mabo::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::mabo::Decode for Sample {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+        let mut f01: Option<::std::num::NonZeroU8> = None;
+        let mut f02: Option<::std::num::NonZeroU16> = None;
+        let mut f03: Option<::std::num::NonZeroU32> = None;
+        let mut f04: Option<::std::num::NonZeroU64> = None;
+        let mut f05: Option<::std::num::NonZeroU128> = None;
+        let mut f06: Option<::std::num::NonZeroI8> = None;
+        let mut f07: Option<::std::num::NonZeroI16> = None;
+        let mut f08: Option<::std::num::NonZeroI32> = None;
+        let mut f09: Option<::std::num::NonZeroI64> = None;
+        let mut f10: Option<::std::num::NonZeroI128> = None;
+        let mut f11: Option<::mabo::NonZeroString> = None;
+        let mut f12: Option<::mabo::NonZeroBytes> = None;
+        let mut f13: Option<::mabo::NonZeroVec<String>> = None;
+        let mut f14: Option<::mabo::NonZeroHashMap<String, Vec<u8>>> = None;
+        let mut f15: Option<::mabo::NonZeroHashSet<String>> = None;
+        loop {
+            let id = ::mabo::buf::decode_id(r)?;
+            match id.value {
+                ::mabo::buf::END_MARKER => break,
+                1 => f01 = Some(::mabo::buf::decode_non_zero_u8(r)?),
+                2 => f02 = Some(::mabo::buf::decode_non_zero_u16(r)?),
+                3 => f03 = Some(::mabo::buf::decode_non_zero_u32(r)?),
+                4 => f04 = Some(::mabo::buf::decode_non_zero_u64(r)?),
+                5 => f05 = Some(::mabo::buf::decode_non_zero_u128(r)?),
+                6 => f06 = Some(::mabo::buf::decode_non_zero_i8(r)?),
+                7 => f07 = Some(::mabo::buf::decode_non_zero_i16(r)?),
+                8 => f08 = Some(::mabo::buf::decode_non_zero_i32(r)?),
+                9 => f09 = Some(::mabo::buf::decode_non_zero_i64(r)?),
+                10 => f10 = Some(::mabo::buf::decode_non_zero_i128(r)?),
+                11 => f11 = Some(::mabo::buf::decode_non_zero_string(r)?),
+                12 => f12 = Some(::mabo::buf::decode_non_zero_bytes_std(r)?),
+                13 => {
+                    f13 = Some(
+                        ::mabo::buf::decode_non_zero_vec(
+                            r,
+                            |r| { ::mabo::buf::decode_string(r) },
+                        )?,
+                    );
+                }
+                14 => {
+                    f14 = Some(
+                        ::mabo::buf::decode_non_zero_hash_map(
+                            r,
+                            |r| { ::mabo::buf::decode_string(r) },
+                            |r| { ::mabo::buf::decode_bytes_std(r) },
+                        )?,
+                    );
+                }
+                15 => {
+                    f15 = Some(
+                        ::mabo::buf::decode_non_zero_hash_set(
+                            r,
+                            |r| { ::mabo::buf::decode_string(r) },
+                        )?,
+                    );
+                }
+                _ => ::mabo::buf::decode_skip(r, id.encoding)?,
+            }
+        }
+        Ok(Self {
+            f01: f01
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("f01"),
+                })?,
+            f02: f02
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("f02"),
+                })?,
+            f03: f03
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("f03"),
+                })?,
+            f04: f04
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 4,
+                    name: Some("f04"),
+                })?,
+            f05: f05
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 5,
+                    name: Some("f05"),
+                })?,
+            f06: f06
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 6,
+                    name: Some("f06"),
+                })?,
+            f07: f07
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 7,
+                    name: Some("f07"),
+                })?,
+            f08: f08
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 8,
+                    name: Some("f08"),
+                })?,
+            f09: f09
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 9,
+                    name: Some("f09"),
+                })?,
+            f10: f10
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 10,
+                    name: Some("f10"),
+                })?,
+            f11: f11
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 11,
+                    name: Some("f11"),
+                })?,
+            f12: f12
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 12,
+                    name: Some("f12"),
+                })?,
+            f13: f13
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 13,
+                    name: Some("f13"),
+                })?,
+            f14: f14
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 14,
+                    name: Some("f14"),
+                })?,
+            f15: f15
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 15,
+                    name: Some("f15"),
+                })?,
+        })
+    }
+}
+#[automatically_derived]
+impl ::mabo::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        let Self {
+            f01,
+            f02,
+            f03,
+            f04,
+            f05,
+            f06,
+            f07,
+            f08,
+            f09,
+            f10,
+            f11,
+            f12,
+            f13,
+            f14,
+            f15,
+        } = self;
+        ::mabo::buf::size_field(1, || { ::mabo::buf::size_u8(f01.get()) })
+            + ::mabo::buf::size_field(2, || { ::mabo::buf::size_u16(f02.get()) })
+            + ::mabo::buf::size_field(3, || { ::mabo::buf::size_u32(f03.get()) })
+            + ::mabo::buf::size_field(4, || { ::mabo::buf::size_u64(f04.get()) })
+            + ::mabo::buf::size_field(5, || { ::mabo::buf::size_u128(f05.get()) })
+            + ::mabo::buf::size_field(6, || { ::mabo::buf::size_i8(f06.get()) })
+            + ::mabo::buf::size_field(7, || { ::mabo::buf::size_i16(f07.get()) })
+            + ::mabo::buf::size_field(8, || { ::mabo::buf::size_i32(f08.get()) })
+            + ::mabo::buf::size_field(9, || { ::mabo::buf::size_i64(f09.get()) })
+            + ::mabo::buf::size_field(10, || { ::mabo::buf::size_i128(f10.get()) })
+            + ::mabo::buf::size_field(11, || { ::mabo::buf::size_string(f11.get()) })
+            + ::mabo::buf::size_field(12, || { ::mabo::buf::size_bytes_std(f12.get()) })
+            + ::mabo::buf::size_field(
+                13,
+                || {
+                    ::mabo::buf::size_vec(f13.get(), |v| { ::mabo::buf::size_string(v) })
+                },
+            )
+            + ::mabo::buf::size_field(
+                14,
+                || {
+                    ::mabo::buf::size_hash_map(
+                        f14.get(),
+                        |k| { ::mabo::buf::size_string(k) },
+                        |v| { ::mabo::buf::size_bytes_std(v) },
+                    )
+                },
+            )
+            + ::mabo::buf::size_field(
+                15,
+                || {
+                    ::mabo::buf::size_hash_set(
+                        f15.get(),
+                        |v| { ::mabo::buf::size_string(v) },
+                    )
+                },
+            ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+    }
+}
+

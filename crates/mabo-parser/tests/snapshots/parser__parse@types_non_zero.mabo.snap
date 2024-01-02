@@ -1,0 +1,353 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "struct Sample {\n    f01: non_zero<u8> @1,\n    f02: non_zero<u16> @2,\n    f03: non_zero<u32> @3,\n    f04: non_zero<u64> @4,\n    f05: non_zero<u128> @5,\n    f06: non_zero<i8> @6,\n    f07: non_zero<i16> @7,\n    f08: non_zero<i32> @8,\n    f09: non_zero<i64> @9,\n    f10: non_zero<i128> @10,\n    f11: non_zero<string> @11,\n    f12: non_zero<bytes> @12,\n    f13: non_zero<vec<string>> @13,\n    f14: non_zero<hash_map<string, bytes>> @14,\n    f15: non_zero<hash_set<string>> @15,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_non_zero.mabo
+---
+Schema {
+    path: Some(
+        "types_non_zero.mabo",
+    ),
+    source: "struct Sample {\n    f01: non_zero<u8> @1,\n    f02: non_zero<u16> @2,\n    f03: non_zero<u32> @3,\n    f04: non_zero<u64> @4,\n    f05: non_zero<u128> @5,\n    f06: non_zero<i8> @6,\n    f07: non_zero<i16> @7,\n    f08: non_zero<i32> @8,\n    f09: non_zero<i64> @9,\n    f10: non_zero<i128> @10,\n    f11: non_zero<string> @11,\n    f12: non_zero<bytes> @12,\n    f13: non_zero<vec<string>> @13,\n    f14: non_zero<hash_map<string, bytes>> @14,\n    f15: non_zero<hash_set<string>> @15,\n}\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f01",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U8,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f02",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U16,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f03",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U32,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f04",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U64,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 4,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f05",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: U128,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 5,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f06",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I8,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 6,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f07",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I16,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 7,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f08",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I32,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 8,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f09",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I64,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 9,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f10",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: I128,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 10,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f11",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: String,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 11,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f12",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: Bytes,
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 12,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f13",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: Vec(
+                                            Type {
+                                                value: String,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 13,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f14",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: HashMap(
+                                            (
+                                                Type {
+                                                    value: String,
+                                                },
+                                                Type {
+                                                    value: Bytes,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 14,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "f15",
+                            },
+                            ty: Type {
+                                value: NonZero(
+                                    Type {
+                                        value: HashSet(
+                                            Type {
+                                                value: String,
+                                            },
+                                        ),
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 15,
+                                },
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

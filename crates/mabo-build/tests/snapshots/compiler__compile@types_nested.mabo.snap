@@ -1,0 +1,142 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_nested.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample {
+    pub value: Vec<Option<::mabo::NonZeroHashMap<i64, Box<str>>>>,
+}
+#[automatically_derived]
+impl ::mabo::Encode for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::mabo::BufMut) {
+        let Self { value } = self;
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(1, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                ::mabo::buf::encode_vec(
+                    w,
+                    value,
+                    |v| {
+                        ::mabo::buf::size_option(
+                            v.as_ref(),
+                            |v| {
+                                ::mabo::buf::size_hash_map(
+                                    v.get(),
+                                    |k| { ::mabo::buf::size_i64(*k) },
+                                    |v| { ::mabo::buf::size_string(v) },
+                                )
+                            },
+                        )
+                    },
+                    |w, v| {
+                        ::mabo::buf::encode_option(
+                            w,
+                            v,
+                            |w, v| {
+                                ::mabo::buf::encode_hash_map(
+                                    w,
+                                    v.get(),
+                                    |k| { ::mabo::buf::size_i64(*k) },
+                                    |v| { ::mabo::buf::size_string(v) },
+                                    |w, k| {
+                                        ::mabo::buf::encode_i64(w, *k);
+                                    },
+                                    |w, v| {
+                                        ::mabo::buf::encode_string(w, v);
+                                    },
+                                );
+                            },
+                        );
+                    },
+                );
+            },
+        );
+        ::mabo::buf::encode_u32(w, ::mabo::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl ::mabo::Decode for Sample {
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+        let mut value: Option<Vec<Option<::mabo::NonZeroHashMap<i64, Box<str>>>>> = None;
+        loop {
+            let id = ::mabo::buf::decode_id(r)?;
+            match id.value {
+                ::mabo::buf::END_MARKER => break,
+                1 => {
+                    value = Some(
+                        ::mabo::buf::decode_vec(
+                            r,
+                            |r| {
+                                ::mabo::buf::decode_option(
+                                    r,
+                                    |r| {
+                                        ::mabo::buf::decode_non_zero_hash_map(
+                                            r,
+                                            |r| { ::mabo::buf::decode_i64(r) },
+                                            |r| { Box::<str>::decode(r) },
+                                        )
+                                    },
+                                )
+                            },
+                        )?,
+                    );
+                }
+                _ => ::mabo::buf::decode_skip(r, id.encoding)?,
+            }
+        }
+        Ok(Self {
+            value: value
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("value"),
+                })?,
+        })
+    }
+}
+#[automatically_derived]
+impl ::mabo::buf::Size for Sample {
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        let Self { value } = self;
+        ::mabo::buf::size_field(
+            1,
+            || {
+                ::mabo::buf::size_vec(
+                    value,
+                    |v| {
+                        ::mabo::buf::size_option(
+                            v.as_ref(),
+                            |v| {
+                                ::mabo::buf::size_hash_map(
+                                    v.get(),
+                                    |k| { ::mabo::buf::size_i64(*k) },
+                                    |v| { ::mabo::buf::size_string(v) },
+                                )
+                            },
+                        )
+                    },
+                )
+            },
+        ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+    }
+}
+

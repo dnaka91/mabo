@@ -1,0 +1,12 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "use other::schema::Sample;\nuse second::submodule;"
+input_file: crates/mabo-parser/tests/inputs/import_basic.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[allow(unused_imports)]
+use super::other::schema::Sample;
+#[allow(unused_imports)]
+use super::second::submodule;
+

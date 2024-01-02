@@ -1,0 +1,146 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/enum_basic.mabo
+---
+Schema {
+    path: Some(
+        "enum_basic.mabo",
+    ),
+    source: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Enum(
+            Enum {
+                comment: Comment(
+                    [
+                        CommentLine {
+                            value: "Sample enum.",
+                        },
+                    ],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "One",
+                        },
+                        fields: Unit,
+                        id: Some(
+                            Id {
+                                value: 1,
+                            },
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [
+                                CommentLine {
+                                    value: "Second variant",
+                                },
+                            ],
+                        ),
+                        name: Name {
+                            value: "Two",
+                        },
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: Type {
+                                        value: U32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: Type {
+                                        value: U64,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Some(
+                            Id {
+                                value: 2,
+                            },
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "Three",
+                        },
+                        fields: Named(
+                            [
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "field1",
+                                    },
+                                    ty: Type {
+                                        value: U32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [
+                                            CommentLine {
+                                                value: "Second field of third variant",
+                                            },
+                                        ],
+                                    ),
+                                    name: Name {
+                                        value: "field2",
+                                    },
+                                    ty: Type {
+                                        value: Bool,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Some(
+                            Id {
+                                value: 3,
+                            },
+                        ),
+                    },
+                ],
+            },
+        ),
+    ],
+}

@@ -11,7 +11,7 @@ build:
 
 # Run the benchmarks
 bench:
-  cargo bench -p stef-benches
+  cargo bench -p mabo-benches
 
 # Run clippy over all crates, testing every feature combination
 check:
@@ -36,18 +36,18 @@ snapshots:
 linkcheck:
   cd book && just build
   lychee --cache --max-cache-age 7d \
-    --exclude https://github\.com/dnaka91/stef \
+    --exclude https://github\.com/dnaka91/mabo \
     'book/src/**/*.md' \
     'book/book/**/*.html' \
     'crates/**/*.rs'
 
 # Install the LSP server into the local system
 install-lsp:
-  cargo install --path crates/stef-lsp --offline --debug
+  cargo install --path crates/mabo-lsp --offline --debug
 
 # Install the VSCode extension into VSCodium
 install-vscodium: install-lsp
   bun install
   cd vscode-extension && \
     bun run package && \
-    codium --install-extension stef-*.vsix
+    codium --install-extension mabo-*.vsix

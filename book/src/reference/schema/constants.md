@@ -12,7 +12,7 @@
 
 ## Schema
 
-<<< constants/basic.stef
+<<< constants/basic.mabo
 
 ## Languages
 

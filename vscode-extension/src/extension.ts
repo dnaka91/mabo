@@ -10,7 +10,7 @@ import {
 let client: LanguageClient;
 
 enum Cmds {
-  Restart = "stef.restart",
+  Restart = "mabo.restart",
 }
 
 export function activate(context: ExtensionContext) {
@@ -21,7 +21,7 @@ export function activate(context: ExtensionContext) {
   );
 
   const executable: Executable = {
-    command: "stef-lsp",
+    command: "mabo-lsp",
     transport: TransportKind.stdio,
   };
 
@@ -31,22 +31,22 @@ export function activate(context: ExtensionContext) {
       ...executable,
       options: {
         env: {
-          RUST_LOG: "info,tower_lsp=trace,stef_lsp=trace",
+          RUST_LOG: "info,tower_lsp=trace,mabo_lsp=trace",
         },
       },
     },
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: "file", language: "stef" }],
+    documentSelector: [{ scheme: "file", language: "mabo" }],
     synchronize: {
-      fileEvents: workspace.createFileSystemWatcher("**/*.stef"),
+      fileEvents: workspace.createFileSystemWatcher("**/*.mabo"),
     },
   };
 
   client = new LanguageClient(
-    "stef",
-    "Strongly Typed Encoding Format",
+    "mabo",
+    "Mabo Schema",
     serverOptions,
     clientOptions,
   );

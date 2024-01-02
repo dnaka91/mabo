@@ -1,0 +1,16 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "struct Sample {\n    value: Other @1,\n}"
+input_file: crates/mabo-compiler/tests/inputs/resolve/local_root.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving type in local modules
+  ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭test❬Y❭
+   ╭─[local_root.mabo:1:1]
+ 1 │ struct Sample {
+ 2 │     value: Other @1,
+   ·            ──┬──
+   ·              ╰── used here
+ 3 │ }
+   ╰────
+

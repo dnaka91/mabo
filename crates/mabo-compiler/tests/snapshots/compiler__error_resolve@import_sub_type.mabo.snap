@@ -1,0 +1,14 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "use datetime::timing::Other;"
+input_file: crates/mabo-compiler/tests/inputs/resolve/import_sub_type.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving import statement
+  ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭datetime::timing❬Y❭
+   ╭─[import_sub_type.mabo:1:1]
+ 1 │ use datetime::timing::Other;
+   ·                       ──┬──
+   ·                         ╰── used here
+   ╰────
+

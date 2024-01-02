@@ -6,7 +6,7 @@
 
 ### Schema {#basic-schema}
 
-<<< enums/basic.stef
+<<< enums/basic.mabo
 
 ### Languages {#basic-lang}
 
@@ -22,7 +22,7 @@
 
 ### Schema {#advanced-schema}
 
-<<< enums/advanced.stef
+<<< enums/advanced.mabo
 
 ### Languages {#advanced-lang}
 

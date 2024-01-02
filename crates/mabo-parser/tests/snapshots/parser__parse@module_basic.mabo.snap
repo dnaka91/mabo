@@ -1,0 +1,140 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}"
+input_file: crates/mabo-parser/tests/inputs/module_basic.mabo
+---
+Schema {
+    path: Some(
+        "module_basic.mabo",
+    ),
+    source: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Module(
+            Module {
+                comment: Comment(
+                    [],
+                ),
+                name: Name {
+                    value: "a",
+                },
+                definitions: [
+                    Module(
+                        Module {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Inner module",
+                                    },
+                                ],
+                            ),
+                            name: Name {
+                                value: "b",
+                            },
+                            definitions: [
+                                Enum(
+                                    Enum {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        attributes: Attributes(
+                                            [],
+                                        ),
+                                        name: Name {
+                                            value: "Sample",
+                                        },
+                                        generics: Generics(
+                                            [],
+                                        ),
+                                        variants: [
+                                            Variant {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "One",
+                                                },
+                                                fields: Unit,
+                                                id: Some(
+                                                    Id {
+                                                        value: 1,
+                                                    },
+                                                ),
+                                            },
+                                        ],
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    Struct(
+                        Struct {
+                            comment: Comment(
+                                [],
+                            ),
+                            attributes: Attributes(
+                                [],
+                            ),
+                            name: Name {
+                                value: "Sample",
+                            },
+                            generics: Generics(
+                                [],
+                            ),
+                            fields: Named(
+                                [
+                                    NamedField {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        name: Name {
+                                            value: "value",
+                                        },
+                                        ty: Type {
+                                            value: U32,
+                                        },
+                                        id: Some(
+                                            Id {
+                                                value: 1,
+                                            },
+                                        ),
+                                    },
+                                    NamedField {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        name: Name {
+                                            value: "inner",
+                                        },
+                                        ty: Type {
+                                            value: External(
+                                                ExternalType {
+                                                    path: [
+                                                        Name {
+                                                            value: "b",
+                                                        },
+                                                    ],
+                                                    name: Name {
+                                                        value: "Sample",
+                                                    },
+                                                    generics: [],
+                                                },
+                                            ),
+                                        },
+                                        id: Some(
+                                            Id {
+                                                value: 2,
+                                            },
+                                        ),
+                                    },
+                                ],
+                            ),
+                        },
+                    ),
+                ],
+            },
+        ),
+    ],
+}

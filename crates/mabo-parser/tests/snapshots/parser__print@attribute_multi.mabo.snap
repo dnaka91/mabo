@@ -1,0 +1,9 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "#[validate(min = 1, max = 100)]\nstruct Sample"
+input_file: crates/mabo-parser/tests/inputs/attribute_multi.mabo
+---
+#[validate(min = 1, max = 100)]
+struct Sample
+
+

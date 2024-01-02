@@ -4,7 +4,7 @@
 
 ## Schema
 
-<<< arrays/basic.stef
+<<< arrays/basic.mabo
 
 ## Languages
 

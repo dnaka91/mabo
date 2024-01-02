@@ -1,0 +1,88 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+input_file: crates/mabo-parser/tests/inputs/const_string.mabo
+---
+Schema {
+    path: Some(
+        "const_string.mabo",
+    ),
+    source: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: Name {
+                    value: "SIMPLE",
+                },
+                ty: Type {
+                    value: String,
+                },
+                value: Literal {
+                    value: String(
+                        "value",
+                    ),
+                },
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: Name {
+                    value: "NEWLINE_ESCAPE",
+                },
+                ty: Type {
+                    value: String,
+                },
+                value: Literal {
+                    value: String(
+                        "one two three",
+                    ),
+                },
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: Name {
+                    value: "ESCAPES",
+                },
+                ty: Type {
+                    value: String,
+                },
+                value: Literal {
+                    value: String(
+                        "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
+                    ),
+                },
+            },
+        ),
+        Const(
+            Const {
+                comment: Comment(
+                    [],
+                ),
+                name: Name {
+                    value: "MULTILINE",
+                },
+                ty: Type {
+                    value: String,
+                },
+                value: Literal {
+                    value: String(
+                        "a\n    b\n    c\n",
+                    ),
+                },
+            },
+        ),
+    ],
+}

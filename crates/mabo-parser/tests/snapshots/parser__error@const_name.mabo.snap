@@ -1,0 +1,27 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "const vALUE: u32 = 1;"
+input_file: crates/mabo-parser/tests/inputs/invalid/const_name.mabo
+---
+mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseConstError.html)
+
+  × Failed to parse const declaration
+  ╰─▶ Invalid const name
+   ╭─[invalid/const_name.mabo:1:1]
+ 1 │ const vALUE: u32 = 1;
+   · ──────────┬──────────
+   ·           ╰── In this declaration
+   ╰────
+  help: Expected const declaration in the form `❬B❭const <NAME>: <type> = <literal>;❬B❭`
+
+Error: mabo::parse::const_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseConstCause.html#variant.InvalidName)
+
+  × Invalid const name
+   ╭─[invalid/const_name.mabo:1:1]
+ 1 │ const vALUE: u32 = 1;
+   ·       ▲
+   ·       ╰── Problematic character
+   ╰────
+  help: Const names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more uppercase alphanumeric
+        characters or underscores (❬Y❭A-Z, 0-9, _❬Y❭)
+

@@ -1,0 +1,180 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "enum Sample<T>{One@1,Two(u32@1,u64@2,T@3)@2,Three{field1:u32@1,field2:bool@2,field3:T@3}@3}"
+input_file: crates/mabo-parser/tests/inputs/enum_min_ws.mabo
+---
+Schema {
+    path: Some(
+        "enum_min_ws.mabo",
+    ),
+    source: "enum Sample<T>{One@1,Two(u32@1,u64@2,T@3)@2,Three{field1:u32@1,field2:bool@2,field3:T@3}@3}\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Enum(
+            Enum {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [
+                        Name {
+                            value: "T",
+                        },
+                    ],
+                ),
+                variants: [
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "One",
+                        },
+                        fields: Unit,
+                        id: Some(
+                            Id {
+                                value: 1,
+                            },
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "Two",
+                        },
+                        fields: Unnamed(
+                            [
+                                UnnamedField {
+                                    ty: Type {
+                                        value: U32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: Type {
+                                        value: U64,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
+                                },
+                                UnnamedField {
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "T",
+                                                },
+                                                generics: [],
+                                            },
+                                        ),
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Some(
+                            Id {
+                                value: 2,
+                            },
+                        ),
+                    },
+                    Variant {
+                        comment: Comment(
+                            [],
+                        ),
+                        name: Name {
+                            value: "Three",
+                        },
+                        fields: Named(
+                            [
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "field1",
+                                    },
+                                    ty: Type {
+                                        value: U32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "field2",
+                                    },
+                                    ty: Type {
+                                        value: Bool,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
+                                },
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "field3",
+                                    },
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "T",
+                                                },
+                                                generics: [],
+                                            },
+                                        ),
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
+                                },
+                            ],
+                        ),
+                        id: Some(
+                            Id {
+                                value: 3,
+                            },
+                        ),
+                    },
+                ],
+            },
+        ),
+    ],
+}

@@ -1,0 +1,19 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "struct Sample {\n    value: inner::a::b::c::Other @1,\n}\n\nmod inner {\n    mod a {\n        mod d {\n            mod c {}\n        }\n    }\n}"
+input_file: crates/mabo-compiler/tests/inputs/resolve/local_sub_nested2.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving type in local modules
+  ╰─▶ module ❬Y❭b❬Y❭ not found
+   ╭─[local_sub_nested2.mabo:1:1]
+ 1 │ struct Sample {
+ 2 │     value: inner::a::b::c::Other @1,
+   ·                            ──┬──
+   ·                              ╰── used here
+ 3 │ }
+ 4 │ 
+ 5 │ mod inner {
+   ╰────
+  help: the resolution stopped at module path ❬Y❭test::inner::a❬Y❭
+

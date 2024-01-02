@@ -1,0 +1,23 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "enum Sample {\n    One @1,\n    Two {\n        field: string @1,\n        field: string @2,\n    } @2,\n}"
+input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_dup_name.mabo
+---
+  × duplicate name found
+  ├─▶ duplicate name in a field
+  ╰─▶ duplicate field name `field`
+   ╭─[enum_named_dup_name.mabo:1:1]
+ 1 │ enum Sample {
+ 2 │     One @1,
+ 3 │     Two {
+ 4 │         field: string @1,
+   ·         ──┬──
+   ·           ╰── first declared here
+ 5 │         field: string @2,
+   ·         ──┬──
+   ·           ╰── used here again
+ 6 │     } @2,
+ 7 │ }
+   ╰────
+  help: the names of each field must be unique
+

@@ -1,0 +1,32 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "use datetime::timing;\n\nstruct Sample {\n    value: timing::UNIX_EPOCH @1,\n}"
+input_file: crates/mabo-compiler/tests/inputs/resolve/remote_kind_mismatch.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving type in remote modules
+  ╰─▶ definition found, but a ❬B❭constant❬B❭ can't be referenced
+   ╭─[remote_kind_mismatch.mabo:1:1]
+ 1 │ use datetime::timing;
+ 2 │ 
+ 3 │ struct Sample {
+ 4 │     value: timing::UNIX_EPOCH @1,
+   ·                    ─────┬────
+   ·                         ╰── used here
+ 5 │ }
+   ╰────
+  help: only struct and enum definitions can be used
+
+Error:   × the definition is a ❬B❭constant❬B❭, which can't be referenced
+    ╭─[resolve/datetime.mabo:5:1]
+  5 │ }
+  6 │ 
+  7 │ mod timing {
+  8 │     const UNIX_EPOCH: u64 = 0;
+    ·           ─────┬────
+    ·                ╰── declared here
+  9 │ 
+ 10 │     struct Timestamp(u64 @1)
+ 11 │ }
+    ╰────
+

@@ -1,0 +1,20 @@
+[package]
+name = "mabo-playground"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+mabo = { path = "../mabo" }
+
+[build-dependencies]
+mabo-build = { path = "../mabo-build" }
+
+[lints]
+workspace = true

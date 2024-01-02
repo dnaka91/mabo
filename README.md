@@ -1,4 +1,4 @@
-# Strongly Typed Encoding Format
+# 🍲 Mabo
 
 Data format and schema, with a type system as strong as Rust's.
 

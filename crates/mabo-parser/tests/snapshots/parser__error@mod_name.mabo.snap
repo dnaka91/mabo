@@ -1,0 +1,27 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "mod Sample {}"
+input_file: crates/mabo-parser/tests/inputs/invalid/mod_name.mabo
+---
+mabo::parse::mod_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseModuleError.html)
+
+  × Failed to parse id declaration
+  ╰─▶ Invalid module name
+   ╭─[invalid/mod_name.mabo:1:1]
+ 1 │ mod Sample {}
+   · ──────┬──────
+   ·       ╰── In this declaration
+   ╰────
+  help: Expected module declaration in the form `❬B❭mod <name> {...}❬B❭`
+
+Error: mabo::parse::module::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseModuleCause.html#variant.InvalidName)
+
+  × Invalid module name
+   ╭─[invalid/mod_name.mabo:1:1]
+ 1 │ mod Sample {}
+   ·     ▲
+   ·     ╰── Problematic character
+   ╰────
+  help: Module names must start with a lowercase letter (❬Y❭a-z❬Y❭), followed by zero or more lowercase alphanumeric
+        characters or underscores (❬Y❭a-z, 0-9, _❬Y❭)
+

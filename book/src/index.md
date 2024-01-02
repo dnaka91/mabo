@@ -3,12 +3,12 @@
 layout: home
 
 hero:
-  name: "Stef"
+  name: "Mabo"
   text: "Strongly Typed Encoding Format"
   tagline: Data format and schema, with a type system as strong as Rust's
   image:
     src: /logo.svg
-    alt: Stef
+    alt: Mabo
   actions:
     - theme: brand
       text: User Guide
@@ -24,13 +24,21 @@ features:
   - icon: 🧰
     title: Rich tooling
     details: Ships with many tools like formatter, linter and documentation generator and more.
+  - icon: 😋
+    title: Delicious naming
+    details: Named after food, joining projects like <em>Bun</em> and <em>OpenTofu</em>.
 ---
 <style>
 :root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #3f3f74 30%, #5b6ee1);
+  --vp-c-brand-1: #E74D11;
+  --vp-c-brand-2: #E87917;
+  --vp-c-brand-3: #E8A41C;
+  --vp-c-brand-soft: #E9D022;
 
-  --vp-home-hero-image-background-image: linear-gradient(-45deg, #3f3f74 50%, #5b6ee1 50%);
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--vp-c-brand-3) 30%, var(--vp-c-brand-1));
+
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, var(--vp-c-brand-3) 30%, var(--vp-c-brand-1) 70%);
   --vp-home-hero-image-filter: blur(44px);
 }
 

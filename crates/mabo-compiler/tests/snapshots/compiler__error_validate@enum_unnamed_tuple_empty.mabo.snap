@@ -1,0 +1,17 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "enum Sample {\n    One @1,\n    Two(() @1) @2,\n}"
+input_file: crates/mabo-compiler/tests/inputs/validate/enum_unnamed_tuple_empty.mabo
+---
+  × invalid tuple element size found
+  ╰─▶ tuples with ❬W❭zero elements❬W❭ are invalid
+   ╭─[enum_unnamed_tuple_empty.mabo:1:1]
+ 1 │ enum Sample {
+ 2 │     One @1,
+ 3 │     Two(() @1) @2,
+   ·         ─┬
+   ·          ╰── declared here
+ 4 │ }
+   ╰────
+  help: a tuple must have between 2 and 12 elements
+

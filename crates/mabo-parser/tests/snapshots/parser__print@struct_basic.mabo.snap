@@ -1,0 +1,13 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    /// Second field\n    b: bool @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/struct_basic.mabo
+---
+/// Basic struct.
+struct Sample {
+    a: u32 @1,
+    /// Second field
+    b: bool @2,
+}
+
+

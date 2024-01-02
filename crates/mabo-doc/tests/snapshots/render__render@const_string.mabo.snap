@@ -1,0 +1,216 @@
+---
+source: crates/mabo-doc/tests/render.rs
+description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+input_file: crates/mabo-parser/tests/inputs/const_string.mabo
+---
+--- const_string/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>const_string - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema const_string</h2>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.SIMPLE.html">SIMPLE</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.NEWLINE_ESCAPE.html">NEWLINE_ESCAPE</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.ESCAPES.html">ESCAPES</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-const" href="constant.MULTILINE.html">MULTILINE</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- const_string/constant.SIMPLE.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>SIMPLE - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_string</a>::<span class="name-const">SIMPLE</span>
+  </h2>
+  <pre class="item-definition my-2">const SIMPLE: string = &quot;value&quot;;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_string/constant.NEWLINE_ESCAPE.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>NEWLINE_ESCAPE - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_string</a>::<span class="name-const">NEWLINE_ESCAPE</span>
+  </h2>
+  <pre class="item-definition my-2">const NEWLINE_ESCAPE: string = &quot;one two three&quot;;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_string/constant.ESCAPES.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>ESCAPES - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_string</a>::<span class="name-const">ESCAPES</span>
+  </h2>
+  <pre class="item-definition my-2">const ESCAPES: string = &quot;escape basics \r\n \t \u{8} \u{c} \\ \&quot;hello\&quot; \nunicode ❤  emoji ❤ &quot;;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>
+
+--- const_string/constant.MULTILINE.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>MULTILINE - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Constant
+    <a href="index.html">const_string</a>::<span class="name-const">MULTILINE</span>
+  </h2>
+  <pre class="item-definition my-2">const MULTILINE: string = &quot;a\n    b\n    c\n&quot;;</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+
+    </main>
+  </body>
+</html>

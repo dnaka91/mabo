@@ -1,0 +1,558 @@
+---
+source: crates/mabo-doc/tests/render.rs
+description: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: i8 @7,\n    f08: i16 @8,\n    f09: i32 @9,\n    f10: i64 @10,\n    f11: i128 @11,\n    f12: f32 @12,\n    f13: f64 @13,\n    f14: string @14,\n    f15: &string @15,\n    f16: bytes @16,\n    f17: &bytes @17,\n    f18: box<string> @18,\n    f19: box<bytes> @19,\n    f20: (u32, u32, u32) @20,\n    f21: [u32; 12] @21,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
+---
+--- types_basic/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>types_basic - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>Schema types_basic</h2>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Modules</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Structs</h3>
+  <table>
+    <tr>
+      <td class="pr-8">
+        <a class="text-lg name-struct" href="struct.Sample.html">Sample</a>
+      </td>
+      <td>
+        
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="section">
+  <h3>Enums</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Aliases</h3>
+  <table>
+  </table>
+</div>
+<div class="section">
+  <h3>Constants</h3>
+  <table>
+  </table>
+</div>
+    </main>
+  </body>
+</html>
+
+--- types_basic/struct.Sample.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <title>Sample - Mabo</title>
+  </head>
+  <body>
+    <nav>
+    </nav>
+    <main>
+<div class="section">
+  <h2>
+    Struct
+    <a href="index.html">types_basic</a>::<span class="name-struct">Sample</span>
+  </h2>
+  <pre class="item-definition my-2">struct Sample {
+    f01: bool @1,
+    f02: u8 @2,
+    f03: u16 @3,
+    f04: u32 @4,
+    f05: u64 @5,
+    f06: u128 @6,
+    f07: i8 @7,
+    f08: i16 @8,
+    f09: i32 @9,
+    f10: i64 @10,
+    f11: i128 @11,
+    f12: f32 @12,
+    f13: f64 @13,
+    f14: string @14,
+    f15: &amp;string @15,
+    f16: bytes @16,
+    f17: &amp;bytes @17,
+    f18: box&lt;string&gt; @18,
+    f19: box&lt;bytes&gt; @19,
+    f20: (u32, u32, u32) @20,
+    f21: [u32; 12] @21,
+}</pre>
+  <div class="markdown pl-6">
+    
+  </div>
+</div>
+<div class="section">
+  <h3>Metadata</h3>
+  <div class="pl-6 mt-2">
+    <p>The next free ID is <code class="font-bold">22</code></p>
+  </div>
+</div>
+<div class="section">
+  <h3>Fields</h3>
+  <ul>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f01</span>:
+        <span class="field-type">bool</span>
+        <span class="field-id">@1</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>bool</strong> <code>1</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f02</span>:
+        <span class="field-type">u8</span>
+        <span class="field-id">@2</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u8</strong> <code>1</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f03</span>:
+        <span class="field-type">u16</span>
+        <span class="field-id">@3</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u16</strong> <code>1..3</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f04</span>:
+        <span class="field-type">u32</span>
+        <span class="field-id">@4</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f05</span>:
+        <span class="field-type">u64</span>
+        <span class="field-id">@5</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u64</strong> <code>1..10</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f06</span>:
+        <span class="field-type">u128</span>
+        <span class="field-id">@6</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>u128</strong> <code>1..19</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f07</span>:
+        <span class="field-type">i8</span>
+        <span class="field-id">@7</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>i8</strong> <code>1</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f08</span>:
+        <span class="field-type">i16</span>
+        <span class="field-id">@8</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>i16</strong> <code>1..3</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f09</span>:
+        <span class="field-type">i32</span>
+        <span class="field-id">@9</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>i32</strong> <code>1..5</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f10</span>:
+        <span class="field-type">i64</span>
+        <span class="field-id">@10</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>i64</strong> <code>1..10</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f11</span>:
+        <span class="field-type">i128</span>
+        <span class="field-id">@11</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>i128</strong> <code>1..19</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f12</span>:
+        <span class="field-type">f32</span>
+        <span class="field-id">@12</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>f32</strong> <code>4</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f13</span>:
+        <span class="field-type">f64</span>
+        <span class="field-id">@13</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>f64</strong> <code>8</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f14</span>:
+        <span class="field-type">string</span>
+        <span class="field-id">@14</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>string</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f15</span>:
+        <span class="field-type">&amp;string</span>
+        <span class="field-id">@15</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>&amp;string</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f16</span>:
+        <span class="field-type">bytes</span>
+        <span class="field-id">@16</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>bytes</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f17</span>:
+        <span class="field-type">&amp;bytes</span>
+        <span class="field-id">@17</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>&amp;bytes</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f18</span>:
+        <span class="field-type">box&lt;string&gt;</span>
+        <span class="field-id">@18</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>box&lt;string&gt;</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f19</span>:
+        <span class="field-type">box&lt;bytes&gt;</span>
+        <span class="field-id">@19</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>box&lt;bytes&gt;</strong> <code>1..</code></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f20</span>:
+        <span class="field-type">(u32, u32, u32)</span>
+        <span class="field-id">@20</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>tuple</strong> <code>3..15</code></p>
+          <ul>
+          <li>0: <strong>u32</strong> <code>1..5</code></li>
+          <li>1: <strong>u32</strong> <code>1..5</code></li>
+          <li>2: <strong>u32</strong> <code>1..5</code></li>
+          </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="field-definition">
+      <code>
+        <span class="field-name">f21</span>:
+        <span class="field-type">[u32; 12]</span>
+        <span class="field-id">@21</span>
+      </code>
+      <div class="markdown pl-4">
+        
+      </div>
+      <div class="pl-4">
+        <h4 class="my-2">Metadata</h4>
+        <div class="text-sm">
+          <p>The size range is:</p>
+          <div
+            class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
+            <p><strong>array</strong> <code>13..61</code></p>
+          <ul>
+          <li>length: <strong>u64</strong> <code>1</code></li>
+          <li>element: <strong>u32</strong> <code>1..5</code></li>
+          </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+    </main>
+  </body>
+</html>

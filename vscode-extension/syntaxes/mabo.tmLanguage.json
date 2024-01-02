@@ -1,0 +1,647 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Mabo Schema",
+  "scopeName": "source.mabo",
+  "fileTypes": [
+    "mabo"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#attributes"
+    },
+    {
+      "include": "#mod"
+    },
+    {
+      "include": "#struct"
+    },
+    {
+      "include": "#enum"
+    },
+    {
+      "include": "#const"
+    },
+    {
+      "include": "#use"
+    },
+    {
+      "include": "#alias"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.documentation.mabo comment.line.triple-slash.mabo",
+          "begin": "///",
+          "end": "$\\n?"
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "name": "meta.preprocessor.mabo",
+          "begin": "#\\[",
+          "end": "\\]$\\n?"
+        }
+      ]
+    },
+    "mod": {
+      "begin": "(mod)\\s+([a-zA-Z0-9_]+)\\s*(?=\\{)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.declaration.mod.mabo"
+        },
+        "2": {
+          "name": "entity.name.class.mod.mabo"
+        }
+      },
+      "end": "(?<=\\})",
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "$self"
+        },
+        {
+          "include": "#struct"
+        },
+        {
+          "include": "#enum"
+        },
+        {
+          "include": "#const"
+        },
+        {
+          "include": "#use"
+        },
+        {
+          "include": "#alias"
+        }
+      ]
+    },
+    "struct": {
+      "patterns": [
+        {
+          "begin": "(struct)\\s+([a-zA-Z0-9_]+)\\s*(<.+>)?\\s*(?=\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.struct.mabo storage.type.struct.mabo"
+            },
+            "2": {
+              "name": "entity.name.class.struct.named.mabo"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          },
+          "end": "(?<=\\})",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#fieldsNamed"
+            }
+          ]
+        },
+        {
+          "begin": "(struct)\\s+([a-zA-Z0-9_]+)\\s*(<.+>)?\\s*(?=\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.struct.mabo storage.type.struct.mabo"
+            },
+            "2": {
+              "name": "entity.name.class.struct.unnamed.mabo"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          },
+          "end": "(?<=\\))",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#fieldsUnnamed"
+            }
+          ]
+        },
+        {
+          "match": "(struct)\\s+([a-zA-Z0-9_]+)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.struct.mabo storage.type.struct.mabo"
+            },
+            "2": {
+              "name": "entity.name.class.struct.unit.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "enum": {
+      "begin": "(enum)\\s+([a-zA-Z0-9_]+)\\s*(<.+>)?\\s*(?=\\{)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.declaration.enum.mabo storage.type.enum.mabo"
+        },
+        "2": {
+          "name": "entity.name.class.enum.mabo"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#generics"
+            }
+          ]
+        }
+      },
+      "end": "(?<=\\})",
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#variants"
+        }
+      ]
+    },
+    "variants": {
+      "patterns": [
+        {
+          "begin": "([a-zA-Z0-9_]+)\\s*(?=\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.class.enum.variant.named.mabo"
+            }
+          },
+          "end": "(?<=\\})\\s*(@\\d+)(,)?",
+          "endCaptures": {
+            "1": {
+              "name": "constant.numeric.mabo"
+            },
+            "2": {
+              "name": "punctuation.comma.mabo"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#fieldsNamed"
+            }
+          ]
+        },
+        {
+          "begin": "([a-zA-Z0-9_]+)\\s*(?=\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.class.enum.variant.unnamed.mabo"
+            }
+          },
+          "end": "(?<=\\))\\s*(@\\d+)(,)?",
+          "endCaptures": {
+            "1": {
+              "name": "constant.numeric.mabo"
+            },
+            "2": {
+              "name": "punctuation.comma.mabo"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#fieldsUnnamed"
+            }
+          ]
+        },
+        {
+          "match": "([a-zA-Z0-9_]+)\\s*(@\\d+)(,)?",
+          "captures": {
+            "1": {
+              "name": "entity.name.class.enum.variant.unit.mabo"
+            },
+            "2": {
+              "name": "constant.numeric.mabo"
+            },
+            "3": {
+              "name": "punctuation.comma.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "fieldsNamed": {
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.brackets.curly.open"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.brackets.curly.close"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#fieldNamed"
+        }
+      ]
+    },
+    "fieldNamed": {
+      "patterns": [
+        {
+          "match": "\\s*([a-zA-Z0-9_]+)\\s*(:)\\s*(.+?)\\s*(@\\d+)(,)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.mabo variable.other.mabo"
+            },
+            "2": {
+              "name": "punctuation.colon.mabo"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "4": {
+              "name": "constant.numeric.mabo"
+            },
+            "5": {
+              "name": "punctuation.comma.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "fieldsUnnamed": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.brackets.round.open"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.brackets.round.close"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#fieldUnnamed"
+        }
+      ]
+    },
+    "fieldUnnamed": {
+      "patterns": [
+        {
+          "match": "(.+?)\\s*(@\\d+)(,)?",
+          "captures": {
+            "1": {
+              "name": "storage.type.mabo",
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "2": {
+              "name": "constant.numeric.mabo"
+            },
+            "3": {
+              "name": "punctuation.comma.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "generics": {
+      "begin": "<",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.brackets.angle.open"
+        }
+      },
+      "end": ">",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.brackets.angle.close"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#type"
+        },
+        {
+          "name": "punctuation.comma.mabo",
+          "match": ","
+        }
+      ]
+    },
+    "type": {
+      "patterns": [
+        {
+          "name": "storage.type.builtin.mabo",
+          "match": "(bool|[iu](?:8|16|32|64|128)|f(?:32|64)|&?(?:string|bytes)|box<(?:string|bytes)>)"
+        },
+        {
+          "name": "storage.type.builtin.tuple.mabo",
+          "begin": "\\(",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.brackets.round.open"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.brackets.round.close"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#type"
+            },
+            {
+              "name": "punctuation.comma.mabo",
+              "match": ","
+            }
+          ]
+        },
+        {
+          "name": "storage.type.builtin.array.mabo",
+          "match": "(\\[)([^;]+)\\s*(;)\\s*(\\d+)(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.brackets.square.open"
+            },
+            "2": {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.semicolon.mabo"
+            },
+            "4": {
+              "name": "constant.numeric.mabo"
+            },
+            "5": {
+              "name": "punctuation.brackets.square.close"
+            }
+          }
+        },
+        {
+          "name": "storage.type.builtin.vec.mabo",
+          "match": "vec(<.+>)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "storage.type.builtin.hash_map.mabo",
+          "match": "hash_map(<.+,.+>)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "storage.type.builtin.hash_set.mabo",
+          "match": "hash_set(<.+>)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "storage.type.builtin.option.mabo",
+          "match": "option(<.+>)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "storage.type.builtin.non_zero.mabo",
+          "match": "non_zero(<.+>)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "storage.type.external.mabo",
+          "match": "[a-zA-Z0-9_]+(<.+>)?",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#generics"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "const": {
+      "patterns": [
+        {
+          "match": "(const)\\s+([a-zA-Z0-9_]+)\\s*(:)\\s*(.+?)\\s*=\\s*(.+)(;)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.const.mabo storage.type.const.mabo"
+            },
+            "2": {
+              "name": "entity.name.class.const.mabo"
+            },
+            "3": {
+              "name": "punctuation.colon.mabo"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "5": {
+              "patterns": [
+                {
+                  "include": "#literal"
+                }
+              ]
+            },
+            "6": {
+              "name": "punctuation.semicolon.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "literal": {
+      "patterns": [
+        {
+          "name": "constant.bool.mabo",
+          "match": "(true|false)"
+        },
+        {
+          "name": "constant.numeric.mabo",
+          "match": "\\d+(\\.\\d+)?"
+        },
+        {
+          "name": "string.quoted.mabo",
+          "match": "\".+\""
+        },
+        {
+          "name": "constant.bytes.mabo",
+          "begin": "\\[",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.brackets.square.open"
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.brackets.square.close"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.numeric.mabo",
+              "match": "\\d+"
+            },
+            {
+              "name": "punctuation.comma.mabo",
+              "match": ","
+            }
+          ]
+        }
+      ]
+    },
+    "use": {
+      "patterns": [
+        {
+          "match": "(use)\\s+([a-zA-Z0-9_]+(?:::[a-zA-Z0-9_]+))(.+)?(;)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.use.mabo"
+            },
+            "2": {
+              "name": "entity.name.namespace.mabo"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.semicolon.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "alias": {
+      "patterns": [
+        {
+          "match": "(type)\\s+(.+?)\\s*=\\s*(.+?)(;)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.alias.mabo storage.type.alias.mabo"
+            },
+            "2": {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.semicolon.mabo"
+            }
+          }
+        }
+      ]
+    },
+    "id": {
+      "patterns": [
+        {
+          "name": "constant.numeric.mabo",
+          "match": "@\\d+"
+        }
+      ]
+    }
+  }
+}

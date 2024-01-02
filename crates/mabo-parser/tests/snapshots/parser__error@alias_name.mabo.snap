@@ -1,0 +1,27 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: type sImple = Simple;
+input_file: crates/mabo-parser/tests/inputs/invalid/alias_name.mabo
+---
+mabo::parse::alias_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseAliasError.html)
+
+  × Failed to parse type alias declaration
+  ╰─▶ Invalid alias name
+   ╭─[invalid/alias_name.mabo:1:1]
+ 1 │ type sImple = Simple;
+   ·      ▲
+   ·      ╰── In this declaration
+   ╰────
+  help: Expected type alias declaration in the form `❬B❭type <Alias> = <Type>;❬B❭`
+
+Error: mabo::parse::alias_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseAliasCause.html#variant.InvalidName)
+
+  × Invalid alias name
+   ╭─[invalid/alias_name.mabo:1:1]
+ 1 │ type sImple = Simple;
+   ·      ▲
+   ·      ╰── Problematic character
+   ╰────
+  help: Alias names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric
+        characters (❬Y❭A-Z, a-z, 0-9❬Y❭)
+

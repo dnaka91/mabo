@@ -1,0 +1,19 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "enum Sample {\n    One @1,\n    Two {\n        field: (u8) @1,\n    } @2,\n}"
+input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_tuple_single.mabo
+---
+  × invalid tuple element size found
+  ╰─▶ tuples with ❬W❭a single element❬W❭ are invalid
+   ╭─[enum_named_tuple_single.mabo:1:1]
+ 1 │ enum Sample {
+ 2 │     One @1,
+ 3 │     Two {
+ 4 │         field: (u8) @1,
+   ·                ──┬─
+   ·                  ╰── declared here
+ 5 │     } @2,
+ 6 │ }
+   ╰────
+  help: a tuple must have between 2 and 12 elements
+

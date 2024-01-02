@@ -12,7 +12,7 @@
 
 ## Schema
 
-<<< type-aliases/basic.stef
+<<< type-aliases/basic.mabo
 
 ## Languages
 

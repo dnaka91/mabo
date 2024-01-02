@@ -1,0 +1,29 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "enum sample {\n    One @1,\n}"
+input_file: crates/mabo-parser/tests/inputs/invalid/enum_name.mabo
+---
+mabo::parse::enum_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseEnumError.html)
+
+  × Failed to parse enum declaration
+  ╰─▶ Invalid enum name
+   ╭─[invalid/enum_name.mabo:1:1]
+ 1 │ enum sample {
+   ·      ▲
+   ·      ╰── In this declaration
+ 2 │     One @1,
+   ╰────
+  help: Expected enum declaration in the form `❬B❭enum <Name> {...}❬B❭`
+
+Error: mabo::parse::enum_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseEnumCause.html#variant.InvalidName)
+
+  × Invalid enum name
+   ╭─[invalid/enum_name.mabo:1:1]
+ 1 │ enum sample {
+   ·      ▲
+   ·      ╰── Problematic character
+ 2 │     One @1,
+   ╰────
+  help: Enum names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric characters
+        (❬Y❭A-Z, a-z, 0-9❬Y❭)
+

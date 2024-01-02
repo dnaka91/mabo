@@ -1,8 +1,0 @@
----
-source: crates/stef-parser/tests/parser.rs
-description: "/// Sample type alias.\ntype Sample = u32;"
-input_file: crates/stef-parser/tests/inputs/alias_basic.stef
----
-/// Sample type alias.
-type Sample = u32;
-

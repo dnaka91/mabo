@@ -6,11 +6,11 @@
 
 First, make sure you followed the [installation](./installation#rust) instructions, to setup the dependencies in your _Cargo.toml_ properly.
 
-The main entry point is the `stef-build` crate, which you use as build script in your `build.rs` file. A basic setup looks like this, assuming you have a single schema under `src/sample.stef`:
+The main entry point is the `mabo-build` crate, which you use as build script in your `build.rs` file. A basic setup looks like this, assuming you have a single schema under `src/sample.mabo`:
 
 ```rust
 fn main() {
-    stef_build::Compiler::default().compile(&["src/sample.stef"]).unwrap();
+    mabo_build::Compiler::default().compile(&["src/sample.mabo"]).unwrap();
 }
 ```
 
@@ -24,7 +24,7 @@ Continuing on the previous example, the generated could could be included like t
 // in src/main.rs
 
 mod sample {
-    stef::include!("sample");
+    mabo::include!("sample");
 }
 
 fn main() {
@@ -32,13 +32,13 @@ fn main() {
 }
 ```
 
-The file name is the same as the input schema file name, but with `.rs` as file extension instead of `.stef`. The schema file `sample.stef` becomes `sample.rs`.
+The file name is the same as the input schema file name, but with `.rs` as file extension instead of `.mabo`. The schema file `sample.mabo` becomes `sample.rs`.
 
 ### Using the code
 
 From that point on, the generated code can be used like regular Rust code. Extending the example a bit, let's say the schema file contained the following:
 
-```stef
+```mabo
 struct Sample {
     value: u32 @1,
 }
@@ -47,11 +47,11 @@ struct Sample {
 Then we could use the generated struct as follows:
 
 ```rust
-// Include stef's `Encode` trait to get access to the `encode()` method.
-use stef::Encode;
+// Include Mabo's `Encode` trait to get access to the `encode()` method.
+use mabo::Encode;
 
 mod sample {
-    stef::include!("sample");
+    mabo::include!("sample");
 }
 
 fn main() {

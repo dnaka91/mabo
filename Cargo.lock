@@ -706,6 +706,153 @@ dependencies = [
 ]
 
 [[package]]
+name = "mabo"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "paste",
+ "thiserror",
+]
+
+[[package]]
+name = "mabo-benches"
+version = "0.1.0"
+dependencies = [
+ "divan",
+ "indoc",
+ "mabo-compiler",
+ "mabo-parser",
+ "mimalloc",
+]
+
+[[package]]
+name = "mabo-build"
+version = "0.1.0"
+dependencies = [
+ "glob",
+ "insta",
+ "mabo-compiler",
+ "mabo-parser",
+ "miette",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.43",
+ "thiserror",
+]
+
+[[package]]
+name = "mabo-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "color-eyre",
+ "glob",
+ "mabo-parser",
+ "miette",
+ "mimalloc",
+]
+
+[[package]]
+name = "mabo-compiler"
+version = "0.1.0"
+dependencies = [
+ "insta",
+ "mabo-parser",
+ "miette",
+ "owo-colors",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "mabo-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.43",
+]
+
+[[package]]
+name = "mabo-doc"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "askama",
+ "glob",
+ "heck",
+ "insta",
+ "mabo-compiler",
+ "mabo-meta",
+ "mabo-parser",
+]
+
+[[package]]
+name = "mabo-go"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "heck",
+ "insta",
+ "mabo-compiler",
+ "mabo-parser",
+ "miette",
+]
+
+[[package]]
+name = "mabo-lsp"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "directories",
+ "ignore",
+ "line-index",
+ "log",
+ "lsp-server",
+ "lsp-types",
+ "mabo-compiler",
+ "mabo-meta",
+ "mabo-parser",
+ "ouroboros",
+ "parking_lot",
+ "ropey",
+ "serde",
+ "serde_json",
+ "time",
+]
+
+[[package]]
+name = "mabo-meta"
+version = "0.1.0"
+dependencies = [
+ "mabo-compiler",
+]
+
+[[package]]
+name = "mabo-parser"
+version = "0.1.0"
+dependencies = [
+ "indoc",
+ "insta",
+ "mabo-derive",
+ "miette",
+ "owo-colors",
+ "winnow",
+]
+
+[[package]]
+name = "mabo-playground"
+version = "0.1.0"
+dependencies = [
+ "mabo",
+ "mabo-build",
+]
+
+[[package]]
 name = "memchr"
 version = "2.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1167,153 +1314,6 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
-
-[[package]]
-name = "stef"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "paste",
- "thiserror",
-]
-
-[[package]]
-name = "stef-benches"
-version = "0.1.0"
-dependencies = [
- "divan",
- "indoc",
- "mimalloc",
- "stef-compiler",
- "stef-parser",
-]
-
-[[package]]
-name = "stef-build"
-version = "0.1.0"
-dependencies = [
- "glob",
- "insta",
- "miette",
- "prettyplease",
- "proc-macro2",
- "quote",
- "stef-compiler",
- "stef-parser",
- "syn 2.0.43",
- "thiserror",
-]
-
-[[package]]
-name = "stef-cli"
-version = "0.1.0"
-dependencies = [
- "clap",
- "color-eyre",
- "glob",
- "miette",
- "mimalloc",
- "stef-parser",
-]
-
-[[package]]
-name = "stef-compiler"
-version = "0.1.0"
-dependencies = [
- "insta",
- "miette",
- "owo-colors",
- "schemars",
- "serde",
- "serde_json",
- "stef-parser",
- "thiserror",
-]
-
-[[package]]
-name = "stef-derive"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.43",
-]
-
-[[package]]
-name = "stef-doc"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "askama",
- "glob",
- "heck",
- "insta",
- "stef-compiler",
- "stef-meta",
- "stef-parser",
-]
-
-[[package]]
-name = "stef-go"
-version = "0.1.0"
-dependencies = [
- "clap",
- "heck",
- "insta",
- "miette",
- "stef-compiler",
- "stef-parser",
-]
-
-[[package]]
-name = "stef-lsp"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "directories",
- "ignore",
- "line-index",
- "log",
- "lsp-server",
- "lsp-types",
- "ouroboros",
- "parking_lot",
- "ropey",
- "serde",
- "serde_json",
- "stef-compiler",
- "stef-meta",
- "stef-parser",
- "time",
-]
-
-[[package]]
-name = "stef-meta"
-version = "0.1.0"
-dependencies = [
- "stef-compiler",
-]
-
-[[package]]
-name = "stef-parser"
-version = "0.1.0"
-dependencies = [
- "indoc",
- "insta",
- "miette",
- "owo-colors",
- "stef-derive",
- "winnow",
-]
-
-[[package]]
-name = "stef-playground"
-version = "0.1.0"
-dependencies = [
- "stef",
- "stef-build",
-]
 
 [[package]]
 name = "str_indices"

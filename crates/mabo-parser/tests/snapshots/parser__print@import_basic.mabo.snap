@@ -1,0 +1,8 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "use other::schema::Sample;\nuse second::submodule;"
+input_file: crates/mabo-parser/tests/inputs/import_basic.mabo
+---
+use other::schema::Sample;
+use second::submodule;
+

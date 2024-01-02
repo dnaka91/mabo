@@ -1,0 +1,11 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "/// Hello world!\ntype Sample = String;"
+input_file: crates/mabo-build/tests/inputs_extra/alias.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+/// Hello world!
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
+pub type Sample = String;
+

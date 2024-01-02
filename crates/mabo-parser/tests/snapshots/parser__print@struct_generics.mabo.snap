@@ -1,0 +1,12 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/struct_generics.mabo
+---
+/// Generic key-value pair.
+struct KeyValue<K, V> {
+    key: K @1,
+    value: V @2,
+}
+
+

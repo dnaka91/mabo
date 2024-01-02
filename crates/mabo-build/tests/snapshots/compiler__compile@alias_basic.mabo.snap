@@ -1,0 +1,11 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "/// Sample type alias.\ntype Sample = u32;"
+input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+/// Sample type alias.
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
+pub type Sample = u32;
+

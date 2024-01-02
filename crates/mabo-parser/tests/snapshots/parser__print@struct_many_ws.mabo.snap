@@ -1,0 +1,13 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "/// Some comment\n       struct      Sample<\n            T\n        >  {\n\n      a:    u32    @1,\n      b:    bool   @2,\n      c:    T      @3,\n    }"
+input_file: crates/mabo-parser/tests/inputs/struct_many_ws.mabo
+---
+/// Some comment
+struct Sample<T> {
+    a: u32 @1,
+    b: bool @2,
+    c: T @3,
+}
+
+

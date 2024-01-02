@@ -16,21 +16,21 @@ Attributes can come in 3 forms.
 
 ### Unit
 
-```stef
+```mabo
 #[deprecated]
 struct Sample {}
 ```
 
 ### Single-value
 
-```stef
+```mabo
 #[deprecated = "Don't use anymore"]
 struct Sample {}
 ```
 
 ### Multi-value
 
-```stef
+```mabo
 struct Sample {
     #[validate(min = 1, max = 100)]
     age: u8 @1,

@@ -1,12 +1,12 @@
 import { defineConfig } from "vitepress";
-import stefGrammar from "../../vscode-extension/syntaxes/stef.tmLanguage.json";
+import maboGrammar from "../../vscode-extension/syntaxes/mabo.tmLanguage.json";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Stef",
+  title: "mabo",
   description: "Strongly Typed Encoding Format",
   srcDir: "src",
-  base: "/stef",
+  base: "/mabo",
   markdown: {
     theme: {
       dark: "one-dark-pro",
@@ -14,8 +14,8 @@ export default defineConfig({
     },
     languages: [
       {
-        ...stefGrammar,
-        name: "stef",
+        ...maboGrammar,
+        name: "mabo",
       },
     ],
     lineNumbers: true,
@@ -25,12 +25,12 @@ export default defineConfig({
       preserveSymlinks: true,
     },
   },
-  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/stef/logo.svg" }]],
+  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/mabo/logo.svg" }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: "/logo.svg",
     editLink: {
-      pattern: "https://github.com/dnaka91/stef/edit/main/book/src/:path",
+      pattern: "https://github.com/dnaka91/mabo/edit/main/book/src/:path",
     },
     nav: [
       { text: "Guide", link: "/guide/installation", activeMatch: "/guide/" },
@@ -56,9 +56,9 @@ export default defineConfig({
             text: "Command Line Interface",
             link: "/reference/cli/",
             items: [
-              { text: "stef lint", link: "/reference/cli/lint" },
-              { text: "stef check", link: "/reference/cli/check" },
-              { text: "stef format", link: "/reference/cli/format" },
+              { text: "mabo lint", link: "/reference/cli/lint" },
+              { text: "mabo check", link: "/reference/cli/check" },
+              { text: "mabo format", link: "/reference/cli/format" },
             ],
           },
           {
@@ -107,7 +107,7 @@ export default defineConfig({
 
     outline: "deep",
 
-    socialLinks: [{ icon: "github", link: "https://github.com/dnaka91/stef" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/dnaka91/mabo" }],
 
     footer: {
       message: "Released under the MIT License.",

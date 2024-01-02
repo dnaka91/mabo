@@ -4,4 +4,4 @@
 
 ## Schema
 
-<<< imports/basic.stef
+<<< imports/basic.mabo

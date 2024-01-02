@@ -1,0 +1,15 @@
+---
+source: crates/mabo-compiler/tests/compiler.rs
+description: "use datetime::other;"
+input_file: crates/mabo-compiler/tests/inputs/resolve/import_sub.mabo
+---
+  × type resolution failed
+  ├─▶ failed resolving import statement
+  ╰─▶ module ❬Y❭other❬Y❭ not found
+   ╭─[import_sub.mabo:1:1]
+ 1 │ use datetime::other;
+   ·               ──┬──
+   ·                 ╰── used here
+   ╰────
+  help: the resolution stopped at module path ❬Y❭datetime❬Y❭
+

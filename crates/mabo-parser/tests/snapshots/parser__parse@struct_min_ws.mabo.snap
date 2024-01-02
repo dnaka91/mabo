@@ -1,0 +1,96 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}"
+input_file: crates/mabo-parser/tests/inputs/struct_min_ws.mabo
+---
+Schema {
+    path: Some(
+        "struct_min_ws.mabo",
+    ),
+    source: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}\n",
+    comment: Comment(
+        [],
+    ),
+    definitions: [
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                name: Name {
+                    value: "Sample",
+                },
+                generics: Generics(
+                    [
+                        Name {
+                            value: "T",
+                        },
+                    ],
+                ),
+                fields: Named(
+                    [
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "a",
+                            },
+                            ty: Type {
+                                value: U32,
+                            },
+                            id: Some(
+                                Id {
+                                    value: 1,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "b",
+                            },
+                            ty: Type {
+                                value: Bool,
+                            },
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
+                        },
+                        NamedField {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "c",
+                            },
+                            ty: Type {
+                                value: External(
+                                    ExternalType {
+                                        path: [],
+                                        name: Name {
+                                            value: "T",
+                                        },
+                                        generics: [],
+                                    },
+                                ),
+                            },
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
+                        },
+                    ],
+                ),
+            },
+        ),
+    ],
+}

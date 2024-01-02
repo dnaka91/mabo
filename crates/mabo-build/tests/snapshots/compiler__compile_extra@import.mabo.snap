@@ -1,0 +1,12 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "use other::module;\nuse other::module::Type;"
+input_file: crates/mabo-build/tests/inputs_extra/import.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[allow(unused_imports)]
+use super::other::module;
+#[allow(unused_imports)]
+use super::other::module::Type;
+

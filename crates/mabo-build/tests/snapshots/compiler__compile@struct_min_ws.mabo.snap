@@ -1,0 +1,112 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "struct Sample<T>{a:u32@1,b:bool@2,c:T@3}"
+input_file: crates/mabo-parser/tests/inputs/struct_min_ws.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub struct Sample<T> {
+    pub a: u32,
+    pub b: bool,
+    pub c: T,
+}
+#[automatically_derived]
+impl<T> ::mabo::Encode for Sample<T>
+where
+    T: ::mabo::buf::Encode + ::mabo::buf::Size,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::mabo::BufMut) {
+        let Self { a, b, c } = self;
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(1, ::mabo::FieldEncoding::Varint),
+            |w| {
+                ::mabo::buf::encode_u32(w, *a);
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(2, ::mabo::FieldEncoding::Fixed1),
+            |w| {
+                ::mabo::buf::encode_bool(w, *b);
+            },
+        );
+        ::mabo::buf::encode_field(
+            w,
+            ::mabo::FieldId::new(3, ::mabo::FieldEncoding::LengthPrefixed),
+            |w| {
+                c.encode(w);
+            },
+        );
+        ::mabo::buf::encode_u32(w, ::mabo::buf::END_MARKER);
+    }
+}
+#[automatically_derived]
+impl<T> ::mabo::Decode for Sample<T>
+where
+    T: ::std::fmt::Debug + ::mabo::buf::Decode,
+{
+    #[allow(clippy::type_complexity, clippy::too_many_lines)]
+    fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+        let mut a: Option<u32> = None;
+        let mut b: Option<bool> = None;
+        let mut c: Option<T> = None;
+        loop {
+            let id = ::mabo::buf::decode_id(r)?;
+            match id.value {
+                ::mabo::buf::END_MARKER => break,
+                1 => a = Some(::mabo::buf::decode_u32(r)?),
+                2 => b = Some(::mabo::buf::decode_bool(r)?),
+                3 => c = Some(T::decode(r)?),
+                _ => ::mabo::buf::decode_skip(r, id.encoding)?,
+            }
+        }
+        Ok(Self {
+            a: a
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 1,
+                    name: Some("a"),
+                })?,
+            b: b
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 2,
+                    name: Some("b"),
+                })?,
+            c: c
+                .ok_or(::mabo::buf::Error::MissingField {
+                    id: 3,
+                    name: Some("c"),
+                })?,
+        })
+    }
+}
+#[automatically_derived]
+impl<T> ::mabo::buf::Size for Sample<T>
+where
+    T: ::mabo::buf::Size,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::explicit_auto_deref,
+        clippy::needless_borrow,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        let Self { a, b, c } = self;
+        ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*a) })
+            + ::mabo::buf::size_field(2, || { ::mabo::buf::size_bool(*b) })
+            + ::mabo::buf::size_field(3, || { c.size() })
+            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+    }
+}
+

@@ -1,0 +1,173 @@
+---
+source: crates/mabo-build/tests/compiler.rs
+description: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n    Two(A @1, B @2) @2,\n    Three {\n        field1: C @1,\n        field2: D @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/enum_generics.mabo
+---
+#[allow(unused_imports)]
+use ::mabo::buf::{Decode, Encode, Size};
+/// Enum with generics.
+#[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions, clippy::option_option)]
+pub enum Sample<A, B, C, D> {
+    One,
+    Two(A, B),
+    Three { field1: C, field2: D },
+}
+#[automatically_derived]
+impl<A, B, C, D> ::mabo::Encode for Sample<A, B, C, D>
+where
+    A: ::mabo::buf::Encode + ::mabo::buf::Size,
+    B: ::mabo::buf::Encode + ::mabo::buf::Size,
+    C: ::mabo::buf::Encode + ::mabo::buf::Size,
+    D: ::mabo::buf::Encode + ::mabo::buf::Size,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
+    fn encode(&self, w: &mut impl ::mabo::BufMut) {
+        match self {
+            Self::One => {
+                ::mabo::buf::encode_variant_id(w, ::mabo::VariantId::new(1));
+            }
+            Self::Two(n0, n1) => {
+                ::mabo::buf::encode_variant_id(w, ::mabo::VariantId::new(2));
+                ::mabo::buf::encode_field(
+                    w,
+                    ::mabo::FieldId::new(1, ::mabo::FieldEncoding::LengthPrefixed),
+                    |w| {
+                        n0.encode(w);
+                    },
+                );
+                ::mabo::buf::encode_field(
+                    w,
+                    ::mabo::FieldId::new(2, ::mabo::FieldEncoding::LengthPrefixed),
+                    |w| {
+                        n1.encode(w);
+                    },
+                );
+                ::mabo::buf::encode_u32(w, ::mabo::buf::END_MARKER);
+            }
+            Self::Three { field1, field2 } => {
+                ::mabo::buf::encode_variant_id(w, ::mabo::VariantId::new(3));
+                ::mabo::buf::encode_field(
+                    w,
+                    ::mabo::FieldId::new(1, ::mabo::FieldEncoding::LengthPrefixed),
+                    |w| {
+                        field1.encode(w);
+                    },
+                );
+                ::mabo::buf::encode_field(
+                    w,
+                    ::mabo::FieldId::new(2, ::mabo::FieldEncoding::LengthPrefixed),
+                    |w| {
+                        field2.encode(w);
+                    },
+                );
+                ::mabo::buf::encode_u32(w, ::mabo::buf::END_MARKER);
+            }
+        }
+    }
+}
+#[automatically_derived]
+impl<A, B, C, D> ::mabo::Decode for Sample<A, B, C, D>
+where
+    A: ::std::fmt::Debug + ::mabo::buf::Decode,
+    B: ::std::fmt::Debug + ::mabo::buf::Decode,
+    C: ::std::fmt::Debug + ::mabo::buf::Decode,
+    D: ::std::fmt::Debug + ::mabo::buf::Decode,
+{
+    #[allow(clippy::too_many_lines)]
+    fn decode(r: &mut impl ::mabo::Buf) -> ::mabo::buf::Result<Self> {
+        match ::mabo::buf::decode_variant_id(r)?.value {
+            1 => Ok(Self::One),
+            2 => {
+                let mut n0: Option<A> = None;
+                let mut n1: Option<B> = None;
+                loop {
+                    let id = ::mabo::buf::decode_id(r)?;
+                    match id.value {
+                        ::mabo::buf::END_MARKER => break,
+                        1 => n0 = Some(A::decode(r)?),
+                        2 => n1 = Some(B::decode(r)?),
+                        _ => ::mabo::buf::decode_skip(r, id.encoding)?,
+                    }
+                }
+                Ok(
+                    Self::Two(
+                        n0
+                            .ok_or(::mabo::buf::Error::MissingField {
+                                id: 1,
+                                name: None,
+                            })?,
+                        n1
+                            .ok_or(::mabo::buf::Error::MissingField {
+                                id: 2,
+                                name: None,
+                            })?,
+                    ),
+                )
+            }
+            3 => {
+                let mut field1: Option<C> = None;
+                let mut field2: Option<D> = None;
+                loop {
+                    let id = ::mabo::buf::decode_id(r)?;
+                    match id.value {
+                        ::mabo::buf::END_MARKER => break,
+                        1 => field1 = Some(C::decode(r)?),
+                        2 => field2 = Some(D::decode(r)?),
+                        _ => ::mabo::buf::decode_skip(r, id.encoding)?,
+                    }
+                }
+                Ok(Self::Three {
+                    field1: field1
+                        .ok_or(::mabo::buf::Error::MissingField {
+                            id: 1,
+                            name: Some("field1"),
+                        })?,
+                    field2: field2
+                        .ok_or(::mabo::buf::Error::MissingField {
+                            id: 2,
+                            name: Some("field2"),
+                        })?,
+                })
+            }
+            id => Err(::mabo::buf::Error::UnknownVariant(id)),
+        }
+    }
+}
+#[automatically_derived]
+impl<A, B, C, D> ::mabo::buf::Size for Sample<A, B, C, D>
+where
+    A: ::mabo::buf::Size,
+    B: ::mabo::buf::Size,
+    C: ::mabo::buf::Size,
+    D: ::mabo::buf::Size,
+{
+    #[allow(
+        clippy::borrow_deref_ref,
+        clippy::deref_addrof,
+        clippy::semicolon_if_nothing_returned,
+        clippy::too_many_lines,
+    )]
+    fn size(&self) -> usize {
+        match self {
+            Self::One => ::mabo::buf::size_id(1),
+            Self::Two(n0, n1) => {
+                ::mabo::buf::size_id(2) + ::mabo::buf::size_field(1, || { n0.size() })
+                    + ::mabo::buf::size_field(2, || { n1.size() })
+                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            }
+            Self::Three { field1, field2 } => {
+                ::mabo::buf::size_id(3)
+                    + ::mabo::buf::size_field(1, || { field1.size() })
+                    + ::mabo::buf::size_field(2, || { field2.size() })
+                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            }
+        }
+    }
+}
+

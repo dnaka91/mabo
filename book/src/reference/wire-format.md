@@ -52,3 +52,31 @@ Both tuples and arrays have a known length as defined in the schema. Therefore, 
 ## Structs
 
 ## Enums
+
+## Identifiers
+
+Identifiers are an essential part of the format. They mark the start of a field or enum variant and decribe which one it is, so the decoder knows how to parse the following data and assign it to the right element of a struct or enum.
+
+These IDs are regular **32-bit unsigned integers**, and may encode additional information together with field or variant number.
+
+They are encoded exactly the same as regular integers, with **Varint** encoding.
+
+::: tip
+Due to how **Varint** encoding works, keeping the identifiers to small values positively affects the binary size.
+
+Gaps can be created to group fields together or keep space for future additions in the same ID range, but may negatively affect the binary size.
+:::
+
+### Field identifiers
+
+The field identifiers combine the raw field number with an encoding marker. This one describes the following data in a very basic form, just enough to be able to skip over it, in case the field is not known to the decoder.
+
+This encoding marker is placed in the first 3 bits and the field number in shifted to the left.
+
+It means the maximum possible field number is **2<sup>29</sup> - 1** (**536,870,911**) instead of the integer types maximum of **2<sup>32</sup> - 1** (**4,294,967,295**). This amount is still sufficient and very unlikely to ever be reached as it is not considered realistic to have a struct or enum variant with that many fields.
+
+### Variant identifiers
+
+The variant identifiers currently don't carry any additional information and encode the the number as is.
+
+Therefore the current maximum possible variant number is **2<sup>32</sup> - 1** (**4,294,967,295**), although unlikely to ever be reached when using sequential numbers without gaps.

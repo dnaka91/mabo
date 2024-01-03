@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Mabo"
   text: "Strongly Typed Encoding Format"
-  tagline: Data format and schema, with a type system as strong as Rust's
+  tagline: Schema-based binary data format, with a type system as strong as Rust's
   image:
     src: /logo.svg
     alt: Mabo

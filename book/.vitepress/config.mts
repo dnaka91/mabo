@@ -3,7 +3,7 @@ import maboGrammar from "../../vscode-extension/syntaxes/mabo.tmLanguage.json";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "mabo",
+  title: "Mabo",
   description: "Strongly Typed Encoding Format",
   appearance: "dark",
   lastUpdated: true,

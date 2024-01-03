@@ -14,10 +14,10 @@ Step by step we will disect this schema and explain each part:
 
 1. The `/// ...` parts are comments. Everything following the three slashes is understood as comment and attached to the element it's defined on. Multiple lines can be written by repeating the slashes on each line.
 2. Next the `struct User { ... }` element defines a data structure indicated by the keyword `struct`, followed by its name. The curly braces denote start and end of the declaration, which contains the _named_ fields.
-3. Each line inside the struct declaration is either a comment (`/// ...`) or a field. The `name: string @1` defines the first field titled `name` and the data type `string`, meaning it can hodl text content. The `@1` describes the unique identifier for the field. This is simply a number but must be unique within each struct.
+3. Each line inside the struct declaration is either a comment (`/// ...`) or a field. The `name: string @1` defines the first field titled `name` and the data type `string`, meaning it can hold text content. The `@1` describes the unique identifier for the field. This is simply a number but must be unique within each struct.
 4. Lastly there is another field declaration `age: u16 @2`, which is a field named `age` with a 16-bit unsigned integer as type and identifier 2.
 
-For Rust developers this might look very familiar. That is, because Mabo is inspired by Rust and will look much alike in many ways. The generated code for the struct definition would actually be almost the same, but with a few visibility modifiers and minus the identifiers.
+For Rust developers this might look very familiar. That is because Mabo is inspired by Rust and will look much alike in many ways. The generated code for the struct definition would actually be almost the same, but with a few visibility modifiers and minus the identifiers.
 
 ## Data types
 

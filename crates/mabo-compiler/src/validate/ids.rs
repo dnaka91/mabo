@@ -1,7 +1,7 @@
 use std::{collections::HashMap, ops::Range};
 
-use miette::Diagnostic;
 use mabo_parser::{Enum, Fields, Id, Spanned, Struct};
+use miette::Diagnostic;
 use thiserror::Error;
 
 use crate::IdGenerator;

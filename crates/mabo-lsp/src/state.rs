@@ -4,9 +4,9 @@ use anyhow::{ensure, Context, Result};
 use line_index::LineIndex;
 use log::{as_debug, debug};
 use lsp_types::{ConfigurationItem, Diagnostic, Url};
+use mabo_parser::Schema;
 use ouroboros::self_referencing;
 use ropey::Rope;
-use mabo_parser::Schema;
 
 use crate::{client::Client, config};
 

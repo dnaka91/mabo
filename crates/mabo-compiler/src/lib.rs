@@ -20,9 +20,9 @@
 
 #![allow(clippy::module_name_repetitions)]
 
+use mabo_parser::Spanned;
 pub use resolve::schemas as resolve_schemas;
 pub use simplify::schema as simplify_schema;
-use mabo_parser::Spanned;
 pub use validate::schema as validate_schema;
 
 mod highlight;

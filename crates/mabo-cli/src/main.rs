@@ -2,8 +2,8 @@
 
 use std::{fs, process::ExitCode};
 
-use miette::{Context, IntoDiagnostic, Result};
 use mabo_parser::Schema;
+use miette::{Context, IntoDiagnostic, Result};
 
 use self::cli::Cli;
 

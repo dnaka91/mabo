@@ -6,8 +6,8 @@ use std::{
 };
 
 use insta::{assert_snapshot, glob, with_settings};
-use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, NamedSource, Report, ReportHandler};
 use mabo_parser::Schema;
+use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, NamedSource, Report, ReportHandler};
 
 struct Wrapper<'a>(&'a MietteHandler, &'a dyn Diagnostic);
 

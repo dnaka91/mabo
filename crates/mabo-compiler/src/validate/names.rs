@@ -1,7 +1,7 @@
 use std::{collections::HashMap, ops::Range};
 
-use miette::Diagnostic;
 use mabo_parser::{Definition, Enum, Fields, Import, Spanned, Struct};
+use miette::Diagnostic;
 use thiserror::Error;
 
 /// Duplicate name was encountered for two elements in the same scope.

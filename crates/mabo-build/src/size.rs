@@ -1,6 +1,6 @@
+use mabo_compiler::simplify::{Enum, Field, FieldKind, Fields, Struct, Type, Variant};
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
-use mabo_compiler::simplify::{Enum, Field, FieldKind, Fields, Struct, Type, Variant};
 
 use crate::{BytesType, Opts};
 

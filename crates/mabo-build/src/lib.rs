@@ -2,8 +2,8 @@
 
 use std::{convert::AsRef, env, fmt::Debug, fs, path::PathBuf};
 
-use miette::Report;
 use mabo_parser::Schema;
+use miette::Report;
 use thiserror::Error;
 
 pub use self::definition::compile_schema;

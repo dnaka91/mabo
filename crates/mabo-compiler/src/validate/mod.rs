@@ -1,8 +1,8 @@
 //! Ensure several conditions for a single schema are met, which are difficult to verify during the
 //! parsing step.
 
-use miette::Diagnostic;
 use mabo_parser::{Definition, Schema};
+use miette::Diagnostic;
 use thiserror::Error;
 
 pub use self::{

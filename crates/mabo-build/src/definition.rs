@@ -1,9 +1,9 @@
-use proc_macro2::{Ident, Span, TokenStream};
-use quote::{quote, ToTokens};
 use mabo_compiler::simplify::{
     Const, Definition, Enum, ExternalType, Field, FieldKind, Fields, Import, Literal, Module,
     Schema, Struct, Type, TypeAlias, Variant,
 };
+use proc_macro2::{Ident, Span, TokenStream};
+use quote::{quote, ToTokens};
 
 use super::{decode, encode, size};
 use crate::{BytesType, Opts};

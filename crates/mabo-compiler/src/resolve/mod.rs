@@ -3,10 +3,10 @@
 
 use std::collections::HashMap;
 
-use miette::NamedSource;
 use mabo_parser::{
     DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
 };
+use miette::NamedSource;
 
 pub use self::error::{
     Error, GenericsCount, InvalidKind, MissingDefinition, MissingImport, MissingModule,

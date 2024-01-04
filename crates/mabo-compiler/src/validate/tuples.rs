@@ -1,7 +1,7 @@
 use std::ops::Range;
 
-use miette::{diagnostic, Diagnostic};
 use mabo_parser::{Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias};
+use miette::{diagnostic, Diagnostic};
 use thiserror::Error;
 
 use crate::highlight;

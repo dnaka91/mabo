@@ -5,8 +5,8 @@ use std::{
 };
 
 use insta::{assert_snapshot, glob, with_settings};
-use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, ReportHandler};
 use mabo_parser::Schema;
+use miette::{Diagnostic, MietteHandler, MietteHandlerOpts, ReportHandler};
 
 fn strip_path(path: &Path) -> PathBuf {
     path.strip_prefix(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/inputs"))

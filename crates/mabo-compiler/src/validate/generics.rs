@@ -1,7 +1,7 @@
 use std::{collections::HashMap, ops::Range};
 
-use miette::Diagnostic;
 use mabo_parser::{DataType, Enum, ExternalType, Fields, Generics, Span, Spanned, Struct, Type};
+use miette::Diagnostic;
 use thiserror::Error;
 
 /// Generic type parameters are considered invalid.

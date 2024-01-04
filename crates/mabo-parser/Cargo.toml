@@ -16,7 +16,7 @@ rustc-args = ["--cfg", "docsrs"]
 miette.workspace = true
 owo-colors.workspace = true
 mabo-derive = { path = "../mabo-derive" }
-winnow = "0.5.31"
+winnow = "0.5.32"
 
 [dev-dependencies]
 indoc.workspace = true

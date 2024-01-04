@@ -12,7 +12,7 @@ license.workspace = true
 [dependencies]
 glob.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
-prettyplease = "0.2.15"
+prettyplease = "0.2.16"
 proc-macro2.workspace = true
 quote.workspace = true
 mabo-compiler = { path = "../mabo-compiler" }

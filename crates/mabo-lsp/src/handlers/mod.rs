@@ -34,25 +34,22 @@ pub fn initialize(
 ) -> Result<InitializeResult> {
     log::trace!("{params:#?}");
 
-    if let Some(root) = params.root_uri {
-        for path in ignore::Walk::new(root.path()) {
-            let Ok(path) = path else { continue };
+    if let Some(projects) = params
+        .root_uri
+        .and_then(|root| mabo_project::discover(root.path()).ok())
+    {
+        for path in projects.into_iter().flat_map(|project| project.files) {
+            let Ok(text) = std::fs::read_to_string(&path) else {
+                error!(path = as_debug!(path); "failed reading file content");
+                continue;
+            };
 
-            if path.file_type().is_some_and(|ty| ty.is_file())
-                && path.path().extension().is_some_and(|ext| ext == "mabo")
-            {
-                let Ok(text) = std::fs::read_to_string(path.path()) else {
-                    error!(path = as_debug!(path.path()); "failed reading file content");
-                    continue;
-                };
+            let Ok(uri) = Url::from_file_path(&path) else {
+                error!(path = as_debug!(path); "failed parsing file path as URI");
+                continue;
+            };
 
-                let Ok(uri) = Url::from_file_path(path.path()) else {
-                    error!(path = as_debug!(path.path()); "failed parsing file path as URI");
-                    continue;
-                };
-
-                state.files.insert(uri.clone(), create_file(uri, text));
-            }
+            state.files.insert(uri.clone(), create_file(uri, text));
         }
     }
 

@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=http://json-schema.org/draft-07/schema#
+$schema: http://json-schema.org/draft-07/schema#
+title: Mabo.toml
+description: A schema for Mabo.toml.
+type: object
+properties:
+  package:
+    $ref: "#/definitions/Package"
+definitions:
+  Package:
+    title: Package
+    description: Single named collection of schema files that form a package.
+    type: object
+    required:
+      - name
+      - files
+    properties:
+      name:
+        $ref: "#/definitions/Name"
+      description:
+        $ref: "#/definitions/Description"
+      license:
+        $ref: "#/definitions/License"
+      files:
+        $ref: "#/definitions/Files"
+  Name:
+    title: Name
+    description: The package name is an identifier used to refer to the package.
+    type: string
+  Description:
+    title: Description
+    description: The description is a short description about the package.
+    type: string
+  License:
+    title: License
+    description: |
+      The license defines the software license that this package is released under. It can be a single
+      [SPDX](https://spdx.dev/) license, or multiple combined with `AND` and `OR` into an expression.
+
+      See the [SPDX Specification](https://spdx.github.io/spdx-spec/v2.3/) for more details about the exact expression
+      syntax.
+
+      ## Example
+
+      ```toml
+      [package]
+      # ...
+      license = "MIT OR Apache-2.0"
+      ```
+    type: string
+  Files:
+    title: Files
+    description: &filesDesc |
+      List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that
+      file trees can be defined in a consise way like `schemas/**/*.mabo`.
+
+      Regardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is
+      always filtered by the `.mabo` file extension.
+    type: array
+    items:
+      - type: string
+        description: *filesDesc

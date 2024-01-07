@@ -13,7 +13,6 @@ license.workspace = true
 anyhow.workspace = true
 clap.workspace = true
 directories = "5.0.1"
-ignore = "0.4.21"
 line-index = "0.1.1"
 log = { version = "0.4.20", features = ["kv_unstable_std", "std"] }
 lsp-server = "0.7.6"
@@ -21,11 +20,12 @@ lsp-types = { version = "0.95.0", features = ["proposed"] }
 ouroboros = "0.18.2"
 parking_lot = "0.12.1"
 ropey = "1.6.1"
-serde = { version = "1.0.194", features = ["derive"] }
-serde_json = "1.0.110"
+serde.workspace = true
+serde_json.workspace = true
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-meta = { path = "../mabo-meta" }
 mabo-parser = { path = "../mabo-parser" }
+mabo-project = { path = "../mabo-project" }
 time = { version = "0.3.31", features = ["formatting", "local-offset", "macros"] }
 
 [lints]

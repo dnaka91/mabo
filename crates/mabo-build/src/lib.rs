@@ -1,6 +1,6 @@
 //! Code generator crate for Rust projects that can be used in `build.rs` build scripts.
 
-use std::{convert::AsRef, env, fmt::Debug, fs, path::PathBuf};
+use std::{env, fmt::Debug, fs, path::PathBuf};
 
 use mabo_parser::Schema;
 use miette::Report;
@@ -19,25 +19,12 @@ pub type Result<T, E = Error> = std::result::Result<T, E>;
 /// Errors that can happen when generating Rust source code from Mabo schema files.
 #[derive(Error)]
 pub enum Error {
+    /// Failed to load the Mabo project.
+    #[error("failed to load the Mabo project")]
+    LoadProject(#[source] mabo_project::Error),
     /// The required OUT_DIR env var doesn't exist.
     #[error("missing OUT_DIR environment variable")]
     NoOutDir,
-    /// One of the user-provided glob patterns is invalid.
-    #[error("failed to parse the glob pattern {glob:?}")]
-    Pattern {
-        /// Source error of the problem.
-        #[source]
-        source: glob::PatternError,
-        /// The problematic pattern.
-        glob: String,
-    },
-    /// Failed to iterate over the matching files for a pattern.
-    #[error("failed to read files of a glob pattern")]
-    Glob {
-        /// Source error of the problem.
-        #[source]
-        source: glob::GlobError,
-    },
     /// The file name resulting from a glob pattern didn't produce a usable file path.
     #[error("failed to get the file name from a found file path")]
     NoFileName,
@@ -100,7 +87,17 @@ pub enum Error {
 
 impl Debug for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self}")
+        use std::error::Error;
+
+        write!(f, "{self}")?;
+
+        let mut source = self.source();
+        while let Some(inner) = source {
+            write!(f, "\n-> {inner}")?;
+            source = inner.source();
+        }
+
+        Ok(())
     }
 }
 
@@ -141,9 +138,10 @@ impl Compiler {
     ///
     /// Will return an `Err` if any of the various cases happen, which are described in the
     /// [`Error`] type.
-    pub fn compile(&self, schemas: &[impl AsRef<str>]) -> Result<()> {
+    pub fn compile(&self, manifest_dir: &str) -> Result<()> {
         init_miette();
 
+        let project = mabo_project::load(manifest_dir).map_err(Error::LoadProject)?;
         let out_dir = PathBuf::from(env::var_os("OUT_DIR").ok_or(Error::NoOutDir)?).join("mabo");
 
         fs::create_dir_all(&out_dir).map_err(|source| Error::Create {
@@ -154,20 +152,13 @@ impl Compiler {
         let mut inputs = Vec::new();
         let mut validated = Vec::new();
 
-        for schema in schemas.iter().map(AsRef::as_ref) {
-            for schema in glob::glob(schema).map_err(|source| Error::Pattern {
+        for path in project.files {
+            let input = fs::read_to_string(&path).map_err(|source| Error::Read {
                 source,
-                glob: schema.to_owned(),
-            })? {
-                let path = schema.map_err(|e| Error::Glob { source: e })?;
+                file: path.clone(),
+            })?;
 
-                let input = fs::read_to_string(&path).map_err(|source| Error::Read {
-                    source,
-                    file: path.clone(),
-                })?;
-
-                inputs.push((path, input));
-            }
+            inputs.push((path, input));
         }
 
         for (path, input) in &inputs {

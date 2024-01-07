@@ -1,0 +1,21 @@
+[package]
+name = "mabo-project"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+globset = "0.4.14"
+ignore = "0.4.22"
+serde.workspace = true
+spdx = "0.10.3"
+thiserror.workspace = true
+toml = "0.8.8"
+
+[lints]
+workspace = true

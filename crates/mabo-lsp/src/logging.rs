@@ -174,6 +174,10 @@ struct FileLogger {
 
 impl FileLogger {
     fn new(file: PathBuf, offset: UtcOffset) -> Result<Self> {
+        if let Some(parent) = file.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+
         Ok(Self {
             file: File::options().create(true).append(true).open(file)?.into(),
             offset,

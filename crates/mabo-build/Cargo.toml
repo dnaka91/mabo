@@ -10,13 +10,13 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-glob.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 prettyplease = "0.2.16"
 proc-macro2.workspace = true
 quote.workspace = true
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-parser = { path = "../mabo-parser" }
+mabo-project = { path = "../mabo-project" }
 syn.workspace = true
 thiserror.workspace = true
 

@@ -1,0 +1,9 @@
+[package]
+name = "playground"
+files = [
+    "src/evolution.mabo",
+    "src/sample.mabo",
+    "schemas/*.mabo",
+    "src/other.mabo",
+    "src/second.mabo",
+]

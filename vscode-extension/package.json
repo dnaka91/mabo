@@ -21,8 +21,7 @@
       {
         "id": "mabo",
         "aliases": [
-          "Mabo",
-          "mabo"
+          "Mabo"
         ],
         "extensions": [
           ".mabo"
@@ -42,7 +41,7 @@
       }
     ],
     "configuration": {
-      "title": "Strongly Typed Encoding Format",
+      "title": "Mabo",
       "properties": {
         "mabo.maxNumberOfProblems": {
           "scope": "resource",
@@ -108,6 +107,12 @@
           ]
         }
       }
+    ],
+    "tomlValidation": [
+      {
+        "fileMatch": "Mabo.toml",
+        "url": "https://raw.githubusercontent.com/dnaka91/mabo/main/vscode-extension/schemas/mabo.json"
+      }
     ]
   },
   "vsce": {
@@ -118,8 +123,9 @@
     "watch": "bun run esbuild --watch",
     "build": "bun run esbuild --minify",
     "lint": "biome check --apply src/**/*.ts",
+    "schemas": "js-yaml schemas/mabo.yaml > schemas/mabo.json",
     "syntaxes": "js-yaml syntaxes/mabo.tmLanguage.yaml > syntaxes/mabo.tmLanguage.json",
-    "vscode:prepublish": "bun run syntaxes && bun run build",
+    "vscode:prepublish": "bun run schemas && bun run syntaxes && bun run build",
     "package": "vsce package"
   },
   "dependencies": {

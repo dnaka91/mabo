@@ -86,6 +86,11 @@ export default defineConfig({
             ],
           },
           {
+            text: "Project Files",
+            link: "/reference/project/",
+            items: [{ text: "Packages", link: "/reference/project/packages" }],
+          },
+          {
             text: "Wire Format",
             link: "/reference/wire-format",
           },

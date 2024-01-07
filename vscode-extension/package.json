@@ -122,7 +122,7 @@
     "esbuild": "esbuild src/extension.ts --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --bundle",
     "watch": "bun run esbuild --watch",
     "build": "bun run esbuild --minify",
-    "lint": "biome check --apply src/**/*.ts",
+    "lint": "biome check --apply src/*.ts",
     "schemas": "js-yaml schemas/mabo.yaml > schemas/mabo.json",
     "syntaxes": "js-yaml syntaxes/mabo.tmLanguage.yaml > syntaxes/mabo.tmLanguage.json",
     "vscode:prepublish": "bun run schemas && bun run syntaxes && bun run build",

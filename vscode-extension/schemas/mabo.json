@@ -11,7 +11,7 @@
   "definitions": {
     "Package": {
       "title": "Package",
-      "description": "The only fields required by Cargo are [`name`](https://doc.rust-lang.org/cargo/reference/manifest.html#the-name-field) and\n[`version`](https://doc.rust-lang.org/cargo/reference/manifest.html#the-version-field). If publishing to a registry, the registry may\nrequire additional fields. See the notes below and [the publishing chapter](https://doc.rust-lang.org/cargo/reference/publishing.html) for requirements for publishing to [crates.io](https://crates.io/).\n",
+      "description": "Single named collection of schema files that form a package.",
       "type": "object",
       "required": [
         "name",
@@ -19,11 +19,7 @@
       ],
       "properties": {
         "name": {
-          "description": "The package name is an identifier used to refer to the package. It is used\nwhen listed as a dependency in another package, and as the default name of\ninferred lib and bin targets.\n\nThe name must use only [alphanumeric](https://doc.rust-lang.org/std/primitive.char.html#method.is_alphanumeric) characters or `-` or `_`, and cannot be empty.\nNote that [`cargo new`](https://doc.rust-lang.org/cargo/commands/cargo-new.html) and [`cargo init`](https://doc.rust-lang.org/cargo/commands/cargo-init.html) impose some additional restrictions on\nthe package name, such as enforcing that it is a valid Rust identifier and not\na keyword. [crates.io](https://crates.io) imposes even more restrictions, such as\nenforcing only ASCII characters, not a reserved name, not a special Windows\nname such as \"nul\", is not too long, etc.\n",
-          "type": "string"
-        },
-        "authors": {
-          "$ref": "#/definitions/Authors"
+          "$ref": "#/definitions/Name"
         },
         "description": {
           "$ref": "#/definitions/Description"
@@ -31,36 +27,36 @@
         "license": {
           "$ref": "#/definitions/License"
         },
-        "readme": {
-          "$ref": "#/definitions/Readme"
+        "files": {
+          "$ref": "#/definitions/Files"
         }
       }
     },
-    "Readme": {
-      "title": "Readme",
-      "description": "The `readme` field should be the path to a file in the package root (relative\nto this `Cargo.toml`) that contains general information about the package.\nThis file will be transferred to the registry when you publish. [crates.io](https://crates.io)\nwill interpret it as Markdown and render it on the crate's page.\n\n```toml\n[package]\n# ...\nreadme = \"README.md\"\n```\n\nIf no value is specified for this field, and a file named `README.md`,\n`README.txt` or `README` exists in the package root, then the name of that\nfile will be used. You can suppress this behavior by setting this field to\n`false`. If the field is set to `true`, a default value of `README.md` will\nbe assumed.\n",
+    "Name": {
+      "title": "Name",
+      "description": "The package name is an identifier used to refer to the package.",
       "type": "string"
-    },
-    "Authors": {
-      "title": "Authors",
-      "description": "The `authors` field lists people or organizations that are considered the\n\"authors\" of the package. The exact meaning is open to interpretation — it may\nlist the original or primary authors, current maintainers, or owners of the\npackage. These names will be listed on the crate's page on\n[crates.io](https://crates.io). An optional email address may be included within angled\nbrackets at the end of each author.\n\n> **Note**: [crates.io](https://crates.io) requires at least one author to be listed.\n",
-      "type": "array",
-      "items": [
-        {
-          "type": "string",
-          "description": "The `authors` field lists people or organizations that are considered the\n\"authors\" of the package. The exact meaning is open to interpretation — it may\nlist the original or primary authors, current maintainers, or owners of the\npackage. These names will be listed on the crate's page on\n[crates.io](https://crates.io). An optional email address may be included within angled\nbrackets at the end of each author.\n\n> **Note**: [crates.io](https://crates.io) requires at least one author to be listed.\n"
-        }
-      ]
     },
     "Description": {
       "title": "Description",
-      "description": "The description is a short blurb about the package. [crates.io](https://crates.io) will display\nthis with your package. This should be plain text (not Markdown).\n\n```toml\n[package]\n# ...\ndescription = \"A short description of my package\"\n```\n\n> **Note**: [crates.io](https://crates.io) requires the `description` to be set.\n",
+      "description": "The description is a short explanation about content of the package.",
       "type": "string"
     },
     "License": {
       "title": "License",
-      "description": "The `license` field contains the name of the software license that the package\nis released under.\n\n[crates.io](https://crates.io/) interprets the `license` field as an [SPDX 2.1 license\nexpression](https://spdx.org/spdx-specification-21-web-version#h.jxpfx0ykyb60). The name must be a known license\nfrom the [SPDX license list 3.6](https://github.com/spdx/license-list-data/tree/v3.6). Parentheses are not\ncurrently supported. See the [SPDX site](https://spdx.org/license-list) for more information.\n\nSPDX license expressions support AND and OR operators to combine multiple\nlicenses.\n\n```toml\n[package]\n# ...\nlicense = \"MIT OR Apache-2.0\"\n```\n\nUsing `OR` indicates the user may choose either license. Using `AND` indicates\nthe user must comply with both licenses simultaneously. The `WITH` operator\nindicates a license with a special exception. Some examples:\n\n* `MIT OR Apache-2.0`\n* `LGPL-2.1 AND MIT AND BSD-2-Clause`\n* `GPL-2.0+ WITH Bison-exception-2.2`\n\nIf a package is using a nonstandard license, then the `license-file` field may\nbe specified in lieu of the `license` field.\n",
+      "description": "The license defines the software license that this package is released under. It can be a single\n[SPDX](https://spdx.dev/) license, or multiple combined with `AND` and `OR` into an expression.\n\nSee the [SPDX Specification](https://spdx.github.io/spdx-spec/v2.3/) for more details about the exact expression\nsyntax.\n\n## Example\n\n```toml\n[package]\n# ...\nlicense = \"MIT OR Apache-2.0\"\n```\n",
       "type": "string"
+    },
+    "Files": {
+      "title": "Files",
+      "description": "List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that\nfile trees can be defined in a consise way like `schemas/**/*.mabo`.\n\nRegardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is\nalways filtered by the `.mabo` file extension.\n",
+      "type": "array",
+      "items": [
+        {
+          "type": "string",
+          "description": "List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that\nfile trees can be defined in a consise way like `schemas/**/*.mabo`.\n\nRegardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is\nalways filtered by the `.mabo` file extension.\n"
+        }
+      ]
     }
   }
 }

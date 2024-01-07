@@ -44,12 +44,7 @@ export function activate(context: ExtensionContext) {
     },
   };
 
-  client = new LanguageClient(
-    "mabo",
-    "Mabo Schema",
-    serverOptions,
-    clientOptions,
-  );
+  client = new LanguageClient("mabo", "Mabo Schema", serverOptions, clientOptions);
 
   client.start();
 }

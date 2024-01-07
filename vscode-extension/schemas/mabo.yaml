@@ -29,7 +29,7 @@ definitions:
     type: string
   Description:
     title: Description
-    description: The description is a short description about the package.
+    description: The description is a short explanation about content of the package.
     type: string
   License:
     title: License

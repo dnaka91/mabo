@@ -2,7 +2,7 @@ name: Deploy Book
 on:
   push:
     branches: [main]
-    paths: ["book/**"]
+    paths: ["book/**", "bun.lockb", "CHANGELOG.md", "LICENSE.md"]
   workflow_dispatch:
 permissions:
   contents: read

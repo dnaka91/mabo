@@ -108,6 +108,7 @@ export default defineConfig({
         items: [
           { text: "Team", link: "/misc/team" },
           { text: "License", link: "/misc/license" },
+          { text: "Changelog", link: "/misc/changelog" },
         ],
       },
     ],

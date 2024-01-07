@@ -37,8 +37,7 @@ linkcheck:
   cd book && just build
   lychee --cache --max-cache-age 7d \
     --exclude https://github\.com/dnaka91/mabo \
-    'book/src/**/*.md' \
-    'book/book/**/*.html' \
+    'book/.vitepress/dist/**/*.html' \
     'crates/**/*.rs'
 
 # Install the LSP server into the local system

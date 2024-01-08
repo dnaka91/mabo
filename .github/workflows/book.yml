@@ -29,7 +29,9 @@ jobs:
       - name: Install dependencies
         run: bun install
       - name: Build book
-        run: cd book && bun run build
+        run: |
+          cd book && bun run build
+          touch book/.vitepress/dist/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

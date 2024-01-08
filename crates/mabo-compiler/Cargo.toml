@@ -10,8 +10,9 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
+anstream.workspace = true
+anstyle.workspace = true
 miette.workspace = true
-owo-colors.workspace = true
 schemars = { version = "0.8.16", optional = true }
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }

@@ -13,8 +13,9 @@ license.workspace = true
 rustc-args = ["--cfg", "docsrs"]
 
 [dependencies]
+anstream.workspace = true
+anstyle.workspace = true
 miette.workspace = true
-owo-colors.workspace = true
 mabo-derive = { path = "../mabo-derive" }
 winnow = "0.5.32"
 

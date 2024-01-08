@@ -31,10 +31,30 @@ export default defineConfig({
       preserveSymlinks: true,
     },
   },
-  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/mabo/logo.svg" }]],
+  head: [
+    ["link", { rel: "icon", type: "image/svg+xml", href: "/mabo/logo.svg" }],
+    ["meta", { name: "color-scheme", content: "dark light" }],
+    ["meta", { name: "theme-color", content: "#d95a00" }],
+    ["meta", { name: "og:type", content: "website" }],
+    ["meta", { name: "og:locale", content: "en" }],
+    ["meta", { name: "og:site_name", content: "Mabo" }],
+  ],
+  transformPageData(pageData, ctx) {
+    pageData.frontmatter.head ??= [];
+    pageData.frontmatter.head.push([
+      "meta",
+      {
+        name: "og:title",
+        content:
+          pageData.frontmatter.layout === "home"
+            ? ctx.siteConfig.site.title
+            : `${pageData.title} | ${ctx.siteConfig.site.title}`,
+      },
+    ]);
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: "/logo.svg",
+    logo: { src: "/logo.svg", width: 24, height: 24 },
     editLink: {
       pattern: "https://github.com/dnaka91/mabo/edit/main/book/src/:path",
       text: "Edit this page on GitHub",

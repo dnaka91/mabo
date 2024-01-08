@@ -53,7 +53,7 @@ pub mod a {
             )]
             fn size(&self) -> usize {
                 match self {
-                    Self::One => ::mabo::buf::size_id(1),
+                    Self::One => ::mabo::buf::size_variant_id(1),
                 }
             }
         }

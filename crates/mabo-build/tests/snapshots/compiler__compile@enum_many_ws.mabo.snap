@@ -137,15 +137,15 @@ impl ::mabo::buf::Size for Sample {
     )]
     fn size(&self) -> usize {
         match self {
-            Self::One => ::mabo::buf::size_id(1),
+            Self::One => ::mabo::buf::size_variant_id(1),
             Self::Two(n0, n1) => {
-                ::mabo::buf::size_id(2)
+                ::mabo::buf::size_variant_id(2)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*n0) })
                     + ::mabo::buf::size_field(2, || { ::mabo::buf::size_u64(*n1) })
                     + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
             }
             Self::Three { field1, field2 } => {
-                ::mabo::buf::size_id(3)
+                ::mabo::buf::size_variant_id(3)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*field1) })
                     + ::mabo::buf::size_field(2, || { ::mabo::buf::size_bool(*field2) })
                     + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)

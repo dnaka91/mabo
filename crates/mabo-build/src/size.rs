@@ -123,19 +123,19 @@ fn compile_variant(
     match fields.kind {
         FieldKind::Named => quote! {
             Self::#name{ #(#field_names,)* } => {
-                ::mabo::buf::size_id(#id) +
+                ::mabo::buf::size_variant_id(#id) +
                 #fields_body
             }
         },
         FieldKind::Unnamed => quote! {
             Self::#name(#(#field_names,)*) => {
-                ::mabo::buf::size_id(#id) +
+                ::mabo::buf::size_variant_id(#id) +
                 #fields_body
             }
         },
         FieldKind::Unit => quote! {
             Self::#name => {
-                ::mabo::buf::size_id(#id)
+                ::mabo::buf::size_variant_id(#id)
             }
         },
     }

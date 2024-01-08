@@ -423,12 +423,12 @@ impl ::mabo::buf::Size for HouseNumber {
     fn size(&self) -> usize {
         match self {
             Self::Digit(n0) => {
-                ::mabo::buf::size_id(1)
+                ::mabo::buf::size_variant_id(1)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u16(*n0) })
                     + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
             }
             Self::Text(n0) => {
-                ::mabo::buf::size_id(2)
+                ::mabo::buf::size_variant_id(2)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_string(n0) })
                     + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
             }
@@ -574,21 +574,21 @@ pub mod birthday {
         fn size(&self) -> usize {
             match self {
                 Self::Specific { year, month, day } => {
-                    ::mabo::buf::size_id(1)
+                    ::mabo::buf::size_variant_id(1)
                         + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u16(*year) })
                         + ::mabo::buf::size_field(2, || { month.size() })
                         + ::mabo::buf::size_field(3, || { ::mabo::buf::size_u8(*day) })
                         + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
                 }
                 Self::Secret { reason } => {
-                    ::mabo::buf::size_id(2)
+                    ::mabo::buf::size_variant_id(2)
                         + ::mabo::buf::size_field_option(
                             1,
                             reason.as_ref(),
                             |v| { ::mabo::buf::size_string(v) },
                         ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
                 }
-                Self::Unknown => ::mabo::buf::size_id(3),
+                Self::Unknown => ::mabo::buf::size_variant_id(3),
             }
         }
     }
@@ -696,18 +696,18 @@ pub mod birthday {
         )]
         fn size(&self) -> usize {
             match self {
-                Self::January => ::mabo::buf::size_id(1),
-                Self::February => ::mabo::buf::size_id(2),
-                Self::March => ::mabo::buf::size_id(3),
-                Self::April => ::mabo::buf::size_id(4),
-                Self::May => ::mabo::buf::size_id(5),
-                Self::June => ::mabo::buf::size_id(6),
-                Self::July => ::mabo::buf::size_id(7),
-                Self::August => ::mabo::buf::size_id(8),
-                Self::September => ::mabo::buf::size_id(9),
-                Self::October => ::mabo::buf::size_id(10),
-                Self::November => ::mabo::buf::size_id(11),
-                Self::December => ::mabo::buf::size_id(12),
+                Self::January => ::mabo::buf::size_variant_id(1),
+                Self::February => ::mabo::buf::size_variant_id(2),
+                Self::March => ::mabo::buf::size_variant_id(3),
+                Self::April => ::mabo::buf::size_variant_id(4),
+                Self::May => ::mabo::buf::size_variant_id(5),
+                Self::June => ::mabo::buf::size_variant_id(6),
+                Self::July => ::mabo::buf::size_variant_id(7),
+                Self::August => ::mabo::buf::size_variant_id(8),
+                Self::September => ::mabo::buf::size_variant_id(9),
+                Self::October => ::mabo::buf::size_variant_id(10),
+                Self::November => ::mabo::buf::size_variant_id(11),
+                Self::December => ::mabo::buf::size_variant_id(12),
             }
         }
     }

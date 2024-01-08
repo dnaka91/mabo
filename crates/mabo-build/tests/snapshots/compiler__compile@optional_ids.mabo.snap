@@ -353,15 +353,15 @@ impl ::mabo::buf::Size for SampleEnum {
     fn size(&self) -> usize {
         match self {
             Self::Named { field1, field2, field3 } => {
-                ::mabo::buf::size_id(1)
+                ::mabo::buf::size_variant_id(1)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*field1) })
                     + ::mabo::buf::size_field(100, || { ::mabo::buf::size_u32(*field2) })
                     + ::mabo::buf::size_field(101, || { ::mabo::buf::size_u32(*field3) })
                     + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
             }
-            Self::Unit => ::mabo::buf::size_id(50),
+            Self::Unit => ::mabo::buf::size_variant_id(50),
             Self::Unnamed(n0, n1, n2) => {
-                ::mabo::buf::size_id(51)
+                ::mabo::buf::size_variant_id(51)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*n0) })
                     + ::mabo::buf::size_field(100, || { ::mabo::buf::size_u32(*n1) })
                     + ::mabo::buf::size_field(101, || { ::mabo::buf::size_u32(*n2) })

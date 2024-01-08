@@ -110,10 +110,17 @@ where
     size_u64(N as u64) + array.iter().map(size).sum::<usize>()
 }
 
-/// Calculate the size of a Mabo field or variant identifier.
+/// Calculate the size of a Mabo field identifier.
 #[inline(always)]
 #[must_use]
-pub fn size_id(id: u32) -> usize {
+pub fn size_field_id(id: u32) -> usize {
+    size_u32(id << 3)
+}
+
+/// Calculate the size of a Mabo variant identifier.
+#[inline(always)]
+#[must_use]
+pub fn size_variant_id(id: u32) -> usize {
     size_u32(id)
 }
 
@@ -123,7 +130,7 @@ pub fn size_field<S>(id: u32, size: S) -> usize
 where
     S: Fn() -> usize,
 {
-    size_id(id) + size()
+    size_field_id(id) + size()
 }
 
 /// Calculate the size of an optional Mabo struct or enum field.
@@ -132,7 +139,7 @@ pub fn size_field_option<T, S>(id: u32, option: Option<&T>, size: S) -> usize
 where
     S: Fn(&T) -> usize,
 {
-    option.map_or(0, |value| size_id(id) + size(value))
+    option.map_or(0, |value| size_field_id(id) + size(value))
 }
 
 /// Values that are able to calculate their encoded byte size, without actually encoding.

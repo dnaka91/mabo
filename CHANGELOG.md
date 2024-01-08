@@ -205,6 +205,15 @@ All notable changes to this project will be documented in this file.
   > Therefore, now the field IDs as well as enum variant IDs can be omitted
   > and are derived by the compiler. They can be mixed as well to create
   > gaps in the ID range.
+- Rename project to `Mabo` ([1085e24](https://github.com/dnaka91/mabo/commit/1085e2499a76284f1df4af3641ffe58c9a3293ee))
+- Introduce Mabo project files ([b5798cf](https://github.com/dnaka91/mabo/commit/b5798cf1cadfd057a14a94c9aa9890594f565857))
+  > Adding dedicated `Mabo.toml` files allows to define the root of projects
+  > as well as kicking off the start of project metadata and future
+  > packaging.
+  > 
+  > This can later extend into an ecosystem that allows to distribute schema
+  > file collections and consume them through a dependency management
+  > system.
 
 ### 🐛 Bug Fixes
 
@@ -276,6 +285,21 @@ All notable changes to this project will be documented in this file.
   > Explain the components of a simple schema and describe the commonly used
   > data types.
 - _book_: Use Vuepress for the book ([9a0b0d9](https://github.com/dnaka91/mabo/commit/9a0b0d9a05ad6ef704ccc1d7ec7964f8658c2cfa))
+- _book_: Tweak colors and page details ([c43d077](https://github.com/dnaka91/mabo/commit/c43d077873b2719eb1f732b165c1aab033d0c5ab))
+  > Adjust the branding colors for better visual contrast and flip a few
+  > config values of Vitepress.
+- _book_: Expand the introduction page ([6f3c902](https://github.com/dnaka91/mabo/commit/6f3c902948a1933ccd8e215f8e4f638fe77aa06f))
+- _book_: Explain how identifiers are encoded in the wire format ([e45b743](https://github.com/dnaka91/mabo/commit/e45b74308ad14bd025d847f2888f194e632cb2d8))
+- _book_: Fix a few typos ([c891908](https://github.com/dnaka91/mabo/commit/c8919089d23257dd811831e9f49345aa67fb74c9))
+- _book_: Include the changelog in the book ([5b32249](https://github.com/dnaka91/mabo/commit/5b32249f396875dfc26d4546129312b597b8e0ad))
+- _book_: Describe the content of the Mabo.toml project files ([a31ecc2](https://github.com/dnaka91/mabo/commit/a31ecc2b118ef3a813b9effda8b8a0d5c161187c))
+  > Explain the need for the project files as well as all the possible
+  > settings that can be set as content.
+- _book_: Add additional metadata to each page ([601ac4c](https://github.com/dnaka91/mabo/commit/601ac4c9d59098f956abd58d619522dd50990b82))
+  > Apply a few metadata improvements reported in Lighthouse, as well as
+  > increasing the information for OpenGraph display.
+  > 
+  > This allows for a richer link display on several platforms when shared.
 - _parser_: Add missing doc for new field ([7f4ca98](https://github.com/dnaka91/mabo/commit/7f4ca98c236a41e505bcaa70a2df5fc3aae85b7a))
 - Generate more stylish changelog ([5319fb3](https://github.com/dnaka91/mabo/commit/5319fb3417a830042e7bc220fe283046923da349))
 - Add changelog ([5b2a15c](https://github.com/dnaka91/mabo/commit/5b2a15cad70e53c6c39a93c395fbe8f80382ae56))
@@ -389,6 +413,12 @@ All notable changes to this project will be documented in this file.
   > These crates were still working directly on top of the `stef_parser`
   > crate's types, but can get the same benefits as the other crates by
   > depending on the `stef_compiler`'s simplified structs instead.
+- Replace owo-colors with anstream&#x2F;anstyle ([e831c05](https://github.com/dnaka91/mabo/commit/e831c05697ee7cdca426f4596dd1bbceb99d4b4c))
+  > The anstream and anstyle crates look more promising and additionally
+  > allow to expose the on the API if needed, without restricting to a
+  > specific terminal coloring crate.
+  > 
+  > Also, the owo-colors crate contained some unmaintained dependencies.
 
 ### 🧪 Testing
 
@@ -400,6 +430,9 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- _ci_: Setup GitHub Actions to deploy the book ([cf24bbb](https://github.com/dnaka91/mabo/commit/cf24bbb0e55955e37233f9719f046bb482a8d712))
+- _ci_: Improve path filters for book deployment ([8b79f6f](https://github.com/dnaka91/mabo/commit/8b79f6f03787edde0db881ab0e61b6e163924709))
+- _ci_: Create .nojekyll marker file for the book ([b51681f](https://github.com/dnaka91/mabo/commit/b51681f377640421249d9d9e180446f8ae16142a))
 - _lsp_: Remove duplicate log message ([e8cfa08](https://github.com/dnaka91/mabo/commit/e8cfa08e0798c924c61c555fc74359ad2c660bb0))
 - Initial commit ([5eb2f2b](https://github.com/dnaka91/mabo/commit/5eb2f2b9687146363974ea645de22a8441e890a1))
 - Update checkout action to v4 ([4d753d8](https://github.com/dnaka91/mabo/commit/4d753d8b30ef3ee7d7e463fb2e7f594aee86d8e7))
@@ -415,5 +448,6 @@ All notable changes to this project will be documented in this file.
   > The script was still using pnpm in places and the custom highlighting
   > component wasn't built before building the full book.
 - Remove outdated GitHub Actions config ([cd9877f](https://github.com/dnaka91/mabo/commit/cd9877f2aa3bbcc25b5ba1b8985fd982ff3d0c1e))
+- Fix Just task for link checking ([24e1520](https://github.com/dnaka91/mabo/commit/24e15209799f6285ca3a55f7145556145cb61f30))
 
 <!-- generated by git-cliff -->

@@ -38,7 +38,11 @@ pub fn initialize(
         .root_uri
         .and_then(|root| mabo_project::discover(root.path()).ok())
     {
-        for path in projects.into_iter().flat_map(|project| project.files) {
+        for path in projects
+            .into_iter()
+            .inspect(|project| debug!(path = as_debug!(project.project_path); "found project"))
+            .flat_map(|project| project.files)
+        {
             let Ok(text) = std::fs::read_to_string(&path) else {
                 error!(path = as_debug!(path); "failed reading file content");
                 continue;

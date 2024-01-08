@@ -103,6 +103,8 @@ pub struct Package {
 pub struct Project {
     /// Parsed content of the `Mabo.toml` project file.
     pub project_file: ProjectFile,
+    /// Location of the `Mabo.toml` project file.
+    pub project_path: PathBuf,
     /// Resolved final list of files to process.
     pub files: Vec<PathBuf>,
 }
@@ -163,6 +165,7 @@ fn load_project(base: &Path, file: &Path) -> Result<Project> {
 
     Ok(Project {
         project_file,
+        project_path: file.to_owned(),
         files,
     })
 }

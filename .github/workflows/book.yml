@@ -31,7 +31,7 @@ jobs:
       - name: Build book
         run: |
           cd book && bun run build
-          touch book/.vitepress/dist/.nojekyll
+          touch .vitepress/dist/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

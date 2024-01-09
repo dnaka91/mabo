@@ -74,19 +74,28 @@ pub fn schemas(values: &[(&str, &Schema<'_>)]) -> Result<(), Error> {
 pub(crate) struct Module<'a> {
     /// Name of this module.
     pub name: &'a str,
+    /// Reference back into the schema.
     schema: &'a Schema<'a>,
-    /// Full path from the root (the schema) till here.
-    path: String,
-    path2: Vec<&'a str>,
+    /// Full path from the root (the schema) till here, split into individual components.
+    path: Vec<&'a str>,
     /// List of imports declared in the module.
     imports: Vec<&'a Import<'a>>,
     /// List of types that are declared in this module.
     types: Vec<Declaration<'a>>,
-    /// Directly submodules located in this module.
+    /// Direct submodules located in this module.
     modules: HashMap<&'a str, Module<'a>>,
+    /// List of original definitions.
     definitions: &'a [Definition<'a>],
 }
 
+impl Module<'_> {
+    fn path_to_string(&self)->String{
+        self.path.join("::")
+    }
+}
+
+/// Simplified declaration with just enough information to check whether declaration and use site
+/// are compatible with another.
 struct Declaration<'a> {
     kind: DeclarationKind,
     name: Name<'a>,
@@ -97,6 +106,17 @@ enum DeclarationKind {
     Enum { generics: usize },
     Alias,
     Const,
+}
+
+impl DeclarationKind {
+    fn as_str(&self) -> &'static str {
+        match self {
+            DeclarationKind::Struct { .. } => "struct",
+            DeclarationKind::Enum { .. } => "enum",
+            DeclarationKind::Alias => "type alias",
+            DeclarationKind::Const => "constant",
+        }
+    }
 }
 
 pub(crate) enum ResolvedImport<'a> {
@@ -116,7 +136,7 @@ impl Module<'_> {
             ty.path.iter().try_fold(self, |module, name| {
                 module.modules.get(name.get()).ok_or_else(|| MissingModule {
                     name: name.get().to_owned(),
-                    path: module.path.clone(),
+                    path: module.path_to_string(),
                     used: ty.name.span().into(),
                 })
             })?
@@ -128,7 +148,7 @@ impl Module<'_> {
             .find(|type_def| type_def.name.get() == ty.name.get())
             .ok_or_else(|| MissingDefinition {
                 name: ty.name.get().to_owned(),
-                path: module.path.clone(),
+                path: module.path_to_string(),
                 used: ty.name.span().into(),
             })?;
 
@@ -144,14 +164,8 @@ impl Module<'_> {
                 }
                 .into())
             }
-            DeclarationKind::Alias => Err(InvalidKind {
-                kind: "type alias",
-                declared: definition.name.span().into(),
-                used: ty.name.span().into(),
-            }
-            .into()),
-            DeclarationKind::Const => Err(InvalidKind {
-                kind: "constant",
+            DeclarationKind::Alias | DeclarationKind::Const => Err(InvalidKind {
+                kind: definition.kind.as_str(),
                 declared: definition.name.span().into(),
                 used: ty.name.span().into(),
             }
@@ -171,7 +185,7 @@ impl Module<'_> {
                 .try_fold(self, |module, name| {
                     module.modules.get(name.get()).ok_or_else(|| MissingModule {
                         name: name.get().to_owned(),
-                        path: module.path.clone(),
+                        path: module.path_to_string(),
                         used: name.span().into(),
                     })
                 })?
@@ -184,7 +198,7 @@ impl Module<'_> {
                 .find(|type_def| type_def.name.get() == element.get())
                 .ok_or_else(|| MissingDefinition {
                     name: element.get().to_owned(),
-                    path: module.path.clone(),
+                    path: module.path_to_string(),
                     used: element.span().into(),
                 })?;
 
@@ -225,7 +239,7 @@ impl Module<'_> {
             ty.path.iter().try_fold(self, |module, name| {
                 module.modules.get(name.get()).ok_or_else(|| MissingModule {
                     name: name.get().to_owned(),
-                    path: module.path.clone(),
+                    path: module.path_to_string(),
                     used: ty.name.span().into(),
                 })
             })?
@@ -237,7 +251,7 @@ impl Module<'_> {
             .find(|type_def| type_def.name.get() == ty.name.get())
             .ok_or_else(|| MissingDefinition {
                 name: ty.name.get().to_owned(),
-                path: module.path.clone(),
+                path: module.path_to_string(),
                 used: ty.name.span().into(),
             })?;
 
@@ -332,36 +346,33 @@ pub(crate) fn resolve_module_types<'a>(
         });
     }
 
+    fn resolve_fields<'a>(
+        missing: &mut Vec<LocallyMissingType<'a>>,
+        fields: &'a Fields<'_>,
+        generics: &Generics<'_>,
+        module: &'a Module<'_>,
+    ) {
+        match fields {
+            Fields::Named(named) => {
+                for field in named {
+                    resolve(missing, &field.ty, generics, module);
+                }
+            }
+            Fields::Unnamed(unnamed) => {
+                for field in unnamed {
+                    resolve(missing, &field.ty, generics, module);
+                }
+            }
+            Fields::Unit => {}
+        }
+    }
+
     for def in module.definitions {
         match def {
-            Definition::Struct(s) => match &s.fields {
-                Fields::Named(named) => {
-                    for field in named {
-                        resolve(missing, &field.ty, &s.generics, module);
-                    }
-                }
-                Fields::Unnamed(unnamed) => {
-                    for field in unnamed {
-                        resolve(missing, &field.ty, &s.generics, module);
-                    }
-                }
-                Fields::Unit => {}
-            },
+            Definition::Struct(s) => resolve_fields(missing, &s.fields, &s.generics, module),
             Definition::Enum(e) => {
                 for variant in &e.variants {
-                    match &variant.fields {
-                        Fields::Named(named) => {
-                            for field in named {
-                                resolve(missing, &field.ty, &e.generics, module);
-                            }
-                        }
-                        Fields::Unnamed(unnamed) => {
-                            for field in unnamed {
-                                resolve(missing, &field.ty, &e.generics, module);
-                            }
-                        }
-                        Fields::Unit => {}
-                    }
+                    resolve_fields(missing, &variant.fields, &e.generics, module);
                 }
             }
             _ => {}
@@ -397,8 +408,7 @@ fn visit_module_tree<'a>(
     let mut module = Module {
         name,
         schema,
-        path: path.join("::"),
-        path2: path,
+        path,
         imports: Vec::new(),
         types: Vec::new(),
         modules: HashMap::new(),
@@ -410,7 +420,7 @@ fn visit_module_tree<'a>(
             Definition::Module(m) => {
                 module.modules.insert(
                     m.name.get(),
-                    visit_module_tree(m.name.get(), schema, &module.path2, &m.definitions),
+                    visit_module_tree(m.name.get(), schema, &module.path, &m.definitions),
                 );
             }
             Definition::Struct(s) => module.types.push(Declaration {
@@ -440,6 +450,8 @@ fn visit_module_tree<'a>(
     module
 }
 
+/// Walk through the type and any type arguments, calling the visitor whenever an external type is
+/// encountered.
 fn visit_externals<'a>(value: &'a Type<'_>, visit: &mut impl FnMut(&'a ExternalType<'_>)) {
     match &value.value {
         DataType::Bool

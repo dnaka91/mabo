@@ -193,7 +193,7 @@
               "name": "entity.name.class.enum.variant.named.mabo"
             }
           },
-          "end": "(?<=\\})\\s*(@\\d+)(,)?",
+          "end": "(?<=\\})\\s*(@\\d+)?(,)?",
           "endCaptures": {
             "1": {
               "name": "constant.numeric.mabo"
@@ -218,7 +218,7 @@
               "name": "entity.name.class.enum.variant.unnamed.mabo"
             }
           },
-          "end": "(?<=\\))\\s*(@\\d+)(,)?",
+          "end": "(?<=\\))\\s*(@\\d+)?(,)?",
           "endCaptures": {
             "1": {
               "name": "constant.numeric.mabo"
@@ -237,7 +237,7 @@
           ]
         },
         {
-          "match": "([a-zA-Z0-9_]+)\\s*(@\\d+)(,)?",
+          "match": "([a-zA-Z0-9_]+)\\s*(@\\d+)?(,)?",
           "captures": {
             "1": {
               "name": "entity.name.class.enum.variant.unit.mabo"
@@ -277,7 +277,7 @@
     "fieldNamed": {
       "patterns": [
         {
-          "match": "\\s*([a-zA-Z0-9_]+)\\s*(:)\\s*(.+?)\\s*(@\\d+)(,)?",
+          "match": "\\s*([a-zA-Z0-9_]+)\\s*(:)\\s*(&?[a-zA-Z0-9_]+(?:<.+>)?)\\s*(@\\d+)?(,)?",
           "captures": {
             "1": {
               "name": "variable.language.mabo variable.other.mabo"
@@ -327,10 +327,9 @@
     "fieldUnnamed": {
       "patterns": [
         {
-          "match": "(.+?)\\s*(@\\d+)(,)?",
+          "match": "(&?[a-zA-Z0-9_]+(?:<.+>)?)\\s*(@\\d+)?(,)?",
           "captures": {
             "1": {
-              "name": "storage.type.mabo",
               "patterns": [
                 {
                   "include": "#type"

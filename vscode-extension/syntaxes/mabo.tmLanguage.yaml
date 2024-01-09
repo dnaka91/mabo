@@ -83,7 +83,7 @@ repository:
       - begin: ([a-zA-Z0-9_]+)\s*(?=\{)
         beginCaptures:
           "1": { name: entity.name.class.enum.variant.named.mabo }
-        end: (?<=\})\s*(@\d+)(,)?
+        end: (?<=\})\s*(@\d+)?(,)?
         endCaptures:
           "1": { name: constant.numeric.mabo }
           "2": { name: punctuation.comma.mabo }
@@ -93,14 +93,14 @@ repository:
       - begin: ([a-zA-Z0-9_]+)\s*(?=\()
         beginCaptures:
           "1": { name: entity.name.class.enum.variant.unnamed.mabo }
-        end: (?<=\))\s*(@\d+)(,)?
+        end: (?<=\))\s*(@\d+)?(,)?
         endCaptures:
           "1": { name: constant.numeric.mabo }
           "2": { name: punctuation.comma.mabo }
         patterns:
           - include: "#comments"
           - include: "#fieldsUnnamed"
-      - match: ([a-zA-Z0-9_]+)\s*(@\d+)(,)?
+      - match: ([a-zA-Z0-9_]+)\s*(@\d+)?(,)?
         captures:
           "1": { name: entity.name.class.enum.variant.unit.mabo }
           "2": { name: constant.numeric.mabo }
@@ -118,7 +118,7 @@ repository:
       - include: "#fieldNamed"
   fieldNamed:
     patterns:
-      - match: \s*([a-zA-Z0-9_]+)\s*(:)\s*(.+?)\s*(@\d+)(,)?
+      - match: \s*([a-zA-Z0-9_]+)\s*(:)\s*(&?[a-zA-Z0-9_]+(?:<.+>)?)\s*(@\d+)?(,)?
         captures:
           "1": { name: variable.language.mabo variable.other.mabo }
           "2": { name: punctuation.colon.mabo }
@@ -137,9 +137,9 @@ repository:
       - include: "#fieldUnnamed"
   fieldUnnamed:
     patterns:
-      - match: (.+?)\s*(@\d+)(,)?
+      - match: (&?[a-zA-Z0-9_]+(?:<.+>)?)\s*(@\d+)?(,)?
         captures:
-          "1": { name: storage.type.mabo, patterns: [include: "#type"] }
+          "1": { patterns: [include: "#type"] }
           "2": { name: constant.numeric.mabo }
           "3": { name: punctuation.comma.mabo }
 

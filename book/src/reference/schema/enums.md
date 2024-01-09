@@ -1,7 +1,5 @@
 # Enums
 
-[[toc]]
-
 ## Basic
 
 ### Schema {#basic-schema}

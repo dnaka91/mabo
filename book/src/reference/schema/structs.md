@@ -10,8 +10,6 @@ Note that acronyms should be written in strict _CamelCase_, meaning `Html` inste
 
 Individual fields in both named and unnamed form are separated by a comma `,`, and it's recommended to even give the last field a trailing comma. This allows for simpler diffs in version control systems.
 
-[[toc]]
-
 ## Named
 
 The likely most common form is a named struct. Named means that each element is represented as a field with a name to identify it.

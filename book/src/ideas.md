@@ -2,8 +2,6 @@
 
 The following are general ideas for this project, that are not yet implemented or even close to being developed, but definitely on the list of ideas for the future.
 
-[[toc]]
-
 ## Documentation generator
 
 Similar to Rust's [rustdoc](https://doc.rust-lang.org/rustdoc/index.html), it would be nice to have a documentation generator built in. The doc comments can be extended to be parsed as Markdown and allow for rich formatting in the docs.

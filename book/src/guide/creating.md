@@ -1,7 +1,5 @@
 # Creating schemas
 
-[[toc]]
-
 ## Create the first schema
 
 Lets jump right in and discover further details along the way.

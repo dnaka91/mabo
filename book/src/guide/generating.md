@@ -1,7 +1,5 @@
 # Generating code
 
-[[toc]]
-
 ## Rust
 
 First, make sure you followed the [installation](./installation#rust) instructions, to setup the dependencies in your _Cargo.toml_ properly.

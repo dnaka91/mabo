@@ -1,7 +1,5 @@
 # Modules
 
-[[toc]]
-
 ## Schema
 
 <<< modules/basic.mabo

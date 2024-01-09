@@ -1,7 +1,5 @@
 # Type aliases
 
-[[toc]]
-
 | Language      | Example            |
 | ------------- | ------------------ |
 | Schema / Rust | `type A = T;`      |

@@ -1,7 +1,5 @@
 # Arrays
 
-[[toc]]
-
 ## Schema
 
 <<< arrays/basic.mabo

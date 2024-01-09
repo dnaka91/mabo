@@ -4,8 +4,6 @@ The attributes allow to further apply configuration to elements, while not affec
 
 For example, they allow to mark elements as _deprecated_ or define how a certain value is represented in code, off the default variant.
 
-[[toc]]
-
 ## Schema
 
 Attributes can come in 3 forms.

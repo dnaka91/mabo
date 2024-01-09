@@ -1,7 +1,5 @@
 # Installation
 
-[[toc]]
-
 ## Command Line Interface
 
 The CLI tool is not strictly needed to compile and use Mabo schemas, but it contains several helpful elements like a validator for schema correctness, a formatter and helper for setting up Mabo in your project.

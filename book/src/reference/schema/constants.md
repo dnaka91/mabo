@@ -1,7 +1,5 @@
 # Constants
 
-[[toc]]
-
 | Language      | Example                         |
 | ------------- | ------------------------------- |
 | Schema / Rust | `const NAME: T = <literal>;`    |

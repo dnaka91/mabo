@@ -31,22 +31,3 @@ When decoding a value, it may contain new fields and enum variants that are not 
 The same can happen the other way around. For example, if the data was saved in some form of storage and the schema evolved in the meantime, the decoder might encounter old data that lacks the newer content.
 
 In both cases, the schema must be able to handle missing or unknown fields. Several rules must be upheld when updating a schema, to ensure it is both forward and backward compatible.
-
-### Skip fields without knowing the exact type
-
-This section explains how a decoder is able to process payloads that contain newer or unknown fields, given these were introduced in a backward compatible way.
-
-Without the new schema it's not possible to make decisions about the data that follows after a field identifier. To work around this, reduced information can be encoded into the identifier.
-
-Only a few  details are important for the decoder to proceed, not needing full type information:
-
-- Is the value a variable integer?
-  - Skip over individual bytes until the end marker is found
-- Is the value length delimited?
-  - Parse the delimiter, which is always a _varint_, and skip over the length.
-- Is the value a nested struct or enum?
-  - Step into the nested type and skip over all its fields.
-- Is the value of fixed length?
-  - Skip over the fixed length of 1 (`bool`, `u8` and `i8`), 4 (`f32`) or 8 (`f64`) bytes.
-
-Furthermore, this information is only needed for direct elements of a struct or enum variant, as this allows to skip over the whole field. Types nested into another, like a `vec<u32>` for example, don't need to provide this information for each element again.

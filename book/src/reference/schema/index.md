@@ -148,7 +148,41 @@ Byte arrays are mutable in other languages as well, but they don't have a reason
 
 Identifier are an integral part of schemas and are attached to named and unnamed fields inside a struct or enum.
 
-As the wire format doesn't contain any field names, fields have to be identified in some way. This is done by identifiers, which are [varint](../wire-format#varint-encoding) encoded integers.
+As the wire format doesn't contain any field names, fields have to be identified in some way. This is done by identifiers, which are [Varint](../wire-format#varint-encoding) encoded **32-bit unsigned integers**.
+
+Depending on the type of identifier (field or variant), they might carry some additional information. This is further explained in the [Wire Format](../wire-format).
+
+### Deriving identifiers
+
+Similar to classic enums in most languages, the identifiers can be omitted. In that case the compiler derives the identifiers automatically. This feature can be combined to mix and match explicit identifiers with derived ones.
+
+Whenever an integer is is explicitly derived, it becomes the source for deriving the next potentially following identifier. After all, it's just an integer counter.
+
+::: info
+Identifiers don't have to be strictly increasing. They can appear in any order, can jump from different ranges like `1, 100, 5, 200, ...`
+
+The only requirement is that they are unique within a struct or enum variant (for fields), and unique within an enum (for variants).
+:::
+
+For example, the following schema applies a mix of explicitly defined and derived identifiers on a single struct:
+
+```mabo
+struct Sample {
+  field1: u32,
+  field2: u32 @100,
+  field3: u32,
+  field4: u32 @10,
+  field5: u32,
+}
+```
+
+The final identifiers are as follows:
+
+- field1: `1` as the minimum identifier is one.
+- field2: `100` because it's explicitly defined.
+- field3: `101` the next value after 100.
+- field4: `10` explicitly defined again.
+- field5: `11` the next value after 10.
 
 ## Naming
 

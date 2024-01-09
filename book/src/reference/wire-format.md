@@ -55,7 +55,7 @@ Both tuples and arrays have a known length as defined in the schema. Therefore, 
 
 ## Identifiers
 
-Identifiers are an essential part of the format. They mark the start of a field or enum variant and decribe which one it is, so the decoder knows how to parse the following data and assign it to the right element of a struct or enum.
+Identifiers are an essential part of the format. They mark the start of a field or enum variant and describe which one it is, so the decoder knows how to parse the following data and assign it to the right element of a struct or enum.
 
 These IDs are regular **32-bit unsigned integers**, and may encode additional information together with field or variant number.
 
@@ -74,6 +74,16 @@ The field identifiers combine the raw field number with an encoding marker. This
 This encoding marker is placed in the first 3 bits and the field number in shifted to the left.
 
 It means the maximum possible field number is **2<sup>29</sup> - 1** (**536,870,911**) instead of the integer types maximum of **2<sup>32</sup> - 1** (**4,294,967,295**). This amount is still sufficient and very unlikely to ever be reached as it is not considered realistic to have a struct or enum variant with that many fields.
+
+The possible encodings are:
+
+- `0`/`b000` Variable integer: Skip over individual bytes until the end marker is found.
+- `1`/`b001` Length delimited: Parse the delimiter, which is always a _varint_, and skip over the length.
+- Is the value a nested struct or enum?
+  - Step into the nested type and skip over all its fields.
+- `2`/`b010` Fixed 1-byte length: Skip over the fixed length of 1 byte (`bool`, `u8` and `i8`).
+- `3`/`b011` Fixed 4-byte length: Skip over the fixed length of 4 bytes (`f32`).
+- `4`/`b100` Fixed 8-byte length: Skip over the fixed length of 8 bytes (`f64`).
 
 ### Variant identifiers
 

@@ -27,14 +27,7 @@ export function activate(context: ExtensionContext) {
 
   const serverOptions: ServerOptions = {
     run: executable,
-    debug: {
-      ...executable,
-      options: {
-        env: {
-          RUST_LOG: "info,tower_lsp=trace,mabo_lsp=trace",
-        },
-      },
-    },
+    debug: executable,
   };
 
   const clientOptions: LanguageClientOptions = {

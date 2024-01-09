@@ -89,7 +89,7 @@ pub(crate) struct Module<'a> {
 }
 
 impl Module<'_> {
-    fn path_to_string(&self)->String{
+    fn path_to_string(&self) -> String {
         self.path.join("::")
     }
 }

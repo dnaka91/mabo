@@ -113,10 +113,10 @@ impl Display for RenderFoundChecks<'_> {
         for field in &*self.0.fields {
             writeln!(f, "\tif !found{} {{", heck::AsUpperCamelCase(&field.name))?;
             writeln!(f, "\t\treturn nil, buf.MissingFieldError{{")?;
-            writeln!(f, "\t\t\tID:    {}", field.id)?;
+            writeln!(f, "\t\t\tID:    {},", field.id)?;
             writeln!(
                 f,
-                "\t\t\tField: \"{}\"",
+                "\t\t\tField: \"{}\",",
                 if self.0.kind == FieldKind::Named {
                     &field.name
                 } else {

@@ -1,10 +1,16 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 
 #[derive(Debug, Parser)]
 #[command(about, author, version, propagate_version = true)]
 pub struct Cli {
-    #[arg(num_args(1..))]
-    files: Vec<String>,
+    #[arg(long)]
+    pub project_dir: Option<PathBuf>,
+    #[arg(long, short)]
+    pub out_dir: Option<PathBuf>,
+    #[arg(long)]
+    pub no_fmt: bool,
 }
 
 impl Cli {

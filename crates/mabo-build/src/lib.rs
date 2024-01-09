@@ -205,7 +205,7 @@ impl Compiler {
                 }
             })?);
 
-            let out_file = out_dir.join(format!("{stem}.rs",));
+            let out_file = out_dir.join(format!("{stem}.rs"));
 
             fs::write(&out_file, code).map_err(|source| Error::Write {
                 source,

@@ -730,12 +730,15 @@ dependencies = [
 name = "mabo-go"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "heck",
  "insta",
  "mabo-compiler",
  "mabo-parser",
+ "mabo-project",
  "miette",
+ "mimalloc",
 ]
 
 [[package]]

@@ -16,8 +16,8 @@ pub fn render_schema<'a>(
     let mut content = format!(
         "{}{}{}",
         RenderHeader,
+        RenderPackage(opts.package, None),
         RenderImports,
-        RenderPackage(opts.package, None)
     );
 
     let modules = definitions
@@ -36,9 +36,10 @@ fn render_definition<'a>(buf: &mut String, definition: &'a Definition<'_>) -> Op
     match definition {
         Definition::Module(m) => {
             let mut content = format!(
-                "{}{}",
+                "{}{}{}",
                 RenderHeader,
-                RenderPackage(m.name, Some(&m.comment))
+                RenderPackage(m.name, Some(&m.comment)),
+                RenderImports,
             );
 
             let modules = m
@@ -114,8 +115,8 @@ struct RenderImports;
 impl Display for RenderImports {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "import (")?;
-        writeln!(f, "\t\"github.com/dnaka91/mabo-go\"")?;
-        writeln!(f, "\t\"github.com/dnaka91/mabo-go/buf\"")?;
+        writeln!(f, "\tmabo \"github.com/dnaka91/mabo-go\"")?;
+        writeln!(f, "\tbuf \"github.com/dnaka91/mabo-go/buf\"")?;
         writeln!(f, ")\n")
     }
 }

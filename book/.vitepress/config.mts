@@ -122,8 +122,12 @@ export default defineConfig({
             text: "Generators",
             link: "/reference/generators/",
             items: [
+              { text: "Doc", link: "/reference/generators/doc" },
               { text: "Rust", link: "/reference/generators/rust" },
               { text: "Go", link: "/reference/generators/go" },
+              { text: "Kotlin", link: "/reference/generators/kotlin" },
+              { text: "TypeScript", link: "/reference/generators/typescript" },
+              { text: "Python", link: "/reference/generators/python" },
             ],
           },
         ],

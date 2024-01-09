@@ -15,7 +15,6 @@ path = "src/main.rs"
 
 [dependencies]
 clap.workspace = true
-color-eyre.workspace = true
 glob.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mimalloc.workspace = true

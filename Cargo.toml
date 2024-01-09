@@ -40,5 +40,5 @@ syn = "2.0.48"
 thiserror = "1.0.56"
 
 [profile.release]
-lto = true
+lto = "thin"
 strip = true

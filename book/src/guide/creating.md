@@ -43,7 +43,7 @@ The following list contains the most essential data types that are likely to be 
 
 - Bytes `bytes`: Raw bytes of an arbitrary length. These can contain literally anything, images, binaries, structured data, and so on. The interpretation is up to the application.
 
-### Colletions
+### Collections
 
 To bundle multiple values together, they can be put into collections. These all have in common that they can hold zero or more elements of the same type.
 

@@ -36,7 +36,8 @@ snapshots:
 linkcheck:
   cd book && just build
   lychee --cache --max-cache-age 7d \
-    --exclude https://github\.com/dnaka91/mabo \
+    --exclude https://github\.com/dnaka91/mabo/commit/ \
+    --exclude https://github\.com/dnaka91/mabo/edit/ \
     'book/.vitepress/dist/**/*.html' \
     'crates/**/*.rs'
 

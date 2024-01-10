@@ -15,8 +15,8 @@ rustc-args = ["--cfg", "docsrs"]
 [dependencies]
 anstream.workspace = true
 anstyle.workspace = true
-miette.workspace = true
 mabo-derive = { path = "../mabo-derive" }
+miette.workspace = true
 winnow = "0.5.33"
 
 [dev-dependencies]

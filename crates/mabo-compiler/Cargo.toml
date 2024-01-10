@@ -12,11 +12,11 @@ license.workspace = true
 [dependencies]
 anstream.workspace = true
 anstyle.workspace = true
+mabo-parser = { path = "../mabo-parser" }
 miette.workspace = true
 schemars = { version = "0.8.16", optional = true }
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
-mabo-parser = { path = "../mabo-parser" }
 thiserror.workspace = true
 
 [dev-dependencies]

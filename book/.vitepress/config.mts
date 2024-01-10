@@ -85,7 +85,8 @@ export default defineConfig({
             items: [
               { text: "mabo lint", link: "/reference/cli/lint" },
               { text: "mabo check", link: "/reference/cli/check" },
-              { text: "mabo format", link: "/reference/cli/format" },
+              { text: "mabo fmt", link: "/reference/cli/fmt" },
+              { text: "mabo doc", link: "/reference/cli/doc" },
             ],
           },
           {

@@ -14,11 +14,15 @@ name = "mabo"
 path = "src/main.rs"
 
 [dependencies]
+anyhow.workspace = true
 clap.workspace = true
 glob.workspace = true
+mabo-compiler = { path = "../mabo-compiler" }
+mabo-doc = { path = "../mabo-doc" }
+mabo-parser = { path = "../mabo-parser" }
+mabo-project = { path = "../mabo-project" }
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mimalloc.workspace = true
-mabo-parser = { path = "../mabo-parser" }
 
 [lints]
 workspace = true

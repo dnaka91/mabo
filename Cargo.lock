@@ -682,9 +682,13 @@ dependencies = [
 name = "mabo-cli"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "glob",
+ "mabo-compiler",
+ "mabo-doc",
  "mabo-parser",
+ "mabo-project",
  "miette",
  "mimalloc",
 ]

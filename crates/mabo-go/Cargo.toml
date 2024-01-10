@@ -10,14 +10,14 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
+anyhow.workspace = true
 clap.workspace = true
 heck = "0.4.1"
-miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-parser = { path = "../mabo-parser" }
 mabo-project = { path = "../mabo-project" }
+miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mimalloc.workspace = true
-anyhow.workspace = true
 
 [dev-dependencies]
 insta.workspace = true

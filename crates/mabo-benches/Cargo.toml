@@ -23,9 +23,9 @@ name = "varint"
 harness = false
 
 [dependencies]
-mimalloc.workspace = true
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-parser = { path = "../mabo-parser" }
+mimalloc.workspace = true
 
 [dev-dependencies]
 divan = "0.1.8"

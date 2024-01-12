@@ -1,0 +1,49 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n    Two(A @1, B @2) @2,\n    Three {\n        field1: C @1,\n        field2: D @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/enum_generics.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public sealed interface Sample {
+    public object One : Sample, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(1)
+
+    }
+
+    public data class Two<A, B>(
+        val n0: A,
+        val n1: B,
+    ) : Sample, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(2)
+            + Sizer.sizeField(1, { this.N0.size() })
+            + Sizer.sizeField(2, { this.N1.size() })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+
+    public data class Three<C, D>(
+        val field1: C,
+        val field2: D,
+    ) : Sample, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(3)
+            + Sizer.sizeField(1, { this.Field1.size() })
+            + Sizer.sizeField(2, { this.Field2.size() })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+}
+
+

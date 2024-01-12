@@ -1,0 +1,69 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Basic struct.\nstruct SampleStruct {\n    a: u32 @1,\n    b: bool @2,\n}\n\n/// Sample enum.\nenum SampleEnum {\n    One @1,\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/schema_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+/**
+ * Basic struct.
+ */
+public data class SampleStruct(
+    val a: UInt,
+    val b: Boolean,
+) : Decode, Encode Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.A) })
+        Encoder.encodeField(w, 2, { w -> Encoder.encodeBool(w, this.B) })
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0
+        + Sizer.sizeField(1, { Sizer.sizeU32(this.A) })
+        + Sizer.sizeField(2, { Sizer.sizeBool(this.B) })
+        + Sizer.sizeFieldId(END_MARKER)
+
+}
+
+public sealed interface SampleEnum {
+    public object One : SampleEnum, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(1)
+
+    }
+
+    public data class Two(
+        val n0: UInt,
+        val n1: ULong,
+    ) : SampleEnum, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(2)
+            + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
+            + Sizer.sizeField(2, { Sizer.sizeU64(this.N1) })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+
+    public data class Three(
+        val field1: UInt,
+        val field2: Boolean,
+    ) : SampleEnum, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(3)
+            + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
+            + Sizer.sizeField(2, { Sizer.sizeBool(this.Field2) })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+}
+
+

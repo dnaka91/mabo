@@ -1,0 +1,93 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct SampleNamed {\n    field1: u32,\n    field2: u32 @100,\n    field3: u32,\n}\n\nstruct SampleUnnamed(u32, u32 @100, u32)\n\nenum SampleEnum {\n    Named {\n        field1: u32,\n        field2: u32 @100,\n        field3: u32,\n    },\n    Unit @50,\n    Unnamed(u32, u32 @100, u32),\n}"
+input_file: crates/mabo-parser/tests/inputs/optional_ids.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class SampleNamed(
+    val field1: UInt,
+    val field2: UInt,
+    val field3: UInt,
+) : Decode, Encode Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.Field1) })
+        Encoder.encodeField(w, 100, { w -> Encoder.encodeU32(w, this.Field2) })
+        Encoder.encodeField(w, 101, { w -> Encoder.encodeU32(w, this.Field3) })
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0
+        + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
+        + Sizer.sizeField(100, { Sizer.sizeU32(this.Field2) })
+        + Sizer.sizeField(101, { Sizer.sizeU32(this.Field3) })
+        + Sizer.sizeFieldId(END_MARKER)
+
+}
+
+public data class SampleUnnamed(
+    val n0: UInt,
+    val n1: UInt,
+    val n2: UInt,
+) : Decode, Encode Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.N0) })
+        Encoder.encodeField(w, 100, { w -> Encoder.encodeU32(w, this.N1) })
+        Encoder.encodeField(w, 101, { w -> Encoder.encodeU32(w, this.N2) })
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0
+        + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
+        + Sizer.sizeField(100, { Sizer.sizeU32(this.N1) })
+        + Sizer.sizeField(101, { Sizer.sizeU32(this.N2) })
+        + Sizer.sizeFieldId(END_MARKER)
+
+}
+
+public sealed interface SampleEnum {
+    public data class Named(
+        val field1: UInt,
+        val field2: UInt,
+        val field3: UInt,
+    ) : SampleEnum, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(1)
+            + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
+            + Sizer.sizeField(100, { Sizer.sizeU32(this.Field2) })
+            + Sizer.sizeField(101, { Sizer.sizeU32(this.Field3) })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+
+    public object Unit : SampleEnum, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(50)
+
+    }
+
+    public data class Unnamed(
+        val n0: UInt,
+        val n1: UInt,
+        val n2: UInt,
+    ) : SampleEnum, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(51)
+            + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
+            + Sizer.sizeField(100, { Sizer.sizeU32(this.N1) })
+            + Sizer.sizeField(101, { Sizer.sizeU32(this.N2) })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+}
+
+

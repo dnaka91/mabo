@@ -1,0 +1,107 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: i8 @7,\n    f08: i16 @8,\n    f09: i32 @9,\n    f10: i64 @10,\n    f11: i128 @11,\n    f12: f32 @12,\n    f13: f64 @13,\n    f14: string @14,\n    f15: &string @15,\n    f16: bytes @16,\n    f17: &bytes @17,\n    f18: box<string> @18,\n    f19: box<bytes> @19,\n    f20: (u32, u32, u32) @20,\n    f21: [u32; 12] @21,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val f01: Boolean,
+    val f02: UByte,
+    val f03: UShort,
+    val f04: UInt,
+    val f05: ULong,
+    val f06: BigInteger,
+    val f07: Byte,
+    val f08: Short,
+    val f09: Int,
+    val f10: Long,
+    val f11: BigInteger,
+    val f12: Float,
+    val f13: Double,
+    val f14: String,
+    val f15: String,
+    val f16: ByteArray,
+    val f17: ByteArray,
+    val f18: String,
+    val f19: ByteArray,
+    val f20: Tuple3<UInt, UInt, UInt>,
+    val f21: Array<UInt>,
+) : Decode, Encode Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1, { w -> Encoder.encodeBool(w, this.F01) })
+        Encoder.encodeField(w, 2, { w -> Encoder.encodeU8(w, this.F02) })
+        Encoder.encodeField(w, 3, { w -> Encoder.encodeU16(w, this.F03) })
+        Encoder.encodeField(w, 4, { w -> Encoder.encodeU32(w, this.F04) })
+        Encoder.encodeField(w, 5, { w -> Encoder.encodeU64(w, this.F05) })
+        Encoder.encodeField(w, 6, { w -> Encoder.encodeU128(w, this.F06) })
+        Encoder.encodeField(w, 7, { w -> Encoder.encodeI8(w, this.F07) })
+        Encoder.encodeField(w, 8, { w -> Encoder.encodeI16(w, this.F08) })
+        Encoder.encodeField(w, 9, { w -> Encoder.encodeI32(w, this.F09) })
+        Encoder.encodeField(w, 10, { w -> Encoder.encodeI64(w, this.F10) })
+        Encoder.encodeField(w, 11, { w -> Encoder.encodeI128(w, this.F11) })
+        Encoder.encodeField(w, 12, { w -> Encoder.encodeF32(w, this.F12) })
+        Encoder.encodeField(w, 13, { w -> Encoder.encodeF64(w, this.F13) })
+        Encoder.encodeField(w, 14, { w -> Encoder.encodeString(w, this.F14) })
+        Encoder.encodeField(w, 15, { w -> Encoder.encodeString(w, this.F15) })
+        Encoder.encodeField(w, 16, { w -> Encoder.encodeBytes(w, this.F16) })
+        Encoder.encodeField(w, 17, { w -> Encoder.encodeBytes(w, this.F17) })
+        Encoder.encodeField(w, 18, { w -> Encoder.encodeString(w, this.F18) })
+        Encoder.encodeField(w, 19, { w -> Encoder.encodeBytes(w, this.F19) })
+        Encoder.encodeField(w, 20, { w -> w.let { w ->
+            Encoder.encodeU32(w, this.F20.F0)
+            Encoder.encodeU32(w, this.F20.F1)
+            Encoder.encodeU32(w, this.F20.F2)
+        } })
+        Encoder.encodeField(w, 21, { w -> Enoder.encodeArray(w, this.F21, { w, v ->
+            Encoder.encodeU32(w, v)
+        }) })
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0
+        + Sizer.sizeField(1, { Sizer.sizeBool(this.F01) })
+        + Sizer.sizeField(2, { Sizer.sizeU8(this.F02) })
+        + Sizer.sizeField(3, { Sizer.sizeU16(this.F03) })
+        + Sizer.sizeField(4, { Sizer.sizeU32(this.F04) })
+        + Sizer.sizeField(5, { Sizer.sizeU64(this.F05) })
+        + Sizer.sizeField(6, { Sizer.sizeU128(this.F06) })
+        + Sizer.sizeField(7, { Sizer.sizeI8(this.F07) })
+        + Sizer.sizeField(8, { Sizer.sizeI16(this.F08) })
+        + Sizer.sizeField(9, { Sizer.sizeI32(this.F09) })
+        + Sizer.sizeField(10, { Sizer.sizeI64(this.F10) })
+        + Sizer.sizeField(11, { Sizer.sizeI128(this.F11) })
+        + Sizer.sizeField(12, { Sizer.sizeF32(this.F12) })
+        + Sizer.sizeField(13, { Sizer.sizeF64(this.F13) })
+        + Sizer.sizeField(14, { Sizer.sizeString(this.F14) })
+        + Sizer.sizeField(15, { Sizer.sizeString(this.F15) })
+        + Sizer.sizeField(16, { Sizer.sizeBytes(this.F16) })
+        + Sizer.sizeField(17, { Sizer.sizeBytes(this.F17) })
+        + Sizer.sizeField(18, { Sizer.sizeString(this.F18) })
+        + Sizer.sizeField(19, { Sizer.sizeBytes(this.F19) })
+        + Sizer.sizeField(20, { run {
+            0
+            + Sizer.sizeU32(this.F20.F0)
+            + Sizer.sizeU32(this.F20.F1)
+            + Sizer.sizeU32(this.F20.F2)
+        }() })
+        + Sizer.sizeField(21, { Sizer.sizeArray(this.F21, { v ->
+            Sizer.sizeU32(v)
+        }) })
+        + Sizer.sizeFieldId(END_MARKER)
+
+}
+
+

@@ -1,0 +1,55 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Sample enum.\nenum Sample {\n    One @1,\n    /// Second variant\n    Two(u32 @1, u64 @2) @2,\n    Three {\n        field1: u32 @1,\n        /// Second field of third variant\n        field2: bool @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/enum_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public sealed interface Sample {
+    public object One : Sample, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(1)
+
+    }
+
+    /**
+     * Second variant
+     */
+    public data class Two(
+        val n0: UInt,
+        val n1: ULong,
+    ) : Sample, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(2)
+            + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
+            + Sizer.sizeField(2, { Sizer.sizeU64(this.N1) })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+
+    public data class Three(
+        val field1: UInt,
+        /**
+         * Second field of third variant
+         */
+        val field2: Boolean,
+    ) : Sample, Decode, Encode, Size {
+        override fun size(): Int = Sizer.sizeVariantId(3)
+            + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
+            + Sizer.sizeField(2, { Sizer.sizeBool(this.Field2) })
+            + Sizer.sizeFieldId(END_MARKER)
+
+    }
+}
+
+

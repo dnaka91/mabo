@@ -1,0 +1,120 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    vec<u32> @1,\n    hash_map<u32, string> @2,\n    hash_set<u32> @3,\n    option<u32> @4,\n    non_zero<u32> @5,\n)"
+input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val f1: List<UInt>,
+    val f2: Map<UInt, String>,
+    val f3: Set<UInt>,
+    val f4: UInt?,
+    val f5: NonZeroNumber<UInt>,
+) : Decode, Encode Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1, { w -> Encoder.encodeVec(w, this.F1, { w, v ->
+            Encoder.encodeU32(w, v)
+        }) })
+        Encoder.encodeField(w, 2, { w -> Encoder.encodeHashMap(
+            w, this.F2,
+            { w, k ->
+                Encoder.encodeU32(w, k)
+            },
+            { w, v ->
+                Encoder.encodeString(w, v)
+            },
+        ) })
+        Encoder.encodeField(w, 3, { w -> Encoder.encodeHashSet(w, this.F3, { w, v ->
+            Encoder.encodeU32(w, v)
+        }) })
+        Encoder.encodeFieldOption(w, 4, this.F4, { w, v -> Encoder.encodeU32(w, v) })
+        Encoder.encodeField(w, 5, { w -> Encoder.encodeU32(w, this.F5.get()) })
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0
+        + Sizer.sizeField(1, { Sizer.sizeVec(this.F1, { v ->
+            Sizer.sizeU32(v)
+        }) })
+        + Sizer.sizeField(2, { Sizer.sizeHashMap(
+            this.F2,
+            { k ->
+                Sizer.sizeU32(k)
+            },
+            { v ->
+                Sizer.sizeString(v)
+            },
+        ) })
+        + Sizer.sizeField(3, { Sizer.sizeHashSet(this.F3, { v ->
+            Sizer.sizeU32(v)
+        }) })
+        + Sizer.sizeFieldOption(4, this.F4, { v -> Sizer.sizeU32(v) })
+        + Sizer.sizeField(5, { Sizer.sizeU32(this.F5.get()) })
+        + Sizer.sizeFieldId(END_MARKER)
+
+}
+
+public data class SampleUnnamed(
+    val n0: List<UInt>,
+    val n1: Map<UInt, String>,
+    val n2: Set<UInt>,
+    val n3: UInt?,
+    val n4: NonZeroNumber<UInt>,
+) : Decode, Encode Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1, { w -> Encoder.encodeVec(w, this.N0, { w, v ->
+            Encoder.encodeU32(w, v)
+        }) })
+        Encoder.encodeField(w, 2, { w -> Encoder.encodeHashMap(
+            w, this.N1,
+            { w, k ->
+                Encoder.encodeU32(w, k)
+            },
+            { w, v ->
+                Encoder.encodeString(w, v)
+            },
+        ) })
+        Encoder.encodeField(w, 3, { w -> Encoder.encodeHashSet(w, this.N2, { w, v ->
+            Encoder.encodeU32(w, v)
+        }) })
+        Encoder.encodeFieldOption(w, 4, this.N3, { w, v -> Encoder.encodeU32(w, v) })
+        Encoder.encodeField(w, 5, { w -> Encoder.encodeU32(w, this.N4.get()) })
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0
+        + Sizer.sizeField(1, { Sizer.sizeVec(this.N0, { v ->
+            Sizer.sizeU32(v)
+        }) })
+        + Sizer.sizeField(2, { Sizer.sizeHashMap(
+            this.N1,
+            { k ->
+                Sizer.sizeU32(k)
+            },
+            { v ->
+                Sizer.sizeString(v)
+            },
+        ) })
+        + Sizer.sizeField(3, { Sizer.sizeHashSet(this.N2, { v ->
+            Sizer.sizeU32(v)
+        }) })
+        + Sizer.sizeFieldOption(4, this.N3, { v -> Sizer.sizeU32(v) })
+        + Sizer.sizeField(5, { Sizer.sizeU32(this.N4.get()) })
+        + Sizer.sizeFieldId(END_MARKER)
+
+}
+
+

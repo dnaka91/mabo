@@ -31,22 +31,52 @@ public data class User(
     val address: Address?,
     val age: UByte,
     val birthday: DayOfBirth,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> this.Name.encode(w) })
-        Encoder.encodeFieldOption(w, 2, this.Address, { w, v -> v.encode(w) })
-        Encoder.encodeField(w, 3, { w -> Encoder.encodeU8(w, this.Age) })
-        Encoder.encodeField(w, 4, { w -> this.Birthday.encode(w) })
+        Encoder.encodeField(w, 1) { w -> this.Name.encode(w) }
+        Encoder.encodeFieldOption(w, 2, this.Address) { w, v -> v.encode(w) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU8(w, this.Age) }
+        Encoder.encodeField(w, 4) { w -> this.Birthday.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { this.Name.size() })
-        + Sizer.sizeFieldOption(2, this.Address, { v -> v.size() })
-        + Sizer.sizeField(3, { Sizer.sizeU8(this.Age) })
-        + Sizer.sizeField(4, { this.Birthday.size() })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Name.size() } +
+        Sizer.sizeFieldOption(2, this.Address) { v -> v.size() } +
+        Sizer.sizeField(3) { Sizer.sizeU8(this.Age) } +
+        Sizer.sizeField(4) { this.Birthday.size() } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<User> {
+        override fun decode(r ByteBuffer): Result<User> = runCatching {
+            var name: FullName? = null
+            var address: Address? = null
+            var age: UByte? = null
+            var birthday: DayOfBirth? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> name = FullName.decode(r).getOrThrow()
+                    2u -> address = Decoder.decodeOption(r) { r ->
+                            Address.decode(r)
+                        }.getOrThrow()
+                    3u -> age = Decoder.decodeU8(r).getOrThrow()
+                    4u -> birthday = DayOfBirth.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                User(
+                    name ?: return Result.failure(MissingFieldException(1u, "name")),
+                    address,
+                    age ?: return Result.failure(MissingFieldException(3u, "age")),
+                    birthday ?: return Result.failure(MissingFieldException(4u, "birthday")),
+                ),
+            )
+        }
+    }
 }
 
 /**
@@ -56,20 +86,47 @@ public data class FullName(
     val first: String,
     val middle: String?,
     val last: String,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeString(w, this.First) })
-        Encoder.encodeFieldOption(w, 2, this.Middle, { w, v -> Encoder.encodeString(w, v) })
-        Encoder.encodeField(w, 3, { w -> Encoder.encodeString(w, this.Last) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.First) }
+        Encoder.encodeFieldOption(w, 2, this.Middle) { w, v -> Encoder.encodeString(w, v) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.Last) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeString(this.First) })
-        + Sizer.sizeFieldOption(2, this.Middle, { v -> Sizer.sizeString(v) })
-        + Sizer.sizeField(3, { Sizer.sizeString(this.Last) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeString(this.First) } +
+        Sizer.sizeFieldOption(2, this.Middle) { v -> Sizer.sizeString(v) } +
+        Sizer.sizeField(3) { Sizer.sizeString(this.Last) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<FullName> {
+        override fun decode(r ByteBuffer): Result<FullName> = runCatching {
+            var first: String? = null
+            var middle: String? = null
+            var last: String? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> first = Decoder.decodeString(r).getOrThrow()
+                    2u -> middle = Decoder.decodeOption(r) { r ->
+                            Decoder.decodeString(r)
+                        }.getOrThrow()
+                    3u -> last = Decoder.decodeString(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                FullName(
+                    first ?: return Result.failure(MissingFieldException(1u, "first")),
+                    middle,
+                    last ?: return Result.failure(MissingFieldException(3u, "last")),
+                ),
+            )
+        }
+    }
 }
 
 /**
@@ -90,20 +147,45 @@ public data class Address(
      */
     val houseNo: HouseNumber,
     val city: String,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeString(w, this.Street) })
-        Encoder.encodeField(w, 2, { w -> this.HouseNo.encode(w) })
-        Encoder.encodeField(w, 3, { w -> Encoder.encodeString(w, this.City) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.Street) }
+        Encoder.encodeField(w, 2) { w -> this.HouseNo.encode(w) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.City) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeString(this.Street) })
-        + Sizer.sizeField(2, { this.HouseNo.size() })
-        + Sizer.sizeField(3, { Sizer.sizeString(this.City) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeString(this.Street) } +
+        Sizer.sizeField(2) { this.HouseNo.size() } +
+        Sizer.sizeField(3) { Sizer.sizeString(this.City) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<Address> {
+        override fun decode(r ByteBuffer): Result<Address> = runCatching {
+            var street: String? = null
+            var houseNo: HouseNumber? = null
+            var city: String? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> street = Decoder.decodeString(r).getOrThrow()
+                    2u -> houseNo = HouseNumber.decode(r).getOrThrow()
+                    3u -> city = Decoder.decodeString(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                Address(
+                    street ?: return Result.failure(MissingFieldException(1u, "street")),
+                    houseNo ?: return Result.failure(MissingFieldException(2u, "house_no")),
+                    city ?: return Result.failure(MissingFieldException(3u, "city")),
+                ),
+            )
+        }
+    }
 }
 
 public sealed interface HouseNumber {
@@ -113,9 +195,9 @@ public sealed interface HouseNumber {
     public data class Digit(
         val n0: UShort,
     ) : HouseNumber, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
-            + Sizer.sizeField(1, { Sizer.sizeU16(this.N0) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU16(this.N0) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 
@@ -125,9 +207,9 @@ public sealed interface HouseNumber {
     public data class Text(
         val n0: String,
     ) : HouseNumber, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2)
-            + Sizer.sizeField(1, { Sizer.sizeString(this.N0) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(2) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeString(this.N0) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 }
@@ -160,11 +242,11 @@ public sealed interface DayOfBirth {
         val month: Month,
         val day: UByte,
     ) : DayOfBirth, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
-            + Sizer.sizeField(1, { Sizer.sizeU16(this.Year) })
-            + Sizer.sizeField(2, { this.Month.size() })
-            + Sizer.sizeField(3, { Sizer.sizeU8(this.Day) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU16(this.Year) } +
+            Sizer.sizeField(2) { this.Month.size() } +
+            Sizer.sizeField(3) { Sizer.sizeU8(this.Day) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 
@@ -178,9 +260,9 @@ public sealed interface DayOfBirth {
          */
         val reason: String?,
     ) : DayOfBirth, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2)
-            + Sizer.sizeFieldOption(1, this.Reason, { v -> Sizer.sizeString(v) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(2) + 0 +
+            Sizer.sizeFieldOption(1, this.Reason) { v -> Sizer.sizeString(v) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 
@@ -188,7 +270,7 @@ public sealed interface DayOfBirth {
      * We never asked and nobody knows.
      */
     public object Unknown : DayOfBirth, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(3)
+        override fun size(): Int = Sizer.sizeVariantId(3) + 0
 
     }
 }
@@ -206,62 +288,62 @@ const val MAX_DAY: UByte = 31u
 
 public sealed interface Month {
     public object January : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0
 
     }
 
     public object February : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2)
+        override fun size(): Int = Sizer.sizeVariantId(2) + 0
 
     }
 
     public object March : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(3)
+        override fun size(): Int = Sizer.sizeVariantId(3) + 0
 
     }
 
     public object April : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(4)
+        override fun size(): Int = Sizer.sizeVariantId(4) + 0
 
     }
 
     public object May : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(5)
+        override fun size(): Int = Sizer.sizeVariantId(5) + 0
 
     }
 
     public object June : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(6)
+        override fun size(): Int = Sizer.sizeVariantId(6) + 0
 
     }
 
     public object July : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(7)
+        override fun size(): Int = Sizer.sizeVariantId(7) + 0
 
     }
 
     public object August : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(8)
+        override fun size(): Int = Sizer.sizeVariantId(8) + 0
 
     }
 
     public object September : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(9)
+        override fun size(): Int = Sizer.sizeVariantId(9) + 0
 
     }
 
     public object October : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(10)
+        override fun size(): Int = Sizer.sizeVariantId(10) + 0
 
     }
 
     public object November : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(11)
+        override fun size(): Int = Sizer.sizeVariantId(11) + 0
 
     }
 
     public object December : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(12)
+        override fun size(): Int = Sizer.sizeVariantId(12) + 0
 
     }
 }

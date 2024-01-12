@@ -4,50 +4,50 @@ use std::fmt::{self, Display};
 
 use mabo_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
 
+use crate::Indent;
+
 pub(super) struct RenderStruct<'a> {
-    pub indent: usize,
+    pub indent: Indent,
     pub item: &'a Struct<'a>,
 }
 
 impl Display for RenderStruct<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let indent = self.indent * 4;
-        writeln!(f, "{:indent$}override fun encode(w: ByteBuffer) {{", "")?;
+        let Self { indent, item } = *self;
+        writeln!(f, "{indent}override fun encode(w: ByteBuffer) {{")?;
         writeln!(
             f,
-            "{}{:indent$}}}",
+            "{}{indent}}}",
             RenderFields {
-                indent: self.indent + 1,
-                item: &self.item.fields
+                indent: indent + 1,
+                item: &item.fields
             },
-            "",
         )
     }
 }
 
 pub(super) struct RenderEnumVariant<'a> {
-    pub indent: usize,
-    pub variant: &'a Variant<'a>,
+    pub indent: Indent,
+    pub item: &'a Variant<'a>,
 }
 
 impl Display for RenderEnumVariant<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let indent = self.indent * 4;
-        writeln!(f, "{:indent$}override fun encode(w: ByteBuffer) {{", "")?;
+        let Self { indent, item } = *self;
+        writeln!(f, "{indent}override fun encode(w: ByteBuffer) {{")?;
         writeln!(
             f,
-            "{}{:indent$}return nil{1:indent$}}}",
+            "{}{indent}return nil{indent}}}",
             RenderFields {
-                indent: self.indent + 1,
-                item: &self.variant.fields
+                indent: indent + 1,
+                item: &item.fields
             },
-            ""
         )
     }
 }
 
 struct RenderFields<'a> {
-    indent: usize,
+    indent: Indent,
     item: &'a Fields<'a>,
 }
 
@@ -57,45 +57,43 @@ impl Display for RenderFields<'_> {
             return Ok(());
         }
 
-        let indent = self.indent * 4;
+        let Self { indent, item } = *self;
 
-        for field in &*self.item.fields {
+        for field in &*item.fields {
             if let Type::Option(ty) = &field.ty {
                 writeln!(
                     f,
-                    "{:indent$}Encoder.encodeFieldOption(w, {}, this.{}, {{ w, v -> {} }})",
-                    "",
+                    "{indent}Encoder.encodeFieldOption(w, {}, this.{}) {{ w, v -> {} }}",
                     field.id,
                     heck::AsUpperCamelCase(&field.name),
                     RenderType {
+                        indent: indent + 1,
                         ty,
                         name: "v",
-                        indent: 2,
                     },
                 )?;
             } else {
                 writeln!(
                     f,
-                    "{:indent$}Encoder.encodeField(w, {}, {{ w -> {} }})",
-                    "",
+                    "{indent}Encoder.encodeField(w, {}) {{ w -> {} }}",
                     field.id,
                     RenderType {
+                        indent: indent + 1,
                         ty: &field.ty,
                         name: format_args!("this.{}", heck::AsUpperCamelCase(&field.name)),
-                        indent: 2,
                     },
                 )?;
             }
         }
 
-        writeln!(f, "{:indent$}Encoder.encodeU32(w, END_MARKER)", "")
+        writeln!(f, "{indent}Encoder.encodeU32(w, END_MARKER)")
     }
 }
 
 struct RenderType<'a, T> {
+    indent: Indent,
     ty: &'a Type<'a>,
     name: T,
-    indent: usize,
 }
 
 impl<T> Display for RenderType<'_, T>
@@ -124,98 +122,77 @@ where
                 write!(f, "Encoder.encodeBytes(w, {})", self.name)
             }
             Type::Vec(ty) => {
-                writeln!(f, "Encoder.encodeVec(w, {}, {{ w, v ->", self.name)?;
+                writeln!(f, "Encoder.encodeVec(w, {}) {{ w, v ->", self.name)?;
                 writeln!(
                     f,
-                    "{:indent$}{}",
-                    "",
+                    "{indent}{}",
                     RenderType {
                         ty,
                         name: "v",
-                        indent: self.indent + 1
+                        indent: self.indent + 1,
                     },
-                    indent = (self.indent + 1) * 4,
+                    indent = self.indent + 1,
                 )?;
-                write!(f, "{:indent$}}})", "", indent = self.indent * 4)
+                write!(f, "{indent}}}", indent = self.indent)
             }
             Type::HashMap(kv) => {
                 writeln!(f, "Encoder.encodeHashMap(")?;
-                writeln!(
-                    f,
-                    "{:indent$}w, {},",
-                    "",
-                    self.name,
-                    indent = (self.indent + 1) * 4
-                )?;
+                writeln!(f, "{indent}w, {},", self.name, indent = self.indent + 1,)?;
 
+                writeln!(f, "{indent}{{ w, k ->", indent = self.indent + 1,)?;
                 writeln!(
                     f,
-                    "{:indent$}{{ w, k ->",
-                    "",
-                    indent = (self.indent + 1) * 4
-                )?;
-                writeln!(
-                    f,
-                    "{:indent$}{}",
-                    "",
+                    "{indent}{}",
                     RenderType {
                         ty: &kv.0,
                         name: "k",
-                        indent: self.indent + 2
+                        indent: self.indent + 2,
                     },
-                    indent = (self.indent + 2) * 4,
+                    indent = self.indent + 2,
                 )?;
-                writeln!(f, "{:indent$}}},", "", indent = (self.indent + 1) * 4)?;
+                writeln!(f, "{indent}}},", indent = self.indent + 1)?;
 
+                writeln!(f, "{indent}{{ w, v ->", indent = self.indent + 1,)?;
                 writeln!(
                     f,
-                    "{:indent$}{{ w, v ->",
-                    "",
-                    indent = (self.indent + 1) * 4
-                )?;
-                writeln!(
-                    f,
-                    "{:indent$}{}",
-                    "",
+                    "{indent}{}",
                     RenderType {
                         ty: &kv.1,
                         name: "v",
-                        indent: self.indent + 2
+                        indent: self.indent + 2,
                     },
-                    indent = (self.indent + 2) * 4,
+                    indent = self.indent + 2,
                 )?;
-                writeln!(f, "{:indent$}}},", "", indent = (self.indent + 1) * 4)?;
-                write!(f, "{:indent$})", "", indent = self.indent * 4)
+                writeln!(f, "{indent}}},", indent = self.indent + 1)?;
+                write!(f, "{indent})", indent = self.indent)
             }
             Type::HashSet(ty) => {
-                writeln!(f, "Encoder.encodeHashSet(w, {}, {{ w, v ->", self.name)?;
+                writeln!(f, "Encoder.encodeHashSet(w, {}) {{ w, v ->", self.name)?;
                 writeln!(
                     f,
-                    "{:indent$}{}",
-                    "",
+                    "{indent}{}",
                     RenderType {
                         ty,
                         name: "v",
-                        indent: self.indent + 1
+                        indent: self.indent + 1,
                     },
-                    indent = (self.indent + 1) * 4,
+                    indent = self.indent + 1,
                 )?;
-                write!(f, "{:indent$}}})", "", indent = self.indent * 4)
+                write!(f, "{indent}}}", indent = self.indent)
             }
             Type::Option(ty) => {
-                writeln!(f, "Encoder.encodeOption(w, {}, {{ w, v ->", self.name)?;
+                writeln!(f, "Encoder.encodeOption(w, {}) {{ w, v ->", self.name)?;
                 writeln!(
                     f,
-                    "{:indent$}{}",
-                    "",
+                    "{indent}{}",
                     RenderType {
                         ty,
                         name: "v",
-                        indent: self.indent + 1
+                        indent: self.indent + 1,
                     },
-                    indent = (self.indent + 1) * 4,
+                    indent = self.indent + 1,
                 )?;
-                write!(f, "{:indent$}}})", "", indent = self.indent * 4)
+                write!(f, "{indent}}}", indent = self.indent)
             }
             Type::NonZero(ty) => match &**ty {
                 Type::U8 => write!(f, "Encoder.encodeU8(w, {}.get())", self.name),
@@ -251,35 +228,33 @@ where
                     for (idx, ty) in types.iter().enumerate() {
                         writeln!(
                             f,
-                            "{:indent$}{}",
-                            "",
+                            "{indent}{}",
                             RenderType {
                                 ty,
                                 name: format_args!("{}.F{}", self.name, idx),
                                 indent: self.indent + 1,
                             },
-                            indent = (self.indent + 1) * 4,
+                            indent = self.indent + 1,
                         )?;
                     }
-                    write!(f, "{:indent$}}}", "", indent = self.indent * 4)
+                    write!(f, "{indent}}}", indent = self.indent)
                 }
                 n => todo!("compiler should catch invalid tuple with {n} elements"),
             },
             Type::Array(ty, size) => match *size {
                 1..=32 => {
-                    writeln!(f, "Enoder.encodeArray(w, {}, {{ w, v ->", self.name)?;
+                    writeln!(f, "Enoder.encodeArray(w, {}) {{ w, v ->", self.name)?;
                     writeln!(
                         f,
-                        "{:indent$}{}",
-                        "",
+                        "{indent}{}",
                         RenderType {
                             ty,
                             name: "v",
-                            indent: self.indent + 1
+                            indent: self.indent + 1,
                         },
-                        indent = (self.indent + 1) * 4,
+                        indent = self.indent + 1,
                     )?;
-                    write!(f, "{:indent$}}})", "", indent = self.indent * 4)
+                    write!(f, "{indent}}}", indent = self.indent)
                 }
                 n => todo!("arrays with larger ({n}) sizes"),
             },

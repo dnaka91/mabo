@@ -5,7 +5,7 @@ use mabo_compiler::simplify::{
     TypeAlias, Variant,
 };
 
-use crate::{encode, size, Opts, Output};
+use crate::{decode, encode, size, Indent, Opts, Output};
 
 /// Take a single schema and convert it into Kotlin source code (which can result in multiple
 /// files).
@@ -97,7 +97,7 @@ impl Display for RenderStruct<'_> {
         if self.0.fields.kind == FieldKind::Unit {
             writeln!(
                 f,
-                "{}public object {} : Decode, Encode Size {{",
+                "{}public object {} : Encode, Size {{",
                 RenderComment {
                     indent: 0,
                     comment: &self.0.comment
@@ -107,7 +107,7 @@ impl Display for RenderStruct<'_> {
         } else {
             writeln!(
                 f,
-                "{}public data class {}{}(\n{}) : Decode, Encode Size {{",
+                "{}public data class {}{}(\n{}) : Encode, Size {{",
                 RenderComment {
                     indent: 0,
                     comment: &self.0.comment
@@ -126,16 +126,36 @@ impl Display for RenderStruct<'_> {
 
         writeln!(
             f,
-            "{}\n{}\n}}",
+            "{}\n{}\n",
             encode::RenderStruct {
-                indent: 1,
-                item: self.0
+                indent: Indent(1),
+                item: self.0,
             },
             size::RenderStruct {
-                indent: 1,
-                item: self.0
+                indent: Indent(1),
+                item: self.0,
             }
-        )
+        )?;
+
+        writeln!(
+            f,
+            "    companion object : Decode<{}{}> {{",
+            heck::AsUpperCamelCase(&self.0.name),
+            RenderGenerics {
+                generics: &self.0.generics,
+                fields_filter: None
+            },
+        )?;
+        write!(
+            f,
+            "{}",
+            decode::RenderStruct {
+                indent: Indent(2),
+                item: self.0,
+            }
+        )?;
+        writeln!(f, "    }}")?;
+        writeln!(f, "}}")
     }
 }
 
@@ -209,8 +229,8 @@ impl Display for RenderEnumVariant<'_> {
             f,
             "{}\n{:indent$}}}",
             size::RenderEnumVariant {
-                indent: 2,
-                variant: self.variant,
+                indent: Indent(2),
+                item: self.variant,
             },
             "",
             indent = 4,

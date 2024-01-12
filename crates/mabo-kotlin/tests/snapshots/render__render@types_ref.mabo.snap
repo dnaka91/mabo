@@ -20,23 +20,45 @@ import rocks.dnaka91.mabo.buf.*
 public data class Sample(
     val basic: Test123,
     val withGenerics: KeyValue<UInt, Boolean>,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> this.Basic.encode(w) })
-        Encoder.encodeField(w, 2, { w -> this.WithGenerics.encode(w) })
+        Encoder.encodeField(w, 1) { w -> this.Basic.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.WithGenerics.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { this.Basic.size() })
-        + Sizer.sizeField(2, { this.WithGenerics.size() })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Basic.size() } +
+        Sizer.sizeField(2) { this.WithGenerics.size() } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var basic: Test123? = null
+            var withGenerics: KeyValue<UInt, Boolean>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> basic = Test123.decode(r).getOrThrow()
+                    2u -> withGenerics = KeyValue<UInt, Boolean>.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                Sample(
+                    basic ?: return Result.failure(MissingFieldException(1u, "basic")),
+                    withGenerics ?: return Result.failure(MissingFieldException(2u, "with_generics")),
+                ),
+            )
+        }
+    }
 }
 
 public sealed interface Test123 {
     public object Value : Test123, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0
 
     }
 }
@@ -44,18 +66,40 @@ public sealed interface Test123 {
 public data class KeyValue<K, V>(
     val key: K,
     val value: V,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> this.Key.encode(w) })
-        Encoder.encodeField(w, 2, { w -> this.Value.encode(w) })
+        Encoder.encodeField(w, 1) { w -> this.Key.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.Value.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { this.Key.size() })
-        + Sizer.sizeField(2, { this.Value.size() })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Key.size() } +
+        Sizer.sizeField(2) { this.Value.size() } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<KeyValue<K, V>> {
+        override fun decode(r ByteBuffer): Result<KeyValue> = runCatching {
+            var key: K? = null
+            var value: V? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> key = K.decode(r).getOrThrow()
+                    2u -> value = V.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                KeyValue(
+                    key ?: return Result.failure(MissingFieldException(1u, "key")),
+                    value ?: return Result.failure(MissingFieldException(2u, "value")),
+                ),
+            )
+        }
+    }
 }
 
 

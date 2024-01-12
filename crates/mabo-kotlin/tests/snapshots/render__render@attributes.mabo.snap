@@ -17,12 +17,15 @@ import kotlin.ULong
 import rocks.dnaka91.mabo.*
 import rocks.dnaka91.mabo.buf.*
 
-public object Sample : Decode, Encode Size {
+public object Sample : Encode, Size {
     override fun encode(w: ByteBuffer) {
     }
 
     override fun size(): Int = 0
 
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = Result.success(Sample)
+    }
 }
 
 

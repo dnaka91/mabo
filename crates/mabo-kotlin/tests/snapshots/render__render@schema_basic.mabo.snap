@@ -23,23 +23,45 @@ import rocks.dnaka91.mabo.buf.*
 public data class SampleStruct(
     val a: UInt,
     val b: Boolean,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.A) })
-        Encoder.encodeField(w, 2, { w -> Encoder.encodeBool(w, this.B) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.A) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.B) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeU32(this.A) })
-        + Sizer.sizeField(2, { Sizer.sizeBool(this.B) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.A) } +
+        Sizer.sizeField(2) { Sizer.sizeBool(this.B) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<SampleStruct> {
+        override fun decode(r ByteBuffer): Result<SampleStruct> = runCatching {
+            var a: UInt? = null
+            var b: Boolean? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> a = Decoder.decodeU32(r).getOrThrow()
+                    2u -> b = Decoder.decodeBool(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                SampleStruct(
+                    a ?: return Result.failure(MissingFieldException(1u, "a")),
+                    b ?: return Result.failure(MissingFieldException(2u, "b")),
+                ),
+            )
+        }
+    }
 }
 
 public sealed interface SampleEnum {
     public object One : SampleEnum, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0
 
     }
 
@@ -47,10 +69,10 @@ public sealed interface SampleEnum {
         val n0: UInt,
         val n1: ULong,
     ) : SampleEnum, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2)
-            + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
-            + Sizer.sizeField(2, { Sizer.sizeU64(this.N1) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(2) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+            Sizer.sizeField(2) { Sizer.sizeU64(this.N1) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 
@@ -58,10 +80,10 @@ public sealed interface SampleEnum {
         val field1: UInt,
         val field2: Boolean,
     ) : SampleEnum, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(3)
-            + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
-            + Sizer.sizeField(2, { Sizer.sizeBool(this.Field2) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(3) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+            Sizer.sizeField(2) { Sizer.sizeBool(this.Field2) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 }

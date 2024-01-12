@@ -21,40 +21,90 @@ public data class SampleNamed(
     val field1: UInt,
     val field2: UInt,
     val field3: UInt,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.Field1) })
-        Encoder.encodeField(w, 100, { w -> Encoder.encodeU32(w, this.Field2) })
-        Encoder.encodeField(w, 101, { w -> Encoder.encodeU32(w, this.Field3) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.Field1) }
+        Encoder.encodeField(w, 100) { w -> Encoder.encodeU32(w, this.Field2) }
+        Encoder.encodeField(w, 101) { w -> Encoder.encodeU32(w, this.Field3) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
-        + Sizer.sizeField(100, { Sizer.sizeU32(this.Field2) })
-        + Sizer.sizeField(101, { Sizer.sizeU32(this.Field3) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+        Sizer.sizeField(100) { Sizer.sizeU32(this.Field2) } +
+        Sizer.sizeField(101) { Sizer.sizeU32(this.Field3) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<SampleNamed> {
+        override fun decode(r ByteBuffer): Result<SampleNamed> = runCatching {
+            var field1: UInt? = null
+            var field2: UInt? = null
+            var field3: UInt? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> field1 = Decoder.decodeU32(r).getOrThrow()
+                    100u -> field2 = Decoder.decodeU32(r).getOrThrow()
+                    101u -> field3 = Decoder.decodeU32(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                SampleNamed(
+                    field1 ?: return Result.failure(MissingFieldException(1u, "field1")),
+                    field2 ?: return Result.failure(MissingFieldException(100u, "field2")),
+                    field3 ?: return Result.failure(MissingFieldException(101u, "field3")),
+                ),
+            )
+        }
+    }
 }
 
 public data class SampleUnnamed(
     val n0: UInt,
     val n1: UInt,
     val n2: UInt,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.N0) })
-        Encoder.encodeField(w, 100, { w -> Encoder.encodeU32(w, this.N1) })
-        Encoder.encodeField(w, 101, { w -> Encoder.encodeU32(w, this.N2) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.N0) }
+        Encoder.encodeField(w, 100) { w -> Encoder.encodeU32(w, this.N1) }
+        Encoder.encodeField(w, 101) { w -> Encoder.encodeU32(w, this.N2) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
-        + Sizer.sizeField(100, { Sizer.sizeU32(this.N1) })
-        + Sizer.sizeField(101, { Sizer.sizeU32(this.N2) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+        Sizer.sizeField(100) { Sizer.sizeU32(this.N1) } +
+        Sizer.sizeField(101) { Sizer.sizeU32(this.N2) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<SampleUnnamed> {
+        override fun decode(r ByteBuffer): Result<SampleUnnamed> = runCatching {
+            var n0: UInt? = null
+            var n1: UInt? = null
+            var n2: UInt? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> n0 = Decoder.decodeU32(r).getOrThrow()
+                    100u -> n1 = Decoder.decodeU32(r).getOrThrow()
+                    101u -> n2 = Decoder.decodeU32(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                SampleUnnamed(
+                    n0 ?: return Result.failure(MissingFieldException(1u, null)),
+                    n1 ?: return Result.failure(MissingFieldException(100u, null)),
+                    n2 ?: return Result.failure(MissingFieldException(101u, null)),
+                ),
+            )
+        }
+    }
 }
 
 public sealed interface SampleEnum {
@@ -63,16 +113,16 @@ public sealed interface SampleEnum {
         val field2: UInt,
         val field3: UInt,
     ) : SampleEnum, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
-            + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
-            + Sizer.sizeField(100, { Sizer.sizeU32(this.Field2) })
-            + Sizer.sizeField(101, { Sizer.sizeU32(this.Field3) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+            Sizer.sizeField(100) { Sizer.sizeU32(this.Field2) } +
+            Sizer.sizeField(101) { Sizer.sizeU32(this.Field3) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 
     public object Unit : SampleEnum, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(50)
+        override fun size(): Int = Sizer.sizeVariantId(50) + 0
 
     }
 
@@ -81,11 +131,11 @@ public sealed interface SampleEnum {
         val n1: UInt,
         val n2: UInt,
     ) : SampleEnum, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(51)
-            + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
-            + Sizer.sizeField(100, { Sizer.sizeU32(this.N1) })
-            + Sizer.sizeField(101, { Sizer.sizeU32(this.N2) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(51) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+            Sizer.sizeField(100) { Sizer.sizeU32(this.N1) } +
+            Sizer.sizeField(101) { Sizer.sizeU32(this.N2) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 }

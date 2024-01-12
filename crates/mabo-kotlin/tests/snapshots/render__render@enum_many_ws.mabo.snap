@@ -19,7 +19,7 @@ import rocks.dnaka91.mabo.buf.*
 
 public sealed interface Sample {
     public object One : Sample, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0
 
     }
 
@@ -27,10 +27,10 @@ public sealed interface Sample {
         val n0: UInt,
         val n1: ULong,
     ) : Sample, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2)
-            + Sizer.sizeField(1, { Sizer.sizeU32(this.N0) })
-            + Sizer.sizeField(2, { Sizer.sizeU64(this.N1) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(2) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+            Sizer.sizeField(2) { Sizer.sizeU64(this.N1) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 
@@ -38,10 +38,10 @@ public sealed interface Sample {
         val field1: UInt,
         val field2: Boolean,
     ) : Sample, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(3)
-            + Sizer.sizeField(1, { Sizer.sizeU32(this.Field1) })
-            + Sizer.sizeField(2, { Sizer.sizeBool(this.Field2) })
-            + Sizer.sizeFieldId(END_MARKER)
+        override fun size(): Int = Sizer.sizeVariantId(3) + 0 +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+            Sizer.sizeField(2) { Sizer.sizeBool(this.Field2) } +
+            Sizer.sizeFieldId(END_MARKER)
 
     }
 }

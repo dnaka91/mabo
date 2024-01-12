@@ -23,48 +23,93 @@ public data class Sample(
     val f3: Set<UInt>,
     val f4: UInt?,
     val f5: NonZeroNumber<UInt>,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeVec(w, this.F1, { w, v ->
-            Encoder.encodeU32(w, v)
-        }) })
-        Encoder.encodeField(w, 2, { w -> Encoder.encodeHashMap(
-            w, this.F2,
-            { w, k ->
-                Encoder.encodeU32(w, k)
-            },
-            { w, v ->
-                Encoder.encodeString(w, v)
-            },
-        ) })
-        Encoder.encodeField(w, 3, { w -> Encoder.encodeHashSet(w, this.F3, { w, v ->
-            Encoder.encodeU32(w, v)
-        }) })
-        Encoder.encodeFieldOption(w, 4, this.F4, { w, v -> Encoder.encodeU32(w, v) })
-        Encoder.encodeField(w, 5, { w -> Encoder.encodeU32(w, this.F5.get()) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.F1) { w, v ->
+                Encoder.encodeU32(w, v)
+            } }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeHashMap(
+                w, this.F2,
+                { w, k ->
+                    Encoder.encodeU32(w, k)
+                },
+                { w, v ->
+                    Encoder.encodeString(w, v)
+                },
+            ) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeHashSet(w, this.F3) { w, v ->
+                Encoder.encodeU32(w, v)
+            } }
+        Encoder.encodeFieldOption(w, 4, this.F4) { w, v -> Encoder.encodeU32(w, v) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU32(w, this.F5.get()) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeVec(this.F1, { v ->
-            Sizer.sizeU32(v)
-        }) })
-        + Sizer.sizeField(2, { Sizer.sizeHashMap(
-            this.F2,
-            { k ->
-                Sizer.sizeU32(k)
-            },
-            { v ->
-                Sizer.sizeString(v)
-            },
-        ) })
-        + Sizer.sizeField(3, { Sizer.sizeHashSet(this.F3, { v ->
-            Sizer.sizeU32(v)
-        }) })
-        + Sizer.sizeFieldOption(4, this.F4, { v -> Sizer.sizeU32(v) })
-        + Sizer.sizeField(5, { Sizer.sizeU32(this.F5.get()) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeVec(this.F1) { v ->
+                Sizer.sizeU32(v)
+            } } +
+        Sizer.sizeField(2) { Sizer.sizeHashMap(
+                this.F2,
+                { k ->
+                    Sizer.sizeU32(k)
+                },
+                { v ->
+                    Sizer.sizeString(v)
+                },
+            ) } +
+        Sizer.sizeField(3) { Sizer.sizeHashSet(this.F3) { v ->
+                Sizer.sizeU32(v)
+            } } +
+        Sizer.sizeFieldOption(4, this.F4) { v -> Sizer.sizeU32(v) } +
+        Sizer.sizeField(5) { Sizer.sizeU32(this.F5.get()) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var f1: List<UInt>? = null
+            var f2: Map<UInt, String>? = null
+            var f3: Set<UInt>? = null
+            var f4: UInt? = null
+            var f5: NonZeroNumber<UInt>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> f1 = Decoder.decodeVec(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    2u -> f2 = Decoder.decodeHashMap(
+                            r,
+                            { r ->
+                                Decoder.decodeU32(r)
+                            },
+                            { r ->
+                                Decoder.decodeString(r)
+                            },
+                        ).getOrThrow()
+                    3u -> f3 = Decoder.decodeHashSet(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    4u -> f4 = Decoder.decodeOption(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    5u -> f5 = Decoder.decodeNonZeroU32(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                Sample(
+                    f1 ?: return Result.failure(MissingFieldException(1u, "f1")),
+                    f2 ?: return Result.failure(MissingFieldException(2u, "f2")),
+                    f3 ?: return Result.failure(MissingFieldException(3u, "f3")),
+                    f4,
+                    f5 ?: return Result.failure(MissingFieldException(5u, "f5")),
+                ),
+            )
+        }
+    }
 }
 
 public data class SampleUnnamed(
@@ -73,48 +118,93 @@ public data class SampleUnnamed(
     val n2: Set<UInt>,
     val n3: UInt?,
     val n4: NonZeroNumber<UInt>,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeVec(w, this.N0, { w, v ->
-            Encoder.encodeU32(w, v)
-        }) })
-        Encoder.encodeField(w, 2, { w -> Encoder.encodeHashMap(
-            w, this.N1,
-            { w, k ->
-                Encoder.encodeU32(w, k)
-            },
-            { w, v ->
-                Encoder.encodeString(w, v)
-            },
-        ) })
-        Encoder.encodeField(w, 3, { w -> Encoder.encodeHashSet(w, this.N2, { w, v ->
-            Encoder.encodeU32(w, v)
-        }) })
-        Encoder.encodeFieldOption(w, 4, this.N3, { w, v -> Encoder.encodeU32(w, v) })
-        Encoder.encodeField(w, 5, { w -> Encoder.encodeU32(w, this.N4.get()) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.N0) { w, v ->
+                Encoder.encodeU32(w, v)
+            } }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeHashMap(
+                w, this.N1,
+                { w, k ->
+                    Encoder.encodeU32(w, k)
+                },
+                { w, v ->
+                    Encoder.encodeString(w, v)
+                },
+            ) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeHashSet(w, this.N2) { w, v ->
+                Encoder.encodeU32(w, v)
+            } }
+        Encoder.encodeFieldOption(w, 4, this.N3) { w, v -> Encoder.encodeU32(w, v) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU32(w, this.N4.get()) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeVec(this.N0, { v ->
-            Sizer.sizeU32(v)
-        }) })
-        + Sizer.sizeField(2, { Sizer.sizeHashMap(
-            this.N1,
-            { k ->
-                Sizer.sizeU32(k)
-            },
-            { v ->
-                Sizer.sizeString(v)
-            },
-        ) })
-        + Sizer.sizeField(3, { Sizer.sizeHashSet(this.N2, { v ->
-            Sizer.sizeU32(v)
-        }) })
-        + Sizer.sizeFieldOption(4, this.N3, { v -> Sizer.sizeU32(v) })
-        + Sizer.sizeField(5, { Sizer.sizeU32(this.N4.get()) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeVec(this.N0) { v ->
+                Sizer.sizeU32(v)
+            } } +
+        Sizer.sizeField(2) { Sizer.sizeHashMap(
+                this.N1,
+                { k ->
+                    Sizer.sizeU32(k)
+                },
+                { v ->
+                    Sizer.sizeString(v)
+                },
+            ) } +
+        Sizer.sizeField(3) { Sizer.sizeHashSet(this.N2) { v ->
+                Sizer.sizeU32(v)
+            } } +
+        Sizer.sizeFieldOption(4, this.N3) { v -> Sizer.sizeU32(v) } +
+        Sizer.sizeField(5) { Sizer.sizeU32(this.N4.get()) } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<SampleUnnamed> {
+        override fun decode(r ByteBuffer): Result<SampleUnnamed> = runCatching {
+            var n0: List<UInt>? = null
+            var n1: Map<UInt, String>? = null
+            var n2: Set<UInt>? = null
+            var n3: UInt? = null
+            var n4: NonZeroNumber<UInt>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> n0 = Decoder.decodeVec(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    2u -> n1 = Decoder.decodeHashMap(
+                            r,
+                            { r ->
+                                Decoder.decodeU32(r)
+                            },
+                            { r ->
+                                Decoder.decodeString(r)
+                            },
+                        ).getOrThrow()
+                    3u -> n2 = Decoder.decodeHashSet(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    4u -> n3 = Decoder.decodeOption(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    5u -> n4 = Decoder.decodeNonZeroU32(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                SampleUnnamed(
+                    n0 ?: return Result.failure(MissingFieldException(1u, null)),
+                    n1 ?: return Result.failure(MissingFieldException(2u, null)),
+                    n2 ?: return Result.failure(MissingFieldException(3u, null)),
+                    n3,
+                    n4 ?: return Result.failure(MissingFieldException(5u, null)),
+                ),
+            )
+        }
+    }
 }
 
 

@@ -34,18 +34,40 @@ import rocks.dnaka91.mabo.buf.*
 public data class Sample(
     val value: UInt,
     val inner: Sample,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeU32(w, this.Value) })
-        Encoder.encodeField(w, 2, { w -> this.Inner.encode(w) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.Value) }
+        Encoder.encodeField(w, 2) { w -> this.Inner.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeU32(this.Value) })
-        + Sizer.sizeField(2, { this.Inner.size() })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.Value) } +
+        Sizer.sizeField(2) { this.Inner.size() } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var value: UInt? = null
+            var inner: Sample? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> value = Decoder.decodeU32(r).getOrThrow()
+                    2u -> inner = Sample.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                Sample(
+                    value ?: return Result.failure(MissingFieldException(1u, "value")),
+                    inner ?: return Result.failure(MissingFieldException(2u, "inner")),
+                ),
+            )
+        }
+    }
 }
 
 --- sample/a/b.kt
@@ -67,7 +89,7 @@ import rocks.dnaka91.mabo.buf.*
 
 public sealed interface Sample {
     public object One : Sample, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1)
+        override fun size(): Int = Sizer.sizeVariantId(1) + 0
 
     }
 }

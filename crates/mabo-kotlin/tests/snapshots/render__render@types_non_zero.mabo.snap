@@ -33,68 +33,141 @@ public data class Sample(
     val f13: NonZeroVec<String>,
     val f14: NonZeroHashMap<String, ByteArray>,
     val f15: NonZeroHashSet<String>,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeU8(w, this.F01.get()) })
-        Encoder.encodeField(w, 2, { w -> Encoder.encodeU16(w, this.F02.get()) })
-        Encoder.encodeField(w, 3, { w -> Encoder.encodeU32(w, this.F03.get()) })
-        Encoder.encodeField(w, 4, { w -> Encoder.encodeU64(w, this.F04.get()) })
-        Encoder.encodeField(w, 5, { w -> Encoder.encodeU128(w, this.F05.get()) })
-        Encoder.encodeField(w, 6, { w -> Encoder.encodeI8(w, this.F06.get()) })
-        Encoder.encodeField(w, 7, { w -> Encoder.encodeI16(w, this.F07.get()) })
-        Encoder.encodeField(w, 8, { w -> Encoder.encodeI32(w, this.F08.get()) })
-        Encoder.encodeField(w, 9, { w -> Encoder.encodeI64(w, this.F09.get()) })
-        Encoder.encodeField(w, 10, { w -> Encoder.encodeI128(w, this.F10.get()) })
-        Encoder.encodeField(w, 11, { w -> Encoder.encodeString(w, this.F11.get()) })
-        Encoder.encodeField(w, 12, { w -> Encoder.encodeBytes(w, this.F12.get()) })
-        Encoder.encodeField(w, 13, { w -> Encoder.encodeVec(w, this.F13.get(), { w, v ->
-            Encoder.encodeString(w, v)
-        }) })
-        Encoder.encodeField(w, 14, { w -> Encoder.encodeHashMap(
-            w, this.F14.get(),
-            { w, k ->
-                Encoder.encodeString(w, k)
-            },
-            { w, v ->
-                Encoder.encodeBytes(w, v)
-            },
-        ) })
-        Encoder.encodeField(w, 15, { w -> Encoder.encodeHashSet(w, this.F15.get(), { w, v ->
-            Encoder.encodeString(w, v)
-        }) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU8(w, this.F01.get()) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeU16(w, this.F02.get()) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU32(w, this.F03.get()) }
+        Encoder.encodeField(w, 4) { w -> Encoder.encodeU64(w, this.F04.get()) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU128(w, this.F05.get()) }
+        Encoder.encodeField(w, 6) { w -> Encoder.encodeI8(w, this.F06.get()) }
+        Encoder.encodeField(w, 7) { w -> Encoder.encodeI16(w, this.F07.get()) }
+        Encoder.encodeField(w, 8) { w -> Encoder.encodeI32(w, this.F08.get()) }
+        Encoder.encodeField(w, 9) { w -> Encoder.encodeI64(w, this.F09.get()) }
+        Encoder.encodeField(w, 10) { w -> Encoder.encodeI128(w, this.F10.get()) }
+        Encoder.encodeField(w, 11) { w -> Encoder.encodeString(w, this.F11.get()) }
+        Encoder.encodeField(w, 12) { w -> Encoder.encodeBytes(w, this.F12.get()) }
+        Encoder.encodeField(w, 13) { w -> Encoder.encodeVec(w, this.F13.get()) { w, v ->
+                Encoder.encodeString(w, v)
+            } }
+        Encoder.encodeField(w, 14) { w -> Encoder.encodeHashMap(
+                w, this.F14.get(),
+                { w, k ->
+                    Encoder.encodeString(w, k)
+                },
+                { w, v ->
+                    Encoder.encodeBytes(w, v)
+                },
+            ) }
+        Encoder.encodeField(w, 15) { w -> Encoder.encodeHashSet(w, this.F15.get()) { w, v ->
+                Encoder.encodeString(w, v)
+            } }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeU8(this.F01.get()) })
-        + Sizer.sizeField(2, { Sizer.sizeU16(this.F02.get()) })
-        + Sizer.sizeField(3, { Sizer.sizeU32(this.F03.get()) })
-        + Sizer.sizeField(4, { Sizer.sizeU64(this.F04.get()) })
-        + Sizer.sizeField(5, { Sizer.sizeU128(this.F05.get()) })
-        + Sizer.sizeField(6, { Sizer.sizeI8(this.F06.get()) })
-        + Sizer.sizeField(7, { Sizer.sizeI16(this.F07.get()) })
-        + Sizer.sizeField(8, { Sizer.sizeI32(this.F08.get()) })
-        + Sizer.sizeField(9, { Sizer.sizeI64(this.F09.get()) })
-        + Sizer.sizeField(10, { Sizer.sizeI128(this.F10.get()) })
-        + Sizer.sizeField(11, { Sizer.sizeString(this.F11.get()) })
-        + Sizer.sizeField(12, { Sizer.sizeBytes(this.F12.get()) })
-        + Sizer.sizeField(13, { Sizer.sizeVec(this.F13.get(), { v ->
-            Sizer.sizeString(v)
-        }) })
-        + Sizer.sizeField(14, { Sizer.sizeHashMap(
-            this.F14.get(),
-            { k ->
-                Sizer.sizeString(k)
-            },
-            { v ->
-                Sizer.sizeBytes(v)
-            },
-        ) })
-        + Sizer.sizeField(15, { Sizer.sizeHashSet(this.F15.get(), { v ->
-            Sizer.sizeString(v)
-        }) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU8(this.F01.get()) } +
+        Sizer.sizeField(2) { Sizer.sizeU16(this.F02.get()) } +
+        Sizer.sizeField(3) { Sizer.sizeU32(this.F03.get()) } +
+        Sizer.sizeField(4) { Sizer.sizeU64(this.F04.get()) } +
+        Sizer.sizeField(5) { Sizer.sizeU128(this.F05.get()) } +
+        Sizer.sizeField(6) { Sizer.sizeI8(this.F06.get()) } +
+        Sizer.sizeField(7) { Sizer.sizeI16(this.F07.get()) } +
+        Sizer.sizeField(8) { Sizer.sizeI32(this.F08.get()) } +
+        Sizer.sizeField(9) { Sizer.sizeI64(this.F09.get()) } +
+        Sizer.sizeField(10) { Sizer.sizeI128(this.F10.get()) } +
+        Sizer.sizeField(11) { Sizer.sizeString(this.F11.get()) } +
+        Sizer.sizeField(12) { Sizer.sizeBytes(this.F12.get()) } +
+        Sizer.sizeField(13) { Sizer.sizeVec(this.F13.get()) { v ->
+                Sizer.sizeString(v)
+            } } +
+        Sizer.sizeField(14) { Sizer.sizeHashMap(
+                this.F14.get(),
+                { k ->
+                    Sizer.sizeString(k)
+                },
+                { v ->
+                    Sizer.sizeBytes(v)
+                },
+            ) } +
+        Sizer.sizeField(15) { Sizer.sizeHashSet(this.F15.get()) { v ->
+                Sizer.sizeString(v)
+            } } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var f01: NonZeroNumber<UByte>? = null
+            var f02: NonZeroNumber<UShort>? = null
+            var f03: NonZeroNumber<UInt>? = null
+            var f04: NonZeroNumber<ULong>? = null
+            var f05: NonZeroNumber<BigInteger>? = null
+            var f06: NonZeroNumber<Byte>? = null
+            var f07: NonZeroNumber<Short>? = null
+            var f08: NonZeroNumber<Int>? = null
+            var f09: NonZeroNumber<Long>? = null
+            var f10: NonZeroNumber<BigInteger? = null
+            var f11: NonZeroString? = null
+            var f12: NonZeroBytes? = null
+            var f13: NonZeroVec<String>? = null
+            var f14: NonZeroHashMap<String, ByteArray>? = null
+            var f15: NonZeroHashSet<String>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> f01 = Decoder.decodeNonZeroU8(r).getOrThrow()
+                    2u -> f02 = Decoder.decodeNonZeroU16(r).getOrThrow()
+                    3u -> f03 = Decoder.decodeNonZeroU32(r).getOrThrow()
+                    4u -> f04 = Decoder.decodeNonZeroU64(r).getOrThrow()
+                    5u -> f05 = Decoder.decodeNonZeroU128(r).getOrThrow()
+                    6u -> f06 = Decoder.decodeNonZeroI8(r).getOrThrow()
+                    7u -> f07 = Decoder.decodeNonZeroI16(r).getOrThrow()
+                    8u -> f08 = Decoder.decodeNonZeroI32(r).getOrThrow()
+                    9u -> f09 = Decoder.decodeNonZeroI64(r).getOrThrow()
+                    10u -> f10 = Decoder.decodeNonZeroI128(r).getOrThrow()
+                    11u -> f11 = Decoder.decodeNonZeroString(r).getOrThrow()
+                    12u -> f12 = Decoder.decodeNonZeroBytes(r).getOrThrow()
+                    13u -> f13 = Decoder.decodeNonZeroVec(r) { r ->
+                            Decoder.decodeString(r)
+                        }.getOrThrow()
+                    14u -> f14 = Decoder.decodeNonZeroHashMap(
+                            r,
+                            { r ->
+                                Decoder.decodeString(r)
+                            },
+                            { r ->
+                                Decoder.decodeBytes(r)
+                            },
+                        ).getOrThrow()
+                    15u -> f15 = Decoder.decodeNonZeroHashSet(r) { r ->
+                            Decoder.decodeString(r)
+                        }.getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                Sample(
+                    f01 ?: return Result.failure(MissingFieldException(1u, "f01")),
+                    f02 ?: return Result.failure(MissingFieldException(2u, "f02")),
+                    f03 ?: return Result.failure(MissingFieldException(3u, "f03")),
+                    f04 ?: return Result.failure(MissingFieldException(4u, "f04")),
+                    f05 ?: return Result.failure(MissingFieldException(5u, "f05")),
+                    f06 ?: return Result.failure(MissingFieldException(6u, "f06")),
+                    f07 ?: return Result.failure(MissingFieldException(7u, "f07")),
+                    f08 ?: return Result.failure(MissingFieldException(8u, "f08")),
+                    f09 ?: return Result.failure(MissingFieldException(9u, "f09")),
+                    f10 ?: return Result.failure(MissingFieldException(10u, "f10")),
+                    f11 ?: return Result.failure(MissingFieldException(11u, "f11")),
+                    f12 ?: return Result.failure(MissingFieldException(12u, "f12")),
+                    f13 ?: return Result.failure(MissingFieldException(13u, "f13")),
+                    f14 ?: return Result.failure(MissingFieldException(14u, "f14")),
+                    f15 ?: return Result.failure(MissingFieldException(15u, "f15")),
+                ),
+            )
+        }
+    }
 }
 
 

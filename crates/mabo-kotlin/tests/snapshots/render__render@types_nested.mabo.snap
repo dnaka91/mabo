@@ -19,40 +19,71 @@ import rocks.dnaka91.mabo.buf.*
 
 public data class Sample(
     val value: List<NonZeroHashMap<Long, String>?>,
-) : Decode, Encode Size {
+) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1, { w -> Encoder.encodeVec(w, this.Value, { w, v ->
-            Encoder.encodeOption(w, v, { w, v ->
-                Encoder.encodeHashMap(
-                    w, v.get(),
-                    { w, k ->
-                        Encoder.encodeI64(w, k)
-                    },
-                    { w, v ->
-                        Encoder.encodeString(w, v)
-                    },
-                )
-            })
-        }) })
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.Value) { w, v ->
+                Encoder.encodeOption(w, v) { w, v ->
+                    Encoder.encodeHashMap(
+                        w, v.get(),
+                        { w, k ->
+                            Encoder.encodeI64(w, k)
+                        },
+                        { w, v ->
+                            Encoder.encodeString(w, v)
+                        },
+                    )
+                }
+            } }
         Encoder.encodeU32(w, END_MARKER)
     }
 
-    override fun size(): Int = 0
-        + Sizer.sizeField(1, { Sizer.sizeVec(this.Value, { v ->
-            Sizer.sizeOption(v, { v ->
-                Sizer.sizeHashMap(
-                    v.get(),
-                    { k ->
-                        Sizer.sizeI64(k)
-                    },
-                    { v ->
-                        Sizer.sizeString(v)
-                    },
-                )
-            })
-        }) })
-        + Sizer.sizeFieldId(END_MARKER)
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeVec(this.Value) { v ->
+                Sizer.sizeOption(v) { v ->
+                    Sizer.sizeHashMap(
+                        v.get(),
+                        { k ->
+                            Sizer.sizeI64(k)
+                        },
+                        { v ->
+                            Sizer.sizeString(v)
+                        },
+                    )
+                }
+            } } +
+        Sizer.sizeFieldId(END_MARKER)
 
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var value: List<NonZeroHashMap<Long, String>?>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> value = Decoder.decodeVec(r) { r ->
+                            Decoder.decodeOption(r) { r ->
+                                Decoder.decodeNonZeroHashMap(
+                                    r,
+                                    { r ->
+                                        Decoder.decodeI64(r)
+                                    },
+                                    { r ->
+                                        Decoder.decodeString(r)
+                                    },
+                                )
+                            }
+                        }.getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            return Result.success(
+                Sample(
+                    value ?: return Result.failure(MissingFieldException(1u, "value")),
+                ),
+            )
+        }
+    }
 }
 
 

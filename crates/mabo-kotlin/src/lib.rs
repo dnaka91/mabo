@@ -1,10 +1,16 @@
 //! Schema to source code converter for the _Kotlin_ programming language.
 
+use std::{
+    fmt::{self, Display},
+    ops::Add,
+};
+
 pub use definition::render_schema;
 
+mod decode;
 mod definition;
-mod size;
 mod encode;
+mod size;
 
 /// Options for the code generator that can modify the way the code is generated.
 #[derive(Default)]
@@ -28,4 +34,21 @@ pub struct Output<'a> {
     pub content: String,
     /// All modules that were defined as direct children of this module.
     pub modules: Vec<Output<'a>>,
+}
+
+#[derive(Clone, Copy)]
+struct Indent(usize);
+
+impl Display for Indent {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:indent$}", "", indent = self.0 * 4)
+    }
+}
+
+impl Add<usize> for Indent {
+    type Output = Self;
+
+    fn add(self, rhs: usize) -> Self::Output {
+        Self(self.0 + rhs)
+    }
 }

@@ -22,8 +22,8 @@ public data class Sample(
     val withGenerics: KeyValue<UInt, Boolean>,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> this.Basic.encode(w) }
-        Encoder.encodeField(w, 2) { w -> this.WithGenerics.encode(w) }
+        Encoder.encodeField(w, 1) { w -> this.basic.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.withGenerics.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -46,20 +46,27 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    basic ?: return Result.failure(MissingFieldException(1u, "basic")),
-                    withGenerics ?: return Result.failure(MissingFieldException(2u, "with_generics")),
-                ),
+            Sample(
+                basic ?: throw MissingFieldException(1u, "basic"),
+                withGenerics ?: throw MissingFieldException(2u, "with_generics"),
             )
         }
     }
 }
 
-public sealed interface Test123 {
-    public object Value : Test123, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1) + 0
+public sealed class Test123 : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Value -> Encoder.encodeVariantId(w, VariantId(1u))
+        }
+    }
 
+    override fun size(): Int = when (this) {
+        is Value -> Sizer.sizeVariantId(1u)
+    }
+
+    public data object Value : Test123(), Decode<Value>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<Value> = Result.success(Value)
     }
 }
 
@@ -68,8 +75,8 @@ public data class KeyValue<K, V>(
     val value: V,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> this.Key.encode(w) }
-        Encoder.encodeField(w, 2) { w -> this.Value.encode(w) }
+        Encoder.encodeField(w, 1) { w -> this.key.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.value.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -79,7 +86,7 @@ public data class KeyValue<K, V>(
         Sizer.sizeFieldId(END_MARKER)
 
     companion object : Decode<KeyValue<K, V>> {
-        override fun decode(r ByteBuffer): Result<KeyValue> = runCatching {
+        override fun decode(r ByteBuffer): Result<KeyValue<K, V>> = runCatching {
             var key: K? = null
             var value: V? = null
 
@@ -92,11 +99,9 @@ public data class KeyValue<K, V>(
                 }
             }
 
-            return Result.success(
-                KeyValue(
-                    key ?: return Result.failure(MissingFieldException(1u, "key")),
-                    value ?: return Result.failure(MissingFieldException(2u, "value")),
-                ),
+            KeyValue(
+                key ?: throw MissingFieldException(1u, "key"),
+                value ?: throw MissingFieldException(2u, "value"),
             )
         }
     }

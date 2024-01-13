@@ -29,8 +29,12 @@ impl Display for RenderStruct<'_> {
 
         writeln!(
             f,
-            "{indent}override fun decode(r ByteBuffer): Result<{}> = runCatching {{",
-            heck::AsUpperCamelCase(&item.name),
+            "{indent}override fun decode(r ByteBuffer): Result<{}{}> = runCatching {{",
+            heck::AsUpperCamelCase(item.name),
+            definition::RenderGenerics {
+                generics: &item.generics,
+                fields_filter: None,
+            }
         )?;
         writeln!(
             f,
@@ -57,17 +61,15 @@ impl Display for RenderStruct<'_> {
         writeln!(f, "{indent_p2}}}")?;
         writeln!(f, "{indent_p1}}}")?;
         writeln!(f)?;
-        writeln!(f, "{indent_p1}return Result.success(")?;
-        writeln!(f, "{indent_p2}{}(", heck::AsUpperCamelCase(&item.name))?;
+        writeln!(f, "{indent_p1}{}(", heck::AsUpperCamelCase(&item.name))?;
         write!(
             f,
             "{}",
             RenderFoundChecks {
-                indent: indent_p3,
+                indent: indent_p2,
                 item: &item.fields
             }
         )?;
-        writeln!(f, "{indent_p2}),")?;
         writeln!(f, "{indent_p1})")?;
         writeln!(f, "{indent}}}")
     }
@@ -75,60 +77,75 @@ impl Display for RenderStruct<'_> {
 
 pub(super) struct RenderEnumVariant<'a> {
     pub indent: Indent,
-    pub enum_name: &'a str,
     pub generics: &'a [&'a str],
-    pub variant: &'a Variant<'a>,
+    pub item: &'a Variant<'a>,
 }
 
 impl Display for RenderEnumVariant<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self {
             indent,
-            enum_name,
             generics,
-            variant,
+            item,
         } = *self;
+
+        if item.fields.kind == FieldKind::Unit {
+            return writeln!(
+                f,
+                "{indent}override fun decode(r ByteBuffer): Result<{}> = Result.success({0})",
+                heck::AsUpperCamelCase(&item.name),
+            );
+        }
+
+        let indent_p1 = indent + 1;
+        let indent_p2 = indent + 2;
+        let indent_p3 = indent + 3;
+
         writeln!(
             f,
-            "{indent}override fun decode(r ByteBuffer) Result<{}> {{",
-            heck::AsUpperCamelCase(enum_name),
+            "{indent}override fun decode(r ByteBuffer) Result<{}{}> = runCatching {{",
+            heck::AsUpperCamelCase(item.name),
+            definition::RenderGenerics {
+                generics,
+                fields_filter: Some(&item.fields),
+            }
         )?;
         writeln!(
             f,
             "{}",
             RenderFieldVars {
-                indent,
-                item: &variant.fields
+                indent: indent_p1,
+                item: &item.fields
             }
         )?;
-        writeln!(f, "\tfor len(r) > 0 {{")?;
-        writeln!(f, "\t\tr2, id, err := buf.DecodeID(r)")?;
-        writeln!(f, "\t\tif err != nil {{")?;
-        writeln!(f, "\t\t\treturn nil, err")?;
-        writeln!(f, "\t\t}}")?;
-        writeln!(f, "\t\tr = r2\n")?;
-        writeln!(f, "\t\tswitch id {{")?;
+        writeln!(f, "{indent_p1}while (true) {{")?;
+        writeln!(
+            f,
+            "{indent_p2}val id = Decoder.decodeFieldId(r).getOrThrow()"
+        )?;
+        writeln!(f, "{indent_p2}when (id.value) {{")?;
         write!(
             f,
             "{}",
             RenderFields {
-                indent: self.indent,
-                item: &variant.fields
+                indent: indent_p3,
+                item: &item.fields
             }
         )?;
-        writeln!(f, "\t\t\tcase buf.EndMarker:")?;
-        writeln!(f, "\t\t\t\tbreak")?;
-        writeln!(f, "\t\t}}")?;
-        writeln!(f, "\t}}\n")?;
+        writeln!(f, "{indent_p2}}}")?;
+        writeln!(f, "{indent_p1}}}")?;
+        writeln!(f)?;
+        writeln!(f, "{indent_p1}{}(", heck::AsUpperCamelCase(&item.name))?;
         write!(
             f,
             "{}",
             RenderFoundChecks {
-                indent,
-                item: &variant.fields
+                indent: indent_p2,
+                item: &item.fields
             }
         )?;
-        writeln!(f, "\n\treturn r, nil\n}}")
+        writeln!(f, "{indent_p1})")?;
+        writeln!(f, "{indent}}}")
     }
 }
 
@@ -198,7 +215,7 @@ impl Display for RenderFoundChecks<'_> {
             } else {
                 write!(
                     f,
-                    "{indent}{} ?: return Result.failure(MissingFieldException({}u, ",
+                    "{indent}{} ?: throw MissingFieldException({}u, ",
                     heck::AsLowerCamelCase(&field.name),
                     field.id,
                 )?;
@@ -209,7 +226,7 @@ impl Display for RenderFoundChecks<'_> {
                     write!(f, "null")?;
                 }
 
-                writeln!(f, ")),")?;
+                writeln!(f, "),")?;
             }
         }
 

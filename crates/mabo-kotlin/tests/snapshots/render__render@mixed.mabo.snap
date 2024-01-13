@@ -33,10 +33,10 @@ public data class User(
     val birthday: DayOfBirth,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> this.Name.encode(w) }
-        Encoder.encodeFieldOption(w, 2, this.Address) { w, v -> v.encode(w) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeU8(w, this.Age) }
-        Encoder.encodeField(w, 4) { w -> this.Birthday.encode(w) }
+        Encoder.encodeField(w, 1) { w -> this.name.encode(w) }
+        Encoder.encodeFieldOption(w, 2, this.address) { w, v -> v.encode(w) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU8(w, this.age) }
+        Encoder.encodeField(w, 4) { w -> this.birthday.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -67,13 +67,11 @@ public data class User(
                 }
             }
 
-            return Result.success(
-                User(
-                    name ?: return Result.failure(MissingFieldException(1u, "name")),
-                    address,
-                    age ?: return Result.failure(MissingFieldException(3u, "age")),
-                    birthday ?: return Result.failure(MissingFieldException(4u, "birthday")),
-                ),
+            User(
+                name ?: throw MissingFieldException(1u, "name"),
+                address,
+                age ?: throw MissingFieldException(3u, "age"),
+                birthday ?: throw MissingFieldException(4u, "birthday"),
             )
         }
     }
@@ -88,9 +86,9 @@ public data class FullName(
     val last: String,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.First) }
-        Encoder.encodeFieldOption(w, 2, this.Middle) { w, v -> Encoder.encodeString(w, v) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.Last) }
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.first) }
+        Encoder.encodeFieldOption(w, 2, this.middle) { w, v -> Encoder.encodeString(w, v) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.last) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -118,12 +116,10 @@ public data class FullName(
                 }
             }
 
-            return Result.success(
-                FullName(
-                    first ?: return Result.failure(MissingFieldException(1u, "first")),
-                    middle,
-                    last ?: return Result.failure(MissingFieldException(3u, "last")),
-                ),
+            FullName(
+                first ?: throw MissingFieldException(1u, "first"),
+                middle,
+                last ?: throw MissingFieldException(3u, "last"),
             )
         }
     }
@@ -149,9 +145,9 @@ public data class Address(
     val city: String,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.Street) }
-        Encoder.encodeField(w, 2) { w -> this.HouseNo.encode(w) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.City) }
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.street) }
+        Encoder.encodeField(w, 2) { w -> this.houseNo.encode(w) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.city) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -177,28 +173,62 @@ public data class Address(
                 }
             }
 
-            return Result.success(
-                Address(
-                    street ?: return Result.failure(MissingFieldException(1u, "street")),
-                    houseNo ?: return Result.failure(MissingFieldException(2u, "house_no")),
-                    city ?: return Result.failure(MissingFieldException(3u, "city")),
-                ),
+            Address(
+                street ?: throw MissingFieldException(1u, "street"),
+                houseNo ?: throw MissingFieldException(2u, "house_no"),
+                city ?: throw MissingFieldException(3u, "city"),
             )
         }
     }
 }
 
-public sealed interface HouseNumber {
+public sealed class HouseNumber : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Digit -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Text -> Encoder.encodeVariantId(w, VariantId(2u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is Digit -> Sizer.sizeVariantId(1u)
+        is Text -> Sizer.sizeVariantId(2u)
+    }
+
     /**
      * Digit only number.
      */
     public data class Digit(
         val n0: UShort,
-    ) : HouseNumber, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1) + 0 +
+    ) : HouseNumber(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU16(w, this.n0) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
             Sizer.sizeField(1) { Sizer.sizeU16(this.N0) } +
             Sizer.sizeFieldId(END_MARKER)
 
+
+        companion object : Decode<Digit> {
+            override fun decode(r ByteBuffer) Result<Digit> = runCatching {
+                var n0: UShort? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = Decoder.decodeU16(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Digit(
+                    n0 ?: throw MissingFieldException(1u, null),
+                )
+            }
+        }
     }
 
     /**
@@ -206,11 +236,35 @@ public sealed interface HouseNumber {
      */
     public data class Text(
         val n0: String,
-    ) : HouseNumber, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2) + 0 +
+    ) : HouseNumber(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.n0) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
             Sizer.sizeField(1) { Sizer.sizeString(this.N0) } +
             Sizer.sizeFieldId(END_MARKER)
 
+
+        companion object : Decode<Text> {
+            override fun decode(r ByteBuffer) Result<Text> = runCatching {
+                var n0: String? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = Decoder.decodeString(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Text(
+                    n0 ?: throw MissingFieldException(1u, null),
+                )
+            }
+        }
     }
 }
 
@@ -236,18 +290,64 @@ import kotlin.ULong
 import rocks.dnaka91.mabo.*
 import rocks.dnaka91.mabo.buf.*
 
-public sealed interface DayOfBirth {
+public sealed class DayOfBirth : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Specific -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Secret -> Encoder.encodeVariantId(w, VariantId(2u))
+            is Unknown -> Encoder.encodeVariantId(w, VariantId(3u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is Specific -> Sizer.sizeVariantId(1u)
+        is Secret -> Sizer.sizeVariantId(2u)
+        is Unknown -> Sizer.sizeVariantId(3u)
+    }
+
     public data class Specific(
         val year: UShort,
         val month: Month,
         val day: UByte,
-    ) : DayOfBirth, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1) + 0 +
+    ) : DayOfBirth(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU16(w, this.year) }
+            Encoder.encodeField(w, 2) { w -> this.month.encode(w) }
+            Encoder.encodeField(w, 3) { w -> Encoder.encodeU8(w, this.day) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
             Sizer.sizeField(1) { Sizer.sizeU16(this.Year) } +
             Sizer.sizeField(2) { this.Month.size() } +
             Sizer.sizeField(3) { Sizer.sizeU8(this.Day) } +
             Sizer.sizeFieldId(END_MARKER)
 
+
+        companion object : Decode<Specific> {
+            override fun decode(r ByteBuffer) Result<Specific> = runCatching {
+                var year: UShort? = null
+                var month: Month? = null
+                var day: UByte? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> year = Decoder.decodeU16(r).getOrThrow()
+                        2u -> month = Month.decode(r).getOrThrow()
+                        3u -> day = Decoder.decodeU8(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Specific(
+                    year ?: throw MissingFieldException(1u, "year"),
+                    month ?: throw MissingFieldException(2u, "month"),
+                    day ?: throw MissingFieldException(3u, "day"),
+                )
+            }
+        }
     }
 
     /**
@@ -259,19 +359,44 @@ public sealed interface DayOfBirth {
          * reveal their birthday.
          */
         val reason: String?,
-    ) : DayOfBirth, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2) + 0 +
+    ) : DayOfBirth(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeFieldOption(w, 1, this.reason) { w, v -> Encoder.encodeString(w, v) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
             Sizer.sizeFieldOption(1, this.Reason) { v -> Sizer.sizeString(v) } +
             Sizer.sizeFieldId(END_MARKER)
 
+
+        companion object : Decode<Secret> {
+            override fun decode(r ByteBuffer) Result<Secret> = runCatching {
+                var reason: String? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> reason = Decoder.decodeOption(r) { r ->
+                                Decoder.decodeString(r)
+                            }.getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Secret(
+                    reason,
+                )
+            }
+        }
     }
 
     /**
      * We never asked and nobody knows.
      */
-    public object Unknown : DayOfBirth, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(3) + 0
-
+    public data object Unknown : DayOfBirth(), Decode<Unknown>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<Unknown> = Result.success(Unknown)
     }
 }
 
@@ -286,65 +411,85 @@ const val MIN_YEAR: UShort = 1900u
  */
 const val MAX_DAY: UByte = 31u
 
-public sealed interface Month {
-    public object January : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1) + 0
-
+public sealed class Month : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is January -> Encoder.encodeVariantId(w, VariantId(1u))
+            is February -> Encoder.encodeVariantId(w, VariantId(2u))
+            is March -> Encoder.encodeVariantId(w, VariantId(3u))
+            is April -> Encoder.encodeVariantId(w, VariantId(4u))
+            is May -> Encoder.encodeVariantId(w, VariantId(5u))
+            is June -> Encoder.encodeVariantId(w, VariantId(6u))
+            is July -> Encoder.encodeVariantId(w, VariantId(7u))
+            is August -> Encoder.encodeVariantId(w, VariantId(8u))
+            is September -> Encoder.encodeVariantId(w, VariantId(9u))
+            is October -> Encoder.encodeVariantId(w, VariantId(10u))
+            is November -> Encoder.encodeVariantId(w, VariantId(11u))
+            is December -> Encoder.encodeVariantId(w, VariantId(12u))
+        }
     }
 
-    public object February : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(2) + 0
-
+    override fun size(): Int = when (this) {
+        is January -> Sizer.sizeVariantId(1u)
+        is February -> Sizer.sizeVariantId(2u)
+        is March -> Sizer.sizeVariantId(3u)
+        is April -> Sizer.sizeVariantId(4u)
+        is May -> Sizer.sizeVariantId(5u)
+        is June -> Sizer.sizeVariantId(6u)
+        is July -> Sizer.sizeVariantId(7u)
+        is August -> Sizer.sizeVariantId(8u)
+        is September -> Sizer.sizeVariantId(9u)
+        is October -> Sizer.sizeVariantId(10u)
+        is November -> Sizer.sizeVariantId(11u)
+        is December -> Sizer.sizeVariantId(12u)
     }
 
-    public object March : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(3) + 0
-
+    public data object January : Month(), Decode<January>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<January> = Result.success(January)
     }
 
-    public object April : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(4) + 0
-
+    public data object February : Month(), Decode<February>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<February> = Result.success(February)
     }
 
-    public object May : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(5) + 0
-
+    public data object March : Month(), Decode<March>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<March> = Result.success(March)
     }
 
-    public object June : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(6) + 0
-
+    public data object April : Month(), Decode<April>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<April> = Result.success(April)
     }
 
-    public object July : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(7) + 0
-
+    public data object May : Month(), Decode<May>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<May> = Result.success(May)
     }
 
-    public object August : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(8) + 0
-
+    public data object June : Month(), Decode<June>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<June> = Result.success(June)
     }
 
-    public object September : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(9) + 0
-
+    public data object July : Month(), Decode<July>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<July> = Result.success(July)
     }
 
-    public object October : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(10) + 0
-
+    public data object August : Month(), Decode<August>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<August> = Result.success(August)
     }
 
-    public object November : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(11) + 0
-
+    public data object September : Month(), Decode<September>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<September> = Result.success(September)
     }
 
-    public object December : Month, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(12) + 0
+    public data object October : Month(), Decode<October>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<October> = Result.success(October)
+    }
 
+    public data object November : Month(), Decode<November>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<November> = Result.success(November)
+    }
+
+    public data object December : Month(), Decode<December>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<December> = Result.success(December)
     }
 }
 

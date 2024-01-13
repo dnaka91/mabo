@@ -97,7 +97,7 @@ impl Display for RenderStruct<'_> {
         if self.0.fields.kind == FieldKind::Unit {
             writeln!(
                 f,
-                "{}public object {} : Encode, Size {{",
+                "{}public data object {} : Decode<{1}>, Encode, Size {{",
                 RenderComment {
                     indent: 0,
                     comment: &self.0.comment
@@ -137,24 +137,36 @@ impl Display for RenderStruct<'_> {
             }
         )?;
 
-        writeln!(
-            f,
-            "    companion object : Decode<{}{}> {{",
-            heck::AsUpperCamelCase(&self.0.name),
-            RenderGenerics {
-                generics: &self.0.generics,
-                fields_filter: None
-            },
-        )?;
-        write!(
-            f,
-            "{}",
-            decode::RenderStruct {
-                indent: Indent(2),
-                item: self.0,
-            }
-        )?;
-        writeln!(f, "    }}")?;
+        if self.0.fields.kind == FieldKind::Unit {
+            write!(
+                f,
+                "{}",
+                decode::RenderStruct {
+                    indent: Indent(1),
+                    item: self.0,
+                }
+            )?;
+        } else {
+            writeln!(
+                f,
+                "{}companion object : Decode<{}{}> {{",
+                Indent(1),
+                heck::AsUpperCamelCase(&self.0.name),
+                RenderGenerics {
+                    generics: &self.0.generics,
+                    fields_filter: None
+                },
+            )?;
+            write!(
+                f,
+                "{}",
+                decode::RenderStruct {
+                    indent: Indent(2),
+                    item: self.0,
+                }
+            )?;
+            writeln!(f, "{}}}", Indent(1))?;
+        }
         writeln!(f, "}}")
     }
 }
@@ -163,10 +175,28 @@ struct RenderEnum<'a>(&'a Enum<'a>);
 
 impl Display for RenderEnum<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(
+            f,
+            "public sealed class {} : Encode, Size {{",
+            heck::AsUpperCamelCase(&self.0.name),
+        )?;
+
+        writeln!(
+            f,
+            "{}",
+            encode::RenderEnum {
+                indent: Indent(1),
+                item: self.0
+            }
+        )?;
+
         write!(
             f,
-            "public sealed interface {} {{",
-            heck::AsUpperCamelCase(&self.0.name),
+            "{}",
+            size::RenderEnum {
+                indent: Indent(1),
+                item: self.0
+            }
         )?;
 
         for variant in &self.0.variants {
@@ -196,45 +226,81 @@ impl Display for RenderEnumVariant<'_> {
         if self.variant.fields.kind == FieldKind::Unit {
             writeln!(
                 f,
-                "{}    public object {} : {}, Decode, Encode, Size {{",
+                "{}{}public data object {} : {}(), Decode<{2}>, Encode, Size {{",
                 RenderComment {
                     indent: 1,
                     comment: &self.variant.comment
                 },
+                Indent(1),
                 heck::AsUpperCamelCase(&self.variant.name),
                 heck::AsUpperCamelCase(&self.enum_name),
             )?;
-        } else {
-            writeln!(
+            write!(
                 f,
-                "{}    public data class {}{}(\n{}    ) : {}, Decode, Encode, Size {{",
-                RenderComment {
-                    indent: 1,
-                    comment: &self.variant.comment
-                },
-                heck::AsUpperCamelCase(&self.variant.name),
-                RenderGenerics {
+                "{}",
+                decode::RenderEnumVariant {
+                    indent: Indent(2),
                     generics: self.generics,
-                    fields_filter: Some(&self.variant.fields)
-                },
-                RenderFields {
-                    indent: 1,
-                    fields: &self.variant.fields
-                },
-                heck::AsUpperCamelCase(&self.enum_name),
+                    item: self.variant,
+                }
             )?;
+            return writeln!(f, "{}}}", Indent(1));
         }
 
         writeln!(
             f,
-            "{}\n{:indent$}}}",
-            size::RenderEnumVariant {
+            "{}{}public data class {}{}(\n{}    ) : {}(), Encode, Size {{",
+            RenderComment {
+                indent: 1,
+                comment: &self.variant.comment
+            },
+            Indent(1),
+            heck::AsUpperCamelCase(&self.variant.name),
+            RenderGenerics {
+                generics: self.generics,
+                fields_filter: Some(&self.variant.fields)
+            },
+            RenderFields {
+                indent: 1,
+                fields: &self.variant.fields
+            },
+            heck::AsUpperCamelCase(&self.enum_name),
+        )?;
+
+        writeln!(
+            f,
+            "{}\n{}\n",
+            encode::RenderEnumVariant {
                 indent: Indent(2),
                 item: self.variant,
             },
-            "",
-            indent = 4,
-        )
+            size::RenderEnumVariant {
+                indent: Indent(2),
+                item: self.variant,
+            }
+        )?;
+
+        writeln!(
+            f,
+            "{}companion object : Decode<{}{}> {{",
+            Indent(2),
+            heck::AsUpperCamelCase(&self.variant.name),
+            RenderGenerics {
+                generics: self.generics,
+                fields_filter: Some(&self.variant.fields),
+            },
+        )?;
+        write!(
+            f,
+            "{}",
+            decode::RenderEnumVariant {
+                indent: Indent(3),
+                generics: self.generics,
+                item: self.variant,
+            }
+        )?;
+        writeln!(f, "{}}}", Indent(2))?;
+        writeln!(f, "{}}}", Indent(1))
     }
 }
 
@@ -267,9 +333,9 @@ impl Display for RenderFields<'_> {
     }
 }
 
-struct RenderGenerics<'a> {
-    generics: &'a [&'a str],
-    fields_filter: Option<&'a Fields<'a>>,
+pub(super) struct RenderGenerics<'a> {
+    pub generics: &'a [&'a str],
+    pub fields_filter: Option<&'a Fields<'a>>,
 }
 
 impl Display for RenderGenerics<'_> {
@@ -449,18 +515,17 @@ impl Display for RenderType<'_> {
             Type::HashSet(ty) => write!(f, "Set<{}>", RenderType(ty)),
             Type::Option(ty) => write!(f, "{}?", RenderType(ty)),
             Type::NonZero(ty) => match &**ty {
-                Type::U8 => write!(f, "NonZeroNumber<UByte>"),
-                Type::U16 => write!(f, "NonZeroNumber<UShort>"),
-                Type::U32 => write!(f, "NonZeroNumber<UInt>"),
-                Type::U64 => write!(f, "NonZeroNumber<ULong>"),
-                Type::U128 => write!(f, "NonZeroNumber<BigInteger>"),
-                Type::I8 => write!(f, "NonZeroNumber<Byte>"),
-                Type::I16 => write!(f, "NonZeroNumber<Short>"),
-                Type::I32 => write!(f, "NonZeroNumber<Int>"),
-                Type::I64 => write!(f, "NonZeroNumber<Long>"),
-                Type::I128 => write!(f, "NonZeroNumber<BigInteger"),
-                Type::F32 => write!(f, "NonZeroNumber<Float>"),
-                Type::F64 => write!(f, "NonZeroNumber<Double>"),
+                Type::U8 => write!(f, "NonZeroUByte"),
+                Type::U16 => write!(f, "NonZeroUShort"),
+                Type::U32 => write!(f, "NonZeroUInt"),
+                Type::U64 => write!(f, "NonZeroULong"),
+                Type::U128 | Type::I128 => write!(f, "NonZeroBigInteger"),
+                Type::I8 => write!(f, "NonZeroByte"),
+                Type::I16 => write!(f, "NonZeroShort"),
+                Type::I32 => write!(f, "NonZeroInt"),
+                Type::I64 => write!(f, "NonZeroLong"),
+                Type::F32 => write!(f, "NonZeroFloat"),
+                Type::F64 => write!(f, "NonZeroDouble"),
                 Type::String | Type::StringRef => write!(f, "NonZeroString"),
                 Type::Bytes | Type::BytesRef => write!(f, "NonZeroBytes"),
                 Type::Vec(ty) => write!(f, "NonZeroVec<{}>", RenderType(ty)),

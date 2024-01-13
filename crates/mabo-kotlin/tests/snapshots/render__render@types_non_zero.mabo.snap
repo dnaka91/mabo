@@ -18,16 +18,16 @@ import rocks.dnaka91.mabo.*
 import rocks.dnaka91.mabo.buf.*
 
 public data class Sample(
-    val f01: NonZeroNumber<UByte>,
-    val f02: NonZeroNumber<UShort>,
-    val f03: NonZeroNumber<UInt>,
-    val f04: NonZeroNumber<ULong>,
-    val f05: NonZeroNumber<BigInteger>,
-    val f06: NonZeroNumber<Byte>,
-    val f07: NonZeroNumber<Short>,
-    val f08: NonZeroNumber<Int>,
-    val f09: NonZeroNumber<Long>,
-    val f10: NonZeroNumber<BigInteger,
+    val f01: NonZeroUByte,
+    val f02: NonZeroUShort,
+    val f03: NonZeroUInt,
+    val f04: NonZeroULong,
+    val f05: NonZeroBigInteger,
+    val f06: NonZeroByte,
+    val f07: NonZeroShort,
+    val f08: NonZeroInt,
+    val f09: NonZeroLong,
+    val f10: NonZeroBigInteger,
     val f11: NonZeroString,
     val f12: NonZeroBytes,
     val f13: NonZeroVec<String>,
@@ -35,23 +35,23 @@ public data class Sample(
     val f15: NonZeroHashSet<String>,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeU8(w, this.F01.get()) }
-        Encoder.encodeField(w, 2) { w -> Encoder.encodeU16(w, this.F02.get()) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeU32(w, this.F03.get()) }
-        Encoder.encodeField(w, 4) { w -> Encoder.encodeU64(w, this.F04.get()) }
-        Encoder.encodeField(w, 5) { w -> Encoder.encodeU128(w, this.F05.get()) }
-        Encoder.encodeField(w, 6) { w -> Encoder.encodeI8(w, this.F06.get()) }
-        Encoder.encodeField(w, 7) { w -> Encoder.encodeI16(w, this.F07.get()) }
-        Encoder.encodeField(w, 8) { w -> Encoder.encodeI32(w, this.F08.get()) }
-        Encoder.encodeField(w, 9) { w -> Encoder.encodeI64(w, this.F09.get()) }
-        Encoder.encodeField(w, 10) { w -> Encoder.encodeI128(w, this.F10.get()) }
-        Encoder.encodeField(w, 11) { w -> Encoder.encodeString(w, this.F11.get()) }
-        Encoder.encodeField(w, 12) { w -> Encoder.encodeBytes(w, this.F12.get()) }
-        Encoder.encodeField(w, 13) { w -> Encoder.encodeVec(w, this.F13.get()) { w, v ->
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU8(w, this.f01.get()) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeU16(w, this.f02.get()) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU32(w, this.f03.get()) }
+        Encoder.encodeField(w, 4) { w -> Encoder.encodeU64(w, this.f04.get()) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU128(w, this.f05.get()) }
+        Encoder.encodeField(w, 6) { w -> Encoder.encodeI8(w, this.f06.get()) }
+        Encoder.encodeField(w, 7) { w -> Encoder.encodeI16(w, this.f07.get()) }
+        Encoder.encodeField(w, 8) { w -> Encoder.encodeI32(w, this.f08.get()) }
+        Encoder.encodeField(w, 9) { w -> Encoder.encodeI64(w, this.f09.get()) }
+        Encoder.encodeField(w, 10) { w -> Encoder.encodeI128(w, this.f10.get()) }
+        Encoder.encodeField(w, 11) { w -> Encoder.encodeString(w, this.f11.get()) }
+        Encoder.encodeField(w, 12) { w -> Encoder.encodeBytes(w, this.f12.get()) }
+        Encoder.encodeField(w, 13) { w -> Encoder.encodeVec(w, this.f13.get()) { w, v ->
                 Encoder.encodeString(w, v)
             } }
         Encoder.encodeField(w, 14) { w -> Encoder.encodeHashMap(
-                w, this.F14.get(),
+                w, this.f14.get(),
                 { w, k ->
                     Encoder.encodeString(w, k)
                 },
@@ -59,7 +59,7 @@ public data class Sample(
                     Encoder.encodeBytes(w, v)
                 },
             ) }
-        Encoder.encodeField(w, 15) { w -> Encoder.encodeHashSet(w, this.F15.get()) { w, v ->
+        Encoder.encodeField(w, 15) { w -> Encoder.encodeHashSet(w, this.f15.get()) { w, v ->
                 Encoder.encodeString(w, v)
             } }
         Encoder.encodeU32(w, END_MARKER)
@@ -97,16 +97,16 @@ public data class Sample(
 
     companion object : Decode<Sample> {
         override fun decode(r ByteBuffer): Result<Sample> = runCatching {
-            var f01: NonZeroNumber<UByte>? = null
-            var f02: NonZeroNumber<UShort>? = null
-            var f03: NonZeroNumber<UInt>? = null
-            var f04: NonZeroNumber<ULong>? = null
-            var f05: NonZeroNumber<BigInteger>? = null
-            var f06: NonZeroNumber<Byte>? = null
-            var f07: NonZeroNumber<Short>? = null
-            var f08: NonZeroNumber<Int>? = null
-            var f09: NonZeroNumber<Long>? = null
-            var f10: NonZeroNumber<BigInteger? = null
+            var f01: NonZeroUByte? = null
+            var f02: NonZeroUShort? = null
+            var f03: NonZeroUInt? = null
+            var f04: NonZeroULong? = null
+            var f05: NonZeroBigInteger? = null
+            var f06: NonZeroByte? = null
+            var f07: NonZeroShort? = null
+            var f08: NonZeroInt? = null
+            var f09: NonZeroLong? = null
+            var f10: NonZeroBigInteger? = null
             var f11: NonZeroString? = null
             var f12: NonZeroBytes? = null
             var f13: NonZeroVec<String>? = null
@@ -147,24 +147,22 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    f01 ?: return Result.failure(MissingFieldException(1u, "f01")),
-                    f02 ?: return Result.failure(MissingFieldException(2u, "f02")),
-                    f03 ?: return Result.failure(MissingFieldException(3u, "f03")),
-                    f04 ?: return Result.failure(MissingFieldException(4u, "f04")),
-                    f05 ?: return Result.failure(MissingFieldException(5u, "f05")),
-                    f06 ?: return Result.failure(MissingFieldException(6u, "f06")),
-                    f07 ?: return Result.failure(MissingFieldException(7u, "f07")),
-                    f08 ?: return Result.failure(MissingFieldException(8u, "f08")),
-                    f09 ?: return Result.failure(MissingFieldException(9u, "f09")),
-                    f10 ?: return Result.failure(MissingFieldException(10u, "f10")),
-                    f11 ?: return Result.failure(MissingFieldException(11u, "f11")),
-                    f12 ?: return Result.failure(MissingFieldException(12u, "f12")),
-                    f13 ?: return Result.failure(MissingFieldException(13u, "f13")),
-                    f14 ?: return Result.failure(MissingFieldException(14u, "f14")),
-                    f15 ?: return Result.failure(MissingFieldException(15u, "f15")),
-                ),
+            Sample(
+                f01 ?: throw MissingFieldException(1u, "f01"),
+                f02 ?: throw MissingFieldException(2u, "f02"),
+                f03 ?: throw MissingFieldException(3u, "f03"),
+                f04 ?: throw MissingFieldException(4u, "f04"),
+                f05 ?: throw MissingFieldException(5u, "f05"),
+                f06 ?: throw MissingFieldException(6u, "f06"),
+                f07 ?: throw MissingFieldException(7u, "f07"),
+                f08 ?: throw MissingFieldException(8u, "f08"),
+                f09 ?: throw MissingFieldException(9u, "f09"),
+                f10 ?: throw MissingFieldException(10u, "f10"),
+                f11 ?: throw MissingFieldException(11u, "f11"),
+                f12 ?: throw MissingFieldException(12u, "f12"),
+                f13 ?: throw MissingFieldException(13u, "f13"),
+                f14 ?: throw MissingFieldException(14u, "f14"),
+                f15 ?: throw MissingFieldException(15u, "f15"),
             )
         }
     }

@@ -21,7 +21,7 @@ public data class Sample(
     val value: List<NonZeroHashMap<Long, String>?>,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.Value) { w, v ->
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.value) { w, v ->
                 Encoder.encodeOption(w, v) { w, v ->
                     Encoder.encodeHashMap(
                         w, v.get(),
@@ -77,10 +77,8 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    value ?: return Result.failure(MissingFieldException(1u, "value")),
-                ),
+            Sample(
+                value ?: throw MissingFieldException(1u, "value"),
             )
         }
     }

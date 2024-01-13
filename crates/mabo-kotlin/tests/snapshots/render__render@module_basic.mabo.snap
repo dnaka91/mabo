@@ -36,8 +36,8 @@ public data class Sample(
     val inner: Sample,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.Value) }
-        Encoder.encodeField(w, 2) { w -> this.Inner.encode(w) }
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.value) }
+        Encoder.encodeField(w, 2) { w -> this.inner.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -60,11 +60,9 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    value ?: return Result.failure(MissingFieldException(1u, "value")),
-                    inner ?: return Result.failure(MissingFieldException(2u, "inner")),
-                ),
+            Sample(
+                value ?: throw MissingFieldException(1u, "value"),
+                inner ?: throw MissingFieldException(2u, "inner"),
             )
         }
     }
@@ -87,10 +85,19 @@ import kotlin.ULong
 import rocks.dnaka91.mabo.*
 import rocks.dnaka91.mabo.buf.*
 
-public sealed interface Sample {
-    public object One : Sample, Decode, Encode, Size {
-        override fun size(): Int = Sizer.sizeVariantId(1) + 0
+public sealed class Sample : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is One -> Encoder.encodeVariantId(w, VariantId(1u))
+        }
+    }
 
+    override fun size(): Int = when (this) {
+        is One -> Sizer.sizeVariantId(1u)
+    }
+
+    public data object One : Sample(), Decode<One>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<One> = Result.success(One)
     }
 }
 

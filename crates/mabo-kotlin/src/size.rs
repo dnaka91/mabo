@@ -2,7 +2,7 @@
 
 use std::fmt::{self, Display};
 
-use mabo_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
+use mabo_compiler::simplify::{Enum, FieldKind, Fields, Struct, Type, Variant};
 
 use crate::Indent;
 
@@ -25,6 +25,31 @@ impl Display for RenderStruct<'_> {
     }
 }
 
+pub(super) struct RenderEnum<'a> {
+    pub indent: Indent,
+    pub item: &'a Enum<'a>,
+}
+
+impl Display for RenderEnum<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Self { indent, item } = *self;
+
+        writeln!(f, "{indent}override fun size(): Int = when (this) {{")?;
+
+        for variant in &item.variants {
+            writeln!(
+                f,
+                "{}is {} -> Sizer.sizeVariantId({}u)",
+                indent + 1,
+                heck::AsUpperCamelCase(variant.name),
+                variant.id
+            )?;
+        }
+
+        writeln!(f, "{indent}}}")
+    }
+}
+
 pub(super) struct RenderEnumVariant<'a> {
     pub indent: Indent,
     pub item: &'a Variant<'a>,
@@ -35,8 +60,7 @@ impl Display for RenderEnumVariant<'_> {
         let Self { indent, item } = *self;
         writeln!(
             f,
-            "{indent}override fun size(): Int = Sizer.sizeVariantId({}) + 0{}",
-            item.id,
+            "{indent}override fun size(): Int = super.size(){}",
             RenderFields {
                 indent: indent + 1,
                 item: &item.fields

@@ -41,31 +41,31 @@ public data class Sample(
     val f21: Array<UInt>,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeBool(w, this.F01) }
-        Encoder.encodeField(w, 2) { w -> Encoder.encodeU8(w, this.F02) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeU16(w, this.F03) }
-        Encoder.encodeField(w, 4) { w -> Encoder.encodeU32(w, this.F04) }
-        Encoder.encodeField(w, 5) { w -> Encoder.encodeU64(w, this.F05) }
-        Encoder.encodeField(w, 6) { w -> Encoder.encodeU128(w, this.F06) }
-        Encoder.encodeField(w, 7) { w -> Encoder.encodeI8(w, this.F07) }
-        Encoder.encodeField(w, 8) { w -> Encoder.encodeI16(w, this.F08) }
-        Encoder.encodeField(w, 9) { w -> Encoder.encodeI32(w, this.F09) }
-        Encoder.encodeField(w, 10) { w -> Encoder.encodeI64(w, this.F10) }
-        Encoder.encodeField(w, 11) { w -> Encoder.encodeI128(w, this.F11) }
-        Encoder.encodeField(w, 12) { w -> Encoder.encodeF32(w, this.F12) }
-        Encoder.encodeField(w, 13) { w -> Encoder.encodeF64(w, this.F13) }
-        Encoder.encodeField(w, 14) { w -> Encoder.encodeString(w, this.F14) }
-        Encoder.encodeField(w, 15) { w -> Encoder.encodeString(w, this.F15) }
-        Encoder.encodeField(w, 16) { w -> Encoder.encodeBytes(w, this.F16) }
-        Encoder.encodeField(w, 17) { w -> Encoder.encodeBytes(w, this.F17) }
-        Encoder.encodeField(w, 18) { w -> Encoder.encodeString(w, this.F18) }
-        Encoder.encodeField(w, 19) { w -> Encoder.encodeBytes(w, this.F19) }
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeBool(w, this.f01) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeU8(w, this.f02) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU16(w, this.f03) }
+        Encoder.encodeField(w, 4) { w -> Encoder.encodeU32(w, this.f04) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU64(w, this.f05) }
+        Encoder.encodeField(w, 6) { w -> Encoder.encodeU128(w, this.f06) }
+        Encoder.encodeField(w, 7) { w -> Encoder.encodeI8(w, this.f07) }
+        Encoder.encodeField(w, 8) { w -> Encoder.encodeI16(w, this.f08) }
+        Encoder.encodeField(w, 9) { w -> Encoder.encodeI32(w, this.f09) }
+        Encoder.encodeField(w, 10) { w -> Encoder.encodeI64(w, this.f10) }
+        Encoder.encodeField(w, 11) { w -> Encoder.encodeI128(w, this.f11) }
+        Encoder.encodeField(w, 12) { w -> Encoder.encodeF32(w, this.f12) }
+        Encoder.encodeField(w, 13) { w -> Encoder.encodeF64(w, this.f13) }
+        Encoder.encodeField(w, 14) { w -> Encoder.encodeString(w, this.f14) }
+        Encoder.encodeField(w, 15) { w -> Encoder.encodeString(w, this.f15) }
+        Encoder.encodeField(w, 16) { w -> Encoder.encodeBytes(w, this.f16) }
+        Encoder.encodeField(w, 17) { w -> Encoder.encodeBytes(w, this.f17) }
+        Encoder.encodeField(w, 18) { w -> Encoder.encodeString(w, this.f18) }
+        Encoder.encodeField(w, 19) { w -> Encoder.encodeBytes(w, this.f19) }
         Encoder.encodeField(w, 20) { w -> w.let { w ->
-                Encoder.encodeU32(w, this.F20.F0)
-                Encoder.encodeU32(w, this.F20.F1)
-                Encoder.encodeU32(w, this.F20.F2)
+                Encoder.encodeU32(w, this.f20.first)
+                Encoder.encodeU32(w, this.f20.second)
+                Encoder.encodeU32(w, this.f20.third)
             } }
-        Encoder.encodeField(w, 21) { w -> Enoder.encodeArray(w, this.F21) { w, v ->
+        Encoder.encodeField(w, 21) { w -> Enoder.encodeArray(w, this.f21) { w, v ->
                 Encoder.encodeU32(w, v)
             } }
         Encoder.encodeU32(w, END_MARKER)
@@ -162,30 +162,28 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    f01 ?: return Result.failure(MissingFieldException(1u, "f01")),
-                    f02 ?: return Result.failure(MissingFieldException(2u, "f02")),
-                    f03 ?: return Result.failure(MissingFieldException(3u, "f03")),
-                    f04 ?: return Result.failure(MissingFieldException(4u, "f04")),
-                    f05 ?: return Result.failure(MissingFieldException(5u, "f05")),
-                    f06 ?: return Result.failure(MissingFieldException(6u, "f06")),
-                    f07 ?: return Result.failure(MissingFieldException(7u, "f07")),
-                    f08 ?: return Result.failure(MissingFieldException(8u, "f08")),
-                    f09 ?: return Result.failure(MissingFieldException(9u, "f09")),
-                    f10 ?: return Result.failure(MissingFieldException(10u, "f10")),
-                    f11 ?: return Result.failure(MissingFieldException(11u, "f11")),
-                    f12 ?: return Result.failure(MissingFieldException(12u, "f12")),
-                    f13 ?: return Result.failure(MissingFieldException(13u, "f13")),
-                    f14 ?: return Result.failure(MissingFieldException(14u, "f14")),
-                    f15 ?: return Result.failure(MissingFieldException(15u, "f15")),
-                    f16 ?: return Result.failure(MissingFieldException(16u, "f16")),
-                    f17 ?: return Result.failure(MissingFieldException(17u, "f17")),
-                    f18 ?: return Result.failure(MissingFieldException(18u, "f18")),
-                    f19 ?: return Result.failure(MissingFieldException(19u, "f19")),
-                    f20 ?: return Result.failure(MissingFieldException(20u, "f20")),
-                    f21 ?: return Result.failure(MissingFieldException(21u, "f21")),
-                ),
+            Sample(
+                f01 ?: throw MissingFieldException(1u, "f01"),
+                f02 ?: throw MissingFieldException(2u, "f02"),
+                f03 ?: throw MissingFieldException(3u, "f03"),
+                f04 ?: throw MissingFieldException(4u, "f04"),
+                f05 ?: throw MissingFieldException(5u, "f05"),
+                f06 ?: throw MissingFieldException(6u, "f06"),
+                f07 ?: throw MissingFieldException(7u, "f07"),
+                f08 ?: throw MissingFieldException(8u, "f08"),
+                f09 ?: throw MissingFieldException(9u, "f09"),
+                f10 ?: throw MissingFieldException(10u, "f10"),
+                f11 ?: throw MissingFieldException(11u, "f11"),
+                f12 ?: throw MissingFieldException(12u, "f12"),
+                f13 ?: throw MissingFieldException(13u, "f13"),
+                f14 ?: throw MissingFieldException(14u, "f14"),
+                f15 ?: throw MissingFieldException(15u, "f15"),
+                f16 ?: throw MissingFieldException(16u, "f16"),
+                f17 ?: throw MissingFieldException(17u, "f17"),
+                f18 ?: throw MissingFieldException(18u, "f18"),
+                f19 ?: throw MissingFieldException(19u, "f19"),
+                f20 ?: throw MissingFieldException(20u, "f20"),
+                f21 ?: throw MissingFieldException(21u, "f21"),
             )
         }
     }

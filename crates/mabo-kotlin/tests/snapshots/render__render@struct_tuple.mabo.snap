@@ -25,8 +25,8 @@ public data class Sample(
     val n1: Boolean,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.N0) }
-        Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.N1) }
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.n0) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.n1) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -49,11 +49,9 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    n0 ?: return Result.failure(MissingFieldException(1u, null)),
-                    n1 ?: return Result.failure(MissingFieldException(2u, null)),
-                ),
+            Sample(
+                n0 ?: throw MissingFieldException(1u, null),
+                n1 ?: throw MissingFieldException(2u, null),
             )
         }
     }

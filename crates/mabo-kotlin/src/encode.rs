@@ -2,7 +2,7 @@
 
 use std::fmt::{self, Display};
 
-use mabo_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
+use mabo_compiler::simplify::{Enum, FieldKind, Fields, Struct, Type, Variant};
 
 use crate::Indent;
 
@@ -26,6 +26,33 @@ impl Display for RenderStruct<'_> {
     }
 }
 
+pub(super) struct RenderEnum<'a> {
+    pub indent: Indent,
+    pub item: &'a Enum<'a>,
+}
+
+impl Display for RenderEnum<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Self { indent, item } = *self;
+
+        writeln!(f, "{indent}override fun encode(w: ByteBuffer) {{")?;
+        writeln!(f, "{}when (this) {{", indent + 1)?;
+
+        for variant in &item.variants {
+            writeln!(
+                f,
+                "{}is {} -> Encoder.encodeVariantId(w, VariantId({}u))",
+                indent + 2,
+                heck::AsUpperCamelCase(variant.name),
+                variant.id,
+            )?;
+        }
+
+        writeln!(f, "{}}}", indent + 1)?;
+        writeln!(f, "{indent}}}")
+    }
+}
+
 pub(super) struct RenderEnumVariant<'a> {
     pub indent: Indent,
     pub item: &'a Variant<'a>,
@@ -35,9 +62,10 @@ impl Display for RenderEnumVariant<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self { indent, item } = *self;
         writeln!(f, "{indent}override fun encode(w: ByteBuffer) {{")?;
+        writeln!(f, "{}super.encode(w)", indent + 1)?;
         writeln!(
             f,
-            "{}{indent}return nil{indent}}}",
+            "{}{indent}}}",
             RenderFields {
                 indent: indent + 1,
                 item: &item.fields
@@ -65,7 +93,7 @@ impl Display for RenderFields<'_> {
                     f,
                     "{indent}Encoder.encodeFieldOption(w, {}, this.{}) {{ w, v -> {} }}",
                     field.id,
-                    heck::AsUpperCamelCase(&field.name),
+                    heck::AsLowerCamelCase(&field.name),
                     RenderType {
                         indent: indent + 1,
                         ty,
@@ -80,7 +108,7 @@ impl Display for RenderFields<'_> {
                     RenderType {
                         indent: indent + 1,
                         ty: &field.ty,
-                        name: format_args!("this.{}", heck::AsUpperCamelCase(&field.name)),
+                        name: format_args!("this.{}", heck::AsLowerCamelCase(&field.name)),
                     },
                 )?;
             }
@@ -231,7 +259,25 @@ where
                             "{indent}{}",
                             RenderType {
                                 ty,
-                                name: format_args!("{}.F{}", self.name, idx),
+                                name: format_args!(
+                                    "{}.{}",
+                                    self.name,
+                                    match idx + 1 {
+                                        1 => "first",
+                                        2 => "second",
+                                        3 => "third",
+                                        4 => "fourth",
+                                        5 => "fifth",
+                                        6 => "sixth",
+                                        7 => "seventh",
+                                        8 => "eighth",
+                                        9 => "ninth",
+                                        10 => "tenth",
+                                        11 => "eleventh",
+                                        12 => "twelfth",
+                                        _ => unreachable!(),
+                                    }
+                                ),
                                 indent: self.indent + 1,
                             },
                             indent = self.indent + 1,

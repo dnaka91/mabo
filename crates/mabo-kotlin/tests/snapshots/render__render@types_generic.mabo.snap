@@ -22,14 +22,14 @@ public data class Sample(
     val f2: Map<UInt, String>,
     val f3: Set<UInt>,
     val f4: UInt?,
-    val f5: NonZeroNumber<UInt>,
+    val f5: NonZeroUInt,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.F1) { w, v ->
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.f1) { w, v ->
                 Encoder.encodeU32(w, v)
             } }
         Encoder.encodeField(w, 2) { w -> Encoder.encodeHashMap(
-                w, this.F2,
+                w, this.f2,
                 { w, k ->
                     Encoder.encodeU32(w, k)
                 },
@@ -37,11 +37,11 @@ public data class Sample(
                     Encoder.encodeString(w, v)
                 },
             ) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeHashSet(w, this.F3) { w, v ->
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeHashSet(w, this.f3) { w, v ->
                 Encoder.encodeU32(w, v)
             } }
-        Encoder.encodeFieldOption(w, 4, this.F4) { w, v -> Encoder.encodeU32(w, v) }
-        Encoder.encodeField(w, 5) { w -> Encoder.encodeU32(w, this.F5.get()) }
+        Encoder.encodeFieldOption(w, 4, this.f4) { w, v -> Encoder.encodeU32(w, v) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU32(w, this.f5.get()) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -71,7 +71,7 @@ public data class Sample(
             var f2: Map<UInt, String>? = null
             var f3: Set<UInt>? = null
             var f4: UInt? = null
-            var f5: NonZeroNumber<UInt>? = null
+            var f5: NonZeroUInt? = null
 
             while (true) {
                 val id = Decoder.decodeFieldId(r).getOrThrow()
@@ -99,14 +99,12 @@ public data class Sample(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    f1 ?: return Result.failure(MissingFieldException(1u, "f1")),
-                    f2 ?: return Result.failure(MissingFieldException(2u, "f2")),
-                    f3 ?: return Result.failure(MissingFieldException(3u, "f3")),
-                    f4,
-                    f5 ?: return Result.failure(MissingFieldException(5u, "f5")),
-                ),
+            Sample(
+                f1 ?: throw MissingFieldException(1u, "f1"),
+                f2 ?: throw MissingFieldException(2u, "f2"),
+                f3 ?: throw MissingFieldException(3u, "f3"),
+                f4,
+                f5 ?: throw MissingFieldException(5u, "f5"),
             )
         }
     }
@@ -117,14 +115,14 @@ public data class SampleUnnamed(
     val n1: Map<UInt, String>,
     val n2: Set<UInt>,
     val n3: UInt?,
-    val n4: NonZeroNumber<UInt>,
+    val n4: NonZeroUInt,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.N0) { w, v ->
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.n0) { w, v ->
                 Encoder.encodeU32(w, v)
             } }
         Encoder.encodeField(w, 2) { w -> Encoder.encodeHashMap(
-                w, this.N1,
+                w, this.n1,
                 { w, k ->
                     Encoder.encodeU32(w, k)
                 },
@@ -132,11 +130,11 @@ public data class SampleUnnamed(
                     Encoder.encodeString(w, v)
                 },
             ) }
-        Encoder.encodeField(w, 3) { w -> Encoder.encodeHashSet(w, this.N2) { w, v ->
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeHashSet(w, this.n2) { w, v ->
                 Encoder.encodeU32(w, v)
             } }
-        Encoder.encodeFieldOption(w, 4, this.N3) { w, v -> Encoder.encodeU32(w, v) }
-        Encoder.encodeField(w, 5) { w -> Encoder.encodeU32(w, this.N4.get()) }
+        Encoder.encodeFieldOption(w, 4, this.n3) { w, v -> Encoder.encodeU32(w, v) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU32(w, this.n4.get()) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -166,7 +164,7 @@ public data class SampleUnnamed(
             var n1: Map<UInt, String>? = null
             var n2: Set<UInt>? = null
             var n3: UInt? = null
-            var n4: NonZeroNumber<UInt>? = null
+            var n4: NonZeroUInt? = null
 
             while (true) {
                 val id = Decoder.decodeFieldId(r).getOrThrow()
@@ -194,14 +192,12 @@ public data class SampleUnnamed(
                 }
             }
 
-            return Result.success(
-                SampleUnnamed(
-                    n0 ?: return Result.failure(MissingFieldException(1u, null)),
-                    n1 ?: return Result.failure(MissingFieldException(2u, null)),
-                    n2 ?: return Result.failure(MissingFieldException(3u, null)),
-                    n3,
-                    n4 ?: return Result.failure(MissingFieldException(5u, null)),
-                ),
+            SampleUnnamed(
+                n0 ?: throw MissingFieldException(1u, null),
+                n1 ?: throw MissingFieldException(2u, null),
+                n2 ?: throw MissingFieldException(3u, null),
+                n3,
+                n4 ?: throw MissingFieldException(5u, null),
             )
         }
     }

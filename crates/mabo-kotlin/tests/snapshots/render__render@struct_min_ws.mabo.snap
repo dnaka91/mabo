@@ -23,9 +23,9 @@ public data class Sample<T>(
     val c: T,
 ) : Encode, Size {
     override fun encode(w: ByteBuffer) {
-        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.A) }
-        Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.B) }
-        Encoder.encodeField(w, 3) { w -> this.C.encode(w) }
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.a) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.b) }
+        Encoder.encodeField(w, 3) { w -> this.c.encode(w) }
         Encoder.encodeU32(w, END_MARKER)
     }
 
@@ -36,7 +36,7 @@ public data class Sample<T>(
         Sizer.sizeFieldId(END_MARKER)
 
     companion object : Decode<Sample<T>> {
-        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+        override fun decode(r ByteBuffer): Result<Sample<T>> = runCatching {
             var a: UInt? = null
             var b: Boolean? = null
             var c: T? = null
@@ -51,12 +51,10 @@ public data class Sample<T>(
                 }
             }
 
-            return Result.success(
-                Sample(
-                    a ?: return Result.failure(MissingFieldException(1u, "a")),
-                    b ?: return Result.failure(MissingFieldException(2u, "b")),
-                    c ?: return Result.failure(MissingFieldException(3u, "c")),
-                ),
+            Sample(
+                a ?: throw MissingFieldException(1u, "a"),
+                b ?: throw MissingFieldException(2u, "b"),
+                c ?: throw MissingFieldException(3u, "c"),
             )
         }
     }

@@ -19,7 +19,7 @@ clap.workspace = true
 glob.workspace = true
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-doc = { path = "../mabo-doc" }
-mabo-parser = { path = "../mabo-parser" }
+mabo-parser = { path = "../mabo-parser", features = ["simd"] }
 mabo-project = { path = "../mabo-project" }
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 mimalloc.workspace = true

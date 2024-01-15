@@ -26,6 +26,7 @@ miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]
 debug = []
+simd = ["winnow/simd"]
 
 [lints]
 workspace = true

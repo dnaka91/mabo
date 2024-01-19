@@ -12,6 +12,10 @@ Currently it can only be installed from source, using Cargo:
 cargo install --git https://github.com/dnaka91/mabo.git mabo-cli
 ```
 
+::: tip
+If the installation fails, it can be that your Rust installation is too old. Please ensure you have the latest stable release installed. The easiest way to manage Rust is through [Rustup](https://rustup.rs/).
+:::
+
 ## Rust
 
 For Rust projects, two crates are needed to work with Mabo schemas and data. One is the `mabo` crate for runtime support, which contains all components that are used by the generated code.

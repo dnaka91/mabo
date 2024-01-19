@@ -83,7 +83,7 @@ export default defineConfig({
             text: "Command Line Interface",
             link: "/reference/cli/",
             items: [
-              { text: "mabo lint", link: "/reference/cli/lint" },
+              { text: "mabo init", link: "/reference/cli/init" },
               { text: "mabo check", link: "/reference/cli/check" },
               { text: "mabo fmt", link: "/reference/cli/fmt" },
               { text: "mabo doc", link: "/reference/cli/doc" },

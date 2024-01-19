@@ -1,1 +1,0 @@
-# mabo lint

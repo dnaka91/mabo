@@ -49,32 +49,32 @@ impl Signed for Bincode {
 
 #[divan::bench(
     types = [Leb128, Bincode],
-    consts = [
+    args = [
         1,
-        u8::MAX as u128,
-        u16::MAX as u128,
-        u32::MAX as u128,
-        u64::MAX as u128,
+        u8::MAX.into(),
+        u16::MAX.into(),
+        u32::MAX.into(),
+        u64::MAX.into(),
         u128::MAX,
     ],
 )]
-fn unsigned<const N: u128, T: Unsigned>() -> u128 {
+fn unsigned<T: Unsigned>(n: u128) -> u128 {
     let mut buf = [0; 19];
-    T::run(black_box(N), black_box(&mut buf))
+    T::run(n, black_box(&mut buf))
 }
 
 #[divan::bench(
     types = [Leb128, Bincode],
-    consts = [
+    args = [
         -1,
-        i8::MIN as i128,
-        i16::MIN as i128,
-        i32::MIN as i128,
-        i64::MIN as i128,
+        i8::MIN.into(),
+        i16::MIN.into(),
+        i32::MIN.into(),
+        i64::MIN.into(),
         i128::MIN,
     ],
 )]
-fn signed<const N: i128, T: Signed>() -> i128 {
+fn signed<T: Signed>(n: i128) -> i128 {
     let mut buf = [0; 19];
-    T::run(black_box(N), black_box(&mut buf))
+    T::run(n, black_box(&mut buf))
 }

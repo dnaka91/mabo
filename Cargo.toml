@@ -32,7 +32,7 @@ indoc = "2.0.4"
 insta = { version = "1.34.0", features = ["glob"] }
 miette = "5.10.0"
 mimalloc = "0.1.39"
-proc-macro2 = { version = "1.0.76", default-features = false }
+proc-macro2 = { version = "1.0.78", default-features = false }
 quote = { version = "1.0.35", default-features = false }
 rustc-hash = "1.1.0"
 serde = { version = "1.0.195", features = ["derive"] }

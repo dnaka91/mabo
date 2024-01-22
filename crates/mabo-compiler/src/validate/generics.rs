@@ -1,7 +1,8 @@
-use std::{collections::HashMap, ops::Range};
+use std::{hash::BuildHasherDefault, ops::Range};
 
 use mabo_parser::{DataType, Enum, ExternalType, Fields, Generics, Span, Spanned, Struct, Type};
 use miette::Diagnostic;
+use rustc_hash::FxHashMap;
 use thiserror::Error;
 
 /// Generic type parameters are considered invalid.
@@ -53,7 +54,7 @@ pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGeneric
         .0
         .iter()
         .map(|gen| (gen.get(), gen.span()))
-        .collect::<HashMap<_, _>>();
+        .collect::<FxHashMap<_, _>>();
 
     validate_field_generics(&value.fields, &mut unvisited);
 
@@ -75,7 +76,7 @@ pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType
         .0
         .iter()
         .map(|gen| (gen.get(), gen.span()))
-        .collect::<HashMap<_, _>>();
+        .collect::<FxHashMap<_, _>>();
 
     for variant in &value.variants {
         validate_field_generics(&variant.fields, &mut unvisited);
@@ -92,7 +93,8 @@ pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType
 
 /// Ensure all generic type arguments are unique within a struct or enum.
 fn validate_duplicate_generics(value: &Generics<'_>) -> Result<(), DuplicateGenericName> {
-    let mut visited = HashMap::with_capacity(value.0.len());
+    let mut visited =
+        FxHashMap::with_capacity_and_hasher(value.0.len(), BuildHasherDefault::default());
     value
         .0
         .iter()
@@ -110,7 +112,7 @@ fn validate_duplicate_generics(value: &Generics<'_>) -> Result<(), DuplicateGene
 
 /// Iterate over all the fields and mark any generic types as used when disvored as type for a
 /// field.
-fn validate_field_generics(value: &Fields<'_>, unvisited: &mut HashMap<&str, Span>) {
+fn validate_field_generics(value: &Fields<'_>, unvisited: &mut FxHashMap<&str, Span>) {
     match &value {
         Fields::Named(named) => {
             for field in named {

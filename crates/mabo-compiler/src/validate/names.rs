@@ -1,7 +1,8 @@
-use std::{collections::HashMap, ops::Range};
+use std::{hash::BuildHasherDefault, ops::Range};
 
 use mabo_parser::{Definition, Enum, Fields, Import, Spanned, Struct};
 use miette::Diagnostic;
+use rustc_hash::FxHashMap;
 use thiserror::Error;
 
 /// Duplicate name was encountered for two elements in the same scope.
@@ -76,7 +77,8 @@ pub(crate) fn validate_struct_names(value: &Struct<'_>) -> Result<(), DuplicateF
 /// Ensure all names inside an enum are unique, which means all variants have a unique name, plus
 /// all potential fields in a variant are unique (within that variant).
 pub(crate) fn validate_enum_names(value: &Enum<'_>) -> Result<(), DuplicateName> {
-    let mut visited = HashMap::with_capacity(value.variants.len());
+    let mut visited =
+        FxHashMap::with_capacity_and_hasher(value.variants.len(), BuildHasherDefault::default());
     value
         .variants
         .iter()
@@ -104,7 +106,8 @@ pub(crate) fn validate_enum_names(value: &Enum<'_>) -> Result<(), DuplicateName>
 fn validate_field_names(value: &Fields<'_>) -> Result<(), DuplicateFieldName> {
     match value {
         Fields::Named(named) => {
-            let mut visited = HashMap::with_capacity(named.len());
+            let mut visited =
+                FxHashMap::with_capacity_and_hasher(named.len(), BuildHasherDefault::default());
             named
                 .iter()
                 .find_map(|field| {
@@ -125,7 +128,8 @@ fn validate_field_names(value: &Fields<'_>) -> Result<(), DuplicateFieldName> {
 }
 
 pub(crate) fn validate_names_in_module(value: &[Definition<'_>]) -> Result<(), DuplicateName> {
-    let mut visited = HashMap::with_capacity(value.len());
+    let mut visited =
+        FxHashMap::with_capacity_and_hasher(value.len(), BuildHasherDefault::default());
     value
         .iter()
         .find_map(|definition| {

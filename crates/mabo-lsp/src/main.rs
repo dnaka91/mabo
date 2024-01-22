@@ -2,7 +2,7 @@
 
 #![warn(clippy::expect_used, clippy::unwrap_used)]
 
-use std::{collections::HashMap, net::Ipv4Addr, time::Instant};
+use std::{net::Ipv4Addr, time::Instant};
 
 use anyhow::{bail, Result};
 use log::{as_debug, debug, error, info, warn};
@@ -18,6 +18,7 @@ use lsp_types::{
     },
     DocumentSymbol, InitializeParams, SemanticTokens,
 };
+use rustc_hash::FxHashMap;
 
 use self::{cli::Cli, client::Client};
 use crate::state::GlobalState;
@@ -45,7 +46,7 @@ fn main() -> Result<()> {
 
     let mut state = GlobalState {
         client: Client::new(&connection),
-        files: HashMap::default(),
+        files: FxHashMap::default(),
         settings: config::Global::default(),
     };
 

@@ -1,12 +1,11 @@
 //! Ensure all referenced types within a schema itself, aswell as between schemas exist and are
 //! correct.
 
-use std::collections::HashMap;
-
 use mabo_parser::{
     DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
 };
 use miette::NamedSource;
+use rustc_hash::FxHashMap;
 
 pub use self::error::{
     Error, GenericsCount, InvalidKind, MissingDefinition, MissingImport, MissingModule,
@@ -83,7 +82,7 @@ pub(crate) struct Module<'a> {
     /// List of types that are declared in this module.
     types: Vec<Declaration<'a>>,
     /// Direct submodules located in this module.
-    modules: HashMap<&'a str, Module<'a>>,
+    modules: FxHashMap<&'a str, Module<'a>>,
     /// List of original definitions.
     definitions: &'a [Definition<'a>],
 }
@@ -411,7 +410,7 @@ fn visit_module_tree<'a>(
         path,
         imports: Vec::new(),
         types: Vec::new(),
-        modules: HashMap::new(),
+        modules: FxHashMap::default(),
         definitions: defs,
     };
 

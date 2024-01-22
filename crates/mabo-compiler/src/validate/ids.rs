@@ -1,7 +1,8 @@
-use std::{collections::HashMap, ops::Range};
+use std::{hash::BuildHasherDefault, ops::Range};
 
 use mabo_parser::{Enum, Fields, Id, Spanned, Struct};
 use miette::Diagnostic;
+use rustc_hash::FxHashMap;
 use thiserror::Error;
 
 use crate::IdGenerator;
@@ -97,7 +98,8 @@ pub(crate) fn validate_struct_ids(value: &Struct<'_>) -> Result<(), DuplicateFie
 /// Ensure all IDs inside an enum are unique, which means all variants have a unique ID, plus all
 /// potential fields in a variant are unique (within that variant).
 pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
-    let mut visited = HashMap::with_capacity(value.variants.len());
+    let mut visited =
+        FxHashMap::with_capacity_and_hasher(value.variants.len(), BuildHasherDefault::default());
     let mut id_gen = IdGenerator::new();
 
     value
@@ -131,7 +133,8 @@ pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
 fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
     match value {
         Fields::Named(named) => {
-            let mut visited = HashMap::with_capacity(named.len());
+            let mut visited =
+                FxHashMap::with_capacity_and_hasher(named.len(), BuildHasherDefault::default());
             let mut id_gen = IdGenerator::new();
 
             named
@@ -152,7 +155,8 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
                 .map_or(Ok(()), Err)?;
         }
         Fields::Unnamed(unnamed) => {
-            let mut visited = HashMap::with_capacity(unnamed.len());
+            let mut visited =
+                FxHashMap::with_capacity_and_hasher(unnamed.len(), BuildHasherDefault::default());
             let mut id_gen = IdGenerator::new();
 
             unnamed

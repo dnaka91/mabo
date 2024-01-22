@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use anyhow::{ensure, Context, Result};
 use line_index::LineIndex;
 use log::{as_debug, debug};
@@ -7,13 +5,14 @@ use lsp_types::{ConfigurationItem, Diagnostic, Url};
 use mabo_parser::Schema;
 use ouroboros::self_referencing;
 use ropey::Rope;
+use rustc_hash::FxHashMap;
 
 use crate::{client::Client, config};
 
 #[allow(clippy::module_name_repetitions)]
 pub struct GlobalState<'a> {
     pub client: Client<'a>,
-    pub files: HashMap<Url, File>,
+    pub files: FxHashMap<Url, File>,
     pub settings: config::Global,
 }
 

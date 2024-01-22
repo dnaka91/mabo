@@ -9,18 +9,18 @@ fn main() {
     divan::main();
 }
 
-#[divan::bench(consts = [1, 10, 100, 1000])]
-fn validate_large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
-    let schema = mabo_benches::generate_schema(N);
+#[divan::bench(args = [1, 10, 100, 1000])]
+fn validate_large_schema(bencher: Bencher<'_, '_>, n: usize) {
+    let schema = mabo_benches::generate_schema(n);
     let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
     mabo_compiler::validate_schema(&schema).unwrap();
 
     bencher.bench(|| mabo_compiler::validate_schema(black_box(&schema)));
 }
 
-#[divan::bench(consts = [1, 10, 100, 1000])]
-fn resolve_large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
-    let schema = mabo_benches::generate_schema(N);
+#[divan::bench(args = [1, 10, 100, 1000])]
+fn resolve_large_schema(bencher: Bencher<'_, '_>, n: usize) {
+    let schema = mabo_benches::generate_schema(n);
     let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
     mabo_compiler::validate_schema(&schema).unwrap();
 
@@ -29,9 +29,9 @@ fn resolve_large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
     bencher.bench(|| mabo_compiler::resolve_schemas(black_box(list)));
 }
 
-#[divan::bench(consts = [1, 10, 100, 1000])]
-fn simplify_large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
-    let schema = mabo_benches::generate_schema(N);
+#[divan::bench(args = [1, 10, 100, 1000])]
+fn simplify_large_schema(bencher: Bencher<'_, '_>, n: usize) {
+    let schema = mabo_benches::generate_schema(n);
     let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
     let _ = mabo_compiler::simplify_schema(&schema);
 

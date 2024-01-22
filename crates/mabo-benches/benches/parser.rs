@@ -48,17 +48,17 @@ fn basic(bencher: Bencher<'_, '_>) {
     bencher.bench(|| mabo_parser::Schema::parse(black_box(input), None));
 }
 
-#[divan::bench(consts = [1, 10, 100, 1000])]
-fn large_schema<const N: usize>(bencher: Bencher<'_, '_>) {
-    let schema = mabo_benches::generate_schema(N);
+#[divan::bench(args = [1, 10, 100, 1000])]
+fn large_schema(bencher: Bencher<'_, '_>, n: usize) {
+    let schema = mabo_benches::generate_schema(n);
     mabo_parser::Schema::parse(&schema, None).unwrap();
 
     bencher.bench(|| mabo_parser::Schema::parse(black_box(&schema), None));
 }
 
-#[divan::bench(consts = [1, 10, 100, 1000])]
-fn print<const N: usize>(bencher: Bencher<'_, '_>) {
-    let schema = mabo_benches::generate_schema(N);
+#[divan::bench(args = [1, 10, 100, 1000])]
+fn print(bencher: Bencher<'_, '_>, n: usize) {
+    let schema = mabo_benches::generate_schema(n);
     let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
 
     bencher.bench(|| black_box(&schema).to_string());

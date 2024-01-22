@@ -66,7 +66,14 @@ struct RenderPackage<'a>(&'a str, Option<&'a [&'a str]>);
 impl Display for RenderPackage<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if let Some(comment) = self.1 {
-            write!(f, "{}", RenderComment { indent: 0, comment })?;
+            write!(
+                f,
+                "{}",
+                RenderComment {
+                    indent: Indent(0),
+                    comment
+                }
+            )?;
         }
 
         writeln!(f, "package {}\n", heck::AsSnakeCase(self.0))
@@ -99,7 +106,7 @@ impl Display for RenderStruct<'_> {
                 f,
                 "{}public data object {} : Decode<{1}>, Encode, Size {{",
                 RenderComment {
-                    indent: 0,
+                    indent: Indent(0),
                     comment: &self.0.comment
                 },
                 heck::AsUpperCamelCase(&self.0.name),
@@ -109,7 +116,7 @@ impl Display for RenderStruct<'_> {
                 f,
                 "{}public data class {}{}(\n{}) : Encode, Size {{",
                 RenderComment {
-                    indent: 0,
+                    indent: Indent(0),
                     comment: &self.0.comment
                 },
                 heck::AsUpperCamelCase(&self.0.name),
@@ -118,7 +125,7 @@ impl Display for RenderStruct<'_> {
                     fields_filter: None
                 },
                 RenderFields {
-                    indent: 0,
+                    indent: Indent(1),
                     fields: &self.0.fields
                 }
             )?;
@@ -228,7 +235,7 @@ impl Display for RenderEnumVariant<'_> {
                 f,
                 "{}{}public data object {} : {}(), Decode<{2}>, Encode, Size {{",
                 RenderComment {
-                    indent: 1,
+                    indent: Indent(1),
                     comment: &self.variant.comment
                 },
                 Indent(1),
@@ -251,7 +258,7 @@ impl Display for RenderEnumVariant<'_> {
             f,
             "{}{}public data class {}{}(\n{}    ) : {}(), Encode, Size {{",
             RenderComment {
-                indent: 1,
+                indent: Indent(1),
                 comment: &self.variant.comment
             },
             Indent(1),
@@ -261,7 +268,7 @@ impl Display for RenderEnumVariant<'_> {
                 fields_filter: Some(&self.variant.fields)
             },
             RenderFields {
-                indent: 1,
+                indent: Indent(2),
                 fields: &self.variant.fields
             },
             heck::AsUpperCamelCase(&self.enum_name),
@@ -305,26 +312,25 @@ impl Display for RenderEnumVariant<'_> {
 }
 
 struct RenderFields<'a> {
-    indent: usize,
+    indent: Indent,
     fields: &'a Fields<'a>,
 }
 
 impl Display for RenderFields<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.fields.fields.is_empty() {
+        let Self { indent, fields } = *self;
+        if fields.fields.is_empty() {
             return Ok(());
         }
 
-        let width = (self.indent + 1) * 4;
-        for field in &*self.fields.fields {
+        for field in &*fields.fields {
             writeln!(
                 f,
-                "{}{:width$}val {}: {},",
+                "{}{indent}val {}: {},",
                 RenderComment {
-                    indent: self.indent + 1,
+                    indent,
                     comment: &field.comment
                 },
-                "",
                 heck::AsLowerCamelCase(&field.name),
                 RenderType(&field.ty)
             )?;
@@ -380,7 +386,7 @@ impl Display for RenderAlias<'_> {
             f,
             "{}typealias {}{} = {}",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.0.comment,
             },
             heck::AsUpperCamelCase(&self.0.name),
@@ -401,7 +407,7 @@ impl Display for RenderConst<'_> {
             f,
             "{}const val {}: {} = {}",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.0.comment
             },
             heck::AsShoutySnakeCase(&self.0.name),
@@ -472,22 +478,22 @@ impl Display for RenderLiteral<'_> {
 }
 
 struct RenderComment<'a> {
-    indent: usize,
+    indent: Indent,
     comment: &'a [&'a str],
 }
 
 impl Display for RenderComment<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.comment.is_empty() {
+        let Self { indent, comment } = *self;
+        if comment.is_empty() {
             return Ok(());
         }
 
-        let width = self.indent * 4;
-        writeln!(f, "{:width$}/**", "")?;
-        for line in self.comment {
-            writeln!(f, "{:width$} * {}", "", line)?;
+        writeln!(f, "{indent}/**")?;
+        for line in comment {
+            writeln!(f, "{indent} * {line}")?;
         }
-        writeln!(f, "{:width$} */", "")
+        writeln!(f, "{indent} */")
     }
 }
 

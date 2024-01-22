@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 
 ### ⛰️ Features
 
+- _cli_: Implement doc sub-command in the CLI tool ([03cdc30](https://github.com/dnaka91/mabo/commit/03cdc30eebf555cd5e31a6f0cea8aee005f9dd55))
+  > Integrate the mabo-doc crate into the CLI to be able to generate the
+  > docs for any project (or individual files).
 - _compiler_: Introduce a simplified schema for easier codegen ([131e7b4](https://github.com/dnaka91/mabo/commit/131e7b46c252a8080c83a292a323c719a4a9fca7))
   > The parser's data structures can be a bit hard to use in the code
   > generator, and some upcoming features would need to be rebuilt in every
@@ -29,6 +32,9 @@ All notable changes to this project will be documented in this file.
   > of an instance and pre-allocate a byte vector. It can be helful for
   > significantly large payloads that would do several re-allocations of a
   > buffer otherwise.
+- _go_: Implement the CLI for the Go code generator ([d3dc8d7](https://github.com/dnaka91/mabo/commit/d3dc8d70fe8655ed066155c46cb4a4e28a466b5b))
+  > Although the Go code generator existed as library, it still needed the
+  > CLI binary to drive the actual codegen step and write files to disk.
 - _lsp_: Properly handle UTF-16 char offsets ([f74d625](https://github.com/dnaka91/mabo/commit/f74d625a793b5569652a852567568a14e0ccc229))
   > The LSP requires all char indices to be in UTF-16 byte offsets by
   > default. But Rust uses UTF-8, so the right offset has to be calculated
@@ -88,17 +94,31 @@ All notable changes to this project will be documented in this file.
   > Scan the project during initialization and add all found files to the
   > state. Also, only remove files from the state when they're deleted, not
   > when closed.
+- _lsp_: Keep track of project file location ([baca562](https://github.com/dnaka91/mabo/commit/baca562c9c98ba2f9079a712325b48d10f7735c7))
+  > Extend the `mabo-project` crate to additional store the location from
+  > wheret the project file was loaded.
+  > 
+  > This is currently used to log the location in the LPS when loading a
+  > folder and searching for Mabo projects in it.
+- _parser_: Add `simd` feature to the parser ([443c32c](https://github.com/dnaka91/mabo/commit/443c32c93622764a89cd3f0682ef8b1c6a6723dc))
+  > The `winnow` crate has a `simd` feature which enables some extra
+  > performance improvements. This might limit possible target platforms for
+  > compilations so the flag is exposed as optional feature on the parser
+  > crate instead.
+  > 
+  > All binary crates will use this flag, but potential users of the parser
+  > crate can omit the feature if it causes issues.
 - _vscode_: Provide command to restart the LSP server ([21e5001](https://github.com/dnaka91/mabo/commit/21e500105b651ecede36495b98d3ad61ac1466a1))
   > Although mostly useful during development, add a custom command to the
   > VSCode extension, which allows to restart the LSP server.
 - Implement encoding in the Rust codegen ([2787b51](https://github.com/dnaka91/mabo/commit/2787b51c04803311bf5ca3160b37e7db31d5a8ea))
 - Simplify encoding logic ([e8205bc](https://github.com/dnaka91/mabo/commit/e8205bcb6749fce6dd1f56ede38128076820bffd))
 - Implement basic decoding logic ([f67c572](https://github.com/dnaka91/mabo/commit/f67c57220ac2c57961bf54f7f47bca467d3fb20b))
-- Skip any decoding for unit structs&#x2F;variants ([8f5a4ec](https://github.com/dnaka91/mabo/commit/8f5a4ec3cd7377ac2f0eb7183c201fbf388d9ce2))
+- Skip any decoding for unit structs/variants ([8f5a4ec](https://github.com/dnaka91/mabo/commit/8f5a4ec3cd7377ac2f0eb7183c201fbf388d9ce2))
 - Create playground crate and fix issues ([b55862f](https://github.com/dnaka91/mabo/commit/b55862f3dafe8276faad9309cebff2cdcaec8ea3))
 - Extend syntax highlighting ([0d83290](https://github.com/dnaka91/mabo/commit/0d83290e1367edc1a8f9c7686bb2032067c177fa))
 - Adjust encoding of option&lt;T&gt; ([39c6ccb](https://github.com/dnaka91/mabo/commit/39c6ccba84c71688346ce9cd33bc2530ee0a746c))
-- Unroll container type en-&#x2F;decoding ([3d64436](https://github.com/dnaka91/mabo/commit/3d64436501d5e395ba27e9acc51bd82aa312a8d8))
+- Unroll container type en-/decoding ([3d64436](https://github.com/dnaka91/mabo/commit/3d64436501d5e395ba27e9acc51bd82aa312a8d8))
   > Instead of relying on generic implementations for the Rust generated
   > code that en- or decodes the data, these are defined as closures.
   > 
@@ -141,7 +161,7 @@ All notable changes to this project will be documented in this file.
 - Add snapshot tests for compiler errors ([0efc118](https://github.com/dnaka91/mabo/commit/0efc118308a3e79ec1edddb833328c80182ea8cb))
   > Verify good compiler error output by creating several snapshot tests.
   > Also, slightly improve some of the messages.
-- En-&#x2F;decode non-zero integers directly ([f165d61](https://github.com/dnaka91/mabo/commit/f165d618e91a70ab805a9f23f1139177150db4f4))
+- En-/decode non-zero integers directly ([f165d61](https://github.com/dnaka91/mabo/commit/f165d618e91a70ab805a9f23f1139177150db4f4))
   > Instead of driving the encoding and decoding of non-zero integer types
   > through the Encode/Decode trait, use direct function calls which allows
   > for specialized calls with better performance.
@@ -214,15 +234,23 @@ All notable changes to this project will be documented in this file.
   > This can later extend into an ecosystem that allows to distribute schema
   > file collections and consume them through a dependency management
   > system.
+- Account for optional IDs in the tmLanguage definition ([d27361e](https://github.com/dnaka91/mabo/commit/d27361e5ca0ec02bad3a3afd9344eacdc7e3ccea))
+- Switch from full/fat to thin LTO ([d5ccf61](https://github.com/dnaka91/mabo/commit/d5ccf61a4fe0b0fca45807d996d09308c604abc5))
+  > This slightly increases binary size, but provides much better compile
+  > speed in release mode. Overall performance should not decrease a lot and
+  > if needed later, full/fat LTO can be turned back on again.
 
 ### 🐛 Bug Fixes
 
 - _book_: Correct the favicon URL ([d66ad2e](https://github.com/dnaka91/mabo/commit/d66ad2e9f0cf963a165a5b57116faa34b98a9f2a))
   > This was set to the root, but the site is currently deployed under the
   > `/stef/` path on Codeberg Pages.
-- _book_: Point directly to first user guide&#x2F;reference pages ([22e20fe](https://github.com/dnaka91/mabo/commit/22e20fe0a00bccdef9ff5676a77eaea922e73e29))
+- _book_: Point directly to first user guide/reference pages ([22e20fe](https://github.com/dnaka91/mabo/commit/22e20fe0a00bccdef9ff5676a77eaea922e73e29))
   > Instead of pointing to an empty page, link to the first currently filled
   > page of both the user guide and reference.
+- _book_: Adjust path for the .nojekyll file ([7c1d68c](https://github.com/dnaka91/mabo/commit/7c1d68c8289cfb122d481806316e05eeefad8c49))
+  > The creation of the `.nojekyll` file was off, due to the previous `cd`
+  > into the book folder.
 - _doc_: Collect overview docs until the first empty line ([160fbcd](https://github.com/dnaka91/mabo/commit/160fbcdaa0c006be397fb2a72706813b71129c74))
   > In Markdown, a line break is only inserted if there is at least one
   > empty line between paragraphs. Therefore, collect all lines until the
@@ -239,7 +267,7 @@ All notable changes to this project will be documented in this file.
 - _lsp_: Solve the hanging shutdown problem ([a9836cb](https://github.com/dnaka91/mabo/commit/a9836cb181d6292c0e53c28eabe10fd4a1e0536f))
   > The connection instance was kept alive, which caused the background
   > threads to idle as they were waiting for all channels to be dropped.
-- Don&#x27;t double wrap optional types in decode ([a6d3d4b](https://github.com/dnaka91/mabo/commit/a6d3d4bde28d28acb0afba123949ed7e5cbfeb98))
+- Don&apos;t double wrap optional types in decode ([a6d3d4b](https://github.com/dnaka91/mabo/commit/a6d3d4bde28d28acb0afba123949ed7e5cbfeb98))
 - Extend playground and correct issues ([ed24491](https://github.com/dnaka91/mabo/commit/ed24491a8361574bb295d34aad6fc70ed408777b))
 - Missing semicolon in tuple structs ([d616e92](https://github.com/dnaka91/mabo/commit/d616e92414072a396e448f7b8cd39607b69fbbbe))
 - Adjust for new clippy lints ([8855572](https://github.com/dnaka91/mabo/commit/88555726ef9e9dd38ddc907a8fb6dbfd4884040f))
@@ -268,7 +296,7 @@ All notable changes to this project will be documented in this file.
   > 
   > In addition, several test snapshots were not updated during that change
   > either.
-- Size wasn&#x27;t calculated correctly for zero value varints ([e29ee00](https://github.com/dnaka91/mabo/commit/e29ee00f938fe560ca11a889777f272380074520))
+- Size wasn&apos;t calculated correctly for zero value varints ([e29ee00](https://github.com/dnaka91/mabo/commit/e29ee00f938fe560ca11a889777f272380074520))
   > A special case for zero integers wasn't covered when calculating the
   > required size in the varint encoding.
   > 
@@ -278,6 +306,10 @@ All notable changes to this project will be documented in this file.
   > This definition was originally ignored as it is auto-generated from the
   > YAML version. But the book no depends on it and including it in Git
   > avoids suddenly build errors for fresh clones.
+- Correct size calculation for field IDs ([e56dd8d](https://github.com/dnaka91/mabo/commit/e56dd8d9c32f64d0453bfcf238a49305ec2e48f4))
+  > The calculation for required bytes of a field ID did not take the
+  > recently added field encoding into account, which could potentially
+  > result in too small values.
 
 ### 📚 Documentation
 
@@ -300,6 +332,24 @@ All notable changes to this project will be documented in this file.
   > increasing the information for OpenGraph display.
   > 
   > This allows for a richer link display on several platforms when shared.
+- _book_: Describe details about derived identifiers ([616dfbf](https://github.com/dnaka91/mabo/commit/616dfbfa26eb4730f84794c0470bc60d888e997c))
+  > Explain that it is possible to automatically derive identifiers instead
+  > of always explicitly defining them. Also, move some encoding details
+  > from the ideas section to the wire format as those are already
+  > implemented.
+- _book_: Remove table of contents ([aeaa69d](https://github.com/dnaka91/mabo/commit/aeaa69db163aa48c09c9262d73129d13a05b2fe6))
+  > The table of contents isn't needed as the automatic "On this page"
+  > navigation fulfills the same purpose.
+- _book_: Create files for each navigation element ([9f45b86](https://github.com/dnaka91/mabo/commit/9f45b86da9315e92579d5b8eaeecf01c8e192665))
+  > Some sections in the navigation didn't have a file associated with it
+  > yet, leading to 404 pages. Also, extend the generators category with all
+  > planned language generators (still empty though).
+- _book_: Extend the docs about cli and generators ([a1474d9](https://github.com/dnaka91/mabo/commit/a1474d92569f3fb0fbb9cab2c752b25dd63e1770))
+  > Extend the docs around these sections and create an example in
+  > `mabo-cli` which auto-generates the doc pages for the CLI subcommands.
+- _book_: Remove implemented ideas ([d8b987f](https://github.com/dnaka91/mabo/commit/d8b987f06f30bc5700704522b5b2834140c27e96))
+  > Remove the sections from the ideas sections that have already been
+  > implemented recently.
 - _parser_: Add missing doc for new field ([7f4ca98](https://github.com/dnaka91/mabo/commit/7f4ca98c236a41e505bcaa70a2df5fc3aae85b7a))
 - Generate more stylish changelog ([5319fb3](https://github.com/dnaka91/mabo/commit/5319fb3417a830042e7bc220fe283046923da349))
 - Add changelog ([5b2a15c](https://github.com/dnaka91/mabo/commit/5b2a15cad70e53c6c39a93c395fbe8f80382ae56))
@@ -325,7 +375,7 @@ All notable changes to this project will be documented in this file.
 - Update project setup instructions ([66b95bf](https://github.com/dnaka91/mabo/commit/66b95bf0029e5e8fe449ac74d4967147359f7c01))
   > Correct the code samples in the guide to use the new APIs for generating
   > Rust code and including the files.
-- Explain the min&#x2F;max amount of tuple elements ([5e74489](https://github.com/dnaka91/mabo/commit/5e74489312030a9ec33e20000755c678bdcf7911))
+- Explain the min/max amount of tuple elements ([5e74489](https://github.com/dnaka91/mabo/commit/5e74489312030a9ec33e20000755c678bdcf7911))
   > Clarify why tuples must contain between 2 and 12 types, especially the
   > arbitrary limit of 12 elements.
 - Highlight schema files ([b6b595c](https://github.com/dnaka91/mabo/commit/b6b595c47031061fe3bf9a983e5b7d3140ced043))
@@ -347,6 +397,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor
 
+- _compiler_: Simplify some type resolution steps ([ae1cf34](https://github.com/dnaka91/mabo/commit/ae1cf344feef941dc7f7afe6e8dca9e30c92b7d5))
 - _lsp_: Avoid unwraps and properly handle errors ([bcbb016](https://github.com/dnaka91/mabo/commit/bcbb016a1180a38311cbaa2709979494c0b2eb77))
 - _lsp_: Move logging logic into its own module ([ef1139b](https://github.com/dnaka91/mabo/commit/ef1139be9290846ccd197c4bbeeddca48ffcff50))
 - _lsp_: Replace tower-lsp with lsp-server ([51645a8](https://github.com/dnaka91/mabo/commit/51645a88c9b9c0d3e13a47da429ab9f7ef28d67f))
@@ -366,6 +417,10 @@ All notable changes to this project will be documented in this file.
 - _lsp_: Use the same pattern for similar functions ([0e15394](https://github.com/dnaka91/mabo/commit/0e15394e43d761ff1572ec80e2138ad26054f0e0))
   > Adjust a few internal functions with similar patterns to behave the same
   > way.
+- _lsp_: Remove unused env var settings ([d8d57f1](https://github.com/dnaka91/mabo/commit/d8d57f15f8082eed655a6e5b9159cb4727dd2d55))
+  > These environment variables (which controlled the logging output) were
+  > originally used, but for some while the logging settings are already
+  > fixed in code.
 - Generate definitions and impls together ([b32bcfd](https://github.com/dnaka91/mabo/commit/b32bcfd8630bc445421ce32b784de6601659aade))
 - Rename test file ([86536c9](https://github.com/dnaka91/mabo/commit/86536c919c26934a439e4ebd8bac631e92941dc7))
 - Switch to more lightweight bench crate ([3870a6c](https://github.com/dnaka91/mabo/commit/3870a6c0db7dbbf720c11f812d5e0b94b57939c3))
@@ -413,7 +468,7 @@ All notable changes to this project will be documented in this file.
   > These crates were still working directly on top of the `stef_parser`
   > crate's types, but can get the same benefits as the other crates by
   > depending on the `stef_compiler`'s simplified structs instead.
-- Replace owo-colors with anstream&#x2F;anstyle ([e831c05](https://github.com/dnaka91/mabo/commit/e831c05697ee7cdca426f4596dd1bbceb99d4b4c))
+- Replace owo-colors with anstream/anstyle ([e831c05](https://github.com/dnaka91/mabo/commit/e831c05697ee7cdca426f4596dd1bbceb99d4b4c))
   > The anstream and anstyle crates look more promising and additionally
   > allow to expose the on the API if needed, without restricting to a
   > specific terminal coloring crate.
@@ -427,9 +482,12 @@ All notable changes to this project will be documented in this file.
 - Add playground sample for tuple structs ([6f9e8ab](https://github.com/dnaka91/mabo/commit/6f9e8abfa72dd1f4bdaef6bbf57e1981f16604fc))
   > To ensure the tuple variant is working and doesn't include oversights
   > like the previous missing `pub` visibility modifier.
+- Use runtime arguments in Divan benchmarks ([#1](https://github.com/dnaka91/mabo/issues/1)) ([07da8a0](https://github.com/dnaka91/mabo/commit/07da8a0e8652431af7ec8388a4f64fe7e206eeee))
+  > This greatly reduces compile times and is not limited to arrays/slices.
 
 ### ⚙️ Miscellaneous Tasks
 
+- _book_: Fix a minor typo ([b04202d](https://github.com/dnaka91/mabo/commit/b04202d482f8d408f2de58368ec5fe4945541a8a))
 - _ci_: Setup GitHub Actions to deploy the book ([cf24bbb](https://github.com/dnaka91/mabo/commit/cf24bbb0e55955e37233f9719f046bb482a8d712))
 - _ci_: Improve path filters for book deployment ([8b79f6f](https://github.com/dnaka91/mabo/commit/8b79f6f03787edde0db881ab0e61b6e163924709))
 - _ci_: Create .nojekyll marker file for the book ([b51681f](https://github.com/dnaka91/mabo/commit/b51681f377640421249d9d9e180446f8ae16142a))
@@ -449,5 +507,7 @@ All notable changes to this project will be documented in this file.
   > component wasn't built before building the full book.
 - Remove outdated GitHub Actions config ([cd9877f](https://github.com/dnaka91/mabo/commit/cd9877f2aa3bbcc25b5ba1b8985fd982ff3d0c1e))
 - Fix Just task for link checking ([24e1520](https://github.com/dnaka91/mabo/commit/24e15209799f6285ca3a55f7145556145cb61f30))
+- Improve readme with badges and project status ([069f788](https://github.com/dnaka91/mabo/commit/069f7882f9abd1d14b697b38314a5db2976b895a))
+- Update snapshots after several Go codegen fixes ([b38e1ca](https://github.com/dnaka91/mabo/commit/b38e1cad5b861e59774a03fb5768d2284376787e))
 
 <!-- generated by git-cliff -->

@@ -1,3 +1,8 @@
+[default]
+extend-ignore-re = [
+    '\[[[:xdigit:]]{7}\]\(https://github.com/dnaka91/mabo/commit/[[:xdigit:]]{40}\)',
+]
+
 [default.extend-identifiers]
 froms = "froms"
 relateds = "relateds"
@@ -5,8 +10,4 @@ vALUE = "vALUE"
 
 [type.cargo-insta]
 extend-glob = ["*.snap", "*.snap.new"]
-check-file = false
-
-[type.changelog]
-extend-glob = ["CHANGELOG.md"]
 check-file = false

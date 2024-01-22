@@ -16,9 +16,9 @@ All notable changes to this project will be documented in this file.
 body = """
 {% if version -%}
     {% if previous.version -%}
-        {% set url = "<REPO>/compare/" ~ previous.version ~ "..." ~ version %}
+        {% set url = "$REPO/compare/" ~ previous.version ~ "..." ~ version %}
     {% else -%}
-        {% set url = "<REPO>/releases/tag/" ~ version %}
+        {% set url = "$REPO/releases/tag/" ~ version %}
     {% endif -%}
     ## [{{ version | trim_start_matches(pat="v") }}]({{ url }}) - {{ timestamp | date(format="%Y-%m-%d") }}
 {% else %}
@@ -27,11 +27,11 @@ body = """
 
 {% macro commit(commit) -%}
 {% set id = commit.id | truncate(length=7, end="") -%}
-{% set url = "<REPO>/commit/" ~ commit.id -%}
+{% set url = "$REPO/commit/" ~ commit.id -%}
 
 - {% if commit.breaking %}[**breaking**] {% endif -%}
   {% if commit.scope %}_{{ commit.scope }}_: {% endif -%}
-  {{ commit.message | escape | upper_first }} ([{{ id }}]({{ url }}))
+  {{ commit.message | escape_xml | upper_first }} ([{{ id }}]({{ url }}))
     {%- if commit.body %}
     {{ commit.body | indent(prefix="  > ", first=true, blank=true) }}
     {%- endif -%}
@@ -59,7 +59,10 @@ footer = """
 """
 # postprocessors
 postprocessors = [
-    { pattern = '<REPO>', replace = "https://github.com/dnaka91/mabo" }, # replace repository URL
+    # replace repository URL
+    { pattern = '\$REPO', replace = "https://github.com/dnaka91/mabo" },
+    # fix commit message typos
+    { pattern = '.*', replace_command = "typos --write-changes -" },
 ]
 
 [git]
@@ -71,8 +74,8 @@ filter_unconventional = true
 split_commits = false
 # regex for preprocessing the commit messages
 commit_preprocessors = [
-    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](<REPO>/issues/${2}))" }, # replace issue numbers
-    { pattern = ".*", replace_command = "typos --write-changes -" }, # fix commit message typos
+    # replace issue numbers
+    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}]($$REPO/issues/${2}))" },
 ]
 # regex for parsing and grouping commits
 commit_parsers = [

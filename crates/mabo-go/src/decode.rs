@@ -4,7 +4,10 @@ use std::fmt::{self, Display};
 
 use mabo_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
 
-use crate::definition::{self, RenderGenericNames};
+use crate::{
+    definition::{self, RenderGenericNames},
+    Indent,
+};
 
 pub(super) struct RenderStruct<'a>(pub(super) &'a Struct<'a>);
 
@@ -142,8 +145,8 @@ impl Display for RenderFields<'_> {
                 "\t\t\t\tr2, value, err := {}",
                 RenderType {
                     ty: &field.ty,
-                    indent: 4
-                }
+                    indent: Indent(4),
+                },
             )?;
             writeln!(f, "\t\t\t\tif err != nil {{")?;
             writeln!(f, "\t\t\t\t\treturn nil, err")?;
@@ -152,12 +155,12 @@ impl Display for RenderFields<'_> {
             writeln!(
                 f,
                 "\t\t\t\tv.{} = value",
-                heck::AsUpperCamelCase(&field.name)
+                heck::AsUpperCamelCase(&field.name),
             )?;
             writeln!(
                 f,
                 "\t\t\t\tfound{} = true",
-                heck::AsUpperCamelCase(&field.name)
+                heck::AsUpperCamelCase(&field.name),
             )?;
         }
 
@@ -167,7 +170,7 @@ impl Display for RenderFields<'_> {
 
 struct RenderType<'a> {
     ty: &'a Type<'a>,
-    indent: usize,
+    indent: Indent,
 }
 
 impl Display for RenderType<'_> {
@@ -290,42 +293,21 @@ impl Display for RenderType<'_> {
                     for (idx, ty) in types.iter().enumerate() {
                         writeln!(
                             f,
-                            "{:\t<indent$}r2, value{idx}, err := {}",
-                            "",
+                            "{}r2, value{idx}, err := {}",
+                            self.indent + 1,
                             RenderType {
                                 ty,
-                                indent: self.indent + 1
+                                indent: self.indent + 1,
                             },
-                            indent = self.indent + 1,
                         )?;
-                        writeln!(
-                            f,
-                            "{:\t<indent$}if err != nil {{",
-                            "",
-                            indent = self.indent + 1,
-                        )?;
-                        writeln!(
-                            f,
-                            "{:\t<indent$}return nil, value, err",
-                            "",
-                            indent = self.indent + 2,
-                        )?;
-                        writeln!(f, "{:\t<indent$}}}", "", indent = self.indent + 1)?;
-                        writeln!(f, "{:\t<indent$}r = r2", "", indent = self.indent + 1)?;
-                        writeln!(
-                            f,
-                            "{:\t<indent$}tuple.F{idx} = value{idx}",
-                            "",
-                            indent = self.indent + 1,
-                        )?;
+                        writeln!(f, "{}if err != nil {{", self.indent + 1)?;
+                        writeln!(f, "{}return nil, value, err", self.indent + 2)?;
+                        writeln!(f, "{}}}", self.indent + 1)?;
+                        writeln!(f, "{}r = r2", self.indent + 1)?;
+                        writeln!(f, "{}tuple.F{idx} = value{idx}", self.indent + 1)?;
                     }
-                    writeln!(
-                        f,
-                        "{:\t<indent$}return r, tuple, nil",
-                        "",
-                        indent = self.indent + 1,
-                    )?;
-                    write!(f, "{:\t<indent$}}}(r)", "", indent = self.indent)
+                    writeln!(f, "{}return r, tuple, nil", self.indent + 1)?;
+                    write!(f, "{}}}(r)", self.indent)
                 }
                 n => todo!("compiler should catch invalid tuple with {n} elements"),
             },
@@ -338,15 +320,14 @@ impl Display for RenderType<'_> {
                     )?;
                     writeln!(
                         f,
-                        "{:\t<indent$}return {}",
-                        "",
+                        "{}return {}",
+                        self.indent + 1,
                         RenderType {
                             ty,
-                            indent: self.indent + 1
+                            indent: self.indent + 1,
                         },
-                        indent = self.indent + 1,
                     )?;
-                    write!(f, "{:\t<indent$}}})", "", indent = self.indent)
+                    write!(f, "{}}})", self.indent)
                 }
                 n => todo!("arrays with larger ({n}) sizes"),
             },
@@ -358,18 +339,12 @@ impl Display for RenderType<'_> {
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}var value {}",
-                    "",
+                    "{}var value {}",
+                    self.indent + 1,
                     definition::RenderType(self.ty),
-                    indent = self.indent + 1,
                 )?;
-                writeln!(
-                    f,
-                    "{:\t<indent$}return value.Decode(r)",
-                    "",
-                    indent = self.indent + 1,
-                )?;
-                writeln!(f, "{:\t<indent$}}}(r)", "", indent = self.indent)
+                writeln!(f, "{}return value.Decode(r)", self.indent + 1)?;
+                writeln!(f, "{}}}(r)", self.indent)
             }
         }
     }
@@ -378,7 +353,7 @@ impl Display for RenderType<'_> {
 struct DecodeGenericSingle<'a> {
     name: &'static str,
     ty: &'a Type<'a>,
-    indent: usize,
+    indent: Indent,
 }
 
 impl Display for DecodeGenericSingle<'_> {
@@ -391,22 +366,21 @@ impl Display for DecodeGenericSingle<'_> {
         )?;
         writeln!(
             f,
-            "{:\t<indent$}return {}",
-            "",
+            "{}return {}",
+            self.indent + 1,
             RenderType {
                 ty: self.ty,
-                indent: self.indent + 1
+                indent: self.indent + 1,
             },
-            indent = self.indent + 1,
         )?;
-        write!(f, "{:\t<indent$}}})", "", indent = self.indent)
+        write!(f, "{}}})", self.indent)
     }
 }
 
 struct DecodeGenericPair<'a> {
     name: &'static str,
     pair: &'a (Type<'a>, Type<'a>),
-    indent: usize,
+    indent: Indent,
 }
 
 impl Display for DecodeGenericPair<'_> {
@@ -418,45 +392,41 @@ impl Display for DecodeGenericPair<'_> {
             definition::RenderType(&self.pair.0),
             definition::RenderType(&self.pair.1)
         )?;
-        writeln!(f, "{:\t<indent$}r,", "", indent = self.indent + 1)?;
+        writeln!(f, "{}r,", self.indent + 1)?;
 
         writeln!(
             f,
-            "{:\t<indent$}func(r []byte) ([]byte, {}, error) {{",
-            "",
+            "{}func(r []byte) ([]byte, {}, error) {{",
+            self.indent + 1,
             definition::RenderType(&self.pair.0),
-            indent = self.indent + 1
         )?;
         writeln!(
             f,
-            "{:\t<indent$}return {}",
-            "",
+            "{}return {}",
+            self.indent + 2,
             RenderType {
                 ty: &self.pair.0,
-                indent: self.indent + 2
+                indent: self.indent + 2,
             },
-            indent = self.indent + 2,
         )?;
-        writeln!(f, "{:\t<indent$}}},", "", indent = self.indent + 1)?;
+        writeln!(f, "{}}},", self.indent + 1)?;
 
         writeln!(
             f,
-            "{:\t<indent$}func(r []byte) ([]byte, {}, error) {{",
-            "",
+            "{}func(r []byte) ([]byte, {}, error) {{",
+            self.indent + 1,
             definition::RenderType(&self.pair.1),
-            indent = self.indent + 1
         )?;
         writeln!(
             f,
-            "{:\t<indent$}return {}",
-            "",
+            "{}return {}",
+            self.indent + 2,
             RenderType {
                 ty: &self.pair.1,
-                indent: self.indent + 2
+                indent: self.indent + 2,
             },
-            indent = self.indent + 2,
         )?;
-        writeln!(f, "{:\t<indent$}}},", "", indent = self.indent + 1)?;
-        write!(f, "{:\t<indent$})", "", indent = self.indent)
+        writeln!(f, "{}}},", self.indent + 1)?;
+        write!(f, "{})", self.indent)
     }
 }

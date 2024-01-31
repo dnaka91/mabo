@@ -5,7 +5,7 @@ use mabo_compiler::simplify::{
     Variant,
 };
 
-use crate::{decode, encode, size, Opts, Output};
+use crate::{decode, encode, size, Indent, Opts, Output};
 
 /// Take a single schema and convert it into Go source code (which can result in multiple files).
 #[must_use]
@@ -103,7 +103,14 @@ struct RenderPackage<'a>(&'a str, Option<&'a [&'a str]>);
 impl Display for RenderPackage<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if let Some(comment) = self.1 {
-            write!(f, "{}", RenderComment { indent: 0, comment })?;
+            write!(
+                f,
+                "{}",
+                RenderComment {
+                    indent: Indent(0),
+                    comment
+                }
+            )?;
         }
 
         writeln!(f, "package {}\n", heck::AsSnakeCase(self.0))
@@ -129,7 +136,7 @@ impl Display for RenderStruct<'_> {
             f,
             "{}type {}{} {}",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.0.comment
             },
             heck::AsUpperCamelCase(&self.0.name),
@@ -293,7 +300,7 @@ impl Display for RenderFields<'_> {
                     f,
                     "{}\t{} {}",
                     RenderComment {
-                        indent: 1,
+                        indent: Indent(1),
                         comment: &field.comment
                     },
                     heck::AsUpperCamelCase(&field.name),
@@ -358,7 +365,7 @@ impl Display for RenderAlias<'_> {
             f,
             "{}type {} {}",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.0.comment,
             },
             heck::AsUpperCamelCase(&self.0.name),
@@ -368,14 +375,15 @@ impl Display for RenderAlias<'_> {
 }
 
 struct RenderComment<'a> {
-    indent: usize,
+    indent: Indent,
     comment: &'a [&'a str],
 }
 
 impl Display for RenderComment<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for line in self.comment {
-            writeln!(f, "{:\t<width$}// {}", "", line, width = self.indent)?;
+        let Self { indent, comment } = *self;
+        for line in comment {
+            writeln!(f, "{indent}// {line}")?;
         }
 
         Ok(())
@@ -529,7 +537,7 @@ impl Display for RenderConst<'_> {
             f,
             "{}{kind} {} {} = {}",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.0.comment
             },
             heck::AsUpperCamelCase(&self.0.name),
@@ -582,7 +590,7 @@ impl Display for RenderEnum<'_> {
             f,
             "\n{}type {} {1}Variant",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.0.comment
             },
             heck::AsUpperCamelCase(&self.0.name),
@@ -616,7 +624,7 @@ impl Display for RenderEnumVariant<'_> {
             f,
             "{}type {}_{}{} {}",
             RenderComment {
-                indent: 0,
+                indent: Indent(0),
                 comment: &self.variant.comment
             },
             heck::AsUpperCamelCase(self.enum_name),

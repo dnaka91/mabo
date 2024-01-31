@@ -1,5 +1,10 @@
 //! Schema to source code converter for the _Go_ programming language.
 
+use std::{
+    fmt::{self, Display},
+    ops::Add,
+};
+
 pub use definition::render_schema;
 
 mod decode;
@@ -29,4 +34,21 @@ pub struct Output<'a> {
     pub content: String,
     /// All modules that were defined as direct children of this module.
     pub modules: Vec<Output<'a>>,
+}
+
+#[derive(Clone, Copy)]
+struct Indent(usize);
+
+impl Display for Indent {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:\t<indent$}", "", indent = self.0)
+    }
+}
+
+impl Add<usize> for Indent {
+    type Output = Self;
+
+    fn add(self, rhs: usize) -> Self::Output {
+        Self(self.0 + rhs)
+    }
 }

@@ -4,7 +4,10 @@ use std::fmt::{self, Display};
 
 use mabo_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
 
-use crate::definition::{self, RenderGenericNames};
+use crate::{
+    definition::{self, RenderGenericNames},
+    Indent,
+};
 
 pub(super) struct RenderStruct<'a>(pub(super) &'a Struct<'a>);
 
@@ -88,7 +91,7 @@ impl Display for RenderFields<'_> {
                     RenderType {
                         ty,
                         name: "v",
-                        indent: 2,
+                        indent: Indent(2),
                     },
                 )?;
             } else {
@@ -99,7 +102,7 @@ impl Display for RenderFields<'_> {
                     RenderType {
                         ty: &field.ty,
                         name: format_args!("v.{}", heck::AsUpperCamelCase(&field.name)),
-                        indent: 2,
+                        indent: Indent(2),
                     },
                 )?;
             }
@@ -112,53 +115,52 @@ impl Display for RenderFields<'_> {
 struct RenderType<'a, T> {
     ty: &'a Type<'a>,
     name: T,
-    indent: usize,
+    indent: Indent,
 }
 
 impl<T> Display for RenderType<'_, T>
 where
-    T: Display,
+    T: Copy + Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.ty {
-            Type::Bool => write!(f, "buf.SizeBool({})", self.name),
-            Type::U8 => write!(f, "buf.SizeU8({})", self.name),
-            Type::U16 => write!(f, "buf.SizeU16({})", self.name),
-            Type::U32 => write!(f, "buf.SizeU32({})", self.name),
-            Type::U64 => write!(f, "buf.SizeU64({})", self.name),
-            Type::U128 => write!(f, "buf.SizeU128({})", self.name),
-            Type::I8 => write!(f, "buf.SizeI8({})", self.name),
-            Type::I16 => write!(f, "buf.SizeI16({})", self.name),
-            Type::I32 => write!(f, "buf.SizeI32({})", self.name),
-            Type::I64 => write!(f, "buf.SizeI64({})", self.name),
-            Type::I128 => write!(f, "buf.SizeI128({})", self.name),
-            Type::F32 => write!(f, "buf.SizeF32({})", self.name),
-            Type::F64 => write!(f, "buf.SizeF64({})", self.name),
+        let Self { ty, name, indent } = *self;
+        match ty {
+            Type::Bool => write!(f, "buf.SizeBool({name})"),
+            Type::U8 => write!(f, "buf.SizeU8({name})"),
+            Type::U16 => write!(f, "buf.SizeU16({name})"),
+            Type::U32 => write!(f, "buf.SizeU32({name})"),
+            Type::U64 => write!(f, "buf.SizeU64({name})"),
+            Type::U128 => write!(f, "buf.SizeU128({name})"),
+            Type::I8 => write!(f, "buf.SizeI8({name})"),
+            Type::I16 => write!(f, "buf.SizeI16({name})"),
+            Type::I32 => write!(f, "buf.SizeI32({name})"),
+            Type::I64 => write!(f, "buf.SizeI64({name})"),
+            Type::I128 => write!(f, "buf.SizeI128({name})"),
+            Type::F32 => write!(f, "buf.SizeF32({name})"),
+            Type::F64 => write!(f, "buf.SizeF64({name})"),
             Type::String | Type::StringRef | Type::BoxString => {
-                write!(f, "buf.SizeString({})", self.name)
+                write!(f, "buf.SizeString({name})")
             }
             Type::Bytes | Type::BytesRef | Type::BoxBytes => {
-                write!(f, "buf.SizeBytes({})", self.name)
+                write!(f, "buf.SizeBytes({name})")
             }
             Type::Vec(ty) => {
                 writeln!(
                     f,
-                    "buf.SizeVec[{}]({}, func(v {0}) int {{",
+                    "buf.SizeVec[{}]({name}, func(v {0}) int {{",
                     definition::RenderType(ty),
-                    self.name
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}return {}",
-                    "",
+                    "{}return {}",
+                    indent + 1,
                     RenderType {
                         ty,
                         name: "v",
-                        indent: self.indent + 1
+                        indent: indent + 1
                     },
-                    indent = self.indent + 1,
                 )?;
-                write!(f, "{:\t<indent$}}})", "", indent = self.indent)
+                write!(f, "{indent}}})")
             }
             Type::HashMap(kv) => {
                 writeln!(
@@ -167,106 +169,92 @@ where
                     definition::RenderType(&kv.0),
                     definition::RenderType(&kv.1)
                 )?;
-                writeln!(
-                    f,
-                    "{:\t<indent$}{},",
-                    "",
-                    self.name,
-                    indent = self.indent + 1
-                )?;
+                writeln!(f, "{}{name},", indent + 1)?;
 
                 writeln!(
                     f,
-                    "{:\t<indent$}func(k {}) int {{",
-                    "",
+                    "{}func(k {}) int {{",
+                    indent + 1,
                     definition::RenderType(&kv.0),
-                    indent = self.indent + 1
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}return {}",
-                    "",
+                    "{}return {}",
+                    indent + 2,
                     RenderType {
                         ty: &kv.0,
                         name: "k",
-                        indent: self.indent + 2
+                        indent: indent + 2
                     },
-                    indent = self.indent + 2,
                 )?;
-                writeln!(f, "{:\t<indent$}}},", "", indent = self.indent + 1)?;
+                writeln!(f, "{}}},", indent + 1)?;
 
                 writeln!(
                     f,
-                    "{:\t<indent$}func(v {}) int {{",
-                    "",
+                    "{}func(v {}) int {{",
+                    indent + 1,
                     definition::RenderType(&kv.1),
-                    indent = self.indent + 1
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}return {}",
-                    "",
+                    "{}return {}",
+                    indent + 2,
                     RenderType {
                         ty: &kv.1,
                         name: "v",
-                        indent: self.indent + 2
+                        indent: indent + 2
                     },
-                    indent = self.indent + 2,
                 )?;
-                writeln!(f, "{:\t<indent$}}},", "", indent = self.indent + 1)?;
-                write!(f, "{:\t<indent$})", "", indent = self.indent)
+                writeln!(f, "{}}},", indent + 1)?;
+                write!(f, "{indent})")
             }
             Type::HashSet(ty) => {
                 writeln!(
                     f,
-                    "buf.SizeHashSet[{}]({}, func(v {0}) int {{",
+                    "buf.SizeHashSet[{}]({name}, func(v {0}) int {{",
                     definition::RenderType(ty),
-                    self.name
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}return {}",
-                    "",
+                    "{}return {}",
+                    indent + 1,
                     RenderType {
                         ty,
                         name: "v",
-                        indent: self.indent + 1
+                        indent: indent + 1
                     },
-                    indent = self.indent + 1,
                 )?;
-                write!(f, "{:\t<indent$}}})", "", indent = self.indent)
+                write!(f, "{indent}}})")
             }
             Type::Option(ty) => {
                 writeln!(
                     f,
-                    "buf.SizeOption[{}]({}, func(v {0}) int {{",
+                    "buf.SizeOption[{}]({name}, func(v {0}) int {{",
                     definition::RenderType(ty),
-                    self.name
                 )?;
                 writeln!(
                     f,
-                    "{:\t<indent$}return {}",
-                    "",
+                    "{}return {}",
+                    indent + 1,
                     RenderType {
                         ty,
                         name: "v",
-                        indent: self.indent + 1
+                        indent: indent + 1
                     },
-                    indent = self.indent + 1,
                 )?;
-                write!(f, "{:\t<indent$}}})", "", indent = self.indent)
+                write!(f, "{indent}}})")
             }
             Type::NonZero(ty) => match &**ty {
-                Type::U8 => write!(f, "buf.SizeU8({}.Get())", self.name),
-                Type::U16 => write!(f, "buf.SizeU16({}.Get())", self.name),
-                Type::U32 => write!(f, "buf.SizeU32({}.Get())", self.name),
-                Type::U64 => write!(f, "buf.SizeU64({}.Get())", self.name),
-                Type::U128 => write!(f, "buf.SizeU128({}.Get())", self.name),
-                Type::I8 => write!(f, "buf.SizeI8({}.Get())", self.name),
-                Type::I16 => write!(f, "buf.SizeI16({}.Get())", self.name),
-                Type::I32 => write!(f, "buf.SizeI32({}.Get())", self.name),
-                Type::I64 => write!(f, "buf.SizeI64({}.Get())", self.name),
-                Type::I128 => write!(f, "buf.SizeI128({}.Get())", self.name),
+                Type::U8 => write!(f, "buf.SizeU8({name}.Get())"),
+                Type::U16 => write!(f, "buf.SizeU16({name}.Get())"),
+                Type::U32 => write!(f, "buf.SizeU32({name}.Get())"),
+                Type::U64 => write!(f, "buf.SizeU64({name}.Get())"),
+                Type::U128 => write!(f, "buf.SizeU128({name}.Get())"),
+                Type::I8 => write!(f, "buf.SizeI8({name}.Get())"),
+                Type::I16 => write!(f, "buf.SizeI16({name}.Get())"),
+                Type::I32 => write!(f, "buf.SizeI32({name}.Get())"),
+                Type::I64 => write!(f, "buf.SizeI64({name}.Get())"),
+                Type::I128 => write!(f, "buf.SizeI128({name}.Get())"),
                 Type::String
                 | Type::StringRef
                 | Type::Bytes
@@ -278,8 +266,8 @@ where
                     "{}",
                     RenderType {
                         ty,
-                        name: format_args!("{}.Get()", self.name),
-                        indent: self.indent,
+                        name: format_args!("{name}.Get()"),
+                        indent,
                     }
                 ),
                 ty => todo!("compiler should catch invalid {ty:?} type"),
@@ -287,22 +275,21 @@ where
             Type::Tuple(types) => match types.len() {
                 2..=12 => {
                     writeln!(f, "func() int {{")?;
-                    writeln!(f, "{:\t<indent$}size := 0", "", indent = self.indent + 1)?;
+                    writeln!(f, "{}size := 0", indent + 1)?;
                     for (idx, ty) in types.iter().enumerate() {
                         writeln!(
                             f,
-                            "{:\t<indent$}size += {}",
-                            "",
+                            "{}size += {}",
+                            indent + 1,
                             RenderType {
                                 ty,
-                                name: format_args!("{}.F{}", self.name, idx),
-                                indent: self.indent + 1,
+                                name: format_args!("{name}.F{idx}"),
+                                indent: indent + 1,
                             },
-                            indent = self.indent + 1,
                         )?;
                     }
-                    writeln!(f, "{:\t<indent$}return size", "", indent = self.indent + 1)?;
-                    write!(f, "{:\t<indent$}}}(size)", "", indent = self.indent)
+                    writeln!(f, "{}return size", indent + 1)?;
+                    write!(f, "{indent}}}(size)")
                 }
                 n => todo!("compiler should catch invalid tuple with {n} elements"),
             },
@@ -310,26 +297,24 @@ where
                 1..=32 => {
                     writeln!(
                         f,
-                        "buf.SizeArray{size}[{}]({}, func(v {0}) int {{",
+                        "buf.SizeArray{size}[{}]({name}, func(v {0}) int {{",
                         definition::RenderType(ty),
-                        self.name
                     )?;
                     writeln!(
                         f,
-                        "{:\t<indent$}return {}",
-                        "",
+                        "{}return {}",
+                        indent + 1,
                         RenderType {
                             ty,
                             name: "v",
-                            indent: self.indent + 1
+                            indent: indent + 1
                         },
-                        indent = self.indent + 1,
                     )?;
-                    write!(f, "{:\t<indent$}}})", "", indent = self.indent)
+                    write!(f, "{indent}}})")
                 }
                 n => todo!("arrays with larger ({n}) sizes"),
             },
-            Type::External(_) => write!(f, "{}.Size()", self.name),
+            Type::External(_) => write!(f, "{name}.Size()"),
         }
     }
 }

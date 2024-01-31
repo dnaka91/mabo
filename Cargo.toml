@@ -13,7 +13,7 @@ repository = "https://github.com/dnaka91/mabo"
 license = "MIT"
 
 [workspace.lints.rust]
-unsafe_code = "forbid"
+unsafe_code = "deny"
 rust_2018_idioms = { level = "deny", priority = -1 }
 missing_docs = "warn"
 

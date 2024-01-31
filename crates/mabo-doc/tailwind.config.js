@@ -2,7 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme")
 const colors = require("tailwindcss/colors")
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: {
     relative: true,
     files: ["./templates/**/*.html"],
@@ -13,9 +13,9 @@ module.exports = {
         main: colors.neutral,
       },
       fontFamily: {
-        'sans': ['"Noto Sans"', ...defaultTheme.fontFamily.sans],
-        'serif': ['"Noto Serif"', ...defaultTheme.fontFamily.serif],
-        'mono': ['"Fira Code"', ...defaultTheme.fontFamily.mono],
+        sans: ['"Noto Sans"', ...defaultTheme.fontFamily.sans],
+        serif: ['"Noto Serif"', ...defaultTheme.fontFamily.serif],
+        mono: ['"Fira Code"', ...defaultTheme.fontFamily.mono],
       },
     },
   },

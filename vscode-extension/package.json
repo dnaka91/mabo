@@ -132,10 +132,10 @@
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.5.2",
+    "@biomejs/biome": "^1.5.3",
     "@types/vscode": "^1.85.0",
-    "@vscode/vsce": "^2.22.0",
-    "esbuild": "^0.19.11",
+    "@vscode/vsce": "~2.22.0",
+    "esbuild": "^0.20.0",
     "js-yaml": "^4.1.0"
   }
 }

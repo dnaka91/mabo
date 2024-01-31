@@ -1,6 +1,8 @@
 ../
 out/
 src/
+images/*.svg
 schemas/*.yaml
 syntaxes/*.yaml
 .gitignore
+biome.json

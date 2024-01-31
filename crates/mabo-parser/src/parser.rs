@@ -1,12 +1,11 @@
 use winnow::{
     ascii::{multispace0, newline, space0},
-    combinator::{fail, opt, peek, preceded, repeat, terminated},
+    combinator::{fail, opt, peek, preceded, repeat, terminated, trace},
     dispatch,
     error::ParserError,
     prelude::*,
     stream::{AsChar, Stream, StreamIsPartial},
     token::any,
-    trace::trace,
 };
 
 pub use self::{

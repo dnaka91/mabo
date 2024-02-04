@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_gens_mismatch.mabo
   × type resolution failed
   ├─▶ failed resolving type in remote modules
   ╰─▶ the use side has ❬Y❭1❬Y❭ generic(s), mismatching with the declaration
-   ╭─[remote_gens_mismatch.mabo:1:1]
+   ╭─[resolve/remote_gens_mismatch.mabo:4:12]
  1 │ use datetime::timing::Timestamp;
  2 │ 
  3 │ struct Sample {
@@ -18,7 +18,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_gens_mismatch.mabo
   help: the amount of generics must always match
 
 Error:   × the declaration has ❬Y❭0❬Y❭ generic(s), mismatching with the use side
-    ╭─[resolve/datetime.mabo:7:1]
+    ╭─[resolve/datetime.mabo:10:12]
   7 │ mod timing {
   8 │     const UNIX_EPOCH: u64 = 0;
   9 │ 

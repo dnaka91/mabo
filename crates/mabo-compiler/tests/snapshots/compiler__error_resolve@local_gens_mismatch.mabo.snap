@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_gens_mismatch.mabo
   × type resolution failed
   ├─▶ failed resolving type in local modules
   ╰─▶ the definition has ❬Y❭1❬Y❭ generics but the use side has ❬Y❭0❬Y❭
-   ╭─[local_gens_mismatch.mabo:1:1]
+   ╭─[resolve/local_gens_mismatch.mabo:2:12]
  1 │ struct Sample {
  2 │     value: Other @1,
    ·            ──┬──

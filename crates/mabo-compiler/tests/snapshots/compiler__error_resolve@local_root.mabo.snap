@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_root.mabo
   × type resolution failed
   ├─▶ failed resolving type in local modules
   ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭test❬Y❭
-   ╭─[local_root.mabo:1:1]
+   ╭─[resolve/local_root.mabo:2:12]
  1 │ struct Sample {
  2 │     value: Other @1,
    ·            ──┬──

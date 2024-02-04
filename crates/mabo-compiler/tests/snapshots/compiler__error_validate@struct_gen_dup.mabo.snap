@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_gen_dup.mabo
   × invalid generic type found
   ├─▶ duplicate generic type name found
   ╰─▶ duplicate generic type name `T`
-   ╭─[struct_gen_dup.mabo:1:1]
+   ╭─[struct_gen_dup.mabo:1:15]
  1 │ struct Sample<T, T> {
    ·               ┬  ┬
    ·               │  ╰── used here again

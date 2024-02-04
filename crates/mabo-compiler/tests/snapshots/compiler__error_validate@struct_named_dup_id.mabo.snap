@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_named_dup_id.mabo
   × duplicate ID found
   ├─▶ duplicate ID in a field
   ╰─▶ duplicate ID 1 in field `field2`, already used in `field1`
-   ╭─[struct_named_dup_id.mabo:1:1]
+   ╭─[struct_named_dup_id.mabo:2:20]
  1 │ struct Sample {
  2 │     field1: string @1,
    ·                    ─┬

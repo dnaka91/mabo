@@ -18,7 +18,7 @@ mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/str
 Error: mabo::parse::struct_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseStructCause.html#variant.InvalidName)
 
   × Invalid struct name
-   ╭─[invalid/struct_name.mabo:1:1]
+   ╭─[invalid/struct_name.mabo:1:8]
  1 │ struct sample {
    ·        ▲
    ·        ╰── Problematic character

@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_dup_id.mabo
   × duplicate ID found
   ├─▶ duplicate ID in a field
   ╰─▶ duplicate ID 1 in field `field2`, already used in `field1`
-   ╭─[enum_named_dup_id.mabo:1:1]
+   ╭─[enum_named_dup_id.mabo:4:24]
  1 │ enum Sample {
  2 │     One @1,
  3 │     Two {

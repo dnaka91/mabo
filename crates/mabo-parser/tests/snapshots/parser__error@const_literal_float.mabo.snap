@@ -17,7 +17,7 @@ mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
 Error: mabo::parse::const_def::char (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseConstCause.html#variant.UnexpectedChar)
 
   × Unexpected character
-   ╭─[invalid/const_literal_float.mabo:1:1]
+   ╭─[invalid/const_literal_float.mabo:1:23]
  1 │ const VALUE: f64 = 1.0z;
    ·                       ▲
    ·                       ╰── Problematic character

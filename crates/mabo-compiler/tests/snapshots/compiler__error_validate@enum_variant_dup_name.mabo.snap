@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_variant_dup_name.mab
   × duplicate name found
   ├─▶ duplicate name in an enum variant
   ╰─▶ duplicate variant name `One` in enum
-   ╭─[enum_variant_dup_name.mabo:1:1]
+   ╭─[enum_variant_dup_name.mabo:2:5]
  1 │ enum Sample {
  2 │     One @1,
    ·     ─┬─

@@ -5,7 +5,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_unnamed_tuple_too_
 ---
   × invalid tuple element size found
   ╰─▶ tuples with ❬W❭more than 12 elements❬W❭ are invalid
-   ╭─[struct_unnamed_tuple_too_large.mabo:1:1]
+   ╭─[struct_unnamed_tuple_too_large.mabo:1:15]
  1 │ struct Sample((u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8) @1)
    ·               ──────────────────────────┬─────────────────────────
    ·                                         ╰── declared here

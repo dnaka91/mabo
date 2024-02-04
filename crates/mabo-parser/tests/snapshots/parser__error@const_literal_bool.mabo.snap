@@ -19,7 +19,7 @@ Error: mabo::parse::literal (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error
 
   × Failed to parse literal value
   ╰─▶ error Tag
-   ╭─[invalid/const_literal_bool.mabo:1:1]
+   ╭─[invalid/const_literal_bool.mabo:1:21]
  1 │ const VALUE: bool = truze;
    ·                     ▲
    ·                     ╰── In this declaration

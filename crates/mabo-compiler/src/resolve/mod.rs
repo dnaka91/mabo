@@ -50,7 +50,7 @@ pub fn schemas(values: &[(&str, &Schema<'_>)]) -> Result<(), Error> {
                     .map_or_else(|| "<unknown>".to_owned(), |p| p.display().to_string()),
                 schema.source.to_owned(),
             ),
-            cause: ResolveError::Import(e),
+            cause: ResolveError::Import(e.into()),
         })?;
 
         for ty in missing {

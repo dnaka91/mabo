@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_gen_unused.mabo
   × invalid generic type found
   ├─▶ unused generic type argument found
   ╰─▶ unused generic type argument `T`
-   ╭─[enum_gen_unused.mabo:1:1]
+   ╭─[enum_gen_unused.mabo:1:13]
  1 │ enum Sample<T> {
    ·             ┬
    ·             ╰── declared here

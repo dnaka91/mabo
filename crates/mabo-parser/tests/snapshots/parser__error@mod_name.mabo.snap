@@ -17,7 +17,7 @@ mabo::parse::mod_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct
 Error: mabo::parse::module::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseModuleCause.html#variant.InvalidName)
 
   × Invalid module name
-   ╭─[invalid/mod_name.mabo:1:1]
+   ╭─[invalid/mod_name.mabo:1:5]
  1 │ mod Sample {}
    ·     ▲
    ·     ╰── Problematic character

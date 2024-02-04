@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_sub.mabo
   × type resolution failed
   ├─▶ failed resolving type in remote modules
   ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭datetime::timing❬Y❭
-   ╭─[remote_sub.mabo:1:1]
+   ╭─[resolve/remote_sub.mabo:4:20]
  1 │ use datetime::timing;
  2 │ 
  3 │ struct Sample {

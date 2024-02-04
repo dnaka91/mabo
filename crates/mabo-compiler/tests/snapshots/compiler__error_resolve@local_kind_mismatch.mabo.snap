@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_kind_mismatch.mabo
   × type resolution failed
   ├─▶ failed resolving type in local modules
   ╰─▶ definition found, but a ❬B❭constant❬B❭ can't be referenced
-   ╭─[local_kind_mismatch.mabo:1:1]
+   ╭─[resolve/local_kind_mismatch.mabo:2:12]
  1 │ struct Sample {
  2 │     value: OTHER @1,
    ·            ──┬──

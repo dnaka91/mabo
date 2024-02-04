@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_named_dup_name.mab
   × duplicate name found
   ├─▶ duplicate name in a field
   ╰─▶ duplicate field name `field`
-   ╭─[struct_named_dup_name.mabo:1:1]
+   ╭─[struct_named_dup_name.mabo:2:5]
  1 │ struct Sample {
  2 │     field: string @1,
    ·     ──┬──

@@ -5,7 +5,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/alias_tuple_empty.mabo
 ---
   × invalid tuple element size found
   ╰─▶ tuples with ❬W❭zero elements❬W❭ are invalid
-   ╭─[alias_tuple_empty.mabo:1:1]
+   ╭─[alias_tuple_empty.mabo:1:15]
  1 │ type Sample = ();
    ·               ─┬
    ·                ╰── declared here

@@ -26,7 +26,7 @@ pub use crate::parser::{
 /// Reason why a Mabo schema definition was invalid.
 #[derive(Debug)]
 pub struct ParseSchemaError {
-    pub(crate) source_code: NamedSource,
+    pub(crate) source_code: NamedSource<String>,
     /// Specific cause of the error.
     pub cause: ParseSchemaCause,
 }

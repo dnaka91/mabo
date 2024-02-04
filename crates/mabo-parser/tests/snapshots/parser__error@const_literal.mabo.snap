@@ -17,7 +17,7 @@ mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
 Error: mabo::parse::const_def::char (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseConstCause.html#variant.UnexpectedChar)
 
   × Unexpected character
-   ╭─[invalid/const_literal.mabo:1:1]
+   ╭─[invalid/const_literal.mabo:1:21]
  1 │ const VALUE: u32 = 1z;
    ·                     ▲
    ·                     ╰── Problematic character

@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space0,
-    combinator::{alt, cut_err, fold_repeat, opt, preceded, separated, terminated},
+    combinator::{alt, cut_err, opt, preceded, repeat, separated, terminated},
     error::ErrorKind,
     stream::Location,
     token::{one_of, take_while},
@@ -46,23 +46,19 @@ pub enum Cause {
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Attributes<'i>, ParseError> {
     let start = input.location();
 
-    fold_repeat(
-        0..,
-        terminated(parse_attribute, '\n'),
-        Vec::new,
-        |mut acc, attrs| {
+    repeat(0.., terminated(parse_attribute, '\n'))
+        .fold(Vec::new, |mut acc, attrs| {
             acc.extend(attrs);
             acc
-        },
-    )
-    .parse_next(input)
-    .map(Attributes)
-    .map_err(|e| {
-        e.map(|cause| ParseError {
-            at: start..start,
-            cause,
         })
-    })
+        .parse_next(input)
+        .map(Attributes)
+        .map_err(|e| {
+            e.map(|cause| ParseError {
+                at: start..start,
+                cause,
+            })
+        })
 }
 
 fn parse_attribute<'i>(input: &mut Input<'i>) -> Result<Vec<Attribute<'i>>, Cause> {

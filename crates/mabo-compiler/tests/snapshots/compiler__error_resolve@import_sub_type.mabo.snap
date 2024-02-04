@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/import_sub_type.mabo
   × type resolution failed
   ├─▶ failed resolving import statement
   ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭datetime::timing❬Y❭
-   ╭─[import_sub_type.mabo:1:1]
+   ╭─[resolve/import_sub_type.mabo:1:23]
  1 │ use datetime::timing::Other;
    ·                       ──┬──
    ·                         ╰── used here

@@ -17,7 +17,7 @@ mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
 Error: mabo::parse::const_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseConstCause.html#variant.InvalidName)
 
   × Invalid const name
-   ╭─[invalid/const_name.mabo:1:1]
+   ╭─[invalid/const_name.mabo:1:7]
  1 │ const vALUE: u32 = 1;
    ·       ▲
    ·       ╰── Problematic character

@@ -5,7 +5,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/alias_tuple_too_large.mab
 ---
   × invalid tuple element size found
   ╰─▶ tuples with ❬W❭more than 12 elements❬W❭ are invalid
-   ╭─[alias_tuple_too_large.mabo:1:1]
+   ╭─[alias_tuple_too_large.mabo:1:15]
  1 │ type Sample = (u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8);
    ·               ──────────────────────────┬─────────────────────────
    ·                                         ╰── declared here

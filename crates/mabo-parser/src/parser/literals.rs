@@ -4,7 +4,7 @@ use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{dec_uint, digit1, multispace1},
     combinator::{
-        alt, cut_err, delimited, fail, fold_repeat, opt, peek, preceded, separated, terminated,
+        alt, cut_err, delimited, fail, opt, peek, preceded, repeat, separated, terminated,
     },
     dispatch,
     error::ErrorKind,
@@ -146,7 +146,7 @@ fn parse_string(input: &mut Input<'_>) -> Result<String, Cause> {
     preceded(
         '"',
         cut_err(terminated(
-            fold_repeat(0.., parse_fragment, String::new, |mut acc, fragment| {
+            repeat(0.., parse_fragment).fold(String::new, |mut acc, fragment| {
                 match fragment {
                     Fragment::Literal(s) => acc.push_str(s),
                     Fragment::EscapedChar(c) => acc.push(c),

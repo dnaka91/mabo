@@ -5,7 +5,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_unnamed_tuple_sing
 ---
   × invalid tuple element size found
   ╰─▶ tuples with ❬W❭a single element❬W❭ are invalid
-   ╭─[struct_unnamed_tuple_single.mabo:1:1]
+   ╭─[struct_unnamed_tuple_single.mabo:1:15]
  1 │ struct Sample((u8) @1)
    ·               ──┬─
    ·                 ╰── declared here

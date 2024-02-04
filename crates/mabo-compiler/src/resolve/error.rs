@@ -8,7 +8,7 @@ use crate::highlight;
 /// Reason why type resolution failed.
 #[derive(Debug)]
 pub struct Error {
-    pub(super) source_code: NamedSource,
+    pub(super) source_code: NamedSource<String>,
     /// Cause of the failure.
     pub cause: ResolveError,
 }
@@ -65,15 +65,27 @@ pub enum ResolveError {
     /// Local type resolution failed.
     #[error("failed resolving type in local modules")]
     #[diagnostic(transparent)]
-    Local(#[from] ResolveLocal),
+    Local(#[from] Box<ResolveLocal>),
     /// Import statement resolution failed.
     #[error("failed resolving import statement")]
     #[diagnostic(transparent)]
-    Import(#[from] ResolveImport),
+    Import(#[from] Box<ResolveImport>),
     /// Remote (types in another schema) type resolution failed.
     #[error("failed resolving type in remote modules")]
     #[diagnostic(transparent)]
     Remote(#[from] Box<ResolveRemote>),
+}
+
+impl From<ResolveLocal> for ResolveError {
+    fn from(value: ResolveLocal) -> Self {
+        Self::Local(value.into())
+    }
+}
+
+impl From<ResolveImport> for ResolveError {
+    fn from(value: ResolveImport) -> Self {
+        Self::Import(value.into())
+    }
 }
 
 impl From<ResolveRemote> for ResolveError {
@@ -220,7 +232,13 @@ pub enum ResolveRemote {
     /// The referenced definition can't be used as type.
     #[error(transparent)]
     #[diagnostic(transparent)]
-    InvalidKind(#[from] RemoteInvalidKind),
+    InvalidKind(#[from] Box<RemoteInvalidKind>),
+}
+
+impl From<RemoteInvalidKind> for ResolveRemote {
+    fn from(value: RemoteInvalidKind) -> Self {
+        Self::InvalidKind(value.into())
+    }
 }
 
 /// None of the existing imports match for the referenced type.
@@ -261,7 +279,7 @@ pub struct RemoteGenericsCountDeclaration {
     /// Amount of generics on the declaration side.
     pub amount: usize,
     #[source_code]
-    pub(super) source_code: NamedSource,
+    pub(super) source_code: NamedSource<String>,
     #[label("declared here")]
     pub(super) used: Range<usize>,
 }
@@ -294,7 +312,7 @@ pub struct RemoteInvalidKindDeclaration {
     /// The kind of definition that is declared.
     pub kind: &'static str,
     #[source_code]
-    pub(super) source_code: NamedSource,
+    pub(super) source_code: NamedSource<String>,
     #[label("declared here")]
     pub(super) used: Range<usize>,
 }

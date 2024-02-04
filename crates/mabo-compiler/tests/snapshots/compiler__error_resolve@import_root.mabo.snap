@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/import_root.mabo
   × type resolution failed
   ├─▶ failed resolving import statement
   ╰─▶ definition ❬Y❭Other❬Y❭ not found in module ❬Y❭datetime❬Y❭
-   ╭─[import_root.mabo:1:1]
+   ╭─[resolve/import_root.mabo:1:15]
  1 │ use datetime::Other;
    ·               ──┬──
    ·                 ╰── used here

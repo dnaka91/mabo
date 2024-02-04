@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_kind_mismatch.mabo
   × type resolution failed
   ├─▶ failed resolving type in remote modules
   ╰─▶ definition found, but a ❬B❭constant❬B❭ can't be referenced
-   ╭─[remote_kind_mismatch.mabo:1:1]
+   ╭─[resolve/remote_kind_mismatch.mabo:4:20]
  1 │ use datetime::timing;
  2 │ 
  3 │ struct Sample {
@@ -18,7 +18,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_kind_mismatch.mabo
   help: only struct and enum definitions can be used
 
 Error:   × the definition is a ❬B❭constant❬B❭, which can't be referenced
-    ╭─[resolve/datetime.mabo:5:1]
+    ╭─[resolve/datetime.mabo:8:11]
   5 │ }
   6 │ 
   7 │ mod timing {

@@ -20,7 +20,7 @@ Error: mabo::parse::id (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
 
   × Failed to parse fields declaration
   ╰─▶ Invalid field name
-   ╭─[invalid/field_name.mabo:1:1]
+   ╭─[invalid/field_name.mabo:1:15]
  1 │ ╭─▶ struct Sample {
  2 │ ├─▶     1value: u32 @1,
    · ╰──── In this declaration
@@ -32,7 +32,7 @@ Error: mabo::parse::id (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
 Error: mabo::parse::fields::named::invalid_name (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/enum.ParseFieldsCause.html#variant.InvalidName)
 
   × Invalid field name
-   ╭─[invalid/field_name.mabo:1:1]
+   ╭─[invalid/field_name.mabo:2:5]
  1 │ struct Sample {
  2 │     1value: u32 @1,
    ·     ▲

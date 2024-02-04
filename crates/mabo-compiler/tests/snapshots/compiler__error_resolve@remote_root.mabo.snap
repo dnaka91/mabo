@@ -6,7 +6,7 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_root.mabo
   × type resolution failed
   ├─▶ failed resolving type in remote modules
   ╰─▶ missing import for type ❬Y❭Other❬Y❭
-   ╭─[remote_root.mabo:1:1]
+   ╭─[resolve/remote_root.mabo:4:12]
  1 │ use datetime::Date;
  2 │ 
  3 │ struct Sample {

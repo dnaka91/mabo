@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 pub use bytes::{BufMut, Bytes};
+use num_bigint::{BigInt, BigUint};
 
 use crate::{FieldId, NonZero, VariantId, varint};
 
@@ -36,6 +37,18 @@ macro_rules! encode_int {
 
 encode_int!(u16, u32, u64, u128);
 encode_int!(i16, i32, i64, i128);
+
+/// Encode a Mabo `ubig` integer.
+pub fn encode_ubig(w: &mut impl BufMut, value: &BigUint) {
+    let buf = varint::encode_ubig(value);
+    w.put(&*buf);
+}
+
+/// Encode a Mabo `ibig` integer.
+pub fn encode_ibig(w: &mut impl BufMut, value: &BigInt) {
+    let buf = varint::encode_ibig(value);
+    w.put(&*buf);
+}
 
 /// Encode a Mabo `f32` floating number.
 pub fn encode_f32(w: &mut impl BufMut, value: f32) {

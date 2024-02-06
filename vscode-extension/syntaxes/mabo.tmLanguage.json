@@ -373,7 +373,7 @@
       "patterns": [
         {
           "name": "storage.type.builtin.mabo",
-          "match": "(bool|[iu](?:8|16|32|64|128)|f(?:32|64)|&?(?:string|bytes)|box<(?:string|bytes)>)"
+          "match": "(bool|[iu](?:8|16|32|64|128|big)|f(?:32|64)|&?(?:string|bytes)|box<(?:string|bytes)>)"
         },
         {
           "name": "storage.type.builtin.tuple.mabo",

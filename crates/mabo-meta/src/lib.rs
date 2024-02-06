@@ -106,6 +106,8 @@ pub fn wire_size(ty: &Type<'_>) -> Option<WireSize> {
         Type::I64 => WireSize::range("i64", 1, 10),
         Type::U128 => WireSize::range("u128", 1, 19),
         Type::I128 => WireSize::range("i128", 1, 19),
+        Type::UBig => WireSize::min("ubig", 1),
+        Type::IBig => WireSize::min("ibig", 1),
         Type::F32 => WireSize::fixed("f32", 4),
         Type::F64 => WireSize::fixed("f64", 8),
         Type::String => WireSize::min("string", 1),

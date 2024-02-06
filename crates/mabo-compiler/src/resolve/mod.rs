@@ -462,11 +462,13 @@ fn visit_externals<'a>(value: &'a Type<'_>, visit: &mut impl FnMut(&'a ExternalT
         | DataType::U32
         | DataType::U64
         | DataType::U128
+        | DataType::UBig
         | DataType::I8
         | DataType::I16
         | DataType::I32
         | DataType::I64
         | DataType::I128
+        | DataType::IBig
         | DataType::F32
         | DataType::F64
         | DataType::String

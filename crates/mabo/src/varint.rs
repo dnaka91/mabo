@@ -1,5 +1,7 @@
 //! Encoding and decoding for variable integers.
 
+use num_bigint::{BigInt, BigUint};
+use num_traits::{One, Zero};
 use thiserror::Error;
 
 macro_rules! zigzag {
@@ -47,6 +49,18 @@ zigzag!(
     i64 => u64,
     i128 => u128,
 );
+
+/// Use the _`ZigZag`_ scheme to encode a `BigInt` as `BigUint`.
+fn zigzag_encode_ibig(value: &BigInt) -> BigUint {
+    ((value << 1_u32) ^ (value >> (value.bits() - 1)))
+        .to_biguint()
+        .unwrap()
+}
+
+/// Convert a _`ZigZag`_ encoded `BigInt` back to its original data.
+fn zigzag_decode_ibig(value: &BigUint) -> BigInt {
+    BigInt::from(value >> 1) ^ (-(BigInt::from(value & BigUint::one())))
+}
 
 /// Calculate the maximum amount of bytes that an integer might require to be encoded as _varint_.
 #[inline]
@@ -191,6 +205,77 @@ macro_rules! varint {
 }
 
 varint!((u16, i16), (u32, i32), (u64, i64), (u128, i128));
+
+/// Encode a `BigUint` as _Varint_.
+#[must_use]
+pub fn encode_ubig(value: &BigUint) -> Vec<u8> {
+    let mut value = value.clone();
+    let mut buf = vec![0; size_ubig(&value)];
+
+    for (i, b) in buf.iter_mut().enumerate() {
+        *b = (&value & BigUint::from(0xff_u32))
+            .iter_u32_digits()
+            .next()
+            .unwrap() as u8;
+        if value < BigUint::from(128_u32) {
+            buf.truncate(i + 1);
+            return buf;
+        }
+
+        *b |= 0x80;
+        value >>= 7_u32;
+    }
+
+    debug_assert_eq!(value.bits(), 0);
+    buf
+}
+
+/// Decode a _Varint_ back to a `BigUint`.
+///
+/// # Errors
+///
+/// Will return `Err` if the raw bytes don't contain an end marker within the possible
+/// maximum byte count valid for the integer.
+pub fn decode_ubig(buf: &[u8]) -> Result<(BigUint, usize), DecodeIntError> {
+    let mut value = BigUint::zero();
+    for (i, b) in buf.iter().copied().enumerate() {
+        value |= (BigUint::from(b & 0x7f)) << (7 * i);
+
+        if b & 0x80 == 0 {
+            return Ok((value, i + 1));
+        }
+    }
+
+    Err(DecodeIntError)
+}
+
+/// Calculate the byte size of a `BigUint` encoded as _Varint_.
+#[must_use]
+pub fn size_ubig(value: &BigUint) -> usize {
+    max(1, value.bits().div_ceil(7) as usize)
+}
+
+/// Encode a `BigInt` as _Varint_.
+#[must_use]
+pub fn encode_ibig(value: &BigInt) -> Vec<u8> {
+    encode_ubig(&zigzag_encode_ibig(value))
+}
+
+/// Decode a _Varint_ back to a `BigInt`.
+///
+/// # Errors
+///
+/// Will return `Err` if the raw bytes don't contain an end marker within the possible
+/// maximum byte count valid for the integer.
+pub fn decode_ibig(buf: &[u8]) -> Result<(BigInt, usize), DecodeIntError> {
+    decode_ubig(buf).map(|(v, b)| (zigzag_decode_ibig(&v), b))
+}
+
+/// Calculate the byte size of a `BigInt` encoded as _Varint_.
+#[must_use]
+pub fn size_ibig(value: &BigInt) -> usize {
+    max(1, zigzag_encode_ibig(value).bits().div_ceil(7) as usize)
+}
 
 /// Error that can happen when trying to decode a _Varint_ back into a regular integer.
 #[derive(Debug, Error)]

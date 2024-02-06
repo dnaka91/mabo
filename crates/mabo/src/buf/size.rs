@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use bytes::Bytes;
+use num_bigint::{BigInt, BigUint};
 
 use crate::{NonZero, varint};
 
@@ -50,6 +51,18 @@ macro_rules! size_int {
 
 size_int!(u16, u32, u64, u128);
 size_int!(i16, i32, i64, i128);
+
+/// Calculate the size of a Mabo `ubig` integer, which varies as it is encoded as a _Varint_.
+#[must_use]
+pub fn size_ubig(value: &BigUint) -> usize {
+    varint::size_ubig(value)
+}
+
+/// Calculate the size of a Mabo `ibig` integer, which varies as it is encoded as a _Varint_.
+#[must_use]
+pub fn size_ibig(value: &BigInt) -> usize {
+    varint::size_ibig(value)
+}
 
 /// Calculate the size of a UTF-8 encoded Mabo `string`.
 #[must_use]

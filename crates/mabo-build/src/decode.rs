@@ -207,11 +207,13 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, root: bool) -> TokenStream {
         Type::U32 => quote! { ::mabo::buf::decode_u32(r) },
         Type::U64 => quote! { ::mabo::buf::decode_u64(r) },
         Type::U128 => quote! { ::mabo::buf::decode_u128(r) },
+        Type::UBig => quote! { ::mabo::buf::decode_ubig(r) },
         Type::I8 => quote! { ::mabo::buf::decode_i8(r) },
         Type::I16 => quote! { ::mabo::buf::decode_i16(r) },
         Type::I32 => quote! { ::mabo::buf::decode_i32(r) },
         Type::I64 => quote! { ::mabo::buf::decode_i64(r) },
         Type::I128 => quote! { ::mabo::buf::decode_i128(r) },
+        Type::IBig => quote! { ::mabo::buf::decode_ibig(r) },
         Type::F32 => quote! { ::mabo::buf::decode_f32(r) },
         Type::F64 => quote! { ::mabo::buf::decode_f64(r) },
         Type::String | Type::StringRef => quote! { ::mabo::buf::decode_string(r) },
@@ -242,11 +244,13 @@ fn compile_data_type(opts: &Opts, ty: &Type<'_>, root: bool) -> TokenStream {
             Type::U32 => quote! { ::mabo::buf::decode_non_zero_u32(r) },
             Type::U64 => quote! { ::mabo::buf::decode_non_zero_u64(r) },
             Type::U128 => quote! { ::mabo::buf::decode_non_zero_u128(r) },
+            Type::UBig => quote! { ::mabo::buf::decode_non_zero_ubig(r) },
             Type::I8 => quote! { ::mabo::buf::decode_non_zero_i8(r) },
             Type::I16 => quote! { ::mabo::buf::decode_non_zero_i16(r) },
             Type::I32 => quote! { ::mabo::buf::decode_non_zero_i32(r) },
             Type::I64 => quote! { ::mabo::buf::decode_non_zero_i64(r) },
             Type::I128 => quote! { ::mabo::buf::decode_non_zero_i128(r) },
+            Type::IBig => quote! { ::mabo::buf::decode_non_zero_ibig(r) },
             Type::String | Type::StringRef => {
                 quote! { ::mabo::buf::decode_non_zero_string(r) }
             }

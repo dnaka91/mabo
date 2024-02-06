@@ -1,7 +1,7 @@
 enum Sample {
     One @1,
     Two {
-        field: string @1,
-        field: string @2,
+        field: String @1,
+        field: String @2,
     } @2,
 }

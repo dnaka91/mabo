@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-compiler/tests/compiler.rs
-description: "enum Sample {\n    One @1,\n    Two(string @1, string @1) @2,\n}"
+description: "enum Sample {\n    One @1,\n    Two(String @1, String @1) @2,\n}"
 input_file: crates/mabo-compiler/tests/inputs/validate/enum_unnamed_dup_id.mabo
 ---
   × duplicate ID found
@@ -9,7 +9,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_unnamed_dup_id.mabo
    ╭─[enum_unnamed_dup_id.mabo:3:16]
  1 │ enum Sample {
  2 │     One @1,
- 3 │     Two(string @1, string @1) @2,
+ 3 │     Two(String @1, String @1) @2,
    ·                ─┬         ─┬
    ·                 │          ╰── used here again
    ·                 ╰── first declared here

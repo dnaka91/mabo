@@ -3,21 +3,21 @@ struct Sample {
     a: u32 @1,
     /// Second field
     b: bool @2,
-    c: (string, i16) @3,
+    c: (String, i16) @3,
 }
 
 enum Sample2 {
     Unit @1,
     Tuple(u32 @1, u32 @2) @2,
     Fields {
-        name: string @1,
+        name: String @1,
         valid: bool @2,
-        dates: vec<(u16, u8, u8)> @3,
+        dates: Vec<(u16, u8, u8)> @3,
     } @3,
 }
 
 /// A tuple struct.
-struct Sample3(bool @1, (bytes, i64) @2)
+struct Sample3(bool @1, (Bytes, i64) @2)
 
 const CHRISTMAS_MONTH: u8 = 12;
 const CHRISTMAS_DAY: u8 = 24;
@@ -26,7 +26,7 @@ const CHRISTMAS_DAY: u8 = 24;
 mod gens {
     /// Using generics
     struct SampleGen<T> {
-        raw: bytes @1,
+        raw: Bytes @1,
         array: [T; 4] @2,
         value: T @3,
     }
@@ -46,10 +46,10 @@ type SampleAlias = Sample;
 
 mod specials {
     struct SomeOptions {
-        maybe_int: option<u32> @1,
-        maybe_text: option<string> @2,
-        maybe_tuple: option<(u8, u8)> @3,
-        nested: option<option<u8>> @4,
-        vec_maybe: vec<option<bool>> @5,
+        maybe_int: Option<u32> @1,
+        maybe_text: Option<String> @2,
+        maybe_tuple: Option<(u8, u8)> @3,
+        nested: Option<Option<u8>> @4,
+        vec_maybe: Vec<Option<bool>> @5,
     }
 }

@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-compiler/tests/compiler.rs
-description: "enum Sample<T> {\n    One @1,\n    Two { value: string @1 } @2,\n}"
+description: "enum Sample<T> {\n    One @1,\n    Two { value: String @1 } @2,\n}"
 input_file: crates/mabo-compiler/tests/inputs/validate/enum_gen_unused.mabo
 ---
   × invalid generic type found
@@ -11,7 +11,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_gen_unused.mabo
    ·             ┬
    ·             ╰── declared here
  2 │     One @1,
- 3 │     Two { value: string @1 } @2,
+ 3 │     Two { value: String @1 } @2,
  4 │ }
    ╰────
   help: each declared generic must be used in some way

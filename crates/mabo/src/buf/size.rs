@@ -51,24 +51,24 @@ macro_rules! size_int {
 size_int!(u16, u32, u64, u128);
 size_int!(i16, i32, i64, i128);
 
-/// Calculate the size of a UTF-8 encoded Mabo `string`.
+/// Calculate the size of a UTF-8 encoded Mabo `String`.
 #[must_use]
 pub const fn size_string(value: &str) -> usize {
     size_bytes_std(value.as_bytes())
 }
 
-/// Calculate the size of a Mabo `bytes` raw byte array (represented as default Rust byte slice).
+/// Calculate the size of a Mabo `Bytes` raw byte array (represented as default Rust byte slice).
 #[must_use]
 pub const fn size_bytes_std(value: &[u8]) -> usize {
     size_u64(value.len() as u64) + value.len()
 }
 
-/// Calculate the size of a Mabo `bytes` raw byte array (represented as [`bytes::Bytes`] type).
+/// Calculate the size of a Mabo `Bytes` raw byte array (represented as [`bytes::Bytes`] type).
 pub const fn size_bytes_bytes(value: &Bytes) -> usize {
     size_u64(value.len() as u64) + value.len()
 }
 
-/// Calculate the size of a Mabo `vec<T>` vector value.
+/// Calculate the size of a Mabo `Vec<T>` vector value.
 pub fn size_vec<T, S>(vec: &[T], size: S) -> usize
 where
     S: Fn(&T) -> usize,
@@ -76,7 +76,7 @@ where
     size_u64(vec.len() as u64) + vec.iter().map(size).sum::<usize>()
 }
 
-/// Calculate the size of a Mabo `hash_map<K, V>` hash map value.
+/// Calculate the size of a Mabo `HashMap<K, V>` hash map value.
 pub fn size_hash_map<K, V, SK, SV>(map: &HashMap<K, V>, size_key: SK, size_value: SV) -> usize
 where
     SK: Fn(&K) -> usize,
@@ -89,7 +89,7 @@ where
             .sum::<usize>()
 }
 
-/// Calculate the size of a Mabo `hash_set<T>` hash set value.
+/// Calculate the size of a Mabo `HashSet<T>` hash set value.
 pub fn size_hash_set<T, S>(set: &HashSet<T>, size: S) -> usize
 where
     S: Fn(&T) -> usize,
@@ -97,7 +97,7 @@ where
     size_u64(set.len() as u64) + set.iter().map(size).sum::<usize>()
 }
 
-/// Calculate the size of a Mabo `option<T>` option value.
+/// Calculate the size of a Mabo `Option<T>` option value.
 pub fn size_option<T, S>(option: Option<&T>, size: S) -> usize
 where
     S: Fn(&T) -> usize,

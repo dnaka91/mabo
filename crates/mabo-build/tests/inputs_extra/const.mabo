@@ -5,6 +5,6 @@ const INT: u32 = 100;
 /// A float.
 const FLOAT: f64 = 5.0;
 /// A string.
-const STRING: string = "hello";
+const STRING: String = "hello";
 /// Some bytes.
-const BYTES: bytes = [1, 2, 3];
+const BYTES: Bytes = [1, 2, 3];

@@ -34,8 +34,8 @@ pub fn generate_schema(count: usize) -> String {
             i as f64 / 19.0
         )
         .unwrap();
-        writeln!(&mut input, "const VALUE_STR_{i}: &string = \"{i}\";").unwrap();
-        writeln!(&mut input, "const VALUE_BYTES_{i}: &bytes = [{}];", i % 256).unwrap();
+        writeln!(&mut input, "const VALUE_STR_{i}: &String = \"{i}\";").unwrap();
+        writeln!(&mut input, "const VALUE_BYTES_{i}: &Bytes = [{}];", i % 256).unwrap();
     }
 
     input.push('\n');
@@ -56,10 +56,10 @@ pub fn generate_schema(count: usize) -> String {
 
     input.push_str("struct SampleNamed {\n");
     for i in 1..=count {
-        writeln!(&mut input, "    field_str_{i:05}: string @{i},").unwrap();
+        writeln!(&mut input, "    field_str_{i:05}: String @{i},").unwrap();
         writeln!(
             &mut input,
-            "    field_gen_{i:05}: vec<hash_map<u32, (bool, string, option<f64>)>> @{},",
+            "    field_gen_{i:05}: Vec<HashMap<u32, (bool, String, Option<f64>)>> @{},",
             i + count
         )
         .unwrap();
@@ -68,10 +68,10 @@ pub fn generate_schema(count: usize) -> String {
 
     input.push_str("\nstruct SampleUnnamed(");
     for i in 1..=count {
-        write!(&mut input, "string @{i},").unwrap();
+        write!(&mut input, "String @{i},").unwrap();
         write!(
             &mut input,
-            "vec<hash_map<u32, (bool, string, option<f64>)>> @{},",
+            "Vec<HashMap<u32, (bool, String, Option<f64>)>> @{},",
             i + count
         )
         .unwrap();
@@ -81,11 +81,11 @@ pub fn generate_schema(count: usize) -> String {
     input.push_str("\nenum SampleEnum {\n");
     for i in 1..=count {
         writeln!(&mut input, "    VariantNamed{i} {{").unwrap();
-        writeln!(&mut input, "        field_str: string @1,").unwrap();
-        writeln!(&mut input, "        field_gen: vec<hash_set<u32>> @2,").unwrap();
+        writeln!(&mut input, "        field_str: String @1,").unwrap();
+        writeln!(&mut input, "        field_gen: Vec<HashSet<u32>> @2,").unwrap();
         writeln!(&mut input, "    }} @{i},").unwrap();
         write!(&mut input, "    VariantUnnamed{i}(").unwrap();
-        write!(&mut input, "string @1, vec<hash_set<u32>> @2").unwrap();
+        write!(&mut input, "String @1, Vec<HashSet<u32>> @2").unwrap();
         writeln!(&mut input, ") @{},", i + count).unwrap();
     }
     input.push_str("}\n");
@@ -104,7 +104,7 @@ pub fn generate_schema(count: usize) -> String {
     writeln!(&mut input, "    }}").unwrap();
     for i in 1..=count {
         writeln!(&mut input, "    struct Type{i:05} {{").unwrap();
-        writeln!(&mut input, "        value1: string @1,").unwrap();
+        writeln!(&mut input, "        value1: String @1,").unwrap();
         writeln!(&mut input, "        value2: i64 @2,").unwrap();
         writeln!(&mut input, "        value3: u64 @3,").unwrap();
         writeln!(&mut input, "    }}").unwrap();

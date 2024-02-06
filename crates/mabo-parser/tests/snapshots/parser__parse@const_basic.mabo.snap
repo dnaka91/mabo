@@ -1,13 +1,13 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];"
+description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: String = \"value\";\nconst BYTES: Bytes = [1, 2, 3];"
 input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
 ---
 Schema {
     path: Some(
         "const_basic.mabo",
     ),
-    source: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];\n",
+    source: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: String = \"value\";\nconst BYTES: Bytes = [1, 2, 3];\n",
     comment: Comment(
         [],
     ),

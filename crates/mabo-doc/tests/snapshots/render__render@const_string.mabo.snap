@@ -1,7 +1,8 @@
 ---
 source: crates/mabo-doc/tests/render.rs
-description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+description: "const SIMPLE: String = \"value\";\n\nconst NEWLINE_ESCAPE: String = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: String = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: String = \"a\n    b\n    c\n\";"
 input_file: crates/mabo-parser/tests/inputs/const_string.mabo
+snapshot_kind: text
 ---
 --- const_string/index.html
 
@@ -109,7 +110,7 @@ input_file: crates/mabo-parser/tests/inputs/const_string.mabo
     Constant
     <a href="index.html">const_string</a>::<span class="name-const">SIMPLE</span>
   </h2>
-  <pre class="item-definition my-2">const SIMPLE: string = &#34;value&#34;;</pre>
+  <pre class="item-definition my-2">const SIMPLE: String = &#34;value&#34;;</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -141,7 +142,7 @@ input_file: crates/mabo-parser/tests/inputs/const_string.mabo
     Constant
     <a href="index.html">const_string</a>::<span class="name-const">NEWLINE_ESCAPE</span>
   </h2>
-  <pre class="item-definition my-2">const NEWLINE_ESCAPE: string = &#34;one two three&#34;;</pre>
+  <pre class="item-definition my-2">const NEWLINE_ESCAPE: String = &#34;one two three&#34;;</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -173,7 +174,7 @@ input_file: crates/mabo-parser/tests/inputs/const_string.mabo
     Constant
     <a href="index.html">const_string</a>::<span class="name-const">ESCAPES</span>
   </h2>
-  <pre class="item-definition my-2">const ESCAPES: string = &#34;escape basics \r\n \t \u{8} \u{c} \\ \&#34;hello\&#34; \nunicode ❤  emoji ❤ &#34;;</pre>
+  <pre class="item-definition my-2">const ESCAPES: String = &#34;escape basics \r\n \t \u{8} \u{c} \\ \&#34;hello\&#34; \nunicode ❤  emoji ❤ &#34;;</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -205,7 +206,7 @@ input_file: crates/mabo-parser/tests/inputs/const_string.mabo
     Constant
     <a href="index.html">const_string</a>::<span class="name-const">MULTILINE</span>
   </h2>
-  <pre class="item-definition my-2">const MULTILINE: string = &#34;a\n    b\n    c\n&#34;;</pre>
+  <pre class="item-definition my-2">const MULTILINE: String = &#34;a\n    b\n    c\n&#34;;</pre>
   <div class="markdown pl-6">
     
   </div>

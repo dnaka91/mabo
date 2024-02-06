@@ -47,23 +47,23 @@ pub fn encode_f64(w: &mut impl BufMut, value: f64) {
     w.put_f64(value);
 }
 
-/// Encode a UTF-8 encoded Mabo `string`.
+/// Encode a UTF-8 encoded Mabo `String`.
 pub fn encode_string(w: &mut impl BufMut, value: &str) {
     encode_bytes_std(w, value.as_bytes());
 }
 
-/// Encode a Mabo `bytes` raw byte array (represented as default Rust byte slice).
+/// Encode a Mabo `Bytes` raw byte array (represented as default Rust byte slice).
 pub fn encode_bytes_std(w: &mut impl BufMut, value: &[u8]) {
     encode_u64(w, value.len() as u64);
     w.put(value);
 }
 
-/// Encode a Mabo `bytes` raw byte array (represented as [`bytes::Bytes`] type).
+/// Encode a Mabo `Bytes` raw byte array (represented as [`bytes::Bytes`] type).
 pub fn encode_bytes_bytes(w: &mut impl BufMut, value: &Bytes) {
     encode_bytes_std(w, value);
 }
 
-/// Encode a Mabo `vec<T>` vector value.
+/// Encode a Mabo `Vec<T>` vector value.
 pub fn encode_vec<W, T, S, E>(w: &mut W, vec: &[T], size: S, encode: E)
 where
     W: BufMut,
@@ -77,7 +77,7 @@ where
     }
 }
 
-/// Encode a Mabo `hash_map<K, V>` hash map value.
+/// Encode a Mabo `HashMap<K, V>` hash map value.
 pub fn encode_hash_map<W, K, V, SK, SV, EK, EV>(
     w: &mut W,
     map: &HashMap<K, V>,
@@ -105,7 +105,7 @@ pub fn encode_hash_map<W, K, V, SK, SV, EK, EV>(
     }
 }
 
-/// Encode a Mabo `hash_set<T>` hash set value.
+/// Encode a Mabo `HashSet<T>` hash set value.
 pub fn encode_hash_set<W, T, S, E>(w: &mut W, set: &HashSet<T>, size: S, encode: E)
 where
     W: BufMut,
@@ -119,7 +119,7 @@ where
     }
 }
 
-/// Encode a Mabo `option<T>` option value.
+/// Encode a Mabo `Option<T>` option value.
 pub fn encode_option<W, T, E>(w: &mut W, option: &Option<T>, encode: E)
 where
     W: BufMut,

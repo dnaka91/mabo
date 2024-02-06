@@ -1,4 +1,4 @@
 struct Sample {
-    field1: string @1,
-    field2: string @1,
+    field1: String @1,
+    field2: String @1,
 }

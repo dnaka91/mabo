@@ -33,13 +33,13 @@ As the table shows, both `u64::MAX` and `u128::MAX` take up less space in the `b
 
 ## Strings and bytes
 
-Both strings (`string`, `&string`) and bytes (`bytes`, `&bytes`) use the same encoding. The difference is that strings ensure valid UTF-8, while bytes are arbitrary data.
+Both strings (`String`, `&String`) and bytes (`Bytes`, `&Bytes`) use the same encoding. The difference is that strings ensure valid UTF-8, while bytes are arbitrary data.
 
 The encoding is the length in _varint_ encoding, followed by the data byte-by-byte.
 
 ### References
 
-The reference versions `&str` and `&[u8]` have identical encoding to their owned versions. The difference lies in the decoding process. Instead of copying the payload out of the raw data stream, they can reference directly into said stream.
+The reference versions `&String` and `&Bytes` have identical encoding to their owned versions. The difference lies in the decoding process. Instead of copying the payload out of the raw data stream, they can reference directly into said stream.
 
 Depending on the support of the programming language, this might not be possible. In that case, they have the same behavior as the owned version.
 

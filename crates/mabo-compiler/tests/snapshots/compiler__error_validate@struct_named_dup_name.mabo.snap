@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-compiler/tests/compiler.rs
-description: "struct Sample {\n    field: string @1,\n    field: string @2,\n}"
+description: "struct Sample {\n    field: String @1,\n    field: String @2,\n}"
 input_file: crates/mabo-compiler/tests/inputs/validate/struct_named_dup_name.mabo
 ---
   × duplicate name found
@@ -8,10 +8,10 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_named_dup_name.mab
   ╰─▶ duplicate field name `field`
    ╭─[struct_named_dup_name.mabo:2:5]
  1 │ struct Sample {
- 2 │     field: string @1,
+ 2 │     field: String @1,
    ·     ──┬──
    ·       ╰── first declared here
- 3 │     field: string @2,
+ 3 │     field: String @2,
    ·     ──┬──
    ·       ╰── used here again
  4 │ }

@@ -1,8 +1,7 @@
 /// Basic user information.
 struct User {
     /// Full name of the user.
-    name: string @1,
+    name: String @1,
     /// Current age in years.
     age: u16 @2,
 }
-

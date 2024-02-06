@@ -373,7 +373,7 @@
       "patterns": [
         {
           "name": "storage.type.builtin.mabo",
-          "match": "(bool|[iu](?:8|16|32|64|128)|f(?:32|64)|&?(?:string|bytes)|box<(?:string|bytes)>)"
+          "match": "(bool|[iu](?:8|16|32|64|128)|f(?:32|64)|&?(?:String|Bytes)|Box<(?:String|Bytes)>)"
         },
         {
           "name": "storage.type.builtin.tuple.mabo",
@@ -426,7 +426,7 @@
         },
         {
           "name": "storage.type.builtin.vec.mabo",
-          "match": "vec(<.+>)",
+          "match": "Vec(<.+>)",
           "captures": {
             "1": {
               "patterns": [
@@ -439,7 +439,7 @@
         },
         {
           "name": "storage.type.builtin.hash_map.mabo",
-          "match": "hash_map(<.+,.+>)",
+          "match": "HashMap(<.+,.+>)",
           "captures": {
             "1": {
               "patterns": [
@@ -452,7 +452,7 @@
         },
         {
           "name": "storage.type.builtin.hash_set.mabo",
-          "match": "hash_set(<.+>)",
+          "match": "HashSet(<.+>)",
           "captures": {
             "1": {
               "patterns": [
@@ -465,7 +465,7 @@
         },
         {
           "name": "storage.type.builtin.option.mabo",
-          "match": "option(<.+>)",
+          "match": "Option(<.+>)",
           "captures": {
             "1": {
               "patterns": [
@@ -478,7 +478,7 @@
         },
         {
           "name": "storage.type.builtin.non_zero.mabo",
-          "match": "non_zero(<.+>)",
+          "match": "NonZero(<.+>)",
           "captures": {
             "1": {
               "patterns": [

@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: Option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: String @1,\n    middle: Option<String> @2,\n    last: String @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: String @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: String @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(String @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: Option<String> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
 input_file: crates/mabo-parser/tests/inputs/mixed.mabo
 ---
 /// Schema with a bit of everything, to try out more complex scenarios.
@@ -12,16 +12,16 @@ input_file: crates/mabo-parser/tests/inputs/mixed.mabo
 struct User {
     name: FullName @1,
     /// Physical address, might not be specified by the user.
-    address: option<Address> @2,
+    address: Option<Address> @2,
     age: u8 @3,
     birthday: birthday::DayOfBirth @4,
 }
 
 /// Full name of a user.
 struct FullName {
-    first: string @1,
-    middle: option<string> @2,
-    last: string @3,
+    first: String @1,
+    middle: Option<String> @2,
+    last: String @3,
 }
 
 /// Simple alias for convenience.
@@ -31,10 +31,10 @@ struct FullName {
 type Name = FullName;
 struct Address {
     /// Street name.
-    street: string @1,
+    street: String @1,
     /// Number of the house in the street.
     house_no: HouseNumber @2,
-    city: string @3,
+    city: String @3,
 }
 
 /// The number on the house.
@@ -44,7 +44,7 @@ enum HouseNumber {
     /// Digit only number.
     Digit(u16 @1) @1,
     /// Mixed _number_ with characters like `1a`.
-    Text(string @1) @2,
+    Text(String @1) @2,
 }
 
 /// Probably the max age of a human, currently.
@@ -62,7 +62,7 @@ mod birthday {
         Secret {
             /// Optional info from the user about why they didn't want to
             /// reveal their birthday.
-            reason: option<string> @1,
+            reason: Option<String> @1,
         } @2,
         /// We never asked and nobody knows.
         Unknown @3,

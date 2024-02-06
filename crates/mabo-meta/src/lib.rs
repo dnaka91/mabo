@@ -108,12 +108,12 @@ pub fn wire_size(ty: &Type<'_>) -> Option<WireSize> {
         Type::I128 => WireSize::range("i128", 1, 19),
         Type::F32 => WireSize::fixed("f32", 4),
         Type::F64 => WireSize::fixed("f64", 8),
-        Type::String => WireSize::min("string", 1),
-        Type::StringRef => WireSize::min("&string", 1),
-        Type::Bytes => WireSize::min("bytes", 1),
-        Type::BytesRef => WireSize::min("&bytes", 1),
+        Type::String => WireSize::min("String", 1),
+        Type::StringRef => WireSize::min("&String", 1),
+        Type::Bytes => WireSize::min("Bytes", 1),
+        Type::BytesRef => WireSize::min("&Bytes", 1),
         Type::Vec(ty) => WireSize {
-            label: "vec".into(),
+            label: "Vec".into(),
             min: 1,
             max: None,
             inner: vec![
@@ -122,7 +122,7 @@ pub fn wire_size(ty: &Type<'_>) -> Option<WireSize> {
             ],
         },
         Type::HashMap(kv) => WireSize {
-            label: "hash_map".into(),
+            label: "HashMap".into(),
             min: 1,
             max: None,
             inner: vec![
@@ -132,7 +132,7 @@ pub fn wire_size(ty: &Type<'_>) -> Option<WireSize> {
             ],
         },
         Type::HashSet(ty) => WireSize {
-            label: "hash_set".into(),
+            label: "HashSet".into(),
             min: 1,
             max: None,
             inner: vec![
@@ -143,7 +143,7 @@ pub fn wire_size(ty: &Type<'_>) -> Option<WireSize> {
         Type::Option(ty) => {
             let inner = wire_size(ty);
             WireSize {
-                label: "option".into(),
+                label: "Option".into(),
                 min: 0,
                 max: inner.as_ref().and_then(|size| size.max).map(|max| 1 + max),
                 inner: vec![("value".into(), inner)],
@@ -152,14 +152,14 @@ pub fn wire_size(ty: &Type<'_>) -> Option<WireSize> {
         Type::NonZero(ty) => {
             let inner = wire_size(ty);
             WireSize {
-                label: "non_zero".into(),
+                label: "NonZero".into(),
                 min: 0,
                 max: inner.as_ref().and_then(|size| size.max).map(|max| 1 + max),
                 inner: vec![("value".into(), inner)],
             }
         }
-        Type::BoxString => WireSize::min("box<string>", 1),
-        Type::BoxBytes => WireSize::min("box<bytes>", 1),
+        Type::BoxString => WireSize::min("Box<String>", 1),
+        Type::BoxBytes => WireSize::min("Box<Bytes>", 1),
         Type::Array(ty, size) => wire_size_array(ty, *size),
         Type::Tuple(types) => wire_size_tuple(types),
         Type::External(_) => return None,

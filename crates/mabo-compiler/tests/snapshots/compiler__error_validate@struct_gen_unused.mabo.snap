@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-compiler/tests/compiler.rs
-description: "struct Sample<T> {\n    value: string @1,\n}"
+description: "struct Sample<T> {\n    value: String @1,\n}"
 input_file: crates/mabo-compiler/tests/inputs/validate/struct_gen_unused.mabo
 ---
   × invalid generic type found
@@ -10,7 +10,7 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_gen_unused.mabo
  1 │ struct Sample<T> {
    ·               ┬
    ·               ╰── declared here
- 2 │     value: string @1,
+ 2 │     value: String @1,
  3 │ }
    ╰────
   help: each declared generic must be used in some way

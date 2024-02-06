@@ -11,5 +11,5 @@ const VALUE_I64: i64 = -4;
 const VALUE_I128: i128 = -5;
 const VALUE_F32: f32 = 1;
 const VALUE_F64: f64 = 2;
-const VALUE_STR: &string = "abc";
-const VALUE_BYTES: &bytes = [1, 2, 3];
+const VALUE_STR: &String = "abc";
+const VALUE_BYTES: &Bytes = [1, 2, 3];

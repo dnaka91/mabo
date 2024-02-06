@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-compiler/tests/compiler.rs
-description: "enum Sample {\n    One @1,\n    Two {\n        field: string @1,\n        field: string @2,\n    } @2,\n}"
+description: "enum Sample {\n    One @1,\n    Two {\n        field: String @1,\n        field: String @2,\n    } @2,\n}"
 input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_dup_name.mabo
 ---
   × duplicate name found
@@ -10,10 +10,10 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_dup_name.mabo
  1 │ enum Sample {
  2 │     One @1,
  3 │     Two {
- 4 │         field: string @1,
+ 4 │         field: String @1,
    ·         ──┬──
    ·           ╰── first declared here
- 5 │         field: string @2,
+ 5 │         field: String @2,
    ·         ──┬──
    ·           ╰── used here again
  6 │     } @2,

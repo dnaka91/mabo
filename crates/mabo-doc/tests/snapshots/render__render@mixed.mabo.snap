@@ -1,7 +1,8 @@
 ---
 source: crates/mabo-doc/tests/render.rs
-description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: Option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: String @1,\n    middle: Option<String> @2,\n    last: String @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: String @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: String @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(String @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: Option<String> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
 input_file: crates/mabo-parser/tests/inputs/mixed.mabo
+snapshot_kind: text
 ---
 --- mixed/index.html
 
@@ -135,7 +136,7 @@ input_file: crates/mabo-parser/tests/inputs/mixed.mabo
   </h2>
   <pre class="item-definition my-2">struct User {
     name: FullName @1,
-    address: option&#60;Address&#62; @2,
+    address: Option&#60;Address&#62; @2,
     age: u8 @3,
     birthday: birthday::DayOfBirth @4,
 }</pre>
@@ -167,7 +168,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">address</span>:
-        <span class="field-type">option&#60;Address&#62;</span>
+        <span class="field-type">Option&#60;Address&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -179,7 +180,7 @@ in a <strong>type safe</strong> way.</p>
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>option</strong> <code>0..</code></p>
+            <p><strong>Option</strong> <code>0..</code></p>
           <ul>
           <li>value: <em>unknown</em></li>
           </ul>
@@ -247,9 +248,9 @@ in a <strong>type safe</strong> way.</p>
     <a href="index.html">mixed</a>::<span class="name-struct">FullName</span>
   </h2>
   <pre class="item-definition my-2">struct FullName {
-    first: string @1,
-    middle: option&#60;string&#62; @2,
-    last: string @3,
+    first: String @1,
+    middle: Option&#60;String&#62; @2,
+    last: String @3,
 }</pre>
   <div class="markdown pl-6">
     <p>Full name of a user.</p>
@@ -267,7 +268,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">first</span>:
-        <span class="field-type">string</span>
+        <span class="field-type">String</span>
         <span class="field-id">@1</span>
       </code>
       <div class="markdown pl-4">
@@ -279,7 +280,7 @@ in a <strong>type safe</strong> way.</p>
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>string</strong> <code>1..</code></p>
+            <p><strong>String</strong> <code>1..</code></p>
           </div>
         </div>
       </div>
@@ -287,7 +288,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">middle</span>:
-        <span class="field-type">option&#60;string&#62;</span>
+        <span class="field-type">Option&#60;String&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -299,9 +300,9 @@ in a <strong>type safe</strong> way.</p>
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>option</strong> <code>0..</code></p>
+            <p><strong>Option</strong> <code>0..</code></p>
           <ul>
-          <li>value: <strong>string</strong> <code>1..</code></li>
+          <li>value: <strong>String</strong> <code>1..</code></li>
           </ul>
           </div>
         </div>
@@ -310,7 +311,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">last</span>:
-        <span class="field-type">string</span>
+        <span class="field-type">String</span>
         <span class="field-id">@3</span>
       </code>
       <div class="markdown pl-4">
@@ -322,7 +323,7 @@ in a <strong>type safe</strong> way.</p>
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>string</strong> <code>1..</code></p>
+            <p><strong>String</strong> <code>1..</code></p>
           </div>
         </div>
       </div>
@@ -393,9 +394,9 @@ in a <strong>type safe</strong> way.</p>
     <a href="index.html">mixed</a>::<span class="name-struct">Address</span>
   </h2>
   <pre class="item-definition my-2">struct Address {
-    street: string @1,
+    street: String @1,
     house_no: HouseNumber @2,
-    city: string @3,
+    city: String @3,
 }</pre>
   <div class="markdown pl-6">
     
@@ -413,7 +414,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">street</span>:
-        <span class="field-type">string</span>
+        <span class="field-type">String</span>
         <span class="field-id">@1</span>
       </code>
       <div class="markdown pl-4">
@@ -425,7 +426,7 @@ in a <strong>type safe</strong> way.</p>
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>string</strong> <code>1..</code></p>
+            <p><strong>String</strong> <code>1..</code></p>
           </div>
         </div>
       </div>
@@ -443,7 +444,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">city</span>:
-        <span class="field-type">string</span>
+        <span class="field-type">String</span>
         <span class="field-id">@3</span>
       </code>
       <div class="markdown pl-4">
@@ -455,7 +456,7 @@ in a <strong>type safe</strong> way.</p>
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>string</strong> <code>1..</code></p>
+            <p><strong>String</strong> <code>1..</code></p>
           </div>
         </div>
       </div>
@@ -491,7 +492,7 @@ in a <strong>type safe</strong> way.</p>
   </h2>
   <pre class="item-definition my-2">enum HouseNumber {
     Digit(u16 @1) @1,
-    Text(string @1) @2,
+    Text(String @1) @2,
 }</pre>
   <div class="markdown pl-6">
     <p>The number on the house.</p>
@@ -549,7 +550,7 @@ in a <strong>type safe</strong> way.</p>
           <li>
             <code>
               <span class="field-name">n0</span>:
-              <span class="field-type">string</span>
+              <span class="field-type">String</span>
               <span class="field-id">@1</span>
             </code>
             <div class="markdown pl-4">
@@ -561,7 +562,7 @@ in a <strong>type safe</strong> way.</p>
                 <p>The size range is:</p>
                 <div
                   class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-                  <p><strong>string</strong> <code>1..</code></p>
+                  <p><strong>String</strong> <code>1..</code></p>
                 </div>
               </div>
             </div>
@@ -725,7 +726,7 @@ on the month.</p>
         day: u8 @3,
     } @1,
     Secret {
-        reason: option&#60;string&#62; @1,
+        reason: Option&#60;String&#62; @1,
     } @2,
     Unknown @3,
 }</pre>
@@ -814,7 +815,7 @@ on the month.</p>
           <li>
             <code>
               <span class="field-name">reason</span>:
-              <span class="field-type">option&#60;string&#62;</span>
+              <span class="field-type">Option&#60;String&#62;</span>
               <span class="field-id">@1</span>
             </code>
             <div class="markdown pl-4">
@@ -827,9 +828,9 @@ reveal their birthday.</p>
                 <p>The size range is:</p>
                 <div
                   class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-                  <p><strong>option</strong> <code>0..</code></p>
+                  <p><strong>Option</strong> <code>0..</code></p>
                 <ul>
-                <li>value: <strong>string</strong> <code>1..</code></li>
+                <li>value: <strong>String</strong> <code>1..</code></li>
                 </ul>
                 </div>
               </div>

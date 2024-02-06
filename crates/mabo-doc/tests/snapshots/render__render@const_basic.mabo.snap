@@ -1,7 +1,8 @@
 ---
 source: crates/mabo-doc/tests/render.rs
-description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];"
+description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: String = \"value\";\nconst BYTES: Bytes = [1, 2, 3];"
 input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
+snapshot_kind: text
 ---
 --- const_basic/index.html
 
@@ -253,7 +254,7 @@ input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
     Constant
     <a href="index.html">const_basic</a>::<span class="name-const">STRING</span>
   </h2>
-  <pre class="item-definition my-2">const STRING: string = &#34;value&#34;;</pre>
+  <pre class="item-definition my-2">const STRING: String = &#34;value&#34;;</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -285,7 +286,7 @@ input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
     Constant
     <a href="index.html">const_basic</a>::<span class="name-const">BYTES</span>
   </h2>
-  <pre class="item-definition my-2">const BYTES: bytes = [1, 2, 3];</pre>
+  <pre class="item-definition my-2">const BYTES: Bytes = [1, 2, 3];</pre>
   <div class="markdown pl-6">
     
   </div>

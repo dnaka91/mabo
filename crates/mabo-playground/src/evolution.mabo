@@ -4,5 +4,5 @@ struct Version1 {
 
 struct Version2 {
     field1: u32 @1,
-    field2: string @2,
+    field2: String @2,
 }

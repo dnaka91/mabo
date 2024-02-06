@@ -17,30 +17,30 @@ fn basic(bencher: Bencher<'_, '_>) {
             use other::two;
 
             const VALUE1: u32 = 100;
-            const VALUE2: &string = "hello, world!";
+            const VALUE2: &String = "hello, world!";
 
             /// Some sample
             #[deprecated = "outdated"]
             struct SampleStruct<T1, T2> {
                 field1: bool @1,
                 field2: u32 @2,
-                field3: hash_map<u32, vec<string>> @3,
+                field3: HashMap<u32, Vec<String>> @3,
                 field4: T1 @4,
                 field5: T2 @5,
                 /// Comment on a field
                 field6: Type1 @6,
                 /// Another field comment
-                field7: two::Type2<u32, bool, bytes> @7,
+                field7: two::Type2<u32, bool, Bytes> @7,
             }
 
             enum Gender {
                 Male @1,
                 Female @2,
-                Other(hash_map<u32, vec<string>> @1) @3,
+                Other(HashMap<u32, Vec<String>> @1) @3,
             }
 
             /// Redefined type with fixed types
-            type SampleTyped = SampleStruct<bool, string>;
+            type SampleTyped = SampleStruct<bool, String>;
         "#};
 
     mabo_parser::Schema::parse(input, None).unwrap();

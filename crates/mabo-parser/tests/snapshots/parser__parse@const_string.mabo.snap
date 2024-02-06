@@ -1,13 +1,13 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+description: "const SIMPLE: String = \"value\";\n\nconst NEWLINE_ESCAPE: String = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: String = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: String = \"a\n    b\n    c\n\";"
 input_file: crates/mabo-parser/tests/inputs/const_string.mabo
 ---
 Schema {
     path: Some(
         "const_string.mabo",
     ),
-    source: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";\n",
+    source: "const SIMPLE: String = \"value\";\n\nconst NEWLINE_ESCAPE: String = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: String = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: String = \"a\n    b\n    c\n\";\n",
     comment: Comment(
         [],
     ),

@@ -71,7 +71,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Type<'i>, ParseError> {
 fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     alt((
         dispatch! {
-            take_while(2.., ('a'..='z', '0'..='9', '&'));
+            take_while(2.., ('a'..='z', 'A'..='Z', '0'..='9', '&'));
             "bool" => empty.value(DataType::Bool),
             "u8" => empty.value(DataType::U8),
             "u16" => empty.value(DataType::U16),
@@ -85,14 +85,14 @@ fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
             "i128" => empty.value(DataType::I128),
             "f32" => empty.value(DataType::F32),
             "f64" => empty.value(DataType::F64),
-            "string" => empty.value(DataType::String),
-            "&string" => empty.value(DataType::StringRef),
-            "bytes" => empty.value(DataType::Bytes),
-            "&bytes" => empty.value(DataType::BytesRef),
+            "String" => empty.value(DataType::String),
+            "&String" => empty.value(DataType::StringRef),
+            "Bytes" => empty.value(DataType::Bytes),
+            "&Bytes" => empty.value(DataType::BytesRef),
             _ => fail,
         },
-        literal("box<string>").value(DataType::BoxString),
-        literal("box<bytes>").value(DataType::BoxBytes),
+        literal("Box<String>").value(DataType::BoxString),
+        literal("Box<Bytes>").value(DataType::BoxBytes),
     ))
     .parse_next(input)
 }
@@ -100,20 +100,20 @@ fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     terminated(
         dispatch! {
-            terminated(take_while(3.., ('a'..='z', '_')), '<');
-            "vec" => cut_err(parse.map_err(Cause::from))
+            terminated(take_while(3.., ('a'..='z', 'A'..='Z', '_')), '<');
+            "Vec" => cut_err(parse.map_err(Cause::from))
                 .map(|t| DataType::Vec(Box::new(t))),
-            "hash_map" => cut_err(separated_pair(
+            "HashMap" => cut_err(separated_pair(
                     parse.map_err(Cause::from),
                     (',', space0),
                     parse.map_err(Cause::from),
                 ))
                 .map(|kv| DataType::HashMap(Box::new(kv))),
-            "hash_set" => cut_err(parse.map_err(Cause::from))
+            "HashSet" => cut_err(parse.map_err(Cause::from))
                 .map(|t| DataType::HashSet(Box::new(t))),
-            "option" => cut_err(parse.map_err(Cause::from))
+            "Option" => cut_err(parse.map_err(Cause::from))
                 .map(|t| DataType::Option(Box::new(t))),
-            "non_zero" => cut_err(parse.map_err(Cause::from))
+            "NonZero" => cut_err(parse.map_err(Cause::from))
                 .map(|t| DataType::NonZero(Box::new(t))),
             _ => fail,
         },

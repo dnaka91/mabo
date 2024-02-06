@@ -441,7 +441,7 @@ impl Display for Variant<'_> {
 /// type A = B;
 ///
 /// /// With generics
-/// type A<T> = hash_map<u32, T>;
+/// type A<T> = HashMap<u32, T>;
 /// ```
 #[derive(Debug, Eq, PartialEq)]
 pub struct TypeAlias<'a> {
@@ -877,17 +877,17 @@ impl Display for DataType<'_> {
             Self::I128 => f.write_str("i128"),
             Self::F32 => f.write_str("f32"),
             Self::F64 => f.write_str("f64"),
-            Self::String => f.write_str("string"),
-            Self::StringRef => f.write_str("&string"),
-            Self::Bytes => f.write_str("bytes"),
-            Self::BytesRef => f.write_str("&bytes"),
-            Self::Vec(t) => write!(f, "vec<{t}>"),
-            Self::HashMap(kv) => write!(f, "hash_map<{}, {}>", kv.0, kv.1),
-            Self::HashSet(t) => write!(f, "hash_set<{t}>"),
-            Self::Option(t) => write!(f, "option<{t}>"),
-            Self::NonZero(t) => write!(f, "non_zero<{t}>"),
-            Self::BoxString => f.write_str("box<string>"),
-            Self::BoxBytes => f.write_str("box<bytes>"),
+            Self::String => f.write_str("String"),
+            Self::StringRef => f.write_str("&String"),
+            Self::Bytes => f.write_str("Bytes"),
+            Self::BytesRef => f.write_str("&Bytes"),
+            Self::Vec(t) => write!(f, "Vec<{t}>"),
+            Self::HashMap(kv) => write!(f, "HashMap<{}, {}>", kv.0, kv.1),
+            Self::HashSet(t) => write!(f, "HashSet<{t}>"),
+            Self::Option(t) => write!(f, "Option<{t}>"),
+            Self::NonZero(t) => write!(f, "NonZero<{t}>"),
+            Self::BoxString => f.write_str("Box<String>"),
+            Self::BoxBytes => f.write_str("Box<Bytes>"),
             Self::Tuple(l) => concat(f, "(", l, ", ", ")"),
             Self::Array(t, size) => write!(f, "[{t}; {size}]"),
             Self::External(t) => t.fmt(f),

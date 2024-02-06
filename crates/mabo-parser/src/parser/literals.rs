@@ -244,7 +244,7 @@ mod tests {
 
         println!(
             "{:?}",
-            miette::Report::from(err).with_source_code("const VALUE: string = &\"test\";")
+            miette::Report::from(err).with_source_code("const VALUE: String = &\"test\";")
         );
     }
 }

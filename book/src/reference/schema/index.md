@@ -29,10 +29,10 @@ Some of these are not natively supported in each language, turning into a common
 | i128    | i128     | [big.Int] | [BigInteger] | bigint     | int    |
 | f32     | f32      | float32   | Float        | number     | float  |
 | f64     | f64      | float64   | Double       | number     | float  |
-| string  | String   | string    | String       | string     | str    |
-| &string | &str     | string    | String       | string     | str    |
-| bytes   | Vec\<u8> | \[]byte   | ByteArray    | Uint8Array | bytes  |
-| &bytes  | &\[u8]   | \[]byte   | ByteArray    | Uint8Array | bytes  |
+| String  | String   | string    | String       | string     | str    |
+| &String | &str     | string    | String       | string     | str    |
+| Bytes   | Vec\<u8> | \[]byte   | ByteArray    | Uint8Array | bytes  |
+| &Bytes  | &\[u8]   | \[]byte   | ByteArray    | Uint8Array | bytes  |
 
 [big.Int]: https://pkg.go.dev/math/big#Int
 [BigInteger]: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/math/BigInteger.html
@@ -41,9 +41,9 @@ Some of these are not natively supported in each language, turning into a common
 
 Generic types have one or more type parameters. That means they are not bound to a single type, but can be used together with any other type.
 
-For example, a vector `vec<T>` (list of values) can be used as `vec<u32>` to create a list of 32-bit unsigned integers, or as `vec<string>` to crate a list of text values.
+For example, a vector `Vec<T>` (list of values) can be used as `Vec<u32>` to create a list of 32-bit unsigned integers, or as `Vec<String>` to crate a list of text values.
 
-#### Vectors `vec<T>`
+#### Vectors `Vec<T>`
 
 Containers for multiple values of a single type.
 
@@ -55,7 +55,7 @@ Containers for multiple values of a single type.
 | TypeScript | T\[]       |
 | Python     | list\[T]   |
 
-#### Hash maps `hash_map<K, V>`
+#### Hash maps `HashMap<K, V>`
 
 Mapping from keys to values, also called dictionaries in some languages. The key must be unique in the map and inserting a new value with the same key will replace the old value.
 
@@ -67,7 +67,7 @@ Mapping from keys to values, also called dictionaries in some languages. The key
 | TypeScript | Map\<K, V>     |
 | Python     | dict\[K, V]    |
 
-#### Hash sets `hash_set<T>`
+#### Hash sets `HashSet<T>`
 
 Collection of distinct values. These are basically like a hash map without an associated value, and can be used to ensure that each contained value is only present once.
 
@@ -79,7 +79,7 @@ Collection of distinct values. These are basically like a hash map without an as
 | TypeScript | Set\<T>         |
 | Python     | set\[T]         |
 
-#### Optionals `option<T>`
+#### Optionals `Option<T>`
 
 Optional values may be present or missing. By default each value must be present in the wire format and this type allows to declare them as potentially absent.
 
@@ -95,16 +95,16 @@ Optional values may be present or missing. By default each value must be present
 
 These types have special meanings that either allow for more compact representation on the wire format, or are beneficial in low-level languages that give fine grained control over memory.
 
-#### Non-zero values `non_zero<T>`
+#### Non-zero values `NonZero<T>`
 
 This wrapper type defines, that the contained type is not zero. Depending on the type this can have a different meaning.
 
 - `u8`-`u128`, `i8`-`i128`: The integer is guaranteed to be non-zero.
-- `string`, `bytes`: The value is guaranteed to contain at least one character or byte.
+- `String`, `Bytes`: The value is guaranteed to contain at least one character or byte.
 
 The reason for this type is two-fold. First off, it allows to be more strict about certain values, where a zero number or empty string is not allowed.
 
-Then, on the wire format when combined with an `option<T>`, it allows to use use less bytes for the value. As the value can't take be zero or empty, this state can be used to represent the missing state of the option.
+Then, on the wire format when combined with an `Option<T>`, it allows to use use less bytes for the value. As the value can't take be zero or empty, this state can be used to represent the missing state of the option.
 
 | Language   | Definition  |
 | ---------- | ----------- |
@@ -114,11 +114,11 @@ Then, on the wire format when combined with an `option<T>`, it allows to use use
 | TypeScript | T           |
 | Python     | T           |
 
-#### Boxed strings `box<string>`
+#### Boxed strings `Box<String>`
 
-Specialized type, that currently only has a specific meaning for Rust. It describes a string value that lives on the heap and is immutable (in contrast to a `string` which can be mutated).
+Specialized type, that currently only has a specific meaning for Rust. It describes a string value that lives on the heap and is immutable (in contrast to a `String` which can be mutated).
 
-As strings are immutable in most other languages, it's equivalent to the `string` type for these.
+As strings are immutable in most other languages, it's equivalent to the `String` type for these.
 
 | Language   | Definition |
 | ---------- | ---------- |
@@ -128,7 +128,7 @@ As strings are immutable in most other languages, it's equivalent to the `string
 | TypeScript | string     |
 | Python     | str        |
 
-#### Boxed bytes `box<bytes>`
+#### Boxed bytes `Box<Bytes>`
 
 Specialized type, that describes an immutable byte array, and is specific to Rust.
 

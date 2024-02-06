@@ -14,26 +14,30 @@ Basic types are the most primitive, like boolean, integers, strings and raw bina
 
 Some of these are not natively supported in each language, turning into a common type. For example the different integer types are all `number` in TypeScript or `int` in Python.
 
-| Schema  | Rust     | Go        | Kotlin       | TypeScript | Python |
-| ------- | -------- | --------- | ------------ | ---------- | ------ |
-| bool    | bool     | bool      | Boolean      | boolean    | bool   |
-| u8      | u8       | uint8     | UByte        | number     | int    |
-| u16     | u16      | uint16    | UShort       | number     | int    |
-| u32     | u32      | uint32    | UInt         | number     | int    |
-| u64     | u64      | uint64    | ULong        | bigint     | int    |
-| u128    | u128     | [big.Int] | [BigInteger] | bigint     | int    |
-| i8      | i8       | int8      | Byte         | number     | int    |
-| i16     | i16      | int16     | Short        | number     | int    |
-| i32     | i32      | int32     | Int          | number     | int    |
-| i64     | i64      | int64     | Long         | bigint     | int    |
-| i128    | i128     | [big.Int] | [BigInteger] | bigint     | int    |
-| f32     | f32      | float32   | Float        | number     | float  |
-| f64     | f64      | float64   | Double       | number     | float  |
-| string  | String   | string    | String       | string     | str    |
-| &string | &str     | string    | String       | string     | str    |
-| bytes   | Vec\<u8> | \[]byte   | ByteArray    | Uint8Array | bytes  |
-| &bytes  | &\[u8]   | \[]byte   | ByteArray    | Uint8Array | bytes  |
+| Schema  | Rust           | Go        | Kotlin       | TypeScript | Python |
+| ------- | -------------- | --------- | ------------ | ---------- | ------ |
+| bool    | bool           | bool      | Boolean      | boolean    | bool   |
+| u8      | u8             | uint8     | UByte        | number     | int    |
+| u16     | u16            | uint16    | UShort       | number     | int    |
+| u32     | u32            | uint32    | UInt         | number     | int    |
+| u64     | u64            | uint64    | ULong        | bigint     | int    |
+| u128    | u128           | [big.Int] | [BigInteger] | bigint     | int    |
+| ubig    | [num::BigUint] | [big.Int] | [BigInteger] | bigint     | int    |
+| i8      | i8             | int8      | Byte         | number     | int    |
+| i16     | i16            | int16     | Short        | number     | int    |
+| i32     | i32            | int32     | Int          | number     | int    |
+| i64     | i64            | int64     | Long         | bigint     | int    |
+| i128    | i128           | [big.Int] | [BigInteger] | bigint     | int    |
+| ibig    | [num::BigInt]  | [big.Int] | [BigInteger] | bigint     | int    |
+| f32     | f32            | float32   | Float        | number     | float  |
+| f64     | f64            | float64   | Double       | number     | float  |
+| string  | String         | string    | String       | string     | str    |
+| &string | &str           | string    | String       | string     | str    |
+| bytes   | Vec\<u8>       | \[]byte   | ByteArray    | Uint8Array | bytes  |
+| &bytes  | &\[u8]         | \[]byte   | ByteArray    | Uint8Array | bytes  |
 
+[num::BigUint]: https://docs.rs/num/latest/num/struct.BigUint.html
+[num::BigInt]: https://docs.rs/num/latest/num/struct.BigInt.html
 [big.Int]: https://pkg.go.dev/math/big#Int
 [BigInteger]: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/math/BigInteger.html
 

@@ -184,6 +184,10 @@ fn compile_data_type(
             quote! { ::mabo::FieldEncoding::Varint },
             quote! { ::mabo::buf::encode_u128(w, *#name) },
         ),
+        Type::UBig => (
+            quote! { ::mabo::FieldEncoding::Varint },
+            quote! { ::mabo::buf::encode_ubig(w, #name) },
+        ),
         Type::I8 => (
             quote! { ::mabo::FieldEncoding::Fixed1 },
             quote! { ::mabo::buf::encode_i8(w, *#name) },
@@ -203,6 +207,10 @@ fn compile_data_type(
         Type::I128 => (
             quote! { ::mabo::FieldEncoding::Varint },
             quote! { ::mabo::buf::encode_i128(w, *#name) },
+        ),
+        Type::IBig => (
+            quote! { ::mabo::FieldEncoding::Varint },
+            quote! { ::mabo::buf::encode_ibig(w, #name) },
         ),
         Type::F32 => (
             quote! { ::mabo::FieldEncoding::Fixed4 },
@@ -288,6 +296,10 @@ fn compile_data_type(
                 quote! { ::mabo::FieldEncoding::Varint },
                 quote! { ::mabo::buf::encode_u128(w, #name.get()) },
             ),
+            Type::UBig => (
+                quote! { ::mabo::FieldEncoding::Varint },
+                quote! { ::mabo::buf::encode_ubig(w, #name.get()) },
+            ),
             Type::I8 => (
                 quote! { ::mabo::FieldEncoding::Fixed1 },
                 quote! { ::mabo::buf::encode_i8(w, #name.get()) },
@@ -307,6 +319,10 @@ fn compile_data_type(
             Type::I128 => (
                 quote! { ::mabo::FieldEncoding::Varint },
                 quote! { ::mabo::buf::encode_i128(w, #name.get()) },
+            ),
+            Type::IBig => (
+                quote! { ::mabo::FieldEncoding::Varint },
+                quote! { ::mabo::buf::encode_ibig(w, #name.get()) },
             ),
             Type::String
             | Type::StringRef

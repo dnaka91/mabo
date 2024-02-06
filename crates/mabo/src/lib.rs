@@ -11,7 +11,9 @@ use std::{
     ops::Deref,
 };
 
-pub use buf::{Buf, BufMut, Bytes, Decode, Encode};
+pub use num_bigint::{BigInt, BigUint};
+
+pub use self::buf::{Buf, BufMut, Bytes, Decode, Encode};
 
 pub mod buf;
 pub mod varint;

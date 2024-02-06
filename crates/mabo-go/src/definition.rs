@@ -400,7 +400,7 @@ impl Display for RenderType<'_> {
             Type::U16 => write!(f, "uint16"),
             Type::U32 => write!(f, "uint32"),
             Type::U64 => write!(f, "uint64"),
-            Type::U128 | Type::I128 => write!(f, "*big.Int"),
+            Type::U128 | Type::UBig | Type::I128 | Type::IBig => write!(f, "*big.Int"),
             Type::I8 => write!(f, "int8"),
             Type::I16 => write!(f, "int16"),
             Type::I32 => write!(f, "int32"),
@@ -419,11 +419,13 @@ impl Display for RenderType<'_> {
                 Type::U32 => write!(f, "mabo.NonZeroU32"),
                 Type::U64 => write!(f, "mabo.NonZeroU64"),
                 Type::U128 => write!(f, "mabo.NonZeroU128"),
+                Type::UBig => write!(f, "mabo.NonZeroUBig"),
                 Type::I8 => write!(f, "mabo.NonZeroI8"),
                 Type::I16 => write!(f, "mabo.NonZeroI16"),
                 Type::I32 => write!(f, "mabo.NonZeroI32"),
                 Type::I64 => write!(f, "mabo.NonZeroI64"),
                 Type::I128 => write!(f, "mabo.NonZeroI128"),
+                Type::IBig => write!(f, "mabo.NonZeroIBig"),
                 Type::F32 => write!(f, "mabo.NonZeroF32"),
                 Type::F64 => write!(f, "mabo.NonZeroF64"),
                 Type::String | Type::StringRef => write!(f, "mabo.NonZeroString"),
@@ -475,7 +477,7 @@ impl Display for RenderConstType<'_> {
             Type::U16 => write!(f, "uint16"),
             Type::U32 => write!(f, "uint32"),
             Type::U64 => write!(f, "uint64"),
-            Type::U128 | Type::I128 => write!(f, "*big.Int"),
+            Type::U128 | Type::UBig | Type::I128 | Type::IBig => write!(f, "*big.Int"),
             Type::I8 => write!(f, "int8"),
             Type::I16 => write!(f, "int16"),
             Type::I32 => write!(f, "int32"),
@@ -693,11 +695,13 @@ fn uses_generic(generic: &str, fields: &Fields<'_>) -> bool {
             | Type::U32
             | Type::U64
             | Type::U128
+            | Type::UBig
             | Type::I8
             | Type::I16
             | Type::I32
             | Type::I64
             | Type::I128
+            | Type::IBig
             | Type::F32
             | Type::F64
             | Type::String

@@ -5,6 +5,7 @@ use std::{
 };
 
 pub use bytes::{Buf, Bytes};
+use num_bigint::{BigInt, BigUint};
 
 use crate::{FieldEncoding, FieldId, NonZero, NonZeroBytes, NonZeroString, VariantId, varint};
 
@@ -106,6 +107,30 @@ macro_rules! decode_int {
 
 decode_int!(u16, u32, u64, u128);
 decode_int!(i16, i32, i64, i128);
+
+///Decode a Mabo `ubig` integer.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the
+/// value, or the _Varint_ decoding fails due to a missing end marker.
+pub fn decode_ubig(r: &mut impl Buf) -> Result<BigUint> {
+    let (value, consumed) = varint::decode_ubig(r.chunk())?;
+    r.advance(consumed);
+    Ok(value)
+}
+
+///Decode a Mabo `ibig` integer.
+///
+/// # Errors
+///
+/// Will return `Err` if the buffer does not have enough remaining data to read the
+/// value, or the _Varint_ decoding fails due to a missing end marker.
+pub fn decode_ibig(r: &mut impl Buf) -> Result<BigInt> {
+    let (value, consumed) = varint::decode_ibig(r.chunk())?;
+    r.advance(consumed);
+    Ok(value)
+}
 
 /// Decode a Mabo `f32` floating number.
 ///

@@ -1,21 +1,57 @@
 {
   "name": "mabo",
   "displayName": "Mabo",
-  "description": "",
   "version": "0.1.0",
+  "description": "Data format and schema, with a type system as strong as Rust's.",
   "license": "MIT",
+  "publisher": "dnaka91",
+  "preview": true,
+  "author": {
+    "name": "Dominik Nakamura",
+    "email": "dnaka91@gmail.com"
+  },
+  "categories": [
+    "Formatters",
+    "Linters",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "data-format",
+    "language",
+    "schema"
+  ],
+  "badges": [
+    {
+      "url": "https://img.shields.io/github/license/dnaka91/mabo?style=for-the-badge",
+      "href": "LICENSE.md",
+      "description": "Project License"
+    },
+    {
+      "url": "https://img.shields.io/github/commit-activity/m/dnaka91/mabo?style=for-the-badge&logo=git",
+      "href": "https://github.com/dnaka91/mabo/commits/main",
+      "description": "Git commit activity"
+    },
+    {
+      "url": "https://img.shields.io/discord/789699970138767360?style=for-the-badge&logo=discord",
+      "href": "https://discord.gg/phxGsW8dWd",
+      "description": "Discord"
+    }
+  ],
+  "qna": false,
+  "homepage": "https://dnaka91.github.io/mabo",
   "repository": {
+    "type": "git",
     "url": "https://github.com/dnaka91/mabo.git"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/dnaka91"
   },
   "main": "./dist/extension.js",
   "icon": "./images/logo.png",
-  "engines": {
-    "node": ">=21",
-    "vscode": "^1.85.0"
+  "galleryBanner": {
+    "color": "#d95a00",
+    "theme": "dark"
   },
-  "categories": [
-    "Programming Languages"
-  ],
   "contributes": {
     "languages": [
       {
@@ -127,6 +163,10 @@
     "syntaxes": "js-yaml syntaxes/mabo.tmLanguage.yaml > syntaxes/mabo.tmLanguage.json",
     "vscode:prepublish": "bun run schemas && bun run syntaxes && bun run build",
     "package": "vsce package"
+  },
+  "engines": {
+    "node": ">=21",
+    "vscode": "^1.85.0"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"

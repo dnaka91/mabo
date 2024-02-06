@@ -1,7 +1,7 @@
 # 🍲 Mabo
 
-[![GitHub License](https://img.shields.io/github/license/dnaka91/mabo?style=for-the-badge)](LICENSE.md)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dnaka91/mabo?style=for-the-badge&logo=git)](https://github.com/dnaka91/mabo/commits/main/)
+[![Project License](https://img.shields.io/github/license/dnaka91/mabo?style=for-the-badge)](LICENSE.md)
+[![Git commit activity](https://img.shields.io/github/commit-activity/m/dnaka91/mabo?style=for-the-badge&logo=git)](https://github.com/dnaka91/mabo/commits/main/)
 [![Discord](https://img.shields.io/discord/789699970138767360?style=for-the-badge&logo=discord)](https://discord.gg/phxGsW8dWd)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/dnaka91?style=for-the-badge&logo=githubsponsors)](https://github.com/sponsors/dnaka91)
 

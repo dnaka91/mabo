@@ -1,13 +1,13 @@
 ---
 source: crates/mabo-compiler/tests/compiler.rs
-description: "struct Sample(string @1, string @1)"
+description: "struct Sample(String @1, String @1)"
 input_file: crates/mabo-compiler/tests/inputs/validate/struct_unnamed_dup_id.mabo
 ---
   × duplicate ID found
   ├─▶ duplicate ID in a field
   ╰─▶ duplicate ID 1 in position 2, already used at 1
    ╭─[struct_unnamed_dup_id.mabo:1:22]
- 1 │ struct Sample(string @1, string @1)
+ 1 │ struct Sample(String @1, String @1)
    ·                      ─┬         ─┬
    ·                       │          ╰── used here again
    ·                       ╰── first declared here

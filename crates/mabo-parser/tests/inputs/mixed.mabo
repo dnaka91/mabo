@@ -7,16 +7,16 @@
 struct User {
     name: FullName @1,
     /// Physical address, might not be specified by the user.
-    address: option<Address> @2,
+    address: Option<Address> @2,
     age: u8 @3,
     birthday: birthday::DayOfBirth @4,
 }
 
 /// Full name of a user.
 struct FullName {
-    first: string @1,
-    middle: option<string> @2,
-    last: string @3,
+    first: String @1,
+    middle: Option<String> @2,
+    last: String @3,
 }
 
 /// Simple alias for convenience.
@@ -27,10 +27,10 @@ type Name = FullName;
 
 struct Address {
     /// Street name.
-    street: string @1,
+    street: String @1,
     /// Number of the house in the street.
     house_no: HouseNumber @2,
-    city: string @3,
+    city: String @3,
 }
 
 /// The number on the house.
@@ -40,7 +40,7 @@ enum HouseNumber {
     /// Digit only number.
     Digit(u16 @1) @1,
     /// Mixed _number_ with characters like `1a`.
-    Text(string @1) @2,
+    Text(String @1) @2,
 }
 
 /// Probably the max age of a human, currently.
@@ -60,7 +60,7 @@ mod birthday {
         Secret {
             /// Optional info from the user about why they didn't want to
             /// reveal their birthday.
-            reason: option<string> @1,
+            reason: Option<String> @1,
         } @2,
         /// We never asked and nobody knows.
         Unknown @3,

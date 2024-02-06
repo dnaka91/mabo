@@ -184,13 +184,13 @@ non_zero_collection!(Bytes);
 non_zero_collection!(HashMap<K, V>);
 non_zero_collection!(HashSet<T>);
 
-/// String (Mabo's `non_zero<string>`) that is guaranteed to not be empty.
+/// String (Mabo's `NonZero<String>`) that is guaranteed to not be empty.
 pub type NonZeroString = NonZero<String>;
-/// Byte vector (Mabo's `non_zero<bytes>`) that is guaranteed to not be empty.
+/// Byte vector (Mabo's `NonZero<Bytes>`) that is guaranteed to not be empty.
 pub type NonZeroBytes = NonZero<Vec<u8>>;
-/// Vector of `T` (Mabo's `non_zero<vec<T>>`) that is guaranteed to not be empty.
+/// Vector of `T` (Mabo's `NonZero<Vec<T>>`) that is guaranteed to not be empty.
 pub type NonZeroVec<T> = NonZero<Vec<T>>;
-/// Hash map (Mabo's `non_zero<hash_map<K ,V>>`) that is guaranteed to not be empty.
+/// Hash map (Mabo's `NonZero<HashMap<K ,V>>`) that is guaranteed to not be empty.
 pub type NonZeroHashMap<K, V> = NonZero<HashMap<K, V>>;
-/// Hash set (Mabo's `non_zero<hash_set<T>>`) that is guaranteed to not be empty.
+/// Hash set (Mabo's `NonZero<HashSet<T>>`) that is guaranteed to not be empty.
 pub type NonZeroHashSet<T> = NonZero<HashSet<T>>;

@@ -3,7 +3,7 @@ enum Sample {
     Variant1 @1,
     Variant2(u32 @1, u8 @2) @2,
     Variant3 {
-        field1: string @1,
-        field2: vec<bool> @2,
+        field1: String @1,
+        field2: Vec<bool> @2,
     } @3,
 }

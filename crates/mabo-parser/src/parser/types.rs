@@ -70,7 +70,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Type<'i>, ParseError> {
 fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     alt((
         dispatch! {
-            take_while(2.., ('a'..='z', '0'..='9', '&'));
+            take_while(2.., ('a'..='z', 'A'..='Z', '0'..='9', '&'));
             "bool" => empty.value(DataType::Bool),
             "u8" => empty.value(DataType::U8),
             "u16" => empty.value(DataType::U16),
@@ -84,14 +84,14 @@ fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
             "i128" => empty.value(DataType::I128),
             "f32" => empty.value(DataType::F32),
             "f64" => empty.value(DataType::F64),
-            "string" => empty.value(DataType::String),
-            "&string" => empty.value(DataType::StringRef),
-            "bytes" => empty.value(DataType::Bytes),
-            "&bytes" => empty.value(DataType::BytesRef),
+            "String" => empty.value(DataType::String),
+            "&String" => empty.value(DataType::StringRef),
+            "Bytes" => empty.value(DataType::Bytes),
+            "&Bytes" => empty.value(DataType::BytesRef),
             _ => fail,
         },
-        literal("box<string>").value(DataType::BoxString),
-        literal("box<bytes>").value(DataType::BoxBytes),
+        literal("Box<String>").value(DataType::BoxString),
+        literal("Box<Bytes>").value(DataType::BoxBytes),
     ))
     .parse_next(input)
 }
@@ -128,30 +128,30 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     }
 
     dispatch! {
-        take_while(3.., ('a'..='z', '_')).with_span();
-        ("vec", ref span) => parse_single(|angle, ty| DataType::Vec {
+        take_while(3.., ('a'..='z', 'A'..='Z', '_')).with_span();
+        ("Vec", ref span) => parse_single(|angle, ty| DataType::Vec {
                 span: span.into(),
                 angle,
                 ty: Box::new(ty),
             }),
-        ("hash_map", ref span) => parse_pair(|angle, key, comma, value| DataType::HashMap {
+        ("HashMap", ref span) => parse_pair(|angle, key, comma, value| DataType::HashMap {
                 span: span.into(),
                 angle,
                 key: Box::new(key),
                 comma,
                 value: Box::new(value),
             }),
-        ("hash_set", ref span) => parse_single(|angle, ty| DataType::HashSet {
+        ("HashSet", ref span) => parse_single(|angle, ty| DataType::HashSet {
                 span: span.into(),
                 angle,
                 ty: Box::new(ty),
             }),
-        ("option", ref span) => parse_single(|angle, ty| DataType::Option {
+        ("Option", ref span) => parse_single(|angle, ty| DataType::Option {
                 span: span.into(),
                 angle,
                 ty: Box::new(ty),
             }),
-        ("non_zero", ref span) => parse_single(|angle, ty| DataType::NonZero {
+        ("NonZero", ref span) => parse_single(|angle, ty| DataType::NonZero {
                 span: span.into(),
                 angle,
                 ty: Box::new(ty),

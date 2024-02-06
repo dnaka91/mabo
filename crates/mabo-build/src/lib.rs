@@ -105,11 +105,11 @@ impl Debug for Error {
 /// Instance of the compiler, which is responsible to generate Rust source code from schema files.
 #[derive(Default)]
 pub struct Compiler {
-    /// The data type to use for Mabo's `bytes` type.
+    /// The data type to use for Mabo's `Bytes` type.
     bytes_type: BytesType,
 }
 
-/// The data type to use for Mabo's `bytes` type, that is used throughout all generated schemas.
+/// The data type to use for Mabo's `Bytes` type, that is used throughout all generated schemas.
 #[derive(Clone, Copy, Default)]
 pub enum BytesType {
     /// Use the default `Vec<u8>` type from Rust's stdlib.
@@ -126,7 +126,7 @@ pub struct Opts {
 }
 
 impl Compiler {
-    /// Change the type that is used to represent Mabo `bytes` byte arrays.
+    /// Change the type that is used to represent Mabo `Bytes` byte arrays.
     #[must_use]
     pub fn with_bytes_type(mut self, value: BytesType) -> Self {
         self.bytes_type = value;

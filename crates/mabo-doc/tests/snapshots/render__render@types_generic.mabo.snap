@@ -1,7 +1,8 @@
 ---
 source: crates/mabo-doc/tests/render.rs
-description: "struct Sample {\n    f1: vec<u32> @1,\n    f2: hash_map<u32, string> @2,\n    f3: hash_set<u32> @3,\n    f4: option<u32> @4,\n    f5: non_zero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    vec<u32> @1,\n    hash_map<u32, string> @2,\n    hash_set<u32> @3,\n    option<u32> @4,\n    non_zero<u32> @5,\n)"
+description: "struct Sample {\n    f1: Vec<u32> @1,\n    f2: HashMap<u32, String> @2,\n    f3: HashSet<u32> @3,\n    f4: Option<u32> @4,\n    f5: NonZero<u32> @5,\n}\n\nstruct SampleUnnamed(\n    Vec<u32> @1,\n    HashMap<u32, String> @2,\n    HashSet<u32> @3,\n    Option<u32> @4,\n    NonZero<u32> @5,\n)"
 input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
+snapshot_kind: text
 ---
 --- types_generic/index.html
 
@@ -94,11 +95,11 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <a href="index.html">types_generic</a>::<span class="name-struct">Sample</span>
   </h2>
   <pre class="item-definition my-2">struct Sample {
-    f1: vec&#60;u32&#62; @1,
-    f2: hash_map&#60;u32, string&#62; @2,
-    f3: hash_set&#60;u32&#62; @3,
-    f4: option&#60;u32&#62; @4,
-    f5: non_zero&#60;u32&#62; @5,
+    f1: Vec&#60;u32&#62; @1,
+    f2: HashMap&#60;u32, String&#62; @2,
+    f3: HashSet&#60;u32&#62; @3,
+    f4: Option&#60;u32&#62; @4,
+    f5: NonZero&#60;u32&#62; @5,
 }</pre>
   <div class="markdown pl-6">
     
@@ -116,7 +117,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f1</span>:
-        <span class="field-type">vec&#60;u32&#62;</span>
+        <span class="field-type">Vec&#60;u32&#62;</span>
         <span class="field-id">@1</span>
       </code>
       <div class="markdown pl-4">
@@ -128,7 +129,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>vec</strong> <code>1..</code></p>
+            <p><strong>Vec</strong> <code>1..</code></p>
           <ul>
           <li>length: <strong>u64</strong> <code>1..10</code></li>
           <li>element: <strong>u32</strong> <code>1..5</code></li>
@@ -140,7 +141,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f2</span>:
-        <span class="field-type">hash_map&#60;u32, string&#62;</span>
+        <span class="field-type">HashMap&#60;u32, String&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -152,11 +153,11 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>hash_map</strong> <code>1..</code></p>
+            <p><strong>HashMap</strong> <code>1..</code></p>
           <ul>
           <li>length: <strong>u64</strong> <code>1..10</code></li>
           <li>key: <strong>u32</strong> <code>1..5</code></li>
-          <li>value: <strong>string</strong> <code>1..</code></li>
+          <li>value: <strong>String</strong> <code>1..</code></li>
           </ul>
           </div>
         </div>
@@ -165,7 +166,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f3</span>:
-        <span class="field-type">hash_set&#60;u32&#62;</span>
+        <span class="field-type">HashSet&#60;u32&#62;</span>
         <span class="field-id">@3</span>
       </code>
       <div class="markdown pl-4">
@@ -177,7 +178,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>hash_set</strong> <code>1..</code></p>
+            <p><strong>HashSet</strong> <code>1..</code></p>
           <ul>
           <li>length: <strong>u64</strong> <code>1..10</code></li>
           <li>element: <strong>u32</strong> <code>1..5</code></li>
@@ -189,7 +190,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f4</span>:
-        <span class="field-type">option&#60;u32&#62;</span>
+        <span class="field-type">Option&#60;u32&#62;</span>
         <span class="field-id">@4</span>
       </code>
       <div class="markdown pl-4">
@@ -201,7 +202,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>option</strong> <code>0..6</code></p>
+            <p><strong>Option</strong> <code>0..6</code></p>
           <ul>
           <li>value: <strong>u32</strong> <code>1..5</code></li>
           </ul>
@@ -212,7 +213,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f5</span>:
-        <span class="field-type">non_zero&#60;u32&#62;</span>
+        <span class="field-type">NonZero&#60;u32&#62;</span>
         <span class="field-id">@5</span>
       </code>
       <div class="markdown pl-4">
@@ -224,7 +225,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>non_zero</strong> <code>0..6</code></p>
+            <p><strong>NonZero</strong> <code>0..6</code></p>
           <ul>
           <li>value: <strong>u32</strong> <code>1..5</code></li>
           </ul>
@@ -261,7 +262,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     Struct
     <a href="index.html">types_generic</a>::<span class="name-struct">SampleUnnamed</span>
   </h2>
-  <pre class="item-definition my-2">struct SampleUnnamed(vec&#60;u32&#62; @1, hash_map&#60;u32, string&#62; @2, hash_set&#60;u32&#62; @3, option&#60;u32&#62; @4, non_zero&#60;u32&#62; @5)</pre>
+  <pre class="item-definition my-2">struct SampleUnnamed(Vec&#60;u32&#62; @1, HashMap&#60;u32, String&#62; @2, HashSet&#60;u32&#62; @3, Option&#60;u32&#62; @4, NonZero&#60;u32&#62; @5)</pre>
   <div class="markdown pl-6">
     
   </div>
@@ -278,7 +279,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">n0</span>:
-        <span class="field-type">vec&#60;u32&#62;</span>
+        <span class="field-type">Vec&#60;u32&#62;</span>
         <span class="field-id">@1</span>
       </code>
       <div class="markdown pl-4">
@@ -290,7 +291,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>vec</strong> <code>1..</code></p>
+            <p><strong>Vec</strong> <code>1..</code></p>
           <ul>
           <li>length: <strong>u64</strong> <code>1..10</code></li>
           <li>element: <strong>u32</strong> <code>1..5</code></li>
@@ -302,7 +303,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">n1</span>:
-        <span class="field-type">hash_map&#60;u32, string&#62;</span>
+        <span class="field-type">HashMap&#60;u32, String&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -314,11 +315,11 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>hash_map</strong> <code>1..</code></p>
+            <p><strong>HashMap</strong> <code>1..</code></p>
           <ul>
           <li>length: <strong>u64</strong> <code>1..10</code></li>
           <li>key: <strong>u32</strong> <code>1..5</code></li>
-          <li>value: <strong>string</strong> <code>1..</code></li>
+          <li>value: <strong>String</strong> <code>1..</code></li>
           </ul>
           </div>
         </div>
@@ -327,7 +328,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">n2</span>:
-        <span class="field-type">hash_set&#60;u32&#62;</span>
+        <span class="field-type">HashSet&#60;u32&#62;</span>
         <span class="field-id">@3</span>
       </code>
       <div class="markdown pl-4">
@@ -339,7 +340,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>hash_set</strong> <code>1..</code></p>
+            <p><strong>HashSet</strong> <code>1..</code></p>
           <ul>
           <li>length: <strong>u64</strong> <code>1..10</code></li>
           <li>element: <strong>u32</strong> <code>1..5</code></li>
@@ -351,7 +352,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">n3</span>:
-        <span class="field-type">option&#60;u32&#62;</span>
+        <span class="field-type">Option&#60;u32&#62;</span>
         <span class="field-id">@4</span>
       </code>
       <div class="markdown pl-4">
@@ -363,7 +364,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>option</strong> <code>0..6</code></p>
+            <p><strong>Option</strong> <code>0..6</code></p>
           <ul>
           <li>value: <strong>u32</strong> <code>1..5</code></li>
           </ul>
@@ -374,7 +375,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">n4</span>:
-        <span class="field-type">non_zero&#60;u32&#62;</span>
+        <span class="field-type">NonZero&#60;u32&#62;</span>
         <span class="field-id">@5</span>
       </code>
       <div class="markdown pl-4">
@@ -386,7 +387,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
           <p>The size range is:</p>
           <div
             class="markdown markdown-sm markdown-p:mb-1 markdown-ul:m-0 markdown-ul:pl-4 markdown-li:m-0 markdown-li:pl-0">
-            <p><strong>non_zero</strong> <code>0..6</code></p>
+            <p><strong>NonZero</strong> <code>0..6</code></p>
           <ul>
           <li>value: <strong>u32</strong> <code>1..5</code></li>
           </ul>

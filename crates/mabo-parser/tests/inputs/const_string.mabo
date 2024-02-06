@@ -1,17 +1,17 @@
-const SIMPLE: string = "value";
+const SIMPLE: String = "value";
 
-const NEWLINE_ESCAPE: string = "one \
+const NEWLINE_ESCAPE: String = "one \
     two \
     three\
 ";
 
-const ESCAPES: string = "escape basics \r\n \t \b \f \\ \"\
+const ESCAPES: String = "escape basics \r\n \t \b \f \\ \"\
     hello\" \n\
     unicode \u{2764}  \
     emoji ❤ \
 ";
 
-const MULTILINE: string = "a
+const MULTILINE: String = "a
     b
     c
 ";

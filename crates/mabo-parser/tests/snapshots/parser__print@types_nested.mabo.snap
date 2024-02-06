@@ -1,8 +1,8 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}"
+description: "struct Sample {\n    value: Vec<Option<NonZero<HashMap<i64, Box<String>>>>> @1,\n}"
 input_file: crates/mabo-parser/tests/inputs/types_nested.mabo
 ---
 struct Sample {
-    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,
+    value: Vec<Option<NonZero<HashMap<i64, Box<String>>>>> @1,
 }

@@ -127,7 +127,7 @@ pub fn decode_f64(r: &mut impl Buf) -> Result<f64> {
     Ok(r.get_f64())
 }
 
-/// Decode a UTF-8 encoded Mabo `string`.
+/// Decode a UTF-8 encoded Mabo `String`.
 ///
 /// # Errors
 ///
@@ -137,7 +137,7 @@ pub fn decode_string(r: &mut impl Buf) -> Result<String> {
     String::from_utf8(decode_bytes_std(r)?).map_err(Into::into)
 }
 
-/// Decode a Mabo `bytes` raw byte array (represented as default Rust byte vector).
+/// Decode a Mabo `Bytes` raw byte array (represented as default Rust byte vector).
 ///
 /// # Errors
 ///
@@ -149,7 +149,7 @@ pub fn decode_bytes_std(r: &mut impl Buf) -> Result<Vec<u8>> {
     Ok(r.copy_to_bytes(len as usize).to_vec())
 }
 
-/// Decode a Mabo `bytes` raw byte array (represented as [`bytes::Bytes`] type).
+/// Decode a Mabo `Bytes` raw byte array (represented as [`bytes::Bytes`] type).
 ///
 /// # Errors
 ///
@@ -161,7 +161,7 @@ pub fn decode_bytes_bytes(r: &mut impl Buf) -> Result<Bytes> {
     Ok(r.copy_to_bytes(len as usize))
 }
 
-/// Decode a Mabo `vec<T>` vector value.
+/// Decode a Mabo `Vec<T>` vector value.
 ///
 /// # Errors
 ///
@@ -185,7 +185,7 @@ where
     Ok(vec)
 }
 
-/// Decode a Mabo `hash_map<K, V>` hash map value.
+/// Decode a Mabo `HashMap<K, V>` hash map value.
 ///
 /// # Errors
 ///
@@ -215,7 +215,7 @@ where
     Ok(map)
 }
 
-/// Decode a Mabo `hash_set<T>` hash set value.
+/// Decode a Mabo `HashSet<T>` hash set value.
 ///
 /// # Errors
 ///
@@ -240,7 +240,7 @@ where
     Ok(set)
 }
 
-/// Decode a Mabo `option<T>` option value.
+/// Decode a Mabo `Option<T>` option value.
 ///
 /// # Errors
 ///
@@ -320,7 +320,7 @@ macro_rules! decode_non_zero_int {
 decode_non_zero_int!(u8, u16, u32, u64, u128);
 decode_non_zero_int!(i8, i16, i32, i64, i128);
 
-/// Decode a Mabo `non_zero<string>`.
+/// Decode a Mabo `NonZero<String>`.
 ///
 /// # Errors
 ///
@@ -333,7 +333,7 @@ pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZeroString> {
         .map_err(Into::into)
 }
 
-/// Decode a Mabo `non_zero<bytes>` (represented as [`NonZeroBytes`]).
+/// Decode a Mabo `NonZero<Bytes>` (represented as [`NonZeroBytes`]).
 ///
 /// # Errors
 ///
@@ -348,7 +348,7 @@ pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZeroBytes> {
     Ok(NonZero::<Vec<_>>::new(r.copy_to_bytes(len as usize).to_vec()).unwrap())
 }
 
-/// Decode a Mabo `non_zero<bytes>` (represented as [`NonZero`]<[`bytes::Bytes`]>).
+/// Decode a Mabo `NonZero<Bytes>` (represented as [`NonZero`]<[`bytes::Bytes`]>).
 ///
 /// # Errors
 ///
@@ -363,7 +363,7 @@ pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
     Ok(NonZero::<Bytes>::new(r.copy_to_bytes(len as usize)).unwrap())
 }
 
-/// Decode a Mabo `non_zero<vec<T>>`.
+/// Decode a Mabo `NonZero<Vec<T>>`.
 ///
 /// # Errors
 ///
@@ -389,7 +389,7 @@ where
     Ok(NonZero::<Vec<_>>::new(vec).unwrap())
 }
 
-/// Decode a Mabo `non_zero<hash_map<K, V>>`.
+/// Decode a Mabo `NonZero<HashMap<K, V>>`.
 ///
 /// # Errors
 ///
@@ -421,7 +421,7 @@ where
     Ok(NonZero::<HashMap<_, _>>::new(map).unwrap())
 }
 
-/// Decode a Mabo `non_zero<hash_set<T>>`.
+/// Decode a Mabo `NonZero<HashSet<T>>`.
 ///
 /// # Errors
 ///

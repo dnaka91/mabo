@@ -129,11 +129,13 @@ where
             Type::U32 => write!(f, "buf.EncodeU32(w, {name})"),
             Type::U64 => write!(f, "buf.EncodeU64(w, {name})"),
             Type::U128 => write!(f, "buf.EncodeU128(w, {name})"),
+            Type::UBig => write!(f, "buf.EncodeUBig(w, {name})"),
             Type::I8 => write!(f, "buf.EncodeI8(w, {name})"),
             Type::I16 => write!(f, "buf.EncodeI16(w, {name})"),
             Type::I32 => write!(f, "buf.EncodeI32(w, {name})"),
             Type::I64 => write!(f, "buf.EncodeI64(w, {name})"),
             Type::I128 => write!(f, "buf.EncodeI128(w, {name})"),
+            Type::IBig => write!(f, "buf.EncodeIBig(w, {name})"),
             Type::F32 => write!(f, "buf.EncodeF32(w, {name})"),
             Type::F64 => write!(f, "buf.EncodeF64(w, {name})"),
             Type::String | Type::StringRef | Type::BoxString => {
@@ -248,11 +250,13 @@ where
                 Type::U32 => write!(f, "buf.EncodeU32(w, {name}.Get())"),
                 Type::U64 => write!(f, "buf.EncodeU64(w, {name}.Get())"),
                 Type::U128 => write!(f, "buf.EncodeU128(w, {name}.Get())"),
+                Type::UBig => write!(f, "buf.EncodeUBig(w, {name}.Get())"),
                 Type::I8 => write!(f, "buf.EncodeI8(w, {name}.Get())"),
                 Type::I16 => write!(f, "buf.EncodeI16(w, {name}.Get())"),
                 Type::I32 => write!(f, "buf.EncodeI32(w, {name}.Get())"),
                 Type::I64 => write!(f, "buf.EncodeI64(w, {name}.Get())"),
                 Type::I128 => write!(f, "buf.EncodeI128(w, {name}.Get())"),
+                Type::IBig => write!(f, "buf.EncodeIBig(w, {name}.Get())"),
                 Type::String
                 | Type::StringRef
                 | Type::Bytes

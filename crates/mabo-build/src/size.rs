@@ -190,11 +190,13 @@ pub(crate) fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -
         Type::U32 => quote! { ::mabo::buf::size_u32(*#name) },
         Type::U64 => quote! { ::mabo::buf::size_u64(*#name) },
         Type::U128 => quote! { ::mabo::buf::size_u128(*#name) },
+        Type::UBig => quote! { ::mabo::buf::size_ubig(#name) },
         Type::I8 => quote! { ::mabo::buf::size_i8(*#name) },
         Type::I16 => quote! { ::mabo::buf::size_i16(*#name) },
         Type::I32 => quote! { ::mabo::buf::size_i32(*#name) },
         Type::I64 => quote! { ::mabo::buf::size_i64(*#name) },
         Type::I128 => quote! { ::mabo::buf::size_i128(*#name) },
+        Type::IBig => quote! { ::mabo::buf::size_ibig(#name) },
         Type::F32 => quote! { ::mabo::buf::size_f32(*#name) },
         Type::F64 => quote! { ::mabo::buf::size_f64(*#name) },
         Type::String | Type::StringRef | Type::BoxString => {

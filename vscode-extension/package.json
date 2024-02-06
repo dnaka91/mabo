@@ -1,7 +1,7 @@
 {
   "name": "mabo",
   "displayName": "Mabo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Data format and schema, with a type system as strong as Rust's.",
   "license": "MIT",
   "publisher": "dnaka91",
@@ -23,7 +23,7 @@
   "badges": [
     {
       "url": "https://img.shields.io/github/license/dnaka91/mabo?style=for-the-badge",
-      "href": "LICENSE.md",
+      "href": "https://github.com/dnaka91/mabo/blob/main/LICENSE.md",
       "description": "Project License"
     },
     {

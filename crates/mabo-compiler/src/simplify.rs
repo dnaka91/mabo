@@ -236,6 +236,8 @@ pub enum Type<'a> {
     U64,
     /// 128-bit unsigned integer.
     U128,
+    /// Arbitrary size unsigned integer.
+    UBig,
     /// 8-bit signed integer.
     I8,
     /// 16-bit signed integer.
@@ -246,6 +248,8 @@ pub enum Type<'a> {
     I64,
     /// 128-bit signed integer.
     I128,
+    /// Arbitrary size signed integer.
+    IBig,
     /// 32-bit floating point number.
     F32,
     /// 64-bit floating point number.
@@ -430,11 +434,13 @@ fn simplify_type<'a>(item: &'a mabo_parser::Type<'_>) -> Type<'a> {
         mabo_parser::DataType::U32 => Type::U32,
         mabo_parser::DataType::U64 => Type::U64,
         mabo_parser::DataType::U128 => Type::U128,
+        mabo_parser::DataType::UBig => Type::UBig,
         mabo_parser::DataType::I8 => Type::I8,
         mabo_parser::DataType::I16 => Type::I16,
         mabo_parser::DataType::I32 => Type::I32,
         mabo_parser::DataType::I64 => Type::I64,
         mabo_parser::DataType::I128 => Type::I128,
+        mabo_parser::DataType::IBig => Type::IBig,
         mabo_parser::DataType::F32 => Type::F32,
         mabo_parser::DataType::F64 => Type::F64,
         mabo_parser::DataType::String => Type::String,

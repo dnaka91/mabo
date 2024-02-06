@@ -1,13 +1,13 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: i8 @7,\n    f08: i16 @8,\n    f09: i32 @9,\n    f10: i64 @10,\n    f11: i128 @11,\n    f12: f32 @12,\n    f13: f64 @13,\n    f14: string @14,\n    f15: &string @15,\n    f16: bytes @16,\n    f17: &bytes @17,\n    f18: box<string> @18,\n    f19: box<bytes> @19,\n    f20: (u32, u32, u32) @20,\n    f21: [u32; 12] @21,\n}"
+description: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: ubig @7,\n    f08: i8 @8,\n    f09: i16 @9,\n    f10: i32 @10,\n    f11: i64 @11,\n    f12: i128 @12,\n    f13: ibig @13,\n    f14: f32 @14,\n    f15: f64 @15,\n    f16: string @16,\n    f17: &string @17,\n    f18: bytes @18,\n    f19: &bytes @19,\n    f20: box<string> @20,\n    f21: box<bytes> @21,\n    f22: (u32, u32, u32) @22,\n    f23: [u32; 12] @23,\n}"
 input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
 ---
 Schema {
     path: Some(
         "types_basic.mabo",
     ),
-    source: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: i8 @7,\n    f08: i16 @8,\n    f09: i32 @9,\n    f10: i64 @10,\n    f11: i128 @11,\n    f12: f32 @12,\n    f13: f64 @13,\n    f14: string @14,\n    f15: &string @15,\n    f16: bytes @16,\n    f17: &bytes @17,\n    f18: box<string> @18,\n    f19: box<bytes> @19,\n    f20: (u32, u32, u32) @20,\n    f21: [u32; 12] @21,\n}\n",
+    source: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: ubig @7,\n    f08: i8 @8,\n    f09: i16 @9,\n    f10: i32 @10,\n    f11: i64 @11,\n    f12: i128 @12,\n    f13: ibig @13,\n    f14: f32 @14,\n    f15: f64 @15,\n    f16: string @16,\n    f17: &string @17,\n    f18: bytes @18,\n    f19: &bytes @19,\n    f20: box<string> @20,\n    f21: box<bytes> @21,\n    f22: (u32, u32, u32) @22,\n    f23: [u32; 12] @23,\n}\n",
     comment: Comment(
         [],
     ),
@@ -159,7 +159,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: I8,
+                                        value: UBig,
                                     },
                                     id: Some(
                                         Id {
@@ -179,7 +179,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: I16,
+                                        value: I8,
                                     },
                                     id: Some(
                                         Id {
@@ -199,7 +199,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: I32,
+                                        value: I16,
                                     },
                                     id: Some(
                                         Id {
@@ -219,7 +219,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: I64,
+                                        value: I32,
                                     },
                                     id: Some(
                                         Id {
@@ -239,7 +239,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: I128,
+                                        value: I64,
                                     },
                                     id: Some(
                                         Id {
@@ -259,7 +259,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: F32,
+                                        value: I128,
                                     },
                                     id: Some(
                                         Id {
@@ -279,7 +279,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: F64,
+                                        value: IBig,
                                     },
                                     id: Some(
                                         Id {
@@ -299,7 +299,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: String,
+                                        value: F32,
                                     },
                                     id: Some(
                                         Id {
@@ -319,7 +319,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: StringRef,
+                                        value: F64,
                                     },
                                     id: Some(
                                         Id {
@@ -339,7 +339,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: Bytes,
+                                        value: String,
                                     },
                                     id: Some(
                                         Id {
@@ -359,7 +359,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: BytesRef,
+                                        value: StringRef,
                                     },
                                     id: Some(
                                         Id {
@@ -379,7 +379,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: BoxString,
+                                        value: Bytes,
                                     },
                                     id: Some(
                                         Id {
@@ -399,7 +399,7 @@ Schema {
                                     },
                                     colon: Colon,
                                     ty: Type {
-                                        value: BoxBytes,
+                                        value: BytesRef,
                                     },
                                     id: Some(
                                         Id {
@@ -416,6 +416,46 @@ Schema {
                                     ),
                                     name: Name {
                                         value: "f20",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: BoxString,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 20,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f21",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: BoxBytes,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 21,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f22",
                                     },
                                     colon: Colon,
                                     ty: Type {
@@ -447,7 +487,7 @@ Schema {
                                     },
                                     id: Some(
                                         Id {
-                                            value: 20,
+                                            value: 22,
                                         },
                                     ),
                                 },
@@ -460,7 +500,7 @@ Schema {
                                     [],
                                 ),
                                 name: Name {
-                                    value: "f21",
+                                    value: "f23",
                                 },
                                 colon: Colon,
                                 ty: Type {
@@ -475,7 +515,7 @@ Schema {
                                 },
                                 id: Some(
                                     Id {
-                                        value: 21,
+                                        value: 23,
                                     },
                                 ),
                             },

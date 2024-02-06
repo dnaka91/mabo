@@ -886,6 +886,8 @@ pub enum DataType<'a> {
     U64,
     /// 128-bit unsigned integer.
     U128,
+    /// Arbitrary size unsigned integer.
+    UBig,
     /// 8-bit signed integer.
     I8,
     /// 16-bit signed integer.
@@ -896,6 +898,8 @@ pub enum DataType<'a> {
     I64,
     /// 128-bit signed integer.
     I128,
+    /// Arbitrary size signed integer.
+    IBig,
     /// 32-bit floating point number.
     F32,
     /// 64-bit floating point number.
@@ -994,11 +998,13 @@ impl Display for DataType<'_> {
             Self::U32 => f.write_str("u32"),
             Self::U64 => f.write_str("u64"),
             Self::U128 => f.write_str("u128"),
+            Self::UBig => f.write_str("ubig"),
             Self::I8 => f.write_str("i8"),
             Self::I16 => f.write_str("i16"),
             Self::I32 => f.write_str("i32"),
             Self::I64 => f.write_str("i64"),
             Self::I128 => f.write_str("i128"),
+            Self::IBig => f.write_str("ibig"),
             Self::F32 => f.write_str("f32"),
             Self::F64 => f.write_str("f64"),
             Self::String => f.write_str("string"),

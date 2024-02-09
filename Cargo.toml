@@ -6,7 +6,7 @@ resolver = "2"
 version = "0.1.0"
 authors = ["Dominik Nakamura <dnaka91@gmail.com"]
 edition = "2021"
-rust-version = "1.71"
+rust-version = "1.76"
 readme = "README.md"
 homepage = "https://github.com/dnaka91/mabo"
 repository = "https://github.com/dnaka91/mabo"
@@ -24,9 +24,9 @@ clone_on_ref_ptr = "warn"
 
 [workspace.dependencies]
 anstream = "0.6.11"
-anstyle = "1.0.5"
+anstyle = "1.0.6"
 anyhow = "1.0.79"
-clap = { version = "4.4.18", features = ["derive", "wrap_help"] }
+clap = { version = "4.5.0", features = ["derive", "wrap_help"] }
 glob = "0.3.1"
 indoc = "2.0.4"
 insta = { version = "1.34.0", features = ["glob"] }

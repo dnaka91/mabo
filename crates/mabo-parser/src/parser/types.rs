@@ -7,7 +7,7 @@ use winnow::{
     dispatch,
     error::ErrorKind,
     stream::Location,
-    token::{one_of, tag, take_while},
+    token::{literal, one_of, take_while},
     Parser,
 };
 
@@ -91,8 +91,8 @@ fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
             "&bytes" => empty.value(DataType::BytesRef),
             _ => fail,
         },
-        tag("box<string>").value(DataType::BoxString),
-        tag("box<bytes>").value(DataType::BoxBytes),
+        literal("box<string>").value(DataType::BoxString),
+        literal("box<bytes>").value(DataType::BoxBytes),
     ))
     .parse_next(input)
 }

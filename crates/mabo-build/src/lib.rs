@@ -13,7 +13,8 @@ mod definition;
 mod encode;
 mod size;
 
-/// Shorthand for the standard result type, that defaults to the crate level's [`Error`] type.
+/// Shorthand for the standard result type, that defaults to the crate level's [`Error`](enum@Error)
+/// type.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 /// Errors that can happen when generating Rust source code from Mabo schema files.
@@ -137,7 +138,7 @@ impl Compiler {
     /// # Errors
     ///
     /// Will return an `Err` if any of the various cases happen, which are described in the
-    /// [`Error`] type.
+    /// [`Error`](enum@Error) type.
     pub fn compile(&self, manifest_dir: &str) -> Result<()> {
         init_miette();
 

@@ -1,37 +1,25 @@
 use std::{fmt::Write, ops::Range};
 
-use anyhow::{Context, Result};
-use line_index::{LineIndex, TextSize, WideLineCol};
-use lsp_types::{Position, Range as LspRange};
+use anyhow::Result;
+use lsp_types as lsp;
 use mabo_compiler::simplify::{
     Const, Definition, Enum, Field, Fields, Module, ParserField, Schema, Struct, TypeAlias, Variant,
 };
 use mabo_parser::{Span, Spanned};
 
+use super::index::Index;
+
 pub fn visit_schema(
-    index: &LineIndex,
+    index: &Index,
     item: &Schema<'_>,
-    position: Position,
-) -> Result<Option<(String, LspRange)>> {
-    let position = index
-        .offset(
-            index
-                .to_utf8(
-                    line_index::WideEncoding::Utf16,
-                    WideLineCol {
-                        line: position.line,
-                        col: position.character,
-                    },
-                )
-                .context("missing utf-16 position")?,
-        )
-        .context("missing offset position")?
-        .into();
+    position: lsp::Position,
+) -> Result<Option<(String, lsp::Range)>> {
+    let position = index.get_offset(position)?;
 
     item.definitions
         .iter()
         .find_map(|def| visit_definition(def, position))
-        .map(|(text, span)| Ok((text, get_range(index, span)?)))
+        .map(|(text, span)| Ok((text, index.get_range(span)?)))
         .transpose()
 }
 
@@ -145,24 +133,4 @@ fn fold_comment(comment: &[&str]) -> String {
         acc.push('\n');
         acc
     })
-}
-
-#[allow(clippy::cast_possible_truncation)]
-fn get_range(index: &LineIndex, span: Span) -> Result<LspRange> {
-    let range = Range::from(span);
-    let (start, end) = index
-        .to_wide(
-            line_index::WideEncoding::Utf16,
-            index.line_col(TextSize::new(range.start as u32)),
-        )
-        .zip(index.to_wide(
-            line_index::WideEncoding::Utf16,
-            index.line_col(TextSize::new(range.end as u32)),
-        ))
-        .context("missing utf-16 positions")?;
-
-    Ok(LspRange::new(
-        Position::new(start.line, start.col),
-        Position::new(end.line, end.col),
-    ))
 }

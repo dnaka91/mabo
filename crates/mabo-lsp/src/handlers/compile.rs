@@ -1,6 +1,5 @@
 use std::ops::Range;
 
-use line_index::{LineIndex, TextSize, WideEncoding};
 use lsp_types::{self as lsp, Diagnostic, Url};
 use mabo_compiler::validate;
 use mabo_parser::{
@@ -13,11 +12,9 @@ use mabo_parser::{
     Schema,
 };
 
-pub fn compile<'a>(
-    file: Url,
-    schema: &'a str,
-    index: &'_ LineIndex,
-) -> Result<Schema<'a>, Diagnostic> {
+use super::index::Index;
+
+pub fn compile<'a>(file: Url, schema: &'a str, index: &'_ Index) -> Result<Schema<'a>, Diagnostic> {
     let parsed =
         mabo_parser::Schema::parse(schema, None).map_err(|e| parse_schema_diagnostic(index, &e))?;
 
@@ -33,7 +30,7 @@ pub fn simplify<'a>(
     result.as_ref().map(mabo_compiler::simplify_schema)
 }
 
-fn parse_schema_diagnostic(index: &LineIndex, e: &ParseSchemaError) -> Diagnostic {
+fn parse_schema_diagnostic(index: &Index, e: &ParseSchemaError) -> Diagnostic {
     match &e.cause {
         ParseSchemaCause::Parser(_, at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
@@ -43,7 +40,7 @@ fn parse_schema_diagnostic(index: &LineIndex, e: &ParseSchemaError) -> Diagnosti
     }
 }
 
-fn parse_definition_diagnostic(index: &LineIndex, e: &ParseDefinitionError) -> Diagnostic {
+fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagnostic {
     match e {
         ParseDefinitionError::Parser(_, at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
@@ -128,7 +125,7 @@ fn parse_definition_diagnostic(index: &LineIndex, e: &ParseDefinitionError) -> D
     }
 }
 
-fn parse_type_diagnostic(index: &LineIndex, e: &ParseTypeError) -> Diagnostic {
+fn parse_type_diagnostic(index: &Index, e: &ParseTypeError) -> Diagnostic {
     match &e.cause {
         ParseTypeCause::Parser(_, at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
@@ -138,11 +135,11 @@ fn parse_type_diagnostic(index: &LineIndex, e: &ParseTypeError) -> Diagnostic {
     }
 }
 
-fn parse_comment_diagnostic(index: &LineIndex, e: &ParseCommentError) -> Diagnostic {
+fn parse_comment_diagnostic(index: &Index, e: &ParseCommentError) -> Diagnostic {
     Diagnostic::new_simple(get_range(index, e.at.clone()), e.to_string())
 }
 
-fn parse_import_cause_diagnostic(index: &LineIndex, c: &ParseImportCause) -> Diagnostic {
+fn parse_import_cause_diagnostic(index: &Index, c: &ParseImportCause) -> Diagnostic {
     match c {
         ParseImportCause::Parser(_, at) | ParseImportCause::InvalidSegmentName { at } => {
             Diagnostic::new_simple(get_range(index, *at..*at), c.to_string())
@@ -168,7 +165,7 @@ fn parse_import_cause_diagnostic(index: &LineIndex, c: &ParseImportCause) -> Dia
     }
 }
 
-fn parse_generics_diagnostic(index: &LineIndex, e: &ParseGenericsError) -> Diagnostic {
+fn parse_generics_diagnostic(index: &Index, e: &ParseGenericsError) -> Diagnostic {
     match &e.cause {
         mabo_parser::error::ParseGenericsCause::Parser(_, at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
@@ -179,7 +176,7 @@ fn parse_generics_diagnostic(index: &LineIndex, e: &ParseGenericsError) -> Diagn
     }
 }
 
-fn parse_fields_diagnostic(index: &LineIndex, e: &ParseFieldsError) -> Diagnostic {
+fn parse_fields_diagnostic(index: &Index, e: &ParseFieldsError) -> Diagnostic {
     match &e.cause {
         ParseFieldsCause::Parser(_, at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
@@ -193,11 +190,11 @@ fn parse_fields_diagnostic(index: &LineIndex, e: &ParseFieldsError) -> Diagnosti
     }
 }
 
-fn parse_id_diagnostic(index: &LineIndex, e: &ParseIdError) -> Diagnostic {
+fn parse_id_diagnostic(index: &Index, e: &ParseIdError) -> Diagnostic {
     Diagnostic::new_simple(get_range(index, e.at.clone()), e.to_string())
 }
 
-fn validate_schema_diagnostic(file: Url, index: &LineIndex, e: validate::Error) -> Diagnostic {
+fn validate_schema_diagnostic(file: Url, index: &Index, e: validate::Error) -> Diagnostic {
     use validate::{DuplicateFieldId, DuplicateId, DuplicateName, Error, InvalidGenericType};
 
     let (message, first, second) = match e {
@@ -244,24 +241,9 @@ fn diagnostic_with_related(
     Diagnostic::new(range, None, None, None, message, Some(related), None)
 }
 
-#[allow(clippy::cast_possible_truncation, clippy::expect_used)]
-fn get_range(index: &LineIndex, location: Range<usize>) -> lsp::Range {
-    let start = index
-        .to_wide(
-            WideEncoding::Utf16,
-            index.line_col(TextSize::new(location.start as u32)),
-        )
-        .expect("missing utf-16 start position");
-
-    let end = index
-        .to_wide(
-            WideEncoding::Utf16,
-            index.line_col(TextSize::new(location.end as u32)),
-        )
-        .expect("missing utf-16 end position");
-
-    lsp::Range::new(
-        lsp::Position::new(start.line, start.col),
-        lsp::Position::new(end.line, end.col),
-    )
+#[allow(clippy::expect_used)]
+fn get_range(index: &Index, location: Range<usize>) -> lsp::Range {
+    index
+        .get_range(location)
+        .expect("missing range information")
 }

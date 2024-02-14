@@ -18,10 +18,8 @@ use lsp_types::{
     },
     DocumentSymbol, InitializeParams, SemanticTokens,
 };
-use rustc_hash::FxHashMap;
 
-use self::{cli::Cli, client::Client};
-use crate::state::GlobalState;
+use crate::{cli::Cli, state::GlobalState};
 
 mod cli;
 mod client;
@@ -44,11 +42,7 @@ fn main() -> Result<()> {
         bail!("no connection method provided")
     };
 
-    let mut state = GlobalState {
-        client: Client::new(&connection),
-        files: FxHashMap::default(),
-        settings: config::Global::default(),
-    };
+    let mut state = GlobalState::new(&connection);
 
     let (id, params) = connection.initialize_start()?;
     let init_params = serde_json::from_value::<InitializeParams>(params)?;

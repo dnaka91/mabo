@@ -1,17 +1,18 @@
 use anyhow::{ensure, Context, Result};
-use line_index::LineIndex;
 use log::{as_debug, debug};
-use lsp_types::{ConfigurationItem, Diagnostic, Url};
+use lsp_server::Connection;
+use lsp_types::{ConfigurationItem, Diagnostic, PositionEncodingKind, Url};
 use mabo_parser::Schema;
 use ouroboros::self_referencing;
 use ropey::Rope;
 use rustc_hash::FxHashMap;
 
-use crate::{client::Client, config};
+use crate::{client::Client, config, handlers::index::Index};
 
 #[allow(clippy::module_name_repetitions)]
 pub struct GlobalState<'a> {
     pub client: Client<'a>,
+    pub encoding: PositionEncodingKind,
     pub files: FxHashMap<Url, File>,
     pub settings: config::Global,
 }
@@ -19,7 +20,7 @@ pub struct GlobalState<'a> {
 #[self_referencing(pub_extras)]
 pub struct File {
     rope: Rope,
-    pub index: LineIndex,
+    pub index: Index,
     pub content: String,
     #[borrows(index, content)]
     #[covariant]
@@ -29,7 +30,16 @@ pub struct File {
     pub simplified: Result<mabo_compiler::simplify::Schema<'this>, &'this Diagnostic>,
 }
 
-impl GlobalState<'_> {
+impl<'a> GlobalState<'a> {
+    pub fn new(connection: &'a Connection) -> Self {
+        Self {
+            client: Client::new(connection),
+            encoding: PositionEncodingKind::UTF16,
+            files: FxHashMap::default(),
+            settings: config::Global::default(),
+        }
+    }
+
     pub fn reload_settings(&mut self) -> Result<()> {
         let mut settings = self
             .client

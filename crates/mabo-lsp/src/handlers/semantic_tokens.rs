@@ -1,7 +1,4 @@
-use std::ops::Range;
-
-use anyhow::{ensure, Context, Result};
-use line_index::{LineIndex, TextSize, WideLineCol};
+use anyhow::{ensure, Result};
 use lsp_types::{SemanticToken, SemanticTokenModifier, SemanticTokenType};
 use mabo_parser::{
     Comment, Const, DataType, Definition, Enum, Fields, Generics, Id, Literal, LiteralValue,
@@ -9,6 +6,7 @@ use mabo_parser::{
 };
 
 pub(crate) use self::{modifiers::TOKEN_MODIFIERS, types::TOKEN_TYPES};
+use super::index::Index;
 
 macro_rules! define_semantic_token_types {
     (
@@ -115,50 +113,45 @@ fn token_modifier_bitset(modifiers: &[SemanticTokenModifier]) -> u32 {
 }
 
 pub struct Visitor<'a> {
-    index: &'a LineIndex,
+    index: &'a Index,
     tokens: Vec<SemanticToken>,
-    delta: WideLineCol,
+    delta: lsp_types::Position,
 }
 
 impl<'a> Visitor<'a> {
-    pub fn new(index: &'a LineIndex) -> Self {
+    pub fn new(index: &'a Index) -> Self {
         Self {
             index,
             tokens: Vec::new(),
-            delta: WideLineCol { line: 0, col: 0 },
+            delta: lsp_types::Position {
+                line: 0,
+                character: 0,
+            },
         }
     }
 
     #[allow(clippy::cast_possible_truncation)]
-    fn get_range(&self, span: Span) -> Result<(WideLineCol, WideLineCol)> {
-        let range = Range::from(span);
-        let (start, end) = self
-            .index
-            .to_wide(
-                line_index::WideEncoding::Utf16,
-                self.index.line_col(TextSize::new(range.start as u32)),
-            )
-            .zip(self.index.to_wide(
-                line_index::WideEncoding::Utf16,
-                self.index.line_col(TextSize::new(range.end as u32)),
-            ))
-            .context("missing utf-16 positions")?;
+    fn get_range(&self, span: Span) -> Result<lsp_types::Range> {
+        let range = self.index.get_range(span)?;
 
-        ensure!(start.line == end.line, "encountered a multi-line span");
+        ensure!(
+            range.start.line == range.end.line,
+            "encountered a multi-line span"
+        );
 
-        Ok((start, end))
+        Ok(range)
     }
 
-    fn lsl(&self, start: WideLineCol, end: WideLineCol) -> (u32, u32, u32) {
+    fn lsl(&self, start: lsp_types::Position, end: lsp_types::Position) -> (u32, u32, u32) {
         (
             start.line - self.delta.line,
-            start.col
+            start.character
                 - if self.delta.line == start.line {
-                    self.delta.col
+                    self.delta.character
                 } else {
                     0
                 },
-            end.col - start.col,
+            end.character - start.character,
         )
     }
 
@@ -168,8 +161,8 @@ impl<'a> Visitor<'a> {
         token_type: &SemanticTokenType,
         token_modifiers: &[SemanticTokenModifier],
     ) -> Result<()> {
-        let (start, end) = self.get_range(span.span())?;
-        let (delta_line, delta_start, length) = self.lsl(start, end);
+        let range = self.get_range(span.span())?;
+        let (delta_line, delta_start, length) = self.lsl(range.start, range.end);
 
         self.tokens.push(SemanticToken {
             delta_line,
@@ -178,9 +171,9 @@ impl<'a> Visitor<'a> {
             token_type: token_type_pos(token_type),
             token_modifiers_bitset: token_modifier_bitset(token_modifiers),
         });
-        self.delta = WideLineCol {
-            line: start.line,
-            col: start.col,
+        self.delta = lsp_types::Position {
+            line: range.start.line,
+            character: range.start.character,
         };
 
         Ok(())

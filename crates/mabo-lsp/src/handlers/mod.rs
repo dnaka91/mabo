@@ -18,6 +18,7 @@ use lsp_types::{
 };
 use ropey::Rope;
 
+use self::index::Index;
 use crate::{
     state::{self, FileBuilder},
     GlobalState,
@@ -26,6 +27,7 @@ use crate::{
 mod compile;
 mod document_symbols;
 mod hover;
+pub mod index;
 mod semantic_tokens;
 
 pub fn initialize(
@@ -33,6 +35,16 @@ pub fn initialize(
     params: InitializeParams,
 ) -> Result<InitializeResult> {
     log::trace!("{params:#?}");
+
+    // Select the most preferred position encoding defined by the client.
+    state.encoding = params
+        .capabilities
+        .general
+        .as_ref()
+        .and_then(|general| general.position_encodings.as_ref())
+        .and_then(|encodings| encodings.first())
+        .cloned()
+        .unwrap_or(PositionEncodingKind::UTF16);
 
     if let Some(projects) = params
         .root_uri
@@ -53,7 +65,9 @@ pub fn initialize(
                 continue;
             };
 
-            state.files.insert(uri.clone(), create_file(uri, text));
+            state
+                .files
+                .insert(uri.clone(), create_file(&state.encoding, uri, text));
         }
     }
 
@@ -63,7 +77,7 @@ pub fn initialize(
             version: Some(env!("CARGO_PKG_VERSION").to_owned()),
         }),
         capabilities: ServerCapabilities {
-            position_encoding: Some(PositionEncodingKind::UTF16),
+            position_encoding: Some(state.encoding.clone()),
             text_document_sync: Some(TextDocumentSyncCapability::Kind(
                 TextDocumentSyncKind::INCREMENTAL,
             )),
@@ -133,7 +147,7 @@ pub fn did_open(state: &mut GlobalState<'_>, params: DidOpenTextDocumentParams) 
     } else {
         debug!("file missing from state");
 
-        let file = create_file(params.text_document.uri.clone(), text);
+        let file = create_file(&state.encoding, params.text_document.uri.clone(), text);
 
         state.files.insert(params.text_document.uri.clone(), file);
         &state.files[&params.text_document.uri]
@@ -165,7 +179,7 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
 
     let file = if is_full(&params.content_changes) {
         let text = params.content_changes.remove(0).text;
-        create_file(params.text_document.uri.clone(), text)
+        create_file(&state.encoding, params.text_document.uri.clone(), text)
     } else {
         let Some(file) = state.files.remove(&params.text_document.uri) else {
             warn!("missing state for changed file");
@@ -299,44 +313,24 @@ pub fn did_change_configuration(
     }
 }
 
-fn convert_range(index: &LineIndex, range: Option<lsp_types::Range>) -> Result<TextRange> {
+fn convert_range(index: &Index, range: Option<lsp_types::Range>) -> Result<TextRange> {
     let range = range.context("incremental change misses range")?;
 
     let start = index
-        .offset(
-            index
-                .to_utf8(
-                    line_index::WideEncoding::Utf16,
-                    line_index::WideLineCol {
-                        line: range.start.line,
-                        col: range.start.character,
-                    },
-                )
-                .context("failed to convert start position to utf-8")?,
-        )
+        .get_offset(range.start)
         .context("failed to convert start position to byte offset")?;
 
     let end = index
-        .offset(
-            index
-                .to_utf8(
-                    line_index::WideEncoding::Utf16,
-                    line_index::WideLineCol {
-                        line: range.end.line,
-                        col: range.end.character,
-                    },
-                )
-                .context("failed to convert end position to utf-8")?,
-        )
+        .get_offset(range.end)
         .context("failed to convert end position to byte offset")?;
 
-    Ok(TextRange::new(start, end))
+    Ok(TextRange::new(start.try_into()?, end.try_into()?))
 }
 
-fn create_file(uri: Url, text: String) -> state::File {
+fn create_file(encoding: &PositionEncodingKind, uri: Url, text: String) -> state::File {
     FileBuilder {
         rope: Rope::from_str(&text),
-        index: LineIndex::new(&text),
+        index: Index::new(LineIndex::new(&text), encoding),
         content: text,
         schema_builder: |index, schema| compile::compile(uri, schema, index),
         simplified_builder: compile::simplify,
@@ -344,19 +338,17 @@ fn create_file(uri: Url, text: String) -> state::File {
     .build()
 }
 
-fn update_file(
-    uri: Url,
-    file: state::File,
-    update: impl FnOnce(&mut Rope, &LineIndex),
-) -> state::File {
+fn update_file(uri: Url, file: state::File, update: impl FnOnce(&mut Rope, &Index)) -> state::File {
     let mut heads = file.into_heads();
 
     update(&mut heads.rope, &heads.index);
     let text = String::from(&heads.rope);
 
+    heads.index.update(LineIndex::new(&text));
+
     FileBuilder {
         rope: heads.rope,
-        index: LineIndex::new(&text),
+        index: heads.index,
         content: text,
         schema_builder: |index, schema| compile::compile(uri, schema, index),
         simplified_builder: compile::simplify,

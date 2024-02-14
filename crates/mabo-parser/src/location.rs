@@ -7,7 +7,7 @@ use winnow::{
 
 pub fn from_until<const N: usize, I>(
     mut input: Located<I>,
-    start: Checkpoint<<I as Stream>::Checkpoint>,
+    start: &Checkpoint<<I as Stream>::Checkpoint, Located<I>>,
     chars: [char; N],
 ) -> Range<usize>
 where

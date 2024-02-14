@@ -124,13 +124,13 @@ impl From<ParseDefinitionError> for ParseSchemaCause {
 
 impl<I> winnow::error::ParserError<I> for ParseSchemaCause
 where
-    I: winnow::stream::Location,
+    I: winnow::stream::Location + winnow::stream::Stream,
 {
     fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
         Self::Parser(kind, input.location())
     }
 
-    fn append(self, _: &I, _: winnow::error::ErrorKind) -> Self {
+    fn append(self, _: &I, _: &I::Checkpoint, _: winnow::error::ErrorKind) -> Self {
         self
     }
 }
@@ -248,13 +248,13 @@ impl From<ParseImportError> for ParseDefinitionError {
 
 impl<I> winnow::error::ParserError<I> for ParseDefinitionError
 where
-    I: winnow::stream::Location,
+    I: winnow::stream::Location + winnow::stream::Stream,
 {
     fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
         Self::Parser(kind, input.location())
     }
 
-    fn append(self, _: &I, _: winnow::error::ErrorKind) -> Self {
+    fn append(self, _: &I, _: &I::Checkpoint, _: winnow::error::ErrorKind) -> Self {
         self
     }
 }

@@ -48,7 +48,7 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
 
         impl<I> ::winnow::error::ParserError<I> for #ident
         where
-            I: ::winnow::stream::Location,
+            I: ::winnow::stream::Location + ::winnow::stream::Stream,
         {
             fn from_error_kind(input: &I, kind: ::winnow::error::ErrorKind) -> Self {
                 Self{
@@ -57,7 +57,7 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
                 }
             }
 
-            fn append(self, _: &I, _: ::winnow::error::ErrorKind) -> Self {
+            fn append(self, _: &I, _: &I::Checkpoint, _: ::winnow::error::ErrorKind) -> Self {
                 self
             }
         }

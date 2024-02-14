@@ -194,7 +194,7 @@ mod comments {
         .map(Comment)
         .map_err(|e| {
             e.map(|cause| ParseError {
-                at: location::from_until(*input, start, ['\n']),
+                at: location::from_until(*input, &start, ['\n']),
                 cause,
             })
         })

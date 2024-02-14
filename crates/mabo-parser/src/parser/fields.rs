@@ -80,7 +80,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Fields<'i>, ParseError>
     .parse_next(input)
     .map_err(|e| {
         e.map(|cause| ParseError {
-            at: location::from_until(*input, start, [',', '\n']),
+            at: location::from_until(*input, &start, [',', '\n']),
             cause,
         })
     })

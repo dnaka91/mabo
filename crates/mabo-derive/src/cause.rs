@@ -446,8 +446,8 @@ fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Tok
                 let ty = &v.fields[0].0.ty;
 
                 Ok(quote! {
-                    impl<I> winnow::error::FromExternalError<I, #ty> for #ident {
-                        fn from_external_error(_: &I, _: winnow::error::ErrorKind, e: #ty) -> Self {
+                    impl<I> ::winnow::error::FromExternalError<I, #ty> for #ident {
+                        fn from_external_error(_: &I, _: ::winnow::error::ErrorKind, e: #ty) -> Self {
                             Self::#variant_ident(e)
                         }
                     }
@@ -457,11 +457,11 @@ fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Tok
                 let ty = &v.fields[1].0.ty;
 
                 Ok(quote! {
-                    impl<I> winnow::error::FromExternalError<I, #ty> for #ident
+                    impl<I> ::winnow::error::FromExternalError<I, #ty> for #ident
                     where
-                        I: winnow::stream::Location,
+                        I: ::winnow::stream::Location,
                     {
-                        fn from_external_error(input: &I, _: winnow::error::ErrorKind, e: #ty) -> Self {
+                        fn from_external_error(input: &I, _: ::winnow::error::ErrorKind, e: #ty) -> Self {
                             Self::#variant_ident {
                                 at: input.location(),
                                 cause: e,
@@ -475,15 +475,15 @@ fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<Tok
     }).collect::<syn::Result<Vec<_>>>()?;
 
     Ok(quote! {
-        impl<I> winnow::error::ParserError<I> for #ident
+        impl<I> ::winnow::error::ParserError<I> for #ident
         where
-            I: winnow::stream::Location,
+            I: ::winnow::stream::Location + ::winnow::stream::Stream,
         {
-            fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
+            fn from_error_kind(input: &I, kind: ::winnow::error::ErrorKind) -> Self {
                 Self::Parser(kind, input.location())
             }
 
-            fn append(self, _: &I, _: winnow::error::ErrorKind) -> Self {
+            fn append(self, _: &I, _: &I::Checkpoint, _: ::winnow::error::ErrorKind) -> Self {
                 self
             }
         }

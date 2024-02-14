@@ -83,7 +83,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Module<'i>, ParseError>
     })
     .map_err(|e| {
         e.map(|cause| ParseError {
-            at: location::from_until(*input, start, ['}', '\n']),
+            at: location::from_until(*input, &start, ['}', '\n']),
             cause,
         })
     })

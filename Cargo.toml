@@ -28,6 +28,7 @@ anstream = "0.6.18"
 anstyle = "1.0.10"
 anyhow = "1.0.98"
 clap = { version = "4.5.38", features = ["derive", "wrap_help"] }
+document-features = "0.2.11"
 glob = "0.3.2"
 indoc = "2.0.6"
 insta = { version = "1.43.1", features = ["glob"] }

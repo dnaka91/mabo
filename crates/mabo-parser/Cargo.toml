@@ -10,11 +10,13 @@ repository.workspace = true
 license.workspace = true
 
 [package.metadata.docs.rs]
-rustc-args = ["--cfg", "docsrs"]
+features = ["docsrs"]
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 anstream.workspace = true
 anstyle.workspace = true
+document-features = { workspace = true, optional = true }
 mabo-derive = { path = "../mabo-derive" }
 miette = { workspace = true, features = ["derive"] }
 winnow = "0.7.10"
@@ -25,7 +27,12 @@ insta.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]
+#! # Feature flags
+## TODO!
 debug = []
+docsrs = ["dep:document-features"]
+## The simd feature enables SIMD accelerated parsing for better performance at the cost of platform
+## support.
 simd = ["winnow/simd"]
 
 [lints]

@@ -1,27 +1,28 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: "/// Sample type alias.\ntype Sample = u32;"
+description: "/// Sample alias.\nalias Sample = u32;"
 input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
+snapshot_kind: text
 ---
 Schema {
     path: Some(
         "alias_basic.mabo",
     ),
-    source: "/// Sample type alias.\ntype Sample = u32;\n",
+    source: "/// Sample alias.\nalias Sample = u32;\n",
     comment: Comment(
         [],
     ),
     definitions: [
-        TypeAlias(
-            TypeAlias {
+        Alias(
+            Alias {
                 comment: Comment(
                     [
                         CommentLine {
-                            value: "Sample type alias.",
+                            value: "Sample alias.",
                         },
                     ],
                 ),
-                keyword: Type,
+                keyword: Alias,
                 name: Name {
                     value: "Sample",
                 },

@@ -193,4 +193,4 @@ The final identifiers are as follows:
 | Enum variants   | `UpperCamelCase`       |
 | Constants       | `SCREAMING_SNAKE_CASE` |
 | Type parameters | `UpperCamelCase`       |
-| Type aliases    | `UpperCamelCase`       |
+| Aliases         | `UpperCamelCase`       |

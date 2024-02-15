@@ -42,8 +42,8 @@ pub enum Definition<'a> {
     Struct(Struct<'a>),
     /// Enum definition.
     Enum(Enum<'a>),
-    /// Type aliasing definition.
-    TypeAlias(TypeAlias<'a>),
+    /// Alias definition.
+    Alias(Alias<'a>),
     /// Const value declaration.
     Const(Const<'a>),
     /// Import declaration of other schemas.
@@ -162,13 +162,13 @@ pub enum FieldKind {
 
 /// Alias (re-name) from one type to another.
 #[cfg_attr(feature = "json", derive(schemars::JsonSchema, serde::Serialize))]
-pub struct TypeAlias<'a> {
+pub struct Alias<'a> {
     /// Original parser element.
     #[cfg_attr(feature = "json", serde(skip))]
-    pub source: &'a mabo_parser::TypeAlias<'a>,
+    pub source: &'a mabo_parser::Alias<'a>,
     /// Optional element-level comment.
     pub comment: Box<[&'a str]>,
-    /// Unique name of the type alias within the current scope.
+    /// Unique name of the alias within the current scope.
     pub name: &'a str,
     /// Potential generic type arguments.
     pub generics: Box<[&'a str]>,
@@ -327,7 +327,7 @@ fn definition<'a>(item: &'a mabo_parser::Definition<'_>) -> Definition<'a> {
         mabo_parser::Definition::Module(m) => Definition::Module(simplify_module(m)),
         mabo_parser::Definition::Struct(s) => Definition::Struct(simplify_struct(s)),
         mabo_parser::Definition::Enum(e) => Definition::Enum(simplify_enum(e)),
-        mabo_parser::Definition::TypeAlias(a) => Definition::TypeAlias(simplify_alias(a)),
+        mabo_parser::Definition::Alias(a) => Definition::Alias(simplify_alias(a)),
         mabo_parser::Definition::Const(c) => Definition::Const(simplify_const(c)),
         mabo_parser::Definition::Import(i) => Definition::Import(simplify_import(i)),
     }
@@ -466,8 +466,8 @@ fn simplify_type<'a>(item: &'a mabo_parser::Type<'_>) -> Type<'a> {
     }
 }
 
-fn simplify_alias<'a>(item: &'a mabo_parser::TypeAlias<'_>) -> TypeAlias<'a> {
-    TypeAlias {
+fn simplify_alias<'a>(item: &'a mabo_parser::Alias<'_>) -> Alias<'a> {
+    Alias {
         source: item,
         comment: comment(&item.comment),
         name: item.name.get(),

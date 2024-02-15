@@ -90,7 +90,7 @@ fn definition(value: &Definition<'_>) -> Result<(), Error> {
             generics::validate_enum_generics(e)?;
             tuples::validate_enum_tuples(e)?;
         }
-        Definition::TypeAlias(a) => {
+        Definition::Alias(a) => {
             tuples::validate_alias_tuples(a)?;
         }
         Definition::Const(c) => {

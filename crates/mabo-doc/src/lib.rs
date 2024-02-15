@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use askama::Template;
-use mabo_compiler::simplify::{Const, Definition, Enum, Module, Schema, Struct, TypeAlias};
+use mabo_compiler::simplify::{Alias, Const, Definition, Enum, Module, Schema, Struct};
 
 mod templates;
 
@@ -77,7 +77,7 @@ fn render_definition<'a>(
         Definition::Module(m) => render_module(m, path),
         Definition::Struct(s) => render_struct(s, path),
         Definition::Enum(e) => render_enum(e, path),
-        Definition::TypeAlias(a) => render_alias(a, path),
+        Definition::Alias(a) => render_alias(a, path),
         Definition::Const(c) => render_const(c, path),
         Definition::Import(_) => return None,
     })
@@ -123,7 +123,7 @@ fn render_enum<'a>(item: &'a Enum<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a
     })
 }
 
-fn render_alias<'a>(item: &'a TypeAlias<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
+fn render_alias<'a>(item: &'a Alias<'_>, path: &Rc<[Rc<str>]>) -> Result<Output<'a>> {
     Ok(Output {
         name: item.name,
         path: Rc::clone(path),

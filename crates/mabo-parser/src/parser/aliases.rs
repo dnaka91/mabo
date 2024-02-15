@@ -11,16 +11,16 @@ use winnow::{
 };
 
 use super::{Input, ParserExt, Result, generics, types};
-use crate::{Comment, Name, TypeAlias, highlight, token};
+use crate::{Alias, Comment, Name, highlight, token};
 
-/// Encountered an invalid `type` alias declaration.
+/// Encountered an invalid `alias` declaration.
 #[derive(Debug, ParserError)]
 #[err(
-    msg("Failed to parse type alias declaration"),
+    msg("Failed to parse alias declaration"),
     code(mabo::parse::alias_def),
     help(
-        "Expected type alias declaration in the form `{}`",
-        highlight::sample("type <Alias> = <Type>;"),
+        "Expected alias declaration in the form `{}`",
+        highlight::sample("alias <Alias> = <Type>;"),
     )
 )]
 #[rename(ParseAliasError)]
@@ -62,9 +62,9 @@ pub enum Cause {
     Type(types::ParseError),
 }
 
-pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseError> {
+pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Alias<'i>, ParseError> {
     (
-        terminated(token::Type::parser(), space1),
+        terminated(token::Alias::parser(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err2(Cause::Generics)),
@@ -75,7 +75,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseErr
     )
         .parse_next(input)
         .map(
-            |(keyword, (name, generics, equal, target, semicolon))| TypeAlias {
+            |(keyword, (name, generics, equal, target, semicolon))| Alias {
                 comment: Comment::default(),
                 keyword,
                 name,

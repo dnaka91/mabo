@@ -99,7 +99,7 @@ export default defineConfig({
               { text: "Tuples", link: "/reference/schema/tuples" },
               { text: "Constants", link: "/reference/schema/constants" },
               // { text: "Statics", link: "/reference/schema/statics" },
-              { text: "Type Aliases", link: "/reference/schema/type-aliases" },
+              { text: "Aliases", link: "/reference/schema/aliases" },
               { text: "Modules", link: "/reference/schema/modules" },
               { text: "Imports", link: "/reference/schema/imports" },
               // { text: "References", link: "/reference/schema/references" },

@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-doc/tests/render.rs
-description: "/// Sample type alias.\ntype Sample = u32;"
+description: "/// Sample alias.\nalias Sample = u32;"
 input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
 ---
 --- alias_basic/index.html
@@ -49,7 +49,7 @@ input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
         <a class="text-lg name-alias" href="alias.Sample.html">Sample</a>
       </td>
       <td>
-        <p>Sample type alias.</p>
+        <p>Sample alias.</p>
       </td>
     </tr>
   </table>
@@ -87,7 +87,7 @@ input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
   </h2>
   <pre class="item-definition my-2">type Sample = u32;</pre>
   <div class="markdown pl-6">
-    <p>Sample type alias.</p>
+    <p>Sample alias.</p>
   </div>
 </div>
 

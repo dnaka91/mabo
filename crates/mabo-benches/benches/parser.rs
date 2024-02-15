@@ -40,7 +40,7 @@ fn basic(bencher: Bencher<'_, '_>) {
             }
 
             /// Redefined type with fixed types
-            type SampleTyped = SampleStruct<bool, string>;
+            alias SampleTyped = SampleStruct<bool, string>;
         "#};
 
     mabo_parser::Schema::parse(input, None).unwrap();

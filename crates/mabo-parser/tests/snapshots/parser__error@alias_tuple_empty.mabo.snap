@@ -1,43 +1,44 @@
 ---
 source: crates/mabo-parser/tests/parser.rs
-description: type Sample = ();
+assertion_line: 60
+description: alias Sample = ();
 input_file: crates/mabo-parser/tests/inputs/invalid/alias_tuple_empty.mabo
 ---
 mabo::parse::alias_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseAliasError.html)
 
-  × Failed to parse type alias declaration
+  × Failed to parse alias declaration
   ├─▶ Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ Parser error at offset 15
-   ╭─[invalid/alias_tuple_empty.mabo:1:16]
- 1 │ type Sample = ();
-   ·                ▲
-   ·                ╰── In this declaration
+  ╰─▶ Parser error at offset 16
+   ╭─[invalid/alias_tuple_empty.mabo:1:17]
+ 1 │ alias Sample = ();
+   ·                 ▲
+   ·                 ╰── In this declaration
    ╰────
-  help: Expected type alias declaration in the form `❬B❭type <Alias> = <Type>;❬B❭`
+  help: Expected alias declaration in the form `❬B❭alias <Alias> = <Type>;❬B❭`
 
 Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
 
   × Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ Parser error at offset 15
-   ╭─[invalid/alias_tuple_empty.mabo:1:15]
- 1 │ type Sample = ();
-   ·               ┬
-   ·               ╰── In this declaration
+  ╰─▶ Parser error at offset 16
+   ╭─[invalid/alias_tuple_empty.mabo:1:16]
+ 1 │ alias Sample = ();
+   ·                ┬
+   ·                ╰── In this declaration
    ╰────
   help: Expected type definition in the form `❬B❭<Name>❬B❭`
 
 Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
 
   × Failed to parse type definition
-  ╰─▶ Parser error at offset 15
-   ╭─[invalid/alias_tuple_empty.mabo:1:16]
- 1 │ type Sample = ();
-   ·                ▲
-   ·                ╰── In this declaration
+  ╰─▶ Parser error at offset 16
+   ╭─[invalid/alias_tuple_empty.mabo:1:17]
+ 1 │ alias Sample = ();
+   ·                 ▲
+   ·                 ╰── In this declaration
    ╰────
   help: Expected type definition in the form `❬B❭<Name>❬B❭`
 
 Error: 
-  × Parser error at offset 15
+  × Parser error at offset 16

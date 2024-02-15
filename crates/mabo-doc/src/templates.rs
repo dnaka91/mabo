@@ -5,8 +5,7 @@ use std::{
 
 use askama::Template;
 use mabo_compiler::simplify::{
-    Const, Definition, Enum, ExternalType, Field, FieldKind, Literal, Module, Struct, Type,
-    TypeAlias,
+    Alias, Const, Definition, Enum, ExternalType, Field, FieldKind, Literal, Module, Struct, Type,
 };
 use mabo_meta::WireSize;
 
@@ -169,7 +168,7 @@ impl EnumDetail<'_> {
 #[template(path = "detail/alias.html")]
 pub struct AliasDetail<'a> {
     pub path: &'a [Rc<str>],
-    pub item: &'a TypeAlias<'a>,
+    pub item: &'a Alias<'a>,
 }
 
 impl AliasDetail<'_> {

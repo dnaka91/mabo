@@ -23,7 +23,7 @@ struct FullName {
 ///
 /// - Might be easier to remember.
 /// - Often referenced as this.
-type Name = FullName;
+alias Name = FullName;
 
 struct Address {
     /// Street name.

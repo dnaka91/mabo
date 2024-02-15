@@ -3,8 +3,8 @@ use std::{fmt::Write, ops::Range};
 use anyhow::Result;
 use lsp_types::{self as lsp, DocumentSymbol, SymbolKind};
 use mabo_parser::{
-    Const, Definition, Enum, Fields, Import, Module, NamedField, Schema, Spanned, Struct,
-    TypeAlias, UnnamedField, Variant,
+    Alias, Const, Definition, Enum, Fields, Import, Module, NamedField, Schema, Spanned, Struct,
+    UnnamedField, Variant,
 };
 
 use super::index::Index;
@@ -21,7 +21,7 @@ fn visit_definition(index: &Index, item: &Definition<'_>) -> Result<DocumentSymb
         Definition::Module(m) => visit_module(index, m),
         Definition::Struct(s) => visit_struct(index, s),
         Definition::Enum(e) => visit_enum(index, e),
-        Definition::TypeAlias(a) => visit_alias(index, a),
+        Definition::Alias(a) => visit_alias(index, a),
         Definition::Const(c) => visit_const(index, c),
         Definition::Import(i) => visit_import(index, i),
     }
@@ -106,7 +106,7 @@ fn visit_unnamed_field(
     ))
 }
 
-fn visit_alias(index: &Index, item: &TypeAlias<'_>) -> Result<DocumentSymbol> {
+fn visit_alias(index: &Index, item: &Alias<'_>) -> Result<DocumentSymbol> {
     Ok(create_symbol(
         item.name.get(),
         SymbolKind::VARIABLE,

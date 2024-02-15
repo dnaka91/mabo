@@ -1,8 +1,8 @@
 use anyhow::{ensure, Result};
 use lsp_types::{SemanticToken, SemanticTokenModifier, SemanticTokenType};
 use mabo_parser::{
-    Comment, Const, DataType, Definition, Enum, Fields, Generics, Id, Literal, LiteralValue,
-    Module, NamedField, Schema, Span, Spanned, Struct, Type, TypeAlias, UnnamedField, Variant,
+    Alias, Comment, Const, DataType, Definition, Enum, Fields, Generics, Id, Literal, LiteralValue,
+    Module, NamedField, Schema, Span, Spanned, Struct, Type, UnnamedField, Variant,
 };
 
 pub(crate) use self::{modifiers::TOKEN_MODIFIERS, types::TOKEN_TYPES};
@@ -54,7 +54,7 @@ define_semantic_token_types! {
         (BOOLEAN, "boolean"),
         (BUILTIN_TYPE, "builtinType"),
         (IDENTIFIER, "identifier"),
-        (TYPE_ALIAS, "typeAlias"),
+        (ALIAS, "alias"),
     }
 }
 
@@ -200,7 +200,7 @@ impl<'a> Visitor<'a> {
             Definition::Module(m) => self.visit_module(m),
             Definition::Struct(s) => self.visit_struct(s),
             Definition::Enum(e) => self.visit_enum(e),
-            Definition::TypeAlias(a) => self.visit_alias(a),
+            Definition::Alias(a) => self.visit_alias(a),
             Definition::Const(c) => self.visit_const(c),
             Definition::Import(_i) => Ok(()),
         }
@@ -281,9 +281,9 @@ impl<'a> Visitor<'a> {
         Ok(())
     }
 
-    fn visit_alias(&mut self, item: &TypeAlias<'_>) -> Result<()> {
+    fn visit_alias(&mut self, item: &Alias<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
-        self.add_span(&item.name, &types::TYPE_ALIAS, &[modifiers::DECLARATION])?;
+        self.add_span(&item.name, &types::ALIAS, &[modifiers::DECLARATION])?;
         self.visit_generics(&item.generics)?;
         self.visit_type(&item.target)
     }

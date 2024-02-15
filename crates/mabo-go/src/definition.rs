@@ -1,8 +1,7 @@
 use std::fmt::{self, Display, Write};
 
 use mabo_compiler::simplify::{
-    Const, Definition, Enum, ExternalType, Fields, Literal, Schema, Struct, Type, TypeAlias,
-    Variant,
+    Alias, Const, Definition, Enum, ExternalType, Fields, Literal, Schema, Struct, Type, Variant,
 };
 
 use crate::{Indent, Opts, Output, decode, encode, size};
@@ -77,7 +76,7 @@ fn render_definition<'a>(buf: &mut String, definition: &'a Definition<'_>) -> Op
             .unwrap();
         }
         Definition::Enum(e) => writeln!(buf, "{}", RenderEnum(e)).unwrap(),
-        Definition::TypeAlias(a) => writeln!(buf, "{}", RenderAlias(a)).unwrap(),
+        Definition::Alias(a) => writeln!(buf, "{}", RenderAlias(a)).unwrap(),
         Definition::Const(c) => write!(buf, "{}", RenderConst(c)).unwrap(),
         Definition::Import(_) => {}
     }
@@ -357,7 +356,7 @@ impl Display for RenderConstructor<'_> {
     }
 }
 
-struct RenderAlias<'a>(&'a TypeAlias<'a>);
+struct RenderAlias<'a>(&'a Alias<'a>);
 
 impl Display for RenderAlias<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

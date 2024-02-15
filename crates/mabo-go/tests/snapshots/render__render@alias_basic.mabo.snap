@@ -1,6 +1,6 @@
 ---
 source: crates/mabo-go/tests/render.rs
-description: "/// Sample type alias.\ntype Sample = u32;"
+description: "/// Sample alias.\nalias Sample = u32;"
 input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
 ---
 --- sample.go
@@ -14,5 +14,5 @@ import (
 	buf "github.com/dnaka91/mabo-go/buf"
 )
 
-// Sample type alias.
+// Sample alias.
 type Sample uint32

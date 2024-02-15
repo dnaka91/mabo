@@ -3,7 +3,7 @@ use std::{fmt::Write, ops::Range};
 use anyhow::Result;
 use lsp_types as lsp;
 use mabo_compiler::simplify::{
-    Const, Definition, Enum, Field, Fields, Module, ParserField, Schema, Struct, TypeAlias, Variant,
+    Alias, Const, Definition, Enum, Field, Fields, Module, ParserField, Schema, Struct, Variant,
 };
 use mabo_parser::{Span, Spanned};
 
@@ -34,7 +34,7 @@ fn visit_definition(
         Definition::Module(m) => visit_module(config, m, position),
         Definition::Struct(s) => visit_struct(config, s, position),
         Definition::Enum(e) => visit_enum(config, e, position),
-        Definition::TypeAlias(a) => visit_alias(a, position),
+        Definition::Alias(a) => visit_alias(a, position),
         Definition::Const(c) => visit_const(c, position),
         Definition::Import(_) => None,
     }
@@ -155,7 +155,7 @@ fn visit_named_field(
     })
 }
 
-fn visit_alias(item: &TypeAlias<'_>, position: usize) -> Option<(String, Span)> {
+fn visit_alias(item: &Alias<'_>, position: usize) -> Option<(String, Span)> {
     (Range::from(item.source.name.span()).contains(&position))
         .then(|| (fold_comment(&item.comment), item.source.name.span()))
 }

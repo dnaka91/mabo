@@ -1,1 +1,1 @@
-type sImple = Simple;
+alias sImple = Simple;

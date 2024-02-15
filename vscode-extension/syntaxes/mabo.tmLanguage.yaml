@@ -246,7 +246,7 @@ repository:
 
   alias:
     patterns:
-      - match: (type)\s+(.+?)\s*=\s*(.+?)(;)
+      - match: (alias)\s+(.+?)\s*=\s*(.+?)(;)
         captures:
           "1": { name: keyword.declaration.alias.mabo storage.type.alias.mabo }
           "2": { patterns: [include: "#type"] }

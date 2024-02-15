@@ -1,6 +1,6 @@
 use mabo_compiler::simplify::{
-    Const, Definition, Enum, ExternalType, Field, FieldKind, Fields, Import, Literal, Module,
-    Schema, Struct, Type, TypeAlias, Variant,
+    Alias, Const, Definition, Enum, ExternalType, Field, FieldKind, Fields, Import, Literal,
+    Module, Schema, Struct, Type, Variant,
 };
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{ToTokens, quote};
@@ -50,7 +50,7 @@ fn compile_definition(opts: &Opts, definition: &Definition<'_>) -> TokenStream {
                 #size
             }
         }
-        Definition::TypeAlias(a) => compile_alias(opts, a),
+        Definition::Alias(a) => compile_alias(opts, a),
         Definition::Const(c) => compile_const(c),
         Definition::Import(i) => compile_import(i),
     }
@@ -150,13 +150,13 @@ fn compile_variant(
 
 fn compile_alias(
     opts: &Opts,
-    TypeAlias {
+    Alias {
         comment,
         name,
         generics,
         target,
         ..
-    }: &TypeAlias<'_>,
+    }: &Alias<'_>,
 ) -> TokenStream {
     let comment = compile_comment(comment);
     let name = Ident::new(name, Span::call_site());

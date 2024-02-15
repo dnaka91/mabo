@@ -226,8 +226,8 @@ define_keywords! {
     Enum "enum"
     /// The `const` keyword.
     Const "const"
-    /// The `type` keyword.
-    Type "type"
+    /// The `alias` keyword.
+    Alias "alias"
     /// The `use` keyword.
     Use "use"
 }

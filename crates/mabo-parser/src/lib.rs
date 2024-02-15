@@ -16,6 +16,9 @@
 //! println!("{schema:#?}");
 //! ```
 
+#![cfg_attr(feature = "docsrs", doc = document_features::document_features!())]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+
 use std::{
     fmt::{self, Display, Write},
     ops::Range,

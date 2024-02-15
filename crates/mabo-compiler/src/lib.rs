@@ -18,6 +18,8 @@
 //! mabo_compiler::resolve_schemas(&[("test", &schema)]).unwrap();
 //! ```
 
+#![cfg_attr(feature = "docsrs", doc = document_features::document_features!())]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![expect(clippy::module_name_repetitions)]
 
 use mabo_parser::Spanned;

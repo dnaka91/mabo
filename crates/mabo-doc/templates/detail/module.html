@@ -77,7 +77,7 @@
   <table>
     {%- for def in item.definitions %}
     {%- match def %}
-    {%- when Definition::TypeAlias(a) %}
+    {%- when Definition::Alias(a) %}
     <tr>
       <td class="pr-8">
         <a class="text-lg name-alias" href="alias.{{ a.name }}.html">{{ a.name }}</a>

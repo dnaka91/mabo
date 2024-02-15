@@ -196,8 +196,8 @@ pub enum Definition<'a> {
     Struct(Struct<'a>),
     /// Enum definition.
     Enum(Enum<'a>),
-    /// Type aliasing definition.
-    TypeAlias(TypeAlias<'a>),
+    /// Alias definition.
+    Alias(Alias<'a>),
     /// Const value declaration.
     Const(Const<'a>),
     /// Import declaration of other schemas.
@@ -210,7 +210,7 @@ impl Print for Definition<'_> {
             Definition::Module(v) => v.print(f, level),
             Definition::Struct(v) => v.print(f, level),
             Definition::Enum(v) => v.print(f, level),
-            Definition::TypeAlias(v) => v.print(f, level),
+            Definition::Alias(v) => v.print(f, level),
             Definition::Const(v) => v.print(f, level),
             Definition::Import(v) => v.print(f, level),
         }
@@ -229,7 +229,7 @@ impl<'a> Definition<'a> {
             Definition::Module(m) => m.comment = comment,
             Definition::Struct(s) => s.comment = comment,
             Definition::Enum(e) => e.comment = comment,
-            Definition::TypeAlias(a) => a.comment = comment,
+            Definition::Alias(a) => a.comment = comment,
             Definition::Const(c) => c.comment = comment,
             Definition::Import(_) => {}
         }
@@ -241,7 +241,7 @@ impl<'a> Definition<'a> {
             Definition::Struct(s) => s.attributes = attributes,
             Definition::Enum(e) => e.attributes = attributes,
             Definition::Module(_)
-            | Definition::TypeAlias(_)
+            | Definition::Alias(_)
             | Definition::Const(_)
             | Definition::Import(_) => {}
         }
@@ -489,12 +489,12 @@ impl Display for Variant<'_> {
 /// type A<T> = hash_map<u32, T>;
 /// ```
 #[derive(Debug, Eq, PartialEq)]
-pub struct TypeAlias<'a> {
+pub struct Alias<'a> {
     /// Optional element-level comment.
     pub comment: Comment<'a>,
     /// The `type` keyword to mark the type alias declaration.
-    pub keyword: token::Type,
-    /// Unique name of the type alias within the current scope.
+    pub keyword: token::Alias,
+    /// Unique name of the alias within the current scope.
     pub name: Name<'a>,
     /// Potential generic type arguments.
     pub generics: Option<Generics<'a>>,
@@ -506,7 +506,7 @@ pub struct TypeAlias<'a> {
     pub semicolon: token::Semicolon,
 }
 
-impl Print for TypeAlias<'_> {
+impl Print for Alias<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
@@ -529,7 +529,7 @@ impl Print for TypeAlias<'_> {
     }
 }
 
-impl Display for TypeAlias<'_> {
+impl Display for Alias<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
     }

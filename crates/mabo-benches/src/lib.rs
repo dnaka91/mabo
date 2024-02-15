@@ -93,7 +93,7 @@ pub fn generate_schema(count: usize) -> String {
     input.push('\n');
 
     for i in 1..=count {
-        writeln!(&mut input, "type Alias{i} = SampleNamed;").unwrap();
+        writeln!(&mut input, "alias Alias{i:05} = SampleNamed;").unwrap();
     }
 
     input.push_str("\nmod resolve {\n");

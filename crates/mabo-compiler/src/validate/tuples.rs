@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use mabo_parser::{
-    punctuated::ValuesIter, Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias,
+    punctuated::ValuesIter, Alias, Const, DataType, Enum, Fields, Spanned, Struct, Type,
 };
 use miette::{diagnostic, Diagnostic};
 use thiserror::Error;
@@ -61,7 +61,7 @@ fn validate_field_tuples(value: &Fields<'_>) -> Result<(), TupleSize> {
     }
 }
 
-pub(crate) fn validate_alias_tuples(value: &TypeAlias<'_>) -> Result<(), TupleSize> {
+pub(crate) fn validate_alias_tuples(value: &Alias<'_>) -> Result<(), TupleSize> {
     validate_tuple_size(&value.target)
 }
 

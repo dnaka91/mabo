@@ -1,2 +1,2 @@
-/// Sample type alias.
-type Sample = u32;
+/// Sample alias.
+alias Sample = u32;

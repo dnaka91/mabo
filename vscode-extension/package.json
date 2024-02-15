@@ -117,8 +117,8 @@
         "superType": "number"
       },
       {
-        "id": "typeAlias",
-        "description": "Style for type aliases",
+        "id": "alias",
+        "description": "Style for aliases",
         "superType": "type"
       },
       {
@@ -182,7 +182,7 @@
           "identifier": [
             "constant.numeric.mabo"
           ],
-          "typeAlias": [
+          "alias": [
             "entity.name.type.declaration.mabo"
           ],
           "variable.constant": [

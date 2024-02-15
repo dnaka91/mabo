@@ -134,7 +134,7 @@ pub(crate) fn validate_names_in_module(value: &[Definition<'_>]) -> Result<(), D
                 Definition::Module(m) => &m.name,
                 Definition::Struct(s) => &s.name,
                 Definition::Enum(e) => &e.name,
-                Definition::TypeAlias(a) => &a.name,
+                Definition::Alias(a) => &a.name,
                 Definition::Const(c) => &c.name,
                 Definition::Import(Import {
                     element: Some((_, name)),

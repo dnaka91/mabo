@@ -9,9 +9,14 @@ homepage.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[package.metadata.docs.rs]
+features = ["docsrs", "json"]
+rustdoc-args = ["--cfg", "docsrs"]
+
 [dependencies]
 anstream.workspace = true
 anstyle.workspace = true
+document-features = { workspace = true, optional = true }
 mabo-parser = { path = "../mabo-parser" }
 miette.workspace = true
 rustc-hash.workspace = true
@@ -25,7 +30,10 @@ insta.workspace = true
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 
 [features]
+#! # Feature flags
 debug = []
+docsrs = ["dep:document-features"]
+## The json feature enables serialization of the simplified data structures to JSON.
 json = ["dep:schemars", "dep:serde", "dep:serde_json"]
 
 [lints]

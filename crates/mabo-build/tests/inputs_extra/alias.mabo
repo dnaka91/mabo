@@ -1,2 +1,2 @@
 /// Hello world!
-type Sample = String;
+alias Sample = String;

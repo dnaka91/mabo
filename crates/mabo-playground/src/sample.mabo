@@ -42,7 +42,7 @@ mod gens {
 }
 
 /// Alias for another type.
-type SampleAlias = Sample;
+alias SampleAlias = Sample;
 
 mod specials {
     struct SomeOptions {

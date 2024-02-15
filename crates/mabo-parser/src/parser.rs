@@ -82,7 +82,7 @@ fn parse_definition<'i>(input: &mut Input<'i>) -> Result<Definition<'i>, ParseDe
                 's' => structs::parse.map(Definition::Struct).map_err(Into::into),
                 'e' => enums::parse.map(Definition::Enum).map_err(Into::into),
                 'c' => consts::parse.map(Definition::Const).map_err(Into::into),
-                't' => aliases::parse.map(Definition::TypeAlias).map_err(Into::into),
+                'a' => aliases::parse.map(Definition::Alias).map_err(Into::into),
                 'u' => imports::parse.map(Definition::Import).map_err(Into::into),
                 _ => fail,
             },

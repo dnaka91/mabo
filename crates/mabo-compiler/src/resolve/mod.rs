@@ -110,11 +110,11 @@ enum DeclarationKind {
 }
 
 impl DeclarationKind {
-    fn as_str(&self) -> &'static str {
+    const fn as_str(&self) -> &'static str {
         match self {
             DeclarationKind::Struct { .. } => "struct",
             DeclarationKind::Enum { .. } => "enum",
-            DeclarationKind::Alias => "type alias",
+            DeclarationKind::Alias => "alias",
             DeclarationKind::Const => "constant",
         }
     }
@@ -278,10 +278,10 @@ impl Module<'_> {
                 .into())
             }
             DeclarationKind::Alias => Err(RemoteInvalidKind {
-                kind: "type alias",
+                kind: "alias",
                 used: ty.name.span().into(),
                 declaration: [RemoteInvalidKindDeclaration {
-                    kind: "type alias",
+                    kind: "alias",
                     source_code: NamedSource::new(
                         self.schema
                             .path
@@ -437,7 +437,7 @@ fn visit_module_tree<'a>(
                 },
                 name: e.name.clone(),
             }),
-            Definition::TypeAlias(a) => module.types.push(Declaration {
+            Definition::Alias(a) => module.types.push(Declaration {
                 kind: DeclarationKind::Alias,
                 name: a.name.clone(),
             }),

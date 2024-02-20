@@ -364,31 +364,42 @@ impl<'a> Visitor<'a> {
             | DataType::Bytes
             | DataType::BytesRef
             | DataType::BoxBytes => self.add_span(item, &types::BUILTIN_TYPE, &[]),
-            DataType::Vec(span, angle, ty)
-            | DataType::HashSet(span, angle, ty)
-            | DataType::Option(span, angle, ty)
-            | DataType::NonZero(span, angle, ty) => {
+            DataType::Vec { span, angle, ty }
+            | DataType::HashSet { span, angle, ty }
+            | DataType::Option { span, angle, ty }
+            | DataType::NonZero { span, angle, ty } => {
                 self.add_span(span, &types::BUILTIN_TYPE, &[])?;
                 self.add_span(&angle.open(), &types::ANGLE, &[])?;
                 self.visit_type(ty)?;
                 self.add_span(&angle.close(), &types::ANGLE, &[])
             }
-            DataType::HashMap(span, angle, comma, kv) => {
+            DataType::HashMap {
+                span,
+                angle,
+                key,
+                comma,
+                value,
+            } => {
                 self.add_span(span, &types::BUILTIN_TYPE, &[])?;
                 self.add_span(&angle.open(), &types::ANGLE, &[])?;
-                self.visit_type(&kv.0)?;
+                self.visit_type(key)?;
                 self.add_span(comma, &types::COMMA, &[])?;
-                self.visit_type(&kv.1)?;
+                self.visit_type(value)?;
                 self.add_span(&angle.close(), &types::ANGLE, &[])
             }
-            DataType::Tuple(paren, types) => {
+            DataType::Tuple { paren, types } => {
                 self.add_span(&paren.open(), &types::PARENTHESIS, &[])?;
                 for ty in types {
                     self.visit_type(ty)?;
                 }
                 self.add_span(&paren.close(), &types::PARENTHESIS, &[])
             }
-            DataType::Array(bracket, ty, semicolon, _) => {
+            DataType::Array {
+                bracket,
+                ty,
+                semicolon,
+                size: _,
+            } => {
                 self.add_span(&bracket.open(), &types::BRACKET, &[])?;
                 self.visit_type(ty)?;
                 self.add_span(semicolon, &types::SEMICOLON, &[])?;

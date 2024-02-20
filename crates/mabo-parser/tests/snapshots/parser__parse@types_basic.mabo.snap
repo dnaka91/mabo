@@ -419,9 +419,9 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Tuple(
-                                    Parenthesis,
-                                    [
+                                value: Tuple {
+                                    paren: Parenthesis,
+                                    types: [
                                         Type {
                                             value: U32,
                                         },
@@ -432,7 +432,7 @@ Schema {
                                             value: U32,
                                         },
                                     ],
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -452,14 +452,14 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Array(
-                                    Bracket,
-                                    Type {
+                                value: Array {
+                                    bracket: Bracket,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                    Semicolon,
-                                    12,
-                                ),
+                                    semicolon: Semicolon,
+                                    size: 12,
+                                },
                             },
                             id: Some(
                                 Id {

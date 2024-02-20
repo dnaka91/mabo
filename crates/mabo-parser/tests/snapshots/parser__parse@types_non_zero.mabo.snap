@@ -39,12 +39,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U8,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -64,12 +64,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U16,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -89,12 +89,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -114,12 +114,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U64,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -139,12 +139,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U128,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -164,12 +164,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: I8,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -189,12 +189,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: I16,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -214,12 +214,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: I32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -239,12 +239,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: I64,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -264,12 +264,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: I128,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -289,12 +289,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: String,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -314,12 +314,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: Bytes,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -339,17 +339,17 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
-                                        value: Vec(
-                                            Angle,
-                                            Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
+                                        value: Vec {
+                                            angle: Angle,
+                                            ty: Type {
                                                 value: String,
                                             },
-                                        ),
+                                        },
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -369,23 +369,21 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
-                                        value: HashMap(
-                                            Angle,
-                                            Comma,
-                                            (
-                                                Type {
-                                                    value: String,
-                                                },
-                                                Type {
-                                                    value: Bytes,
-                                                },
-                                            ),
-                                        ),
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
+                                        value: HashMap {
+                                            angle: Angle,
+                                            key: Type {
+                                                value: String,
+                                            },
+                                            comma: Comma,
+                                            value: Type {
+                                                value: Bytes,
+                                            },
+                                        },
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -405,17 +403,17 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
-                                        value: HashSet(
-                                            Angle,
-                                            Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
+                                        value: HashSet {
+                                            angle: Angle,
+                                            ty: Type {
                                                 value: String,
                                             },
-                                        ),
+                                        },
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {

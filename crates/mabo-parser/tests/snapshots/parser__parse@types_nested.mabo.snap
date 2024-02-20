@@ -39,33 +39,31 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Vec(
-                                    Angle,
-                                    Type {
-                                        value: Option(
-                                            Angle,
-                                            Type {
-                                                value: NonZero(
-                                                    Angle,
-                                                    Type {
-                                                        value: HashMap(
-                                                            Angle,
-                                                            Comma,
-                                                            (
-                                                                Type {
-                                                                    value: I64,
-                                                                },
-                                                                Type {
-                                                                    value: BoxString,
-                                                                },
-                                                            ),
-                                                        ),
+                                value: Vec {
+                                    angle: Angle,
+                                    ty: Type {
+                                        value: Option {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: NonZero {
+                                                    angle: Angle,
+                                                    ty: Type {
+                                                        value: HashMap {
+                                                            angle: Angle,
+                                                            key: Type {
+                                                                value: I64,
+                                                            },
+                                                            comma: Comma,
+                                                            value: Type {
+                                                                value: BoxString,
+                                                            },
+                                                        },
                                                     },
-                                                ),
+                                                },
                                             },
-                                        ),
+                                        },
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {

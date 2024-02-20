@@ -907,25 +907,78 @@ pub enum DataType<'a> {
     /// Reference version (slice) of `u8` bytes.
     BytesRef,
     /// Vector of another data type.
-    Vec(Span, token::Angle, Box<Type<'a>>),
+    Vec {
+        /// Source code location of the `vec` type name.
+        span: Span,
+        /// Angles `<`...`>` that delimit the type parameter.
+        angle: token::Angle,
+        /// Type parameter.
+        ty: Box<Type<'a>>,
+    },
     /// Key-value hash map of data types.
-    HashMap(Span, token::Angle, token::Comma, Box<(Type<'a>, Type<'a>)>),
+    HashMap {
+        /// Source code location of the `hash_map` type name.
+        span: Span,
+        /// Angles `<`...`>` that delimit the type parameters.
+        angle: token::Angle,
+        /// First type parameter.
+        key: Box<Type<'a>>,
+        /// Separator between first and second type parameter.
+        comma: token::Comma,
+        /// Second type parameter.
+        value: Box<Type<'a>>,
+    },
     /// Hash set of data types (each entry is unique).
-    HashSet(Span, token::Angle, Box<Type<'a>>),
+    HashSet {
+        /// Source code location of the `hash_set` type name.
+        span: Span,
+        /// Angles `<`...`>` that delimit the type parameter.
+        angle: token::Angle,
+        /// Type parameter.
+        ty: Box<Type<'a>>,
+    },
     /// Optional value.
-    Option(Span, token::Angle, Box<Type<'a>>),
+    Option {
+        /// Source code location of the `option` type name.
+        span: Span,
+        /// Angles `<`...`>` that delimit the type parameter.
+        angle: token::Angle,
+        /// Type parameter.
+        ty: Box<Type<'a>>,
+    },
     /// Non-zero value.
     /// - Integers: `n > 0`
     /// - Collections: `len() > 0`
-    NonZero(Span, token::Angle, Box<Type<'a>>),
+    NonZero {
+        /// Source code location of the `non_zero` type name.
+        span: Span,
+        /// Angles `<`...`>` that delimit the type parameter.
+        angle: token::Angle,
+        /// Type parameter.
+        ty: Box<Type<'a>>,
+    },
     /// Boxed version of a string that is immutable.
     BoxString,
     /// Boxed version of a byte vector that is immutable.
     BoxBytes,
     /// Fixed size list of up to 12 types.
-    Tuple(token::Parenthesis, Vec<Type<'a>>),
+    Tuple {
+        /// Parenthesis `(`...`)` that delimits the tuple.
+        paren: token::Parenthesis,
+        /// List of types that make up the tuple.
+        types: Vec<Type<'a>>,
+    },
     /// Continuous list of values with a single time and known length.
-    Array(token::Bracket, Box<Type<'a>>, token::Semicolon, u32),
+    Array {
+        /// Brackets `[`...`]` that delimit the array.
+        bracket: token::Bracket,
+        /// The singular repeated type.
+        ty: Box<Type<'a>>,
+        /// Separator between type and array size.
+        semicolon: token::Semicolon,
+        /// Size, as in count of elements.
+        size: u32,
+    },
     /// Any external, non-standard data type (like a user defined struct or enum).
     External(ExternalType<'a>),
 }
@@ -950,15 +1003,15 @@ impl Display for DataType<'_> {
             Self::StringRef => f.write_str("&string"),
             Self::Bytes => f.write_str("bytes"),
             Self::BytesRef => f.write_str("&bytes"),
-            Self::Vec(_, _, t) => write!(f, "vec<{t}>"),
-            Self::HashMap(_, _, _, kv) => write!(f, "hash_map<{}, {}>", kv.0, kv.1),
-            Self::HashSet(_, _, t) => write!(f, "hash_set<{t}>"),
-            Self::Option(_, _, t) => write!(f, "option<{t}>"),
-            Self::NonZero(_, _, t) => write!(f, "non_zero<{t}>"),
+            Self::Vec { ty, .. } => write!(f, "vec<{ty}>"),
+            Self::HashMap { key, value, .. } => write!(f, "hash_map<{key}, {value}>"),
+            Self::HashSet { ty, .. } => write!(f, "hash_set<{ty}>"),
+            Self::Option { ty, .. } => write!(f, "option<{ty}>"),
+            Self::NonZero { ty, .. } => write!(f, "non_zero<{ty}>"),
             Self::BoxString => f.write_str("box<string>"),
             Self::BoxBytes => f.write_str("box<bytes>"),
-            Self::Tuple(_, l) => concat::<token::Parenthesis>(f, l, ", "),
-            Self::Array(_, t, _, size) => write!(f, "[{t}; {size}]"),
+            Self::Tuple { types, .. } => concat::<token::Parenthesis>(f, types, ", "),
+            Self::Array { ty, size, .. } => write!(f, "[{ty}; {size}]"),
             Self::External(t) => t.fmt(f),
         }
     }

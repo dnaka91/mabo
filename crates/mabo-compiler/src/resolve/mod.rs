@@ -470,20 +470,20 @@ fn visit_externals<'a>(value: &'a Type<'_>, visit: &mut impl FnMut(&'a ExternalT
         | DataType::StringRef
         | DataType::Bytes
         | DataType::BytesRef
-        | DataType::NonZero(_, _, _)
+        | DataType::NonZero { .. }
         | DataType::BoxString
         | DataType::BoxBytes => {}
-        DataType::Vec(_, _, ty)
-        | DataType::HashSet(_, _, ty)
-        | DataType::Option(_, _, ty)
-        | DataType::Array(_, ty, _, _) => {
+        DataType::Vec { ty, .. }
+        | DataType::HashSet { ty, .. }
+        | DataType::Option { ty, .. }
+        | DataType::Array { ty, .. } => {
             visit_externals(ty, visit);
         }
-        DataType::HashMap(_, _, _, kv) => {
-            visit_externals(&kv.0, visit);
-            visit_externals(&kv.1, visit);
+        DataType::HashMap { key, value, .. } => {
+            visit_externals(key, visit);
+            visit_externals(value, visit);
         }
-        DataType::Tuple(_, types) => {
+        DataType::Tuple { types, .. } => {
             for ty in types {
                 visit_externals(ty, visit);
             }

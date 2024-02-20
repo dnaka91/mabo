@@ -102,40 +102,73 @@ fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 }
 
 fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
-    dispatch! {
-        (take_while(3.., ('a'..='z', '_')).with_span(), token::Angle::OPEN.span());
-        (("vec", ref span), ref open) => cut_err((
+    /// Create a parser for a single generic parameter like `<T>`.
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
+    fn parse_single<'i>(
+        convert: impl Fn(token::Angle, Type<'i>) -> DataType<'i>,
+    ) -> impl Fn(&mut Input<'i>) -> Result<DataType<'i>, Cause> {
+        move |input| {
+            cut_err((
+                token::Angle::OPEN.span(),
                 parse.map_err(Cause::from),
                 token::Angle::CLOSE.span(),
             ))
-            .map(|(ty, close)| DataType::Vec(span.into(), (open, &close).into(), Box::new(ty))),
-        (("hash_map", ref span), ref open) => cut_err((
+            .parse_next(input)
+            .map(|(open, ty, close)| convert((open, close).into(), ty))
+        }
+    }
+
+    /// Create a parser for two generic parameters like `<K, V>`.
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
+    fn parse_pair<'i>(
+        convert: impl Fn(token::Angle, Type<'i>, token::Comma, Type<'i>) -> DataType<'i>,
+    ) -> impl Fn(&mut Input<'i>) -> Result<DataType<'i>, Cause> {
+        move |input| {
+            cut_err((
+                token::Angle::OPEN.span(),
                 parse.map_err(Cause::from),
                 preceded(space0, token::Comma::VALUE.span()),
                 preceded(space0, parse.map_err(Cause::from)),
                 token::Angle::CLOSE.span(),
             ))
-            .map(|(key, comma, value, close)| DataType::HashMap(
-                span.into(),
-                (open, &close).into(),
-                comma.into(),
-                Box::new((key, value)),
-            )),
-        (("hash_set", ref span), ref open) => cut_err((
-                parse.map_err(Cause::from),
-                token::Angle::CLOSE.span(),
-            ))
-            .map(|(ty, close)| DataType::HashSet(span.into(), (open, &close).into(), Box::new(ty))),
-        (("option", ref span), ref open) => cut_err((
-                parse.map_err(Cause::from),
-                token::Angle::CLOSE.span(),
-            ))
-            .map(|(ty, close)| DataType::Option(span.into(), (open, &close).into(), Box::new(ty))),
-        (("non_zero", ref span), ref open) => cut_err((
-                parse.map_err(Cause::from),
-                token::Angle::CLOSE.span(),
-            ))
-            .map(|(ty, close)| DataType::NonZero(span.into(), (open, &close).into(), Box::new(ty))),
+            .parse_next(input)
+            .map(|(open, ty1, comma, ty2, close)| {
+                convert((open, close).into(), ty1, comma.into(), ty2)
+            })
+        }
+    }
+
+    dispatch! {
+        take_while(3.., ('a'..='z', '_')).with_span();
+        ("vec", ref span) => parse_single(|angle, ty| DataType::Vec {
+                span: span.into(),
+                angle,
+                ty: Box::new(ty),
+            }),
+        ("hash_map", ref span) => parse_pair(|angle, key, comma, value| DataType::HashMap {
+                span: span.into(),
+                angle,
+                key: Box::new(key),
+                comma,
+                value: Box::new(value),
+            }),
+        ("hash_set", ref span) => parse_single(|angle, ty| DataType::HashSet {
+                span: span.into(),
+                angle,
+                ty: Box::new(ty),
+            }),
+        ("option", ref span) => parse_single(|angle, ty| DataType::Option {
+                span: span.into(),
+                angle,
+                ty: Box::new(ty),
+            }),
+        ("non_zero", ref span) => parse_single(|angle, ty| DataType::NonZero {
+                span: span.into(),
+                angle,
+                ty: Box::new(ty),
+            }),
         _ => fail,
     }
     .parse_next(input)
@@ -154,8 +187,9 @@ fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
         )),
     )
         .parse_next(input)
-        .map(|(paren_open, (ty, paren_close))| {
-            DataType::Tuple((paren_open, paren_close).into(), ty)
+        .map(|(paren_open, (types, paren_close))| DataType::Tuple {
+            paren: (paren_open, paren_close).into(),
+            types,
         })
 }
 
@@ -170,14 +204,14 @@ fn parse_array<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
         )),
     )
         .parse_next(input)
-        .map(|(bracket_open, (ty, semicolon, size, bracket_close))| {
-            DataType::Array(
-                (bracket_open, bracket_close).into(),
-                Box::new(ty),
-                semicolon.into(),
+        .map(
+            |(bracket_open, (ty, semicolon, size, bracket_close))| DataType::Array {
+                bracket: (bracket_open, bracket_close).into(),
+                ty: Box::new(ty),
+                semicolon: semicolon.into(),
                 size,
-            )
-        })
+            },
+        )
 }
 
 fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> {

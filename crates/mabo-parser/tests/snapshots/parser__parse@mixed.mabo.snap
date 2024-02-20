@@ -89,9 +89,9 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Option(
-                                    Angle,
-                                    Type {
+                                value: Option {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: External(
                                             ExternalType {
                                                 path: [],
@@ -103,7 +103,7 @@ Schema {
                                             },
                                         ),
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -222,12 +222,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Option(
-                                    Angle,
-                                    Type {
+                                value: Option {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: String,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -686,12 +686,12 @@ Schema {
                                                 },
                                                 colon: Colon,
                                                 ty: Type {
-                                                    value: Option(
-                                                        Angle,
-                                                        Type {
+                                                    value: Option {
+                                                        angle: Angle,
+                                                        ty: Type {
                                                             value: String,
                                                         },
-                                                    ),
+                                                    },
                                                 },
                                                 id: Some(
                                                     Id {

@@ -39,12 +39,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Vec(
-                                    Angle,
-                                    Type {
+                                value: Vec {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -64,18 +64,16 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: HashMap(
-                                    Angle,
-                                    Comma,
-                                    (
-                                        Type {
-                                            value: U32,
-                                        },
-                                        Type {
-                                            value: String,
-                                        },
-                                    ),
-                                ),
+                                value: HashMap {
+                                    angle: Angle,
+                                    key: Type {
+                                        value: U32,
+                                    },
+                                    comma: Comma,
+                                    value: Type {
+                                        value: String,
+                                    },
+                                },
                             },
                             id: Some(
                                 Id {
@@ -95,12 +93,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: HashSet(
-                                    Angle,
-                                    Type {
+                                value: HashSet {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -120,12 +118,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: Option(
-                                    Angle,
-                                    Type {
+                                value: Option {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -145,12 +143,12 @@ Schema {
                             },
                             colon: Colon,
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -185,12 +183,12 @@ Schema {
                     [
                         UnnamedField {
                             ty: Type {
-                                value: Vec(
-                                    Angle,
-                                    Type {
+                                value: Vec {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -203,18 +201,16 @@ Schema {
                         },
                         UnnamedField {
                             ty: Type {
-                                value: HashMap(
-                                    Angle,
-                                    Comma,
-                                    (
-                                        Type {
-                                            value: U32,
-                                        },
-                                        Type {
-                                            value: String,
-                                        },
-                                    ),
-                                ),
+                                value: HashMap {
+                                    angle: Angle,
+                                    key: Type {
+                                        value: U32,
+                                    },
+                                    comma: Comma,
+                                    value: Type {
+                                        value: String,
+                                    },
+                                },
                             },
                             id: Some(
                                 Id {
@@ -227,12 +223,12 @@ Schema {
                         },
                         UnnamedField {
                             ty: Type {
-                                value: HashSet(
-                                    Angle,
-                                    Type {
+                                value: HashSet {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -245,12 +241,12 @@ Schema {
                         },
                         UnnamedField {
                             ty: Type {
-                                value: Option(
-                                    Angle,
-                                    Type {
+                                value: Option {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {
@@ -263,12 +259,12 @@ Schema {
                         },
                         UnnamedField {
                             ty: Type {
-                                value: NonZero(
-                                    Angle,
-                                    Type {
+                                value: NonZero {
+                                    angle: Angle,
+                                    ty: Type {
                                         value: U32,
                                     },
-                                ),
+                                },
                             },
                             id: Some(
                                 Id {

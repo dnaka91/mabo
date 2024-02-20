@@ -106,18 +106,18 @@ fn visit_tuples<E>(
         | DataType::StringRef
         | DataType::Bytes
         | DataType::BytesRef
-        | DataType::NonZero(_, _, _)
+        | DataType::NonZero { .. }
         | DataType::BoxString
         | DataType::BoxBytes => Ok(()),
-        DataType::Vec(_, _, ty)
-        | DataType::HashSet(_, _, ty)
-        | DataType::Option(_, _, ty)
-        | DataType::Array(_, ty, _, _) => visit_tuples(ty, visit),
-        DataType::HashMap(_, _, _, kv) => {
-            visit_tuples(&kv.0, visit)?;
-            visit_tuples(&kv.1, visit)
+        DataType::Vec { ty, .. }
+        | DataType::HashSet { ty, .. }
+        | DataType::Option { ty, .. }
+        | DataType::Array { ty, .. } => visit_tuples(ty, visit),
+        DataType::HashMap { key, value, .. } => {
+            visit_tuples(key, visit)?;
+            visit_tuples(value, visit)
         }
-        DataType::Tuple(_, types) => {
+        DataType::Tuple { types, .. } => {
             visit(types)?;
             types.iter().try_for_each(|ty| visit_tuples(ty, visit))
         }

@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{alphanumeric0, space0, space1},
-    combinator::{cut_err, opt, preceded, separated, terminated},
+    combinator::{cut_err, opt, preceded, repeat, terminated},
     error::ErrorKind,
     stream::Location,
     token::one_of,
@@ -11,7 +11,11 @@ use winnow::{
 };
 
 use super::{comments, fields, generics, ids, ws, Input, ParserExt, Result};
-use crate::{highlight, Attributes, Comment, Enum, Name, Variant};
+use crate::{
+    highlight,
+    token::{self, Delimiter, Punctuation},
+    Attributes, Comment, Enum, Name, Variant,
+};
 
 /// Encountered an invalid `enum` declaration.
 #[derive(Debug, ParserError)]
@@ -85,28 +89,30 @@ pub enum Cause {
 }
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Enum<'i>, ParseError> {
-    preceded(
-        ("enum", space1),
+    (
+        terminated(token::Enum::NAME.span(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err(Cause::from)).map(Option::unwrap_or_default),
             preceded(space0, parse_variants),
         )),
     )
-    .parse_next(input)
-    .map(|(name, generics, variants)| Enum {
-        comment: Comment::default(),
-        attributes: Attributes::default(),
-        name,
-        generics,
-        variants,
-    })
-    .map_err(|e| {
-        e.map(|cause| ParseError {
-            at: input.location()..input.location(),
-            cause,
+        .parse_next(input)
+        .map(|(keyword, (name, generics, (brace, variants)))| Enum {
+            comment: Comment::default(),
+            attributes: Attributes::default(),
+            keyword: keyword.into(),
+            name,
+            generics,
+            brace,
+            variants,
         })
-    })
+        .map_err(|e| {
+            e.map(|cause| ParseError {
+                at: input.location()..input.location(),
+                cause,
+            })
+        })
 }
 
 pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
@@ -122,15 +128,13 @@ pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         })
 }
 
-fn parse_variants<'i>(input: &mut Input<'i>) -> Result<Vec<Variant<'i>>, Cause> {
-    preceded(
-        '{',
-        cut_err(terminated(
-            terminated(separated(1.., parse_variant, ws(',')), opt(ws(','))),
-            ws('}'),
-        )),
+fn parse_variants<'i>(input: &mut Input<'i>) -> Result<(token::Brace, Vec<Variant<'i>>), Cause> {
+    (
+        token::Brace::OPEN.span(),
+        cut_err((repeat(1.., parse_variant), ws(token::Brace::CLOSE.span()))),
     )
-    .parse_next(input)
+        .parse_next(input)
+        .map(|(brace_open, (variants, brace_close))| ((brace_open, brace_close).into(), variants))
 }
 
 fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {
@@ -140,15 +144,17 @@ fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {
             preceded(space0, parse_variant_name.with_span()),
             preceded(space0, fields::parse.map_err(Cause::from)),
             opt(preceded(space0, ids::parse.map_err(Cause::from))),
+            opt(ws(token::Comma::VALUE.span())),
         )
             .with_span(),
     )
         .parse_next(input)
-        .map(|(comment, ((name, fields, id), span))| Variant {
+        .map(|(comment, ((name, fields, id, comma), span))| Variant {
             comment,
             name: name.into(),
             fields,
             id,
+            comma: comma.map(Into::into),
             span: span.into(),
         })
 }

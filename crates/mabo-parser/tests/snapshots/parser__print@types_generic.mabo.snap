@@ -11,6 +11,6 @@ struct Sample {
     f5: non_zero<u32> @5,
 }
 
-struct SampleUnnamed(vec<u32> @1, hash_map<u32, string> @2, hash_set<u32> @3, option<u32> @4, non_zero<u32> @5)
+struct SampleUnnamed(vec<u32> @1, hash_map<u32, string> @2, hash_set<u32> @3, option<u32> @4, non_zero<u32> @5,)
 
 

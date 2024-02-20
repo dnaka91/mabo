@@ -20,6 +20,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Sample",
                 },
@@ -27,6 +28,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -35,6 +37,7 @@ Schema {
                             name: Name {
                                 value: "basic",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -42,6 +45,7 @@ Schema {
                                         name: Name {
                                             value: "Test123",
                                         },
+                                        angle: None,
                                         generics: [],
                                     },
                                 ),
@@ -51,6 +55,9 @@ Schema {
                                     value: 1,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -59,6 +66,7 @@ Schema {
                             name: Name {
                                 value: "with_generics",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -66,6 +74,9 @@ Schema {
                                         name: Name {
                                             value: "KeyValue",
                                         },
+                                        angle: Some(
+                                            Angle,
+                                        ),
                                         generics: [
                                             Type {
                                                 value: U32,
@@ -82,6 +93,9 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                     ],
                 ),
@@ -95,12 +109,14 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Enum,
                 name: Name {
                     value: "Test123",
                 },
                 generics: Generics(
                     [],
                 ),
+                brace: Brace,
                 variants: [
                     Variant {
                         comment: Comment(
@@ -115,6 +131,9 @@ Schema {
                                 value: 1,
                             },
                         ),
+                        comma: Some(
+                            Comma,
+                        ),
                     },
                 ],
             },
@@ -127,6 +146,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "KeyValue",
                 },
@@ -141,6 +161,7 @@ Schema {
                     ],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -149,6 +170,7 @@ Schema {
                             name: Name {
                                 value: "key",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -156,6 +178,7 @@ Schema {
                                         name: Name {
                                             value: "K",
                                         },
+                                        angle: None,
                                         generics: [],
                                     },
                                 ),
@@ -165,6 +188,9 @@ Schema {
                                     value: 1,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -173,6 +199,7 @@ Schema {
                             name: Name {
                                 value: "value",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -180,6 +207,7 @@ Schema {
                                         name: Name {
                                             value: "V",
                                         },
+                                        angle: None,
                                         generics: [],
                                     },
                                 ),
@@ -188,6 +216,9 @@ Schema {
                                 Id {
                                     value: 2,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],

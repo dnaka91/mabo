@@ -17,17 +17,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "BOOL_TRUE",
                 },
+                colon: Colon,
                 ty: Type {
                     value: Bool,
                 },
+                equal: Equal,
                 value: Literal {
                     value: Bool(
                         true,
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -35,17 +39,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "BOOL_FALSE",
                 },
+                colon: Colon,
                 ty: Type {
                     value: Bool,
                 },
+                equal: Equal,
                 value: Literal {
                     value: Bool(
                         false,
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -53,17 +61,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "INT",
                 },
+                colon: Colon,
                 ty: Type {
                     value: U32,
                 },
+                equal: Equal,
                 value: Literal {
                     value: Int(
                         100,
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -71,17 +83,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "FLOAT",
                 },
+                colon: Colon,
                 ty: Type {
                     value: F64,
                 },
+                equal: Equal,
                 value: Literal {
                     value: Float(
                         5.5,
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -89,17 +105,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "STRING",
                 },
+                colon: Colon,
                 ty: Type {
                     value: String,
                 },
+                equal: Equal,
                 value: Literal {
                     value: String(
                         "value",
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -107,12 +127,15 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "BYTES",
                 },
+                colon: Colon,
                 ty: Type {
                     value: Bytes,
                 },
+                equal: Equal,
                 value: Literal {
                     value: Bytes(
                         [
@@ -122,6 +145,7 @@ Schema {
                         ],
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
     ],

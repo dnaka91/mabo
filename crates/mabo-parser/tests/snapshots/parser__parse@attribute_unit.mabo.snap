@@ -25,6 +25,7 @@ Schema {
                         },
                     ],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Sample",
                 },

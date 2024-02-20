@@ -24,6 +24,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "SampleStruct",
                 },
@@ -31,6 +32,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -39,6 +41,7 @@ Schema {
                             name: Name {
                                 value: "a",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: U32,
                             },
@@ -46,6 +49,9 @@ Schema {
                                 Id {
                                     value: 1,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                         NamedField {
@@ -55,6 +61,7 @@ Schema {
                             name: Name {
                                 value: "b",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Bool,
                             },
@@ -62,6 +69,9 @@ Schema {
                                 Id {
                                     value: 2,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],
@@ -80,12 +90,14 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Enum,
                 name: Name {
                     value: "SampleEnum",
                 },
                 generics: Generics(
                     [],
                 ),
+                brace: Brace,
                 variants: [
                     Variant {
                         comment: Comment(
@@ -100,6 +112,9 @@ Schema {
                                 value: 1,
                             },
                         ),
+                        comma: Some(
+                            Comma,
+                        ),
                     },
                     Variant {
                         comment: Comment(
@@ -109,6 +124,7 @@ Schema {
                             value: "Two",
                         },
                         fields: Unnamed(
+                            Parenthesis,
                             [
                                 UnnamedField {
                                     ty: Type {
@@ -118,6 +134,9 @@ Schema {
                                         Id {
                                             value: 1,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 UnnamedField {
@@ -129,6 +148,7 @@ Schema {
                                             value: 2,
                                         },
                                     ),
+                                    comma: None,
                                 },
                             ],
                         ),
@@ -136,6 +156,9 @@ Schema {
                             Id {
                                 value: 2,
                             },
+                        ),
+                        comma: Some(
+                            Comma,
                         ),
                     },
                     Variant {
@@ -146,6 +169,7 @@ Schema {
                             value: "Three",
                         },
                         fields: Named(
+                            Brace,
                             [
                                 NamedField {
                                     comment: Comment(
@@ -154,6 +178,7 @@ Schema {
                                     name: Name {
                                         value: "field1",
                                     },
+                                    colon: Colon,
                                     ty: Type {
                                         value: U32,
                                     },
@@ -161,6 +186,9 @@ Schema {
                                         Id {
                                             value: 1,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 NamedField {
@@ -170,6 +198,7 @@ Schema {
                                     name: Name {
                                         value: "field2",
                                     },
+                                    colon: Colon,
                                     ty: Type {
                                         value: Bool,
                                     },
@@ -178,6 +207,9 @@ Schema {
                                             value: 2,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                             ],
                         ),
@@ -185,6 +217,9 @@ Schema {
                             Id {
                                 value: 3,
                             },
+                        ),
+                        comma: Some(
+                            Comma,
                         ),
                     },
                 ],

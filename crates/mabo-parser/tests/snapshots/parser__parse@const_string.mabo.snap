@@ -17,17 +17,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "SIMPLE",
                 },
+                colon: Colon,
                 ty: Type {
                     value: String,
                 },
+                equal: Equal,
                 value: Literal {
                     value: String(
                         "value",
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -35,17 +39,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "NEWLINE_ESCAPE",
                 },
+                colon: Colon,
                 ty: Type {
                     value: String,
                 },
+                equal: Equal,
                 value: Literal {
                     value: String(
                         "one two three",
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -53,17 +61,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "ESCAPES",
                 },
+                colon: Colon,
                 ty: Type {
                     value: String,
                 },
+                equal: Equal,
                 value: Literal {
                     value: String(
                         "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ",
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Const(
@@ -71,17 +83,21 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "MULTILINE",
                 },
+                colon: Colon,
                 ty: Type {
                     value: String,
                 },
+                equal: Equal,
                 value: Literal {
                     value: String(
                         "a\n    b\n    c\n",
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
     ],

@@ -20,6 +20,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Sample",
                 },
@@ -27,6 +28,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -35,8 +37,10 @@ Schema {
                             name: Name {
                                 value: "f1",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Vec(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -47,6 +51,9 @@ Schema {
                                     value: 1,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -55,8 +62,11 @@ Schema {
                             name: Name {
                                 value: "f2",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: HashMap(
+                                    Angle,
+                                    Comma,
                                     (
                                         Type {
                                             value: U32,
@@ -72,6 +82,9 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -80,8 +93,10 @@ Schema {
                             name: Name {
                                 value: "f3",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: HashSet(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -92,6 +107,9 @@ Schema {
                                     value: 3,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -100,8 +118,10 @@ Schema {
                             name: Name {
                                 value: "f4",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Option(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -112,6 +132,9 @@ Schema {
                                     value: 4,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -120,8 +143,10 @@ Schema {
                             name: Name {
                                 value: "f5",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -131,6 +156,9 @@ Schema {
                                 Id {
                                     value: 5,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],
@@ -145,6 +173,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "SampleUnnamed",
                 },
@@ -152,10 +181,12 @@ Schema {
                     [],
                 ),
                 fields: Unnamed(
+                    Parenthesis,
                     [
                         UnnamedField {
                             ty: Type {
                                 value: Vec(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -166,10 +197,15 @@ Schema {
                                     value: 1,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         UnnamedField {
                             ty: Type {
                                 value: HashMap(
+                                    Angle,
+                                    Comma,
                                     (
                                         Type {
                                             value: U32,
@@ -185,10 +221,14 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         UnnamedField {
                             ty: Type {
                                 value: HashSet(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -199,10 +239,14 @@ Schema {
                                     value: 3,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         UnnamedField {
                             ty: Type {
                                 value: Option(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -213,10 +257,14 @@ Schema {
                                     value: 4,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         UnnamedField {
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -226,6 +274,9 @@ Schema {
                                 Id {
                                     value: 5,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],

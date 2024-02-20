@@ -114,6 +114,47 @@
         "id": "typeAlias",
         "description": "Style for type aliases",
         "superType": "type"
+      },
+      {
+        "id": "comma",
+        "description": "Style for comma punctuation"
+      },
+      {
+        "id": "colon",
+        "description": "Style for colon punctuation"
+      },
+      {
+        "id": "semicolon",
+        "description": "Style for comsemicolonma punctuation"
+      },
+      {
+        "id": "pound",
+        "description": "Style for pound punctuation"
+      },
+      {
+        "id": "doubleColon",
+        "description": "Style for double colon punctuation"
+      },
+      {
+        "id": "equal",
+        "description": "Style for equal sign punctuation",
+        "superType": "operator"
+      },
+      {
+        "id": "brace",
+        "description": "Style for brace delimiters"
+      },
+      {
+        "id": "bracket",
+        "description": "Style for bracket delimiters"
+      },
+      {
+        "id": "parenthesis",
+        "description": "Style for parenthesis delimiters"
+      },
+      {
+        "id": "angle",
+        "description": "Style for angle delimiters"
       }
     ],
     "semanticTokenModifiers": [
@@ -140,6 +181,37 @@
           ],
           "variable.constant": [
             "variable.other.constant.mabo"
+          ],
+          "comma": [
+            "punctuation.comma.mabo"
+          ],
+          "colon": [
+            "punctuation.colon.mabo"
+          ],
+          "semicolon": [
+            "punctuation.semicolon.mabo"
+          ],
+          "pound": [
+            "punctuation.pound.mabo"
+          ],
+          "doubleColon": [
+            "punctuation.colon.mabo",
+            "punctuation.doubleColon.mabo"
+          ],
+          "equal": [
+            "operator.equal.mabo"
+          ],
+          "brace": [
+            "punctuation.brackets.curly"
+          ],
+          "bracket": [
+            "punctuation.brackets.square"
+          ],
+          "parenthesis": [
+            "punctuation.brackets.round"
+          ],
+          "angle": [
+            "punctuation.brackets.angle"
           ]
         }
       }

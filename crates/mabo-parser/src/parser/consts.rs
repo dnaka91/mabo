@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{space0, space1},
-    combinator::{cut_err, delimited, preceded, terminated},
+    combinator::{cut_err, preceded, terminated},
     error::ErrorKind,
     stream::{Location, Stream},
     token::{one_of, take_while},
@@ -11,7 +11,11 @@ use winnow::{
 };
 
 use super::{literals, types, Input, ParserExt, Result};
-use crate::{highlight, location, Comment, Const, Name};
+use crate::{
+    highlight, location,
+    token::{self, Punctuation},
+    Comment, Const, Name,
+};
 
 /// Encountered an invalid `const` declaration.
 #[derive(Debug, ParserError)]
@@ -78,31 +82,38 @@ pub enum Cause {
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Const<'i>, ParseError> {
     let start = input.checkpoint();
 
-    preceded(
-        ("const", space1),
+    (
+        terminated(token::Const::NAME.span(), space1),
         cut_err((
-            terminated(parse_name, (':', space0)),
-            types::parse.map_err(Cause::from),
-            delimited(
-                (space0, '=', space0),
-                literals::parse.map_err(Cause::from),
-                ';'.map_err_loc(|at, ()| Cause::UnexpectedChar { at, expected: ';' }),
-            ),
+            parse_name,
+            token::Colon::VALUE.span(),
+            preceded(space0, types::parse.map_err(Cause::from)),
+            preceded(space0, token::Equal::VALUE.span()),
+            preceded(space0, literals::parse.map_err(Cause::from)),
+            token::Semicolon::VALUE
+                .span()
+                .map_err_loc(|at, ()| Cause::UnexpectedChar { at, expected: ';' }),
         )),
     )
-    .parse_next(input)
-    .map(|(name, ty, value)| Const {
-        comment: Comment::default(),
-        name,
-        ty,
-        value,
-    })
-    .map_err(|e| {
-        e.map(|cause| ParseError {
-            at: location::from_until(*input, &start, [';']),
-            cause,
+        .parse_next(input)
+        .map(
+            |(keyword, (name, colon, ty, equal, value, semicolon))| Const {
+                comment: Comment::default(),
+                keyword: keyword.into(),
+                name,
+                colon: colon.into(),
+                ty,
+                equal: equal.into(),
+                value,
+                semicolon: semicolon.into(),
+            },
+        )
+        .map_err(|e| {
+            e.map(|cause| ParseError {
+                at: location::from_until(*input, &start, [';']),
+                cause,
+            })
         })
-    })
 }
 
 pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {

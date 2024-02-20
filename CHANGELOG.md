@@ -100,6 +100,13 @@ All notable changes to this project will be documented in this file.
   > 
   > This is currently used to log the location in the LPS when loading a
   > folder and searching for Mabo projects in it.
+- _lsp_: Support all official position encodings ([e6d4884](https://github.com/dnaka91/mabo/commit/e6d48848a6e23bf5fd1c43a905ea4904fa0adf9a))
+  > Until now the server always assumed UTF-16, as that is the default in
+  > Visual Studio Code, but other editors like Neovim might ask for a
+  > different encoding.
+  > 
+  > This now allows to run the LSP server with any of the official encodings
+  > UTF-8, UTF-16 and UTF-32.
 - _parser_: Add `simd` feature to the parser ([443c32c](https://github.com/dnaka91/mabo/commit/443c32c93622764a89cd3f0682ef8b1c6a6723dc))
   > The `winnow` crate has a `simd` feature which enables some extra
   > performance improvements. This might limit possible target platforms for
@@ -111,6 +118,7 @@ All notable changes to this project will be documented in this file.
 - _vscode_: Provide command to restart the LSP server ([21e5001](https://github.com/dnaka91/mabo/commit/21e500105b651ecede36495b98d3ad61ac1466a1))
   > Although mostly useful during development, add a custom command to the
   > VSCode extension, which allows to restart the LSP server.
+- _vscode_: Extend metadata for the vscode extension ([1dd3ca8](https://github.com/dnaka91/mabo/commit/1dd3ca83417535d1e91a478f209f10de4f032b97))
 - Implement encoding in the Rust codegen ([2787b51](https://github.com/dnaka91/mabo/commit/2787b51c04803311bf5ca3160b37e7db31d5a8ea))
 - Simplify encoding logic ([e8205bc](https://github.com/dnaka91/mabo/commit/e8205bcb6749fce6dd1f56ede38128076820bffd))
 - Implement basic decoding logic ([f67c572](https://github.com/dnaka91/mabo/commit/f67c57220ac2c57961bf54f7f47bca467d3fb20b))
@@ -257,6 +265,9 @@ All notable changes to this project will be documented in this file.
   > first empty line is found, instead of simply taking the first line only.
   > 
   > This fixes potential cut-off of the overview item docs.
+- _doc_: Fix broken PR links in the changelog ([359f02f](https://github.com/dnaka91/mabo/commit/359f02f284e9ac6d46f7dcbf22abd094a99a9123))
+  > Due to how repo placeholders were used in git-cliff, those were mangled
+  > and then later not properly replaced with the URL anymore.
 - _lsp_: Remove closed documents from the state ([a84018c](https://github.com/dnaka91/mabo/commit/a84018c6206cb17c00284bc792901fecf6785700))
   > To avoid growing the list of open files indefinitely, remove them from
   > the state of the server when closed in the editor.
@@ -310,6 +321,13 @@ All notable changes to this project will be documented in this file.
   > The calculation for required bytes of a field ID did not take the
   > recently added field encoding into account, which could potentially
   > result in too small values.
+- Expand tmLanguage regexes for tuples and arrays ([b589eac](https://github.com/dnaka91/mabo/commit/b589eac40d2d83ef5a5eb224229161fc177d7fe3))
+  > The tuples and arrays were correctly parsed for individual types, but
+  > the field regex didn't include possible token which made it fail to
+  > include those types in them matching.
+- Update winnow to fix broken integer parsing ([1f1790a](https://github.com/dnaka91/mabo/commit/1f1790a188db58b01e50804566d86265b919138b))
+  > Version 0.6 introduced a bug that caused the literal `0` not to be
+  > parsed as valid integer anymore. This was fixed with 0.6.1.
 
 ### 📚 Documentation
 
@@ -351,6 +369,7 @@ All notable changes to this project will be documented in this file.
   > Remove the sections from the ideas sections that have already been
   > implemented recently.
 - _parser_: Add missing doc for new field ([7f4ca98](https://github.com/dnaka91/mabo/commit/7f4ca98c236a41e505bcaa70a2df5fc3aae85b7a))
+- _vscode_: Add dedicated readme for the extension ([38af273](https://github.com/dnaka91/mabo/commit/38af273445a37dc56e04a90c85f0f57ae5621a1a))
 - Generate more stylish changelog ([5319fb3](https://github.com/dnaka91/mabo/commit/5319fb3417a830042e7bc220fe283046923da349))
 - Add changelog ([5b2a15c](https://github.com/dnaka91/mabo/commit/5b2a15cad70e53c6c39a93c395fbe8f80382ae56))
 - Update flatbuffers homepage in the book ([c469e4e](https://github.com/dnaka91/mabo/commit/c469e4e966cfb3866d08369f813eb999a4c3032d))
@@ -394,10 +413,19 @@ All notable changes to this project will be documented in this file.
   > The current schema generated for benchmarks on large schemas didn't
   > generate any definitions that use type references. Therefore, the
   > benchmark didn't give good insight on type resolution timing.
+- Use a faster hasher in compiler and LSP ([4eb37aa](https://github.com/dnaka91/mabo/commit/4eb37aaafc4da7a8b73b6aae31c38672cb8554c9))
+  > By applying the same hasher as in Rust's compiler, performance can be
+  > improved wherever a hash map or set is used.
+  > 
+  > This currently has the most visible impact on the compiler's validation
+  > step as it internally makes heavy use of hash maps.
 
 ### 🚜 Refactor
 
 - _compiler_: Simplify some type resolution steps ([ae1cf34](https://github.com/dnaka91/mabo/commit/ae1cf344feef941dc7f7afe6e8dca9e30c92b7d5))
+- _go_: Simplify indenting logic ([7425a11](https://github.com/dnaka91/mabo/commit/7425a118030d080acd025bbdbc7a2bc4ccc80058))
+  > Use a dedicated type that implements the `Display` trait, which allows
+  > for a much simpler way of expressing and forwarding indents.
 - _lsp_: Avoid unwraps and properly handle errors ([bcbb016](https://github.com/dnaka91/mabo/commit/bcbb016a1180a38311cbaa2709979494c0b2eb77))
 - _lsp_: Move logging logic into its own module ([ef1139b](https://github.com/dnaka91/mabo/commit/ef1139be9290846ccd197c4bbeeddca48ffcff50))
 - _lsp_: Replace tower-lsp with lsp-server ([51645a8](https://github.com/dnaka91/mabo/commit/51645a88c9b9c0d3e13a47da429ab9f7ef28d67f))
@@ -491,6 +519,7 @@ All notable changes to this project will be documented in this file.
 - _ci_: Setup GitHub Actions to deploy the book ([cf24bbb](https://github.com/dnaka91/mabo/commit/cf24bbb0e55955e37233f9719f046bb482a8d712))
 - _ci_: Improve path filters for book deployment ([8b79f6f](https://github.com/dnaka91/mabo/commit/8b79f6f03787edde0db881ab0e61b6e163924709))
 - _ci_: Create .nojekyll marker file for the book ([b51681f](https://github.com/dnaka91/mabo/commit/b51681f377640421249d9d9e180446f8ae16142a))
+- _doc_: Fix ambiguous links in the Rust docs ([e5d73fe](https://github.com/dnaka91/mabo/commit/e5d73fe68759aab1721f74e9845c57ea74fbd911))
 - _lsp_: Remove duplicate log message ([e8cfa08](https://github.com/dnaka91/mabo/commit/e8cfa08e0798c924c61c555fc74359ad2c660bb0))
 - Initial commit ([5eb2f2b](https://github.com/dnaka91/mabo/commit/5eb2f2b9687146363974ea645de22a8441e890a1))
 - Update checkout action to v4 ([4d753d8](https://github.com/dnaka91/mabo/commit/4d753d8b30ef3ee7d7e463fb2e7f594aee86d8e7))
@@ -509,5 +538,9 @@ All notable changes to this project will be documented in this file.
 - Fix Just task for link checking ([24e1520](https://github.com/dnaka91/mabo/commit/24e15209799f6285ca3a55f7145556145cb61f30))
 - Improve readme with badges and project status ([069f788](https://github.com/dnaka91/mabo/commit/069f7882f9abd1d14b697b38314a5db2976b895a))
 - Update snapshots after several Go codegen fixes ([b38e1ca](https://github.com/dnaka91/mabo/commit/b38e1cad5b861e59774a03fb5768d2284376787e))
+- Bump MSRV to 1.76 and update dependencies ([554b05b](https://github.com/dnaka91/mabo/commit/554b05b8799abaaa06caa73260882d22ba4856f2))
+  > Deprecations in `winnow` as well as increases in MSRVs in the
+  > dependencies. Bumping the MSRV to the very latest Rust version as there
+  > are no MSRV promises as of now and `clap` bumped their MSRV.
 
 <!-- generated by git-cliff -->

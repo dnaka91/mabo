@@ -383,7 +383,7 @@ fn simplify_fields<'a>(item: &'a mabo_parser::Fields<'_>) -> Fields<'a> {
     let mut id_gen = IdGenerator::new();
 
     match item {
-        mabo_parser::Fields::Named(named) => Fields {
+        mabo_parser::Fields::Named(_, named) => Fields {
             source: item,
             fields: named
                 .iter()
@@ -397,7 +397,7 @@ fn simplify_fields<'a>(item: &'a mabo_parser::Fields<'_>) -> Fields<'a> {
                 .collect(),
             kind: FieldKind::Named,
         },
-        mabo_parser::Fields::Unnamed(unnamed) => Fields {
+        mabo_parser::Fields::Unnamed(_, unnamed) => Fields {
             source: item,
             fields: unnamed
                 .iter()
@@ -439,19 +439,21 @@ fn simplify_type<'a>(item: &'a mabo_parser::Type<'_>) -> Type<'a> {
         mabo_parser::DataType::StringRef => Type::StringRef,
         mabo_parser::DataType::Bytes => Type::Bytes,
         mabo_parser::DataType::BytesRef => Type::BytesRef,
-        mabo_parser::DataType::Vec(ref ty) => Type::Vec(simplify_type(ty).into()),
-        mabo_parser::DataType::HashMap(ref kv) => {
+        mabo_parser::DataType::Vec(_, _, ref ty) => Type::Vec(simplify_type(ty).into()),
+        mabo_parser::DataType::HashMap(_, _, _, ref kv) => {
             Type::HashMap((simplify_type(&kv.0), simplify_type(&kv.1)).into())
         }
-        mabo_parser::DataType::HashSet(ref ty) => Type::HashSet(simplify_type(ty).into()),
-        mabo_parser::DataType::Option(ref ty) => Type::Option(simplify_type(ty).into()),
-        mabo_parser::DataType::NonZero(ref ty) => Type::NonZero(simplify_type(ty).into()),
+        mabo_parser::DataType::HashSet(_, _, ref ty) => Type::HashSet(simplify_type(ty).into()),
+        mabo_parser::DataType::Option(_, _, ref ty) => Type::Option(simplify_type(ty).into()),
+        mabo_parser::DataType::NonZero(_, _, ref ty) => Type::NonZero(simplify_type(ty).into()),
         mabo_parser::DataType::BoxString => Type::BoxString,
         mabo_parser::DataType::BoxBytes => Type::BoxBytes,
-        mabo_parser::DataType::Tuple(ref types) => {
+        mabo_parser::DataType::Tuple(_, ref types) => {
             Type::Tuple(types.iter().map(|ty| simplify_type(ty)).collect())
         }
-        mabo_parser::DataType::Array(ref ty, size) => Type::Array(simplify_type(ty).into(), size),
+        mabo_parser::DataType::Array(_, ref ty, _, size) => {
+            Type::Array(simplify_type(ty).into(), size)
+        }
         mabo_parser::DataType::External(ref ty) => Type::External(ExternalType {
             path: ty.path.iter().map(mabo_parser::Name::get).collect(),
             name: ty.name.get(),

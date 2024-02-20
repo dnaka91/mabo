@@ -21,15 +21,18 @@ Schema {
                         },
                     ],
                 ),
+                keyword: Type,
                 name: Name {
                     value: "Sample",
                 },
                 generics: Generics(
                     [],
                 ),
+                equal: Equal,
                 target: Type {
                     value: U32,
                 },
+                semicolon: Semicolon,
             },
         ),
     ],

@@ -71,11 +71,11 @@ fn visit_variant(index: &Index, item: &Variant<'_>) -> Result<DocumentSymbol> {
 
 fn visit_fields(index: &Index, item: &Fields<'_>) -> Result<Vec<DocumentSymbol>> {
     match item {
-        Fields::Named(named) => named
+        Fields::Named(_, named) => named
             .iter()
             .map(|field| visit_named_field(index, field))
             .collect(),
-        Fields::Unnamed(unnamed) => unnamed
+        Fields::Unnamed(_, unnamed) => unnamed
             .iter()
             .enumerate()
             .map(|(pos, field)| visit_unnamed_field(index, field, pos))

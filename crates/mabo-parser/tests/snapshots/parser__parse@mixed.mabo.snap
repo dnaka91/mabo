@@ -37,6 +37,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "User",
                 },
@@ -44,6 +45,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -52,6 +54,7 @@ Schema {
                             name: Name {
                                 value: "name",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -59,6 +62,7 @@ Schema {
                                         name: Name {
                                             value: "FullName",
                                         },
+                                        angle: None,
                                         generics: [],
                                     },
                                 ),
@@ -67,6 +71,9 @@ Schema {
                                 Id {
                                     value: 1,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                         NamedField {
@@ -80,8 +87,10 @@ Schema {
                             name: Name {
                                 value: "address",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Option(
+                                    Angle,
                                     Type {
                                         value: External(
                                             ExternalType {
@@ -89,6 +98,7 @@ Schema {
                                                 name: Name {
                                                     value: "Address",
                                                 },
+                                                angle: None,
                                                 generics: [],
                                             },
                                         ),
@@ -100,6 +110,9 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -108,6 +121,7 @@ Schema {
                             name: Name {
                                 value: "age",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: U8,
                             },
@@ -115,6 +129,9 @@ Schema {
                                 Id {
                                     value: 3,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                         NamedField {
@@ -124,6 +141,7 @@ Schema {
                             name: Name {
                                 value: "birthday",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -135,6 +153,7 @@ Schema {
                                         name: Name {
                                             value: "DayOfBirth",
                                         },
+                                        angle: None,
                                         generics: [],
                                     },
                                 ),
@@ -143,6 +162,9 @@ Schema {
                                 Id {
                                     value: 4,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],
@@ -161,6 +183,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "FullName",
                 },
@@ -168,6 +191,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -176,6 +200,7 @@ Schema {
                             name: Name {
                                 value: "first",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: String,
                             },
@@ -183,6 +208,9 @@ Schema {
                                 Id {
                                     value: 1,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                         NamedField {
@@ -192,8 +220,10 @@ Schema {
                             name: Name {
                                 value: "middle",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Option(
+                                    Angle,
                                     Type {
                                         value: String,
                                     },
@@ -204,6 +234,9 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -212,6 +245,7 @@ Schema {
                             name: Name {
                                 value: "last",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: String,
                             },
@@ -219,6 +253,9 @@ Schema {
                                 Id {
                                     value: 3,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],
@@ -243,12 +280,14 @@ Schema {
                         },
                     ],
                 ),
+                keyword: Type,
                 name: Name {
                     value: "Name",
                 },
                 generics: Generics(
                     [],
                 ),
+                equal: Equal,
                 target: Type {
                     value: External(
                         ExternalType {
@@ -256,10 +295,12 @@ Schema {
                             name: Name {
                                 value: "FullName",
                             },
+                            angle: None,
                             generics: [],
                         },
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Struct(
@@ -270,6 +311,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Address",
                 },
@@ -277,6 +319,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -289,6 +332,7 @@ Schema {
                             name: Name {
                                 value: "street",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: String,
                             },
@@ -296,6 +340,9 @@ Schema {
                                 Id {
                                     value: 1,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                         NamedField {
@@ -309,6 +356,7 @@ Schema {
                             name: Name {
                                 value: "house_no",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: External(
                                     ExternalType {
@@ -316,6 +364,7 @@ Schema {
                                         name: Name {
                                             value: "HouseNumber",
                                         },
+                                        angle: None,
                                         generics: [],
                                     },
                                 ),
@@ -325,6 +374,9 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -333,6 +385,7 @@ Schema {
                             name: Name {
                                 value: "city",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: String,
                             },
@@ -340,6 +393,9 @@ Schema {
                                 Id {
                                     value: 3,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],
@@ -364,12 +420,14 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Enum,
                 name: Name {
                     value: "HouseNumber",
                 },
                 generics: Generics(
                     [],
                 ),
+                brace: Brace,
                 variants: [
                     Variant {
                         comment: Comment(
@@ -383,6 +441,7 @@ Schema {
                             value: "Digit",
                         },
                         fields: Unnamed(
+                            Parenthesis,
                             [
                                 UnnamedField {
                                     ty: Type {
@@ -393,6 +452,7 @@ Schema {
                                             value: 1,
                                         },
                                     ),
+                                    comma: None,
                                 },
                             ],
                         ),
@@ -400,6 +460,9 @@ Schema {
                             Id {
                                 value: 1,
                             },
+                        ),
+                        comma: Some(
+                            Comma,
                         ),
                     },
                     Variant {
@@ -414,6 +477,7 @@ Schema {
                             value: "Text",
                         },
                         fields: Unnamed(
+                            Parenthesis,
                             [
                                 UnnamedField {
                                     ty: Type {
@@ -424,6 +488,7 @@ Schema {
                                             value: 1,
                                         },
                                     ),
+                                    comma: None,
                                 },
                             ],
                         ),
@@ -431,6 +496,9 @@ Schema {
                             Id {
                                 value: 2,
                             },
+                        ),
+                        comma: Some(
+                            Comma,
                         ),
                     },
                 ],
@@ -445,17 +513,21 @@ Schema {
                         },
                     ],
                 ),
+                keyword: Const,
                 name: Name {
                     value: "MAX_AGE",
                 },
+                colon: Colon,
                 ty: Type {
                     value: U8,
                 },
+                equal: Equal,
                 value: Literal {
                     value: Int(
                         120,
                     ),
                 },
+                semicolon: Semicolon,
             },
         ),
         Module(
@@ -467,9 +539,11 @@ Schema {
                         },
                     ],
                 ),
+                keyword: Mod,
                 name: Name {
                     value: "birthday",
                 },
+                brace: Brace,
                 definitions: [
                     Enum(
                         Enum {
@@ -483,12 +557,14 @@ Schema {
                             attributes: Attributes(
                                 [],
                             ),
+                            keyword: Enum,
                             name: Name {
                                 value: "DayOfBirth",
                             },
                             generics: Generics(
                                 [],
                             ),
+                            brace: Brace,
                             variants: [
                                 Variant {
                                     comment: Comment(
@@ -498,6 +574,7 @@ Schema {
                                         value: "Specific",
                                     },
                                     fields: Named(
+                                        Brace,
                                         [
                                             NamedField {
                                                 comment: Comment(
@@ -506,6 +583,7 @@ Schema {
                                                 name: Name {
                                                     value: "year",
                                                 },
+                                                colon: Colon,
                                                 ty: Type {
                                                     value: U16,
                                                 },
@@ -513,6 +591,9 @@ Schema {
                                                     Id {
                                                         value: 1,
                                                     },
+                                                ),
+                                                comma: Some(
+                                                    Comma,
                                                 ),
                                             },
                                             NamedField {
@@ -522,6 +603,7 @@ Schema {
                                                 name: Name {
                                                     value: "month",
                                                 },
+                                                colon: Colon,
                                                 ty: Type {
                                                     value: External(
                                                         ExternalType {
@@ -529,6 +611,7 @@ Schema {
                                                             name: Name {
                                                                 value: "Month",
                                                             },
+                                                            angle: None,
                                                             generics: [],
                                                         },
                                                     ),
@@ -538,6 +621,9 @@ Schema {
                                                         value: 2,
                                                     },
                                                 ),
+                                                comma: Some(
+                                                    Comma,
+                                                ),
                                             },
                                             NamedField {
                                                 comment: Comment(
@@ -546,6 +632,7 @@ Schema {
                                                 name: Name {
                                                     value: "day",
                                                 },
+                                                colon: Colon,
                                                 ty: Type {
                                                     value: U8,
                                                 },
@@ -554,6 +641,9 @@ Schema {
                                                         value: 3,
                                                     },
                                                 ),
+                                                comma: Some(
+                                                    Comma,
+                                                ),
                                             },
                                         ],
                                     ),
@@ -561,6 +651,9 @@ Schema {
                                         Id {
                                             value: 1,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -575,6 +668,7 @@ Schema {
                                         value: "Secret",
                                     },
                                     fields: Named(
+                                        Brace,
                                         [
                                             NamedField {
                                                 comment: Comment(
@@ -590,8 +684,10 @@ Schema {
                                                 name: Name {
                                                     value: "reason",
                                                 },
+                                                colon: Colon,
                                                 ty: Type {
                                                     value: Option(
+                                                        Angle,
                                                         Type {
                                                             value: String,
                                                         },
@@ -602,6 +698,9 @@ Schema {
                                                         value: 1,
                                                     },
                                                 ),
+                                                comma: Some(
+                                                    Comma,
+                                                ),
                                             },
                                         ],
                                     ),
@@ -609,6 +708,9 @@ Schema {
                                         Id {
                                             value: 2,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -628,6 +730,9 @@ Schema {
                                             value: 3,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                             ],
                         },
@@ -641,17 +746,21 @@ Schema {
                                     },
                                 ],
                             ),
+                            keyword: Const,
                             name: Name {
                                 value: "MIN_YEAR",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: U16,
                             },
+                            equal: Equal,
                             value: Literal {
                                 value: Int(
                                     1900,
                                 ),
                             },
+                            semicolon: Semicolon,
                         },
                     ),
                     Const(
@@ -666,17 +775,21 @@ Schema {
                                     },
                                 ],
                             ),
+                            keyword: Const,
                             name: Name {
                                 value: "MAX_DAY",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: U8,
                             },
+                            equal: Equal,
                             value: Literal {
                                 value: Int(
                                     31,
                                 ),
                             },
+                            semicolon: Semicolon,
                         },
                     ),
                     Enum(
@@ -691,12 +804,14 @@ Schema {
                             attributes: Attributes(
                                 [],
                             ),
+                            keyword: Enum,
                             name: Name {
                                 value: "Month",
                             },
                             generics: Generics(
                                 [],
                             ),
+                            brace: Brace,
                             variants: [
                                 Variant {
                                     comment: Comment(
@@ -710,6 +825,9 @@ Schema {
                                         Id {
                                             value: 1,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -725,6 +843,9 @@ Schema {
                                             value: 2,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -738,6 +859,9 @@ Schema {
                                         Id {
                                             value: 3,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -753,6 +877,9 @@ Schema {
                                             value: 4,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -766,6 +893,9 @@ Schema {
                                         Id {
                                             value: 5,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -781,6 +911,9 @@ Schema {
                                             value: 6,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -794,6 +927,9 @@ Schema {
                                         Id {
                                             value: 7,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -809,6 +945,9 @@ Schema {
                                             value: 8,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -822,6 +961,9 @@ Schema {
                                         Id {
                                             value: 9,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                                 Variant {
@@ -837,6 +979,9 @@ Schema {
                                             value: 10,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -851,6 +996,9 @@ Schema {
                                             value: 11,
                                         },
                                     ),
+                                    comma: Some(
+                                        Comma,
+                                    ),
                                 },
                                 Variant {
                                     comment: Comment(
@@ -864,6 +1012,9 @@ Schema {
                                         Id {
                                             value: 12,
                                         },
+                                    ),
+                                    comma: Some(
+                                        Comma,
                                     ),
                                 },
                             ],

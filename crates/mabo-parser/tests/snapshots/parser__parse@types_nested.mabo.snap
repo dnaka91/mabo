@@ -20,6 +20,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Sample",
                 },
@@ -27,6 +28,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -35,14 +37,20 @@ Schema {
                             name: Name {
                                 value: "value",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Vec(
+                                    Angle,
                                     Type {
                                         value: Option(
+                                            Angle,
                                             Type {
                                                 value: NonZero(
+                                                    Angle,
                                                     Type {
                                                         value: HashMap(
+                                                            Angle,
+                                                            Comma,
                                                             (
                                                                 Type {
                                                                     value: I64,
@@ -63,6 +71,9 @@ Schema {
                                 Id {
                                     value: 1,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],

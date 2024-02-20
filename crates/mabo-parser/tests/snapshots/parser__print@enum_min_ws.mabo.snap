@@ -9,8 +9,8 @@ enum Sample<T> {
     Three {
         field1: u32 @1,
         field2: bool @2,
-        field3: T @3,
-    } @3,
+        field3: T @3
+    } @3
 }
 
 

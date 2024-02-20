@@ -1,8 +1,9 @@
 use anyhow::{ensure, Result};
 use lsp_types::{SemanticToken, SemanticTokenModifier, SemanticTokenType};
 use mabo_parser::{
-    Comment, Const, DataType, Definition, Enum, Fields, Generics, Id, Literal, LiteralValue,
-    Module, NamedField, Schema, Span, Spanned, Struct, Type, TypeAlias, UnnamedField, Variant,
+    token::Delimiter, Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics,
+    Id, Import, Literal, LiteralValue, Module, NamedField, Schema, Span, Spanned, Struct, Type,
+    TypeAlias, UnnamedField, Variant,
 };
 
 pub(crate) use self::{modifiers::TOKEN_MODIFIERS, types::TOKEN_TYPES};
@@ -42,7 +43,7 @@ define_semantic_token_types! {
         VARIABLE,
         PROPERTY,
         ENUM_MEMBER,
-        // KEYWORD,
+        KEYWORD,
         COMMENT,
         // STRING,
         NUMBER,
@@ -55,6 +56,20 @@ define_semantic_token_types! {
         (BUILTIN_TYPE, "builtinType"),
         (IDENTIFIER, "identifier"),
         (TYPE_ALIAS, "typeAlias"),
+
+        // Punctuation tokens
+        (COMMA, "comma"),
+        (COLON, "colon"),
+        (SEMICOLON, "semicolon"),
+        (POUND, "pound"),
+        (DOUBLE_COLON, "doubleColon"),
+        (EQUAL, "equal"),
+
+        // Delimiter tokens
+        (BRACE, "brace"),
+        (BRACKET, "bracket"),
+        (PARENTHESIS, "parenthesis"),
+        (ANGLE, "angle"),
     }
 }
 
@@ -202,23 +217,26 @@ impl<'a> Visitor<'a> {
             Definition::Enum(e) => self.visit_enum(e),
             Definition::TypeAlias(a) => self.visit_alias(a),
             Definition::Const(c) => self.visit_const(c),
-            Definition::Import(_i) => Ok(()),
+            Definition::Import(i) => self.visit_import(i),
         }
     }
 
     fn visit_module(&mut self, item: &Module<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
+        self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::NAMESPACE, &[modifiers::DECLARATION])?;
+        self.add_span(&item.brace.open(), &types::BRACE, &[])?;
 
         for def in &item.definitions {
             self.visit_definition(def)?;
         }
 
-        Ok(())
+        self.add_span(&item.brace.close(), &types::BRACE, &[])
     }
 
     fn visit_struct(&mut self, item: &Struct<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
+        self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::STRUCT, &[modifiers::DECLARATION])?;
         self.visit_generics(&item.generics)?;
         self.visit_fields(&item.fields)
@@ -226,34 +244,44 @@ impl<'a> Visitor<'a> {
 
     fn visit_enum(&mut self, item: &Enum<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
+        self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::ENUM, &[modifiers::DECLARATION])?;
         self.visit_generics(&item.generics)?;
+        self.add_span(&item.brace.open(), &types::BRACE, &[])?;
 
         for variant in &item.variants {
             self.visit_variant(variant)?;
         }
 
-        Ok(())
+        self.add_span(&item.brace.close(), &types::BRACE, &[])
     }
 
     fn visit_variant(&mut self, item: &Variant<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.name, &types::ENUM_MEMBER, &[modifiers::DECLARATION])?;
         self.visit_fields(&item.fields)?;
-        self.visit_id(&item.id)
+        self.visit_id(&item.id)?;
+        if let Some(comma) = &item.comma {
+            self.add_span(comma, &types::COMMA, &[])?;
+        }
+        Ok(())
     }
 
     fn visit_fields(&mut self, item: &Fields<'_>) -> Result<()> {
         match item {
-            Fields::Named(named) => {
+            Fields::Named(brace, named) => {
+                self.add_span(&brace.open(), &types::BRACE, &[])?;
                 for field in named {
                     self.visit_named_field(field)?;
                 }
+                self.add_span(&brace.close(), &types::BRACE, &[])?;
             }
-            Fields::Unnamed(unnamed) => {
+            Fields::Unnamed(paren, unnamed) => {
+                self.add_span(&paren.open(), &types::PARENTHESIS, &[])?;
                 for field in unnamed {
                     self.visit_unnamed_field(field)?;
                 }
+                self.add_span(&paren.close(), &types::PARENTHESIS, &[])?;
             }
             Fields::Unit => {}
         }
@@ -264,8 +292,13 @@ impl<'a> Visitor<'a> {
     fn visit_named_field(&mut self, item: &NamedField<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.name, &types::PROPERTY, &[modifiers::DECLARATION])?;
+        self.add_span(&item.colon, &types::COLON, &[])?;
         self.visit_type(&item.ty)?;
-        self.visit_id(&item.id)
+        self.visit_id(&item.id)?;
+        if let Some(comma) = &item.comma {
+            self.add_span(comma, &types::COMMA, &[])?;
+        }
+        Ok(())
     }
 
     fn visit_unnamed_field(&mut self, item: &UnnamedField<'_>) -> Result<()> {
@@ -283,13 +316,17 @@ impl<'a> Visitor<'a> {
 
     fn visit_alias(&mut self, item: &TypeAlias<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
+        self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::TYPE_ALIAS, &[modifiers::DECLARATION])?;
         self.visit_generics(&item.generics)?;
-        self.visit_type(&item.target)
+        self.add_span(&item.equal, &types::EQUAL, &[])?;
+        self.visit_type(&item.target)?;
+        self.add_span(&item.semicolon, &types::SEMICOLON, &[])
     }
 
     fn visit_const(&mut self, item: &Const<'_>) -> Result<()> {
         self.visit_comment(&item.comment)?;
+        self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(
             &item.name,
             &types::VARIABLE,
@@ -299,20 +336,86 @@ impl<'a> Visitor<'a> {
                 modifiers::CONSTANT,
             ],
         )?;
+        self.add_span(&item.colon, &types::COLON, &[])?;
         self.visit_type(&item.ty)?;
-        self.visit_literal(&item.value)
+        self.add_span(&item.equal, &types::EQUAL, &[])?;
+        self.visit_literal(&item.value)?;
+        self.add_span(&item.semicolon, &types::SEMICOLON, &[])
     }
 
     fn visit_type(&mut self, item: &Type<'_>) -> Result<()> {
-        self.add_span(
-            item,
-            &if matches!(item.value, DataType::External(_)) {
-                types::TYPE
-            } else {
-                types::BUILTIN_TYPE
-            },
-            &[],
-        )
+        match &item.value {
+            DataType::Bool
+            | DataType::U8
+            | DataType::U16
+            | DataType::U32
+            | DataType::U64
+            | DataType::U128
+            | DataType::I8
+            | DataType::I16
+            | DataType::I32
+            | DataType::I64
+            | DataType::I128
+            | DataType::F32
+            | DataType::F64
+            | DataType::String
+            | DataType::StringRef
+            | DataType::BoxString
+            | DataType::Bytes
+            | DataType::BytesRef
+            | DataType::BoxBytes => self.add_span(item, &types::BUILTIN_TYPE, &[]),
+            DataType::Vec(span, angle, ty)
+            | DataType::HashSet(span, angle, ty)
+            | DataType::Option(span, angle, ty)
+            | DataType::NonZero(span, angle, ty) => {
+                self.add_span(span, &types::BUILTIN_TYPE, &[])?;
+                self.add_span(&angle.open(), &types::ANGLE, &[])?;
+                self.visit_type(ty)?;
+                self.add_span(&angle.close(), &types::ANGLE, &[])
+            }
+            DataType::HashMap(span, angle, comma, kv) => {
+                self.add_span(span, &types::BUILTIN_TYPE, &[])?;
+                self.add_span(&angle.open(), &types::ANGLE, &[])?;
+                self.visit_type(&kv.0)?;
+                self.add_span(comma, &types::COMMA, &[])?;
+                self.visit_type(&kv.1)?;
+                self.add_span(&angle.close(), &types::ANGLE, &[])
+            }
+            DataType::Tuple(paren, types) => {
+                self.add_span(&paren.open(), &types::PARENTHESIS, &[])?;
+                for ty in types {
+                    self.visit_type(ty)?;
+                }
+                self.add_span(&paren.close(), &types::PARENTHESIS, &[])
+            }
+            DataType::Array(bracket, ty, semicolon, _) => {
+                self.add_span(&bracket.open(), &types::BRACKET, &[])?;
+                self.visit_type(ty)?;
+                self.add_span(semicolon, &types::SEMICOLON, &[])?;
+                self.add_span(&bracket.close(), &types::BRACKET, &[])
+            }
+            DataType::External(ExternalType {
+                path,
+                name,
+                angle,
+                generics,
+            }) => {
+                for name in path {
+                    self.add_span(name, &types::NAMESPACE, &[])?;
+                }
+                self.add_span(name, &types::TYPE, &[])?;
+                if let Some(angle) = angle {
+                    self.add_span(&angle.open(), &types::ANGLE, &[])?;
+                }
+                for ty in generics {
+                    self.visit_type(ty)?;
+                }
+                if let Some(angle) = angle {
+                    self.add_span(&angle.close(), &types::ANGLE, &[])?;
+                }
+                Ok(())
+            }
+        }
     }
 
     fn visit_literal(&mut self, item: &Literal) -> Result<()> {
@@ -334,5 +437,9 @@ impl<'a> Visitor<'a> {
         }
 
         Ok(())
+    }
+
+    fn visit_import(&mut self, item: &Import<'_>) -> Result<()> {
+        self.add_span(&item.keyword, &types::KEYWORD, &[])
     }
 }

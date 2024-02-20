@@ -6,7 +6,7 @@ input_file: crates/mabo-parser/tests/inputs/struct_min_ws.mabo
 struct Sample<T> {
     a: u32 @1,
     b: bool @2,
-    c: T @3,
+    c: T @3
 }
 
 

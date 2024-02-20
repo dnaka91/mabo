@@ -17,7 +17,7 @@
 //! ```
 
 use std::{
-    fmt::{self, Display},
+    fmt::{self, Display, Write},
     ops::Range,
     path::{Path, PathBuf},
 };
@@ -27,13 +27,15 @@ pub use miette::{Diagnostic, LabeledSpan};
 use miette::{IntoDiagnostic, NamedSource, Result};
 use winnow::Parser;
 
-use self::error::ParseSchemaError;
+use self::{error::ParseSchemaError, token::Punctuation};
+use crate::token::Delimiter;
 
 pub mod error;
 mod ext;
 mod highlight;
 mod location;
 mod parser;
+pub mod token;
 
 trait Print {
     /// Default indentation, 4 spaces.
@@ -69,9 +71,24 @@ impl From<Range<usize>> for Span {
     }
 }
 
+impl From<&Range<usize>> for Span {
+    fn from(value: &Range<usize>) -> Self {
+        Self {
+            start: value.start,
+            end: value.end,
+        }
+    }
+}
+
 impl From<Span> for Range<usize> {
     fn from(value: Span) -> Self {
         value.start..value.end
+    }
+}
+
+impl Spanned for Span {
+    fn span(&self) -> Span {
+        *self
     }
 }
 
@@ -233,8 +250,12 @@ impl<'a> Definition<'a> {
 pub struct Module<'a> {
     /// Optional module-level comment.
     pub comment: Comment<'a>,
+    /// The `mod` keyword to mark the module declaration.
+    pub keyword: token::Mod,
     /// Unique name of the module, within the current scope.
     pub name: Name<'a>,
+    /// Braces `{`...`}` around the contained definitions.
+    pub brace: token::Brace,
     /// List of definitions that are scoped within this module.
     pub definitions: Vec<Definition<'a>>,
 }
@@ -243,14 +264,16 @@ impl Print for Module<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
+            keyword,
             name,
             definitions,
+            ..
         } = self;
 
         comment.print(f, level)?;
+        keyword.print(f, level)?;
 
-        Self::indent(f, level)?;
-        writeln!(f, "mod {name} {{")?;
+        writeln!(f, " {name} {}", token::Brace::OPEN)?;
 
         for (i, definition) in definitions.iter().enumerate() {
             if i > 0 {
@@ -260,7 +283,7 @@ impl Print for Module<'_> {
         }
 
         Self::indent(f, level)?;
-        f.write_str("}\n")
+        writeln!(f, "{}", token::Brace::CLOSE)
     }
 }
 
@@ -290,6 +313,8 @@ pub struct Struct<'a> {
     pub comment: Comment<'a>,
     /// Optional attributes to customize the behavior.
     pub attributes: Attributes<'a>,
+    /// The `struct` keyword to mark the struct declaration.
+    pub keyword: token::Struct,
     /// Unique name for this struct (within its scope).
     pub name: Name<'a>,
     /// Potential generics.
@@ -300,10 +325,10 @@ pub struct Struct<'a> {
 
 impl Print for Struct<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
-        let indent = Self::INDENT.repeat(level);
         let Self {
             comment,
             attributes,
+            keyword,
             name,
             generics,
             fields: kind,
@@ -311,8 +336,11 @@ impl Print for Struct<'_> {
 
         comment.print(f, level)?;
         attributes.print(f, level)?;
-        write!(f, "{indent}struct {name}{generics}")?;
+        keyword.print(f, level)?;
+
+        write!(f, " {name}{generics}")?;
         kind.print(f, level)?;
+
         f.write_str("\n")
     }
 }
@@ -344,10 +372,14 @@ pub struct Enum<'a> {
     pub comment: Comment<'a>,
     /// Optional attributes to customize the behavior.
     pub attributes: Attributes<'a>,
+    /// The `enum` keyword to mark the enum declaration.
+    pub keyword: token::Enum,
     /// Unique name for this enum, within its current scope.
     pub name: Name<'a>,
     /// Potential generics.
     pub generics: Generics<'a>,
+    /// Braces `{`...`}` around the variants.
+    pub brace: token::Brace,
     /// List of possible variants that the enum can represent.
     pub variants: Vec<Variant<'a>>,
 }
@@ -357,16 +389,18 @@ impl Print for Enum<'_> {
         let Self {
             comment,
             attributes,
+            keyword,
             name,
             generics,
             variants,
+            ..
         } = self;
 
         comment.print(f, level)?;
         attributes.print(f, level)?;
+        keyword.print(f, level)?;
 
-        Self::indent(f, level)?;
-        writeln!(f, "enum {name}{generics} {{")?;
+        writeln!(f, " {name}{generics} {}", token::Brace::OPEN)?;
 
         for variant in variants {
             variant.print(f, level + 1)?;
@@ -374,7 +408,7 @@ impl Print for Enum<'_> {
         }
 
         Self::indent(f, level)?;
-        f.write_str("}\n")
+        writeln!(f, "{}", token::Brace::CLOSE)
     }
 }
 
@@ -395,6 +429,8 @@ pub struct Variant<'a> {
     pub fields: Fields<'a>,
     /// Identifier for this variant, that must be unique within the current enum.
     pub id: Option<Id>,
+    /// Trailing comma to separate variants (might be missing if this is the last element).
+    pub comma: Option<token::Comma>,
     /// Source code location.
     span: Span,
 }
@@ -406,7 +442,8 @@ impl Print for Variant<'_> {
             name,
             fields,
             id,
-            span: _,
+            comma,
+            ..
         } = self;
 
         comment.print(f, level)?;
@@ -415,10 +452,12 @@ impl Print for Variant<'_> {
         f.write_str(name.get())?;
         fields.print(f, level)?;
         if let Some(id) = id {
-            write!(f, " {id},")
-        } else {
-            write!(f, ",")
+            write!(f, " {id}")?;
         }
+        if let Some(comma) = comma {
+            write!(f, "{comma}")?;
+        }
+        Ok(())
     }
 }
 
@@ -447,27 +486,36 @@ impl Display for Variant<'_> {
 pub struct TypeAlias<'a> {
     /// Optional element-level comment.
     pub comment: Comment<'a>,
+    /// The `type` keyword to mark the type alias declaration.
+    pub keyword: token::Type,
     /// Unique name of the type alias within the current scope.
     pub name: Name<'a>,
     /// Potential generic type arguments.
     pub generics: Generics<'a>,
+    /// Equal operator that assigns the target type.
+    pub equal: token::Equal,
     /// Original type that is being aliased.
     pub target: Type<'a>,
+    /// Trailing semicolon to complete the definition.
+    pub semicolon: token::Semicolon,
 }
 
 impl Print for TypeAlias<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
+            keyword,
             name,
             generics,
+            equal,
             target,
+            semicolon,
         } = self;
 
         comment.print(f, level)?;
+        keyword.print(f, level)?;
 
-        Self::indent(f, level)?;
-        write!(f, "type {name}{generics} = {target};")
+        write!(f, " {name}{generics} {equal} {target}{semicolon}")
     }
 }
 
@@ -489,13 +537,13 @@ pub enum Fields<'a> {
     ///     c: i32 @3,
     /// }
     /// ```
-    Named(Vec<NamedField<'a>>),
+    Named(token::Brace, Vec<NamedField<'a>>),
     /// List of types without an explicit name.
     ///
     /// ```txt
     /// Sample(u8 @1, bool @2, i32 @3)
     /// ```
-    Unnamed(Vec<UnnamedField<'a>>),
+    Unnamed(token::Parenthesis, Vec<UnnamedField<'a>>),
     /// No attached value.
     ///
     /// ```txt
@@ -507,18 +555,18 @@ pub enum Fields<'a> {
 impl Print for Fields<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         match self {
-            Fields::Named(fields) => {
-                f.write_str(" {\n")?;
+            Fields::Named(_, fields) => {
+                writeln!(f, " {}", token::Brace::OPEN)?;
 
                 for field in fields {
                     field.print(f, level + 1)?;
-                    f.write_str(",\n")?;
+                    f.write_char('\n')?;
                 }
 
                 Self::indent(f, level)?;
-                f.write_str("}")
+                f.write_char(token::Brace::CLOSE)
             }
-            Fields::Unnamed(elements) => concat(f, "(", elements, ", ", ")"),
+            Fields::Unnamed(_, elements) => concat::<token::Parenthesis>(f, elements, " "),
             Fields::Unit => Ok(()),
         }
     }
@@ -545,10 +593,14 @@ pub struct NamedField<'a> {
     pub comment: Comment<'a>,
     /// Unique name for this field, within the current element.
     pub name: Name<'a>,
+    /// Colon to separate the field name from the type.
+    pub colon: token::Colon,
     /// Data type that defines the shape of the contained data.
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Option<Id>,
+    /// Trailing comma to separate fields (might be missing if this is the last element).
+    pub comma: Option<token::Comma>,
     /// Source code location.
     span: Span,
 }
@@ -558,20 +610,27 @@ impl Print for NamedField<'_> {
         let Self {
             comment,
             name,
+            colon,
             ty,
             id,
-            span: _,
+            comma,
+            ..
         } = self;
 
         comment.print(f, level)?;
 
         Self::indent(f, level)?;
+        write!(f, "{name}{colon} {ty}")?;
 
         if let Some(id) = id {
-            write!(f, "{name}: {ty} {id}")
-        } else {
-            write!(f, "{name}: {ty}")
+            write!(f, " {id}")?;
         }
+
+        if let Some(comma) = comma {
+            comma.fmt(f)?;
+        }
+
+        Ok(())
     }
 }
 
@@ -601,6 +660,8 @@ pub struct UnnamedField<'a> {
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Option<Id>,
+    /// Trailing comma to separate fields (might be missing if this is the last element).
+    pub comma: Option<token::Comma>,
     /// Source code location.
     span: Span,
 }
@@ -613,12 +674,18 @@ impl Spanned for UnnamedField<'_> {
 
 impl Display for UnnamedField<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let Self { ty, id, span: _ } = self;
+        let Self { ty, id, comma, .. } = self;
+        write!(f, "{ty}")?;
+
         if let Some(id) = id {
-            write!(f, "{ty} {id}")
-        } else {
-            write!(f, "{ty}")
+            write!(f, " {id}")?;
         }
+
+        if let Some(comma) = comma {
+            comma.fmt(f)?;
+        }
+
+        Ok(())
     }
 }
 
@@ -708,7 +775,9 @@ impl Print for Attributes<'_> {
         let values = &self.0;
 
         Self::indent(f, level)?;
-        concat(f, "#[", values, ", ", "]\n")
+        f.write_str(token::Pound::VALUE)?;
+        concat::<token::Bracket>(f, values, ", ")?;
+        f.write_char('\n')
     }
 }
 
@@ -758,7 +827,7 @@ impl Print for AttributeValue<'_> {
         match self {
             Self::Unit => Ok(()),
             Self::Single(lit) => write!(f, " = {lit}"),
-            Self::Multi(attrs) => concat(f, "(", attrs, ", ", ")"),
+            Self::Multi(attrs) => concat::<token::Parenthesis>(f, attrs, ", "),
         }
     }
 }
@@ -838,25 +907,25 @@ pub enum DataType<'a> {
     /// Reference version (slice) of `u8` bytes.
     BytesRef,
     /// Vector of another data type.
-    Vec(Box<Type<'a>>),
+    Vec(Span, token::Angle, Box<Type<'a>>),
     /// Key-value hash map of data types.
-    HashMap(Box<(Type<'a>, Type<'a>)>),
+    HashMap(Span, token::Angle, token::Comma, Box<(Type<'a>, Type<'a>)>),
     /// Hash set of data types (each entry is unique).
-    HashSet(Box<Type<'a>>),
+    HashSet(Span, token::Angle, Box<Type<'a>>),
     /// Optional value.
-    Option(Box<Type<'a>>),
+    Option(Span, token::Angle, Box<Type<'a>>),
     /// Non-zero value.
     /// - Integers: `n > 0`
     /// - Collections: `len() > 0`
-    NonZero(Box<Type<'a>>),
+    NonZero(Span, token::Angle, Box<Type<'a>>),
     /// Boxed version of a string that is immutable.
     BoxString,
     /// Boxed version of a byte vector that is immutable.
     BoxBytes,
     /// Fixed size list of up to 12 types.
-    Tuple(Vec<Type<'a>>),
+    Tuple(token::Parenthesis, Vec<Type<'a>>),
     /// Continuous list of values with a single time and known length.
-    Array(Box<Type<'a>>, u32),
+    Array(token::Bracket, Box<Type<'a>>, token::Semicolon, u32),
     /// Any external, non-standard data type (like a user defined struct or enum).
     External(ExternalType<'a>),
 }
@@ -881,15 +950,15 @@ impl Display for DataType<'_> {
             Self::StringRef => f.write_str("&string"),
             Self::Bytes => f.write_str("bytes"),
             Self::BytesRef => f.write_str("&bytes"),
-            Self::Vec(t) => write!(f, "vec<{t}>"),
-            Self::HashMap(kv) => write!(f, "hash_map<{}, {}>", kv.0, kv.1),
-            Self::HashSet(t) => write!(f, "hash_set<{t}>"),
-            Self::Option(t) => write!(f, "option<{t}>"),
-            Self::NonZero(t) => write!(f, "non_zero<{t}>"),
+            Self::Vec(_, _, t) => write!(f, "vec<{t}>"),
+            Self::HashMap(_, _, _, kv) => write!(f, "hash_map<{}, {}>", kv.0, kv.1),
+            Self::HashSet(_, _, t) => write!(f, "hash_set<{t}>"),
+            Self::Option(_, _, t) => write!(f, "option<{t}>"),
+            Self::NonZero(_, _, t) => write!(f, "non_zero<{t}>"),
             Self::BoxString => f.write_str("box<string>"),
             Self::BoxBytes => f.write_str("box<bytes>"),
-            Self::Tuple(l) => concat(f, "(", l, ", ", ")"),
-            Self::Array(t, size) => write!(f, "[{t}; {size}]"),
+            Self::Tuple(_, l) => concat::<token::Parenthesis>(f, l, ", "),
+            Self::Array(_, t, _, size) => write!(f, "[{t}; {size}]"),
             Self::External(t) => t.fmt(f),
         }
     }
@@ -905,6 +974,8 @@ pub struct ExternalType<'a> {
     pub path: Vec<Name<'a>>,
     /// Unique name of the type within the current scope (or the module if prefixed with a path).
     pub name: Name<'a>,
+    /// Angles `<`...`>` to delimit the generic type parameters.
+    pub angle: Option<token::Angle>,
     /// Potential generic type arguments.
     pub generics: Vec<Type<'a>>,
 }
@@ -915,13 +986,14 @@ impl Display for ExternalType<'_> {
             path,
             name,
             generics,
+            ..
         } = self;
 
         for segment in path {
             write!(f, "{segment}::")?;
         }
         name.fmt(f)?;
-        concat(f, "<", generics, ", ", ">")
+        concat::<token::Angle>(f, generics, ", ")
     }
 }
 
@@ -935,7 +1007,7 @@ pub struct Generics<'a>(pub Vec<Name<'a>>);
 
 impl Display for Generics<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        concat(f, "<", &self.0, ", ", ">")
+        concat::<token::Angle>(f, &self.0, ", ")
     }
 }
 
@@ -1032,27 +1104,39 @@ impl AsRef<str> for Name<'_> {
 pub struct Const<'a> {
     /// Optional element-level comment.
     pub comment: Comment<'a>,
+    /// The `const` keyword to mark the constant declaration.
+    pub keyword: token::Const,
     /// Unique identifier of this constant.
     pub name: Name<'a>,
+    /// Colon to separate the const name from the type.
+    pub colon: token::Colon,
     /// Type of the value.
     pub ty: Type<'a>,
+    /// Equal operator that assigns the literal value.
+    pub equal: token::Equal,
     /// Literal value that this declaration represents.
     pub value: Literal,
+    /// Trailing semicolon to complete the definition.
+    pub semicolon: token::Semicolon,
 }
 
 impl Print for Const<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
             comment,
+            keyword,
             name,
+            colon,
             ty,
+            equal,
             value,
+            semicolon,
         } = self;
 
         comment.print(f, level)?;
+        keyword.print(f, level)?;
 
-        Self::indent(f, level)?;
-        write!(f, "const {name}: {ty} = {value};")
+        write!(f, " {name}{colon} {ty} {equal} {value}{semicolon}")
     }
 }
 
@@ -1123,6 +1207,8 @@ impl Display for LiteralValue {
 /// Import declaration for an external schema.
 #[derive(Debug, PartialEq)]
 pub struct Import<'a> {
+    /// The `use` keyword to mark the import declaration.
+    pub keyword: token::Use,
     /// Full import path as it was found in the original schema file.
     pub full: Name<'a>,
     /// Individual elements that form the import path.
@@ -1130,16 +1216,22 @@ pub struct Import<'a> {
     /// Optional final element that allows to fully import the type, making it look as it would be
     /// defined in the current schema.
     pub element: Option<Name<'a>>,
+    /// Trailing semicolon to complete the definition.
+    pub semicolon: token::Semicolon,
 }
 
 impl Print for Import<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         let Self {
-            segments, element, ..
+            keyword,
+            segments,
+            element,
+            semicolon,
+            ..
         } = self;
 
-        Self::indent(f, level)?;
-        f.write_str("use ")?;
+        keyword.print(f, level)?;
+        f.write_str(" ")?;
 
         for (i, segment) in segments.iter().enumerate() {
             if i > 0 {
@@ -1152,22 +1244,20 @@ impl Print for Import<'_> {
             write!(f, "::{element}")?;
         }
 
-        f.write_str(";")
+        write!(f, "{semicolon}")
     }
 }
 
-fn concat(
+fn concat<D: Delimiter>(
     f: &mut fmt::Formatter<'_>,
-    open: &str,
     values: &[impl Display],
     sep: &str,
-    close: &str,
 ) -> fmt::Result {
     if values.is_empty() {
         return Ok(());
     }
 
-    f.write_str(open)?;
+    f.write_char(D::OPEN)?;
 
     for (i, value) in values.iter().enumerate() {
         if i > 0 {
@@ -1176,5 +1266,5 @@ fn concat(
         value.fmt(f)?;
     }
 
-    f.write_str(close)
+    f.write_char(D::CLOSE)
 }

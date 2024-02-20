@@ -105,7 +105,7 @@ pub(crate) fn validate_enum_names(value: &Enum<'_>) -> Result<(), DuplicateName>
 /// Ensure all field names of a struct or enum are unique.
 fn validate_field_names(value: &Fields<'_>) -> Result<(), DuplicateFieldName> {
     match value {
-        Fields::Named(named) => {
+        Fields::Named(_, named) => {
             let mut visited =
                 FxHashMap::with_capacity_and_hasher(named.len(), BuildHasherDefault::default());
             named
@@ -121,7 +121,7 @@ fn validate_field_names(value: &Fields<'_>) -> Result<(), DuplicateFieldName> {
                 })
                 .map_or(Ok(()), Err)?;
         }
-        Fields::Unnamed(_) | Fields::Unit => {}
+        Fields::Unnamed(_, _) | Fields::Unit => {}
     }
 
     Ok(())

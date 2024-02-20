@@ -114,7 +114,7 @@ fn validate_duplicate_generics(value: &Generics<'_>) -> Result<(), DuplicateGene
 /// field.
 fn validate_field_generics(value: &Fields<'_>, unvisited: &mut FxHashMap<&str, Span>) {
     match &value {
-        Fields::Named(named) => {
+        Fields::Named(_, named) => {
             for field in named {
                 visit_externals(&field.ty, &mut |external| {
                     if external.path.is_empty() && external.generics.is_empty() {
@@ -123,7 +123,7 @@ fn validate_field_generics(value: &Fields<'_>, unvisited: &mut FxHashMap<&str, S
                 });
             }
         }
-        Fields::Unnamed(unnamed) => {
+        Fields::Unnamed(_, unnamed) => {
             for field in unnamed {
                 visit_externals(&field.ty, &mut |external| {
                     if external.path.is_empty() && external.generics.is_empty() {
@@ -157,18 +157,18 @@ fn visit_externals(value: &Type<'_>, visit: &mut impl FnMut(&ExternalType<'_>)) 
         | DataType::StringRef
         | DataType::Bytes
         | DataType::BytesRef
-        | DataType::NonZero(_)
+        | DataType::NonZero(_, _, _)
         | DataType::BoxString
         | DataType::BoxBytes => {}
-        DataType::Vec(ty)
-        | DataType::HashSet(ty)
-        | DataType::Option(ty)
-        | DataType::Array(ty, _) => visit_externals(ty, visit),
-        DataType::HashMap(kv) => {
+        DataType::Vec(_, _, ty)
+        | DataType::HashSet(_, _, ty)
+        | DataType::Option(_, _, ty)
+        | DataType::Array(_, ty, _, _) => visit_externals(ty, visit),
+        DataType::HashMap(_, _, _, kv) => {
             visit_externals(&kv.0, visit);
             visit_externals(&kv.1, visit);
         }
-        DataType::Tuple(types) => {
+        DataType::Tuple(_, types) => {
             for ty in types {
                 visit_externals(ty, visit);
             }

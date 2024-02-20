@@ -111,11 +111,25 @@ fn expand_named_field(field: &Field) -> TokenStream {
     }
 }
 
-fn expand_unnamed_field((i, _field): (usize, &Field)) -> TokenStream {
-    let ident = Ident::new(&format!("n{i}"), Span::call_site());
+fn expand_unnamed_field((i, field): (usize, &Field)) -> TokenStream {
+    if let Type::Tuple(tuple) = &field.ty {
+        let ident = Ident::new(&format!("n{i}"), Span::call_site());
+        let index = tuple
+            .elems
+            .iter()
+            .enumerate()
+            .filter(|(_, ty)| !filter_span(ty))
+            .map(|(j, _)| Literal::usize_unsuffixed(j));
 
-    quote! {
-        .field(&#ident)
+        quote! {
+            .field(&#(#ident.#index,)*)
+        }
+    } else {
+        let ident = Ident::new(&format!("n{i}"), Span::call_site());
+
+        quote! {
+            .field(&#ident)
+        }
     }
 }
 

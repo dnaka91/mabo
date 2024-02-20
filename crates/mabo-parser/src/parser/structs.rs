@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{alphanumeric0, space0, space1},
-    combinator::{cut_err, opt, preceded},
+    combinator::{cut_err, opt, preceded, terminated},
     error::ErrorKind,
     stream::{Location, Stream},
     token::one_of,
@@ -11,7 +11,7 @@ use winnow::{
 };
 
 use super::{fields, generics, Input, ParserExt, Result};
-use crate::{highlight, location, Attributes, Comment, Name, Struct};
+use crate::{highlight, location, token, Attributes, Comment, Name, Struct};
 
 /// Encountered an invalid `struct` declaration.
 #[derive(Debug, ParserError)]
@@ -65,28 +65,29 @@ pub enum Cause {
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Struct<'i>, ParseError> {
     let start = input.checkpoint();
 
-    preceded(
-        ("struct", space1),
+    (
+        terminated(token::Struct::NAME.span(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err(Cause::Generics)).map(Option::unwrap_or_default),
             preceded(space0, fields::parse.map_err(Cause::Fields)),
         )),
     )
-    .parse_next(input)
-    .map(|(name, generics, kind)| Struct {
-        comment: Comment::default(),
-        attributes: Attributes::default(),
-        name,
-        generics,
-        fields: kind,
-    })
-    .map_err(|e| {
-        e.map(|cause| ParseError {
-            at: location::from_until(*input, &start, ['}', '\n']),
-            cause,
+        .parse_next(input)
+        .map(|(keyword, (name, generics, kind))| Struct {
+            comment: Comment::default(),
+            attributes: Attributes::default(),
+            keyword: keyword.into(),
+            name,
+            generics,
+            fields: kind,
         })
-    })
+        .map_err(|e| {
+            e.map(|cause| ParseError {
+                at: location::from_until(*input, &start, ['}', '\n']),
+                cause,
+            })
+        })
 }
 
 pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {

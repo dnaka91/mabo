@@ -49,10 +49,10 @@ pub(crate) fn validate_enum_tuples(value: &Enum<'_>) -> Result<(), TupleSize> {
 
 fn validate_field_tuples(value: &Fields<'_>) -> Result<(), TupleSize> {
     match value {
-        Fields::Named(named) => named
+        Fields::Named(_, named) => named
             .iter()
             .try_for_each(|field| validate_tuple_size(&field.ty)),
-        Fields::Unnamed(unnamed) => unnamed
+        Fields::Unnamed(_, unnamed) => unnamed
             .iter()
             .try_for_each(|field| validate_tuple_size(&field.ty)),
         Fields::Unit => Ok(()),
@@ -106,18 +106,18 @@ fn visit_tuples<E>(
         | DataType::StringRef
         | DataType::Bytes
         | DataType::BytesRef
-        | DataType::NonZero(_)
+        | DataType::NonZero(_, _, _)
         | DataType::BoxString
         | DataType::BoxBytes => Ok(()),
-        DataType::Vec(ty)
-        | DataType::HashSet(ty)
-        | DataType::Option(ty)
-        | DataType::Array(ty, _) => visit_tuples(ty, visit),
-        DataType::HashMap(kv) => {
+        DataType::Vec(_, _, ty)
+        | DataType::HashSet(_, _, ty)
+        | DataType::Option(_, _, ty)
+        | DataType::Array(_, ty, _, _) => visit_tuples(ty, visit),
+        DataType::HashMap(_, _, _, kv) => {
             visit_tuples(&kv.0, visit)?;
             visit_tuples(&kv.1, visit)
         }
-        DataType::Tuple(types) => {
+        DataType::Tuple(_, types) => {
             visit(types)?;
             types.iter().try_for_each(|ty| visit_tuples(ty, visit))
         }

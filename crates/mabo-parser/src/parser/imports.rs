@@ -11,7 +11,11 @@ use winnow::{
 };
 
 use super::{enums, structs, Input, ParserExt, Result};
-use crate::{highlight, location, Import, Name};
+use crate::{
+    highlight, location,
+    token::{self, Punctuation},
+    Import, Name,
+};
 
 /// Encountered an invalid `use` declaration.
 #[derive(Debug, ParserError)]
@@ -65,13 +69,13 @@ pub enum Cause {
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError> {
     let start = input.checkpoint();
 
-    preceded(
-        ("use", space1),
-        cut_err(terminated(
+    (
+        terminated(token::Use::NAME.span(), space1),
+        cut_err((
             (
-                separated(1.., parse_segment, "::"),
+                separated(1.., parse_segment, token::DoubleColon::VALUE.span()),
                 opt(preceded(
-                    "::",
+                    token::DoubleColon::VALUE.span(),
                     alt((
                         structs::parse_name.map_err(Cause::from),
                         enums::parse_name.map_err(Cause::from),
@@ -80,21 +84,25 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
             )
                 .with_recognized()
                 .with_span(),
-            ';',
+            token::Semicolon::VALUE.span(),
         )),
     )
-    .parse_next(input)
-    .map(|(((segments, element), full), range)| Import {
-        full: (full, range).into(),
-        segments,
-        element,
-    })
-    .map_err(|e| {
-        e.map(|cause| ParseError {
-            at: location::from_until(*input, &start, [';']),
-            cause,
+        .parse_next(input)
+        .map(
+            |(keyword, ((((segments, element), full), range), semicolon))| Import {
+                keyword: keyword.into(),
+                full: (full, range).into(),
+                segments,
+                element,
+                semicolon: semicolon.into(),
+            },
+        )
+        .map_err(|e| {
+            e.map(|cause| ParseError {
+                at: location::from_until(*input, &start, [';']),
+                cause,
+            })
         })
-    })
 }
 
 pub(super) fn parse_segment<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {

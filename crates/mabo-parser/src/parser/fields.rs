@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space0,
-    combinator::{cut_err, delimited, opt, peek, preceded, separated, terminated},
+    combinator::{cut_err, opt, peek, preceded, repeat},
     dispatch,
     error::ErrorKind,
     stream::{Location, Stream},
@@ -12,7 +12,11 @@ use winnow::{
 };
 
 use super::{comments, ids, types, ws, Input, ParserExt, Result};
-use crate::{highlight, location, Fields, Name, NamedField, UnnamedField};
+use crate::{
+    highlight, location,
+    token::{self, Delimiter, Punctuation},
+    Fields, Name, NamedField, UnnamedField,
+};
 
 /// Encountered an invalid field declaration.
 #[derive(Debug, ParserError)]
@@ -73,8 +77,8 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Fields<'i>, ParseError>
 
     dispatch!(
         peek(any);
-        '{' => parse_named.map(Fields::Named),
-        '(' => parse_unnamed.map(Fields::Unnamed),
+        '{' => parse_named.map(|(brace, fields)| Fields::Named(brace, fields)),
+        '(' => parse_unnamed.map(|(paren, fields)| Fields::Unnamed(paren, fields)),
         _ => parse_unit.map(|()| Fields::Unit),
     )
     .parse_next(input)
@@ -86,26 +90,30 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Fields<'i>, ParseError>
     })
 }
 
-fn parse_named<'i>(input: &mut Input<'i>) -> Result<Vec<NamedField<'i>>, Cause> {
-    preceded(
-        '{',
-        cut_err(terminated(
-            terminated(separated(1.., parse_named_field, ws(',')), opt(ws(','))),
-            ws('}'),
+fn parse_named<'i>(input: &mut Input<'i>) -> Result<(token::Brace, Vec<NamedField<'i>>), Cause> {
+    (
+        token::Brace::OPEN.span(),
+        cut_err((
+            repeat(1.., parse_named_field),
+            ws(token::Brace::CLOSE.span()),
         )),
     )
-    .parse_next(input)
+        .parse_next(input)
+        .map(|(brace_open, (fields, brace_close))| ((brace_open, brace_close).into(), fields))
 }
 
-fn parse_unnamed<'i>(input: &mut Input<'i>) -> Result<Vec<UnnamedField<'i>>, Cause> {
-    preceded(
-        '(',
-        cut_err(terminated(
-            terminated(separated(1.., parse_unnamed_field, ws(',')), opt(ws(','))),
-            ws(')'),
+fn parse_unnamed<'i>(
+    input: &mut Input<'i>,
+) -> Result<(token::Parenthesis, Vec<UnnamedField<'i>>), Cause> {
+    (
+        token::Parenthesis::OPEN.span(),
+        cut_err((
+            repeat(1.., parse_unnamed_field),
+            ws(token::Parenthesis::CLOSE.span()),
         )),
     )
-    .parse_next(input)
+        .parse_next(input)
+        .map(|(paren_open, (fields, paren_close))| ((paren_open, paren_close).into(), fields))
 }
 
 fn parse_unit(input: &mut Input<'_>) -> Result<(), Cause> {
@@ -116,12 +124,14 @@ fn parse_unnamed_field<'i>(input: &mut Input<'i>) -> Result<UnnamedField<'i>, Ca
     (
         ws(types::parse.map_err(Cause::from)),
         opt(preceded(space0, ids::parse.map_err(Cause::from))),
+        opt(ws(token::Comma::VALUE.span())),
     )
         .with_span()
         .parse_next(input)
-        .map(|((ty, id), span)| UnnamedField {
+        .map(|((ty, id, comma), span)| UnnamedField {
             ty,
             id,
+            comma: comma.map(Into::into),
             span: span.into(),
         })
 }
@@ -130,20 +140,26 @@ fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause>
     (
         ws(comments::parse.map_err(Cause::from)),
         (
-            delimited(space0, parse_field_name, ':'),
+            preceded(space0, parse_field_name),
+            preceded(space0, token::Colon::VALUE.span()),
             preceded(space0, types::parse.map_err(Cause::from)),
             opt(preceded(space0, ids::parse.map_err(Cause::from))),
+            opt(ws(token::Comma::VALUE.span())),
         )
             .with_span(),
     )
         .parse_next(input)
-        .map(|(comment, ((name, ty, id), span))| NamedField {
-            comment,
-            name,
-            ty,
-            id,
-            span: span.into(),
-        })
+        .map(
+            |(comment, ((name, colon, ty, id, comma), span))| NamedField {
+                comment,
+                name,
+                colon: colon.into(),
+                ty,
+                id,
+                comma: comma.map(Into::into),
+                span: span.into(),
+            },
+        )
 }
 
 fn parse_field_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {

@@ -17,9 +17,11 @@ Schema {
                 comment: Comment(
                     [],
                 ),
+                keyword: Mod,
                 name: Name {
                     value: "a",
                 },
+                brace: Brace,
                 definitions: [
                     Module(
                         Module {
@@ -30,9 +32,11 @@ Schema {
                                     },
                                 ],
                             ),
+                            keyword: Mod,
                             name: Name {
                                 value: "b",
                             },
+                            brace: Brace,
                             definitions: [
                                 Enum(
                                     Enum {
@@ -42,12 +46,14 @@ Schema {
                                         attributes: Attributes(
                                             [],
                                         ),
+                                        keyword: Enum,
                                         name: Name {
                                             value: "Sample",
                                         },
                                         generics: Generics(
                                             [],
                                         ),
+                                        brace: Brace,
                                         variants: [
                                             Variant {
                                                 comment: Comment(
@@ -61,6 +67,9 @@ Schema {
                                                     Id {
                                                         value: 1,
                                                     },
+                                                ),
+                                                comma: Some(
+                                                    Comma,
                                                 ),
                                             },
                                         ],
@@ -77,6 +86,7 @@ Schema {
                             attributes: Attributes(
                                 [],
                             ),
+                            keyword: Struct,
                             name: Name {
                                 value: "Sample",
                             },
@@ -84,6 +94,7 @@ Schema {
                                 [],
                             ),
                             fields: Named(
+                                Brace,
                                 [
                                     NamedField {
                                         comment: Comment(
@@ -92,6 +103,7 @@ Schema {
                                         name: Name {
                                             value: "value",
                                         },
+                                        colon: Colon,
                                         ty: Type {
                                             value: U32,
                                         },
@@ -99,6 +111,9 @@ Schema {
                                             Id {
                                                 value: 1,
                                             },
+                                        ),
+                                        comma: Some(
+                                            Comma,
                                         ),
                                     },
                                     NamedField {
@@ -108,6 +123,7 @@ Schema {
                                         name: Name {
                                             value: "inner",
                                         },
+                                        colon: Colon,
                                         ty: Type {
                                             value: External(
                                                 ExternalType {
@@ -119,6 +135,7 @@ Schema {
                                                     name: Name {
                                                         value: "Sample",
                                                     },
+                                                    angle: None,
                                                     generics: [],
                                                 },
                                             ),
@@ -127,6 +144,9 @@ Schema {
                                             Id {
                                                 value: 2,
                                             },
+                                        ),
+                                        comma: Some(
+                                            Comma,
                                         ),
                                     },
                                 ],

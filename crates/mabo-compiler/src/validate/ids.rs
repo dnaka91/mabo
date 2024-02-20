@@ -132,7 +132,7 @@ pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
 /// Ensure all field IDs of a struct or enum are unique.
 fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
     match value {
-        Fields::Named(named) => {
+        Fields::Named(_, named) => {
             let mut visited =
                 FxHashMap::with_capacity_and_hasher(named.len(), BuildHasherDefault::default());
             let mut id_gen = IdGenerator::new();
@@ -154,7 +154,7 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
                 })
                 .map_or(Ok(()), Err)?;
         }
-        Fields::Unnamed(unnamed) => {
+        Fields::Unnamed(_, unnamed) => {
             let mut visited =
                 FxHashMap::with_capacity_and_hasher(unnamed.len(), BuildHasherDefault::default());
             let mut id_gen = IdGenerator::new();

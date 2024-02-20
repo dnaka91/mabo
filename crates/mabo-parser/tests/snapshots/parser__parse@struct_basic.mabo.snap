@@ -24,6 +24,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Sample",
                 },
@@ -31,6 +32,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -39,6 +41,7 @@ Schema {
                             name: Name {
                                 value: "a",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: U32,
                             },
@@ -46,6 +49,9 @@ Schema {
                                 Id {
                                     value: 1,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                         NamedField {
@@ -59,6 +65,7 @@ Schema {
                             name: Name {
                                 value: "b",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: Bool,
                             },
@@ -66,6 +73,9 @@ Schema {
                                 Id {
                                     value: 2,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],

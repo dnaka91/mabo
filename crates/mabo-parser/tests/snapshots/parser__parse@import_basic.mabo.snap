@@ -14,6 +14,7 @@ Schema {
     definitions: [
         Import(
             Import {
+                keyword: Use,
                 full: Name {
                     value: "other::schema::Sample",
                 },
@@ -30,10 +31,12 @@ Schema {
                         value: "Sample",
                     },
                 ),
+                semicolon: Semicolon,
             },
         ),
         Import(
             Import {
+                keyword: Use,
                 full: Name {
                     value: "second::submodule",
                 },
@@ -46,6 +49,7 @@ Schema {
                     },
                 ],
                 element: None,
+                semicolon: Semicolon,
             },
         ),
     ],

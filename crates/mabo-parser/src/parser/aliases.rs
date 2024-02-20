@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{alphanumeric0, space0, space1},
-    combinator::{cut_err, delimited, opt, preceded},
+    combinator::{cut_err, opt, preceded, terminated},
     error::ErrorKind,
     stream::Location,
     token::one_of,
@@ -11,7 +11,11 @@ use winnow::{
 };
 
 use super::{generics, types, Input, ParserExt, Result};
-use crate::{highlight, Comment, Name, TypeAlias};
+use crate::{
+    highlight,
+    token::{self, Punctuation},
+    Comment, Name, TypeAlias,
+};
 
 /// Encountered an invalid `type` alias declaration.
 #[derive(Debug, ParserError)]
@@ -63,31 +67,34 @@ pub enum Cause {
 }
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseError> {
-    preceded(
-        ("type", space1),
+    (
+        terminated(token::Type::NAME.span(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err(Cause::Generics)).map(Option::unwrap_or_default),
-            delimited(
-                (space0, '='),
-                preceded(space0, types::parse.map_err(Cause::from)),
-                (space0, ';'),
-            ),
+            preceded(space0, token::Equal::VALUE.span()),
+            preceded(space0, types::parse.map_err(Cause::from)),
+            preceded(space0, token::Semicolon::VALUE.span()),
         )),
     )
-    .parse_next(input)
-    .map(|(name, generics, target)| TypeAlias {
-        comment: Comment::default(),
-        name,
-        generics,
-        target,
-    })
-    .map_err(|e| {
-        e.map(|cause| ParseError {
-            at: input.location()..input.location(),
-            cause,
+        .parse_next(input)
+        .map(
+            |(keyword, (name, generics, equal, target, semicolon))| TypeAlias {
+                comment: Comment::default(),
+                keyword: keyword.into(),
+                name,
+                generics,
+                equal: equal.into(),
+                target,
+                semicolon: semicolon.into(),
+            },
+        )
+        .map_err(|e| {
+            e.map(|cause| ParseError {
+                at: input.location()..input.location(),
+                cause,
+            })
         })
-    })
 }
 
 fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {

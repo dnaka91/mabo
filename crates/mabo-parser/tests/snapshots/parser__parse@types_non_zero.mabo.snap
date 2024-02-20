@@ -20,6 +20,7 @@ Schema {
                 attributes: Attributes(
                     [],
                 ),
+                keyword: Struct,
                 name: Name {
                     value: "Sample",
                 },
@@ -27,6 +28,7 @@ Schema {
                     [],
                 ),
                 fields: Named(
+                    Brace,
                     [
                         NamedField {
                             comment: Comment(
@@ -35,8 +37,10 @@ Schema {
                             name: Name {
                                 value: "f01",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U8,
                                     },
@@ -47,6 +51,9 @@ Schema {
                                     value: 1,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -55,8 +62,10 @@ Schema {
                             name: Name {
                                 value: "f02",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U16,
                                     },
@@ -67,6 +76,9 @@ Schema {
                                     value: 2,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -75,8 +87,10 @@ Schema {
                             name: Name {
                                 value: "f03",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U32,
                                     },
@@ -87,6 +101,9 @@ Schema {
                                     value: 3,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -95,8 +112,10 @@ Schema {
                             name: Name {
                                 value: "f04",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U64,
                                     },
@@ -107,6 +126,9 @@ Schema {
                                     value: 4,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -115,8 +137,10 @@ Schema {
                             name: Name {
                                 value: "f05",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: U128,
                                     },
@@ -127,6 +151,9 @@ Schema {
                                     value: 5,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -135,8 +162,10 @@ Schema {
                             name: Name {
                                 value: "f06",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: I8,
                                     },
@@ -147,6 +176,9 @@ Schema {
                                     value: 6,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -155,8 +187,10 @@ Schema {
                             name: Name {
                                 value: "f07",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: I16,
                                     },
@@ -167,6 +201,9 @@ Schema {
                                     value: 7,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -175,8 +212,10 @@ Schema {
                             name: Name {
                                 value: "f08",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: I32,
                                     },
@@ -187,6 +226,9 @@ Schema {
                                     value: 8,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -195,8 +237,10 @@ Schema {
                             name: Name {
                                 value: "f09",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: I64,
                                     },
@@ -207,6 +251,9 @@ Schema {
                                     value: 9,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -215,8 +262,10 @@ Schema {
                             name: Name {
                                 value: "f10",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: I128,
                                     },
@@ -227,6 +276,9 @@ Schema {
                                     value: 10,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -235,8 +287,10 @@ Schema {
                             name: Name {
                                 value: "f11",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: String,
                                     },
@@ -247,6 +301,9 @@ Schema {
                                     value: 11,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -255,8 +312,10 @@ Schema {
                             name: Name {
                                 value: "f12",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: Bytes,
                                     },
@@ -267,6 +326,9 @@ Schema {
                                     value: 12,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -275,10 +337,13 @@ Schema {
                             name: Name {
                                 value: "f13",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: Vec(
+                                            Angle,
                                             Type {
                                                 value: String,
                                             },
@@ -291,6 +356,9 @@ Schema {
                                     value: 13,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -299,10 +367,14 @@ Schema {
                             name: Name {
                                 value: "f14",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: HashMap(
+                                            Angle,
+                                            Comma,
                                             (
                                                 Type {
                                                     value: String,
@@ -320,6 +392,9 @@ Schema {
                                     value: 14,
                                 },
                             ),
+                            comma: Some(
+                                Comma,
+                            ),
                         },
                         NamedField {
                             comment: Comment(
@@ -328,10 +403,13 @@ Schema {
                             name: Name {
                                 value: "f15",
                             },
+                            colon: Colon,
                             ty: Type {
                                 value: NonZero(
+                                    Angle,
                                     Type {
                                         value: HashSet(
+                                            Angle,
                                             Type {
                                                 value: String,
                                             },
@@ -343,6 +421,9 @@ Schema {
                                 Id {
                                     value: 15,
                                 },
+                            ),
+                            comma: Some(
+                                Comma,
                             ),
                         },
                     ],

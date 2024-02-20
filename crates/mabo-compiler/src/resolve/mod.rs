@@ -352,12 +352,12 @@ pub(crate) fn resolve_module_types<'a>(
         module: &'a Module<'_>,
     ) {
         match fields {
-            Fields::Named(named) => {
+            Fields::Named(_, named) => {
                 for field in named {
                     resolve(missing, &field.ty, generics, module);
                 }
             }
-            Fields::Unnamed(unnamed) => {
+            Fields::Unnamed(_, unnamed) => {
                 for field in unnamed {
                     resolve(missing, &field.ty, generics, module);
                 }
@@ -470,20 +470,20 @@ fn visit_externals<'a>(value: &'a Type<'_>, visit: &mut impl FnMut(&'a ExternalT
         | DataType::StringRef
         | DataType::Bytes
         | DataType::BytesRef
-        | DataType::NonZero(_)
+        | DataType::NonZero(_, _, _)
         | DataType::BoxString
         | DataType::BoxBytes => {}
-        DataType::Vec(ty)
-        | DataType::HashSet(ty)
-        | DataType::Option(ty)
-        | DataType::Array(ty, _) => {
+        DataType::Vec(_, _, ty)
+        | DataType::HashSet(_, _, ty)
+        | DataType::Option(_, _, ty)
+        | DataType::Array(_, ty, _, _) => {
             visit_externals(ty, visit);
         }
-        DataType::HashMap(kv) => {
+        DataType::HashMap(_, _, _, kv) => {
             visit_externals(&kv.0, visit);
             visit_externals(&kv.1, visit);
         }
-        DataType::Tuple(types) => {
+        DataType::Tuple(_, types) => {
             for ty in types {
                 visit_externals(ty, visit);
             }

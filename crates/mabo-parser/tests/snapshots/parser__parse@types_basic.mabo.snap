@@ -24,453 +24,466 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f01",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Bool,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f02",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U8,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f03",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U16,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f04",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 4,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f05",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U64,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 5,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f06",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U128,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 6,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f07",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: I8,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 7,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f08",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: I16,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 8,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f09",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: I32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 9,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f10",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: I64,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 10,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f11",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: I128,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 11,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f12",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: F32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 12,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f13",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: F64,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 13,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f14",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: String,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 14,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f15",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: StringRef,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 15,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f16",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Bytes,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 16,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f17",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: BytesRef,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 17,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f18",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: BoxString,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 18,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f19",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: BoxBytes,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 19,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f20",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Tuple {
-                                    paren: Parenthesis,
-                                    types: [
-                                        Type {
-                                            value: U32,
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f01",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: Bool,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
                                         },
-                                        Type {
-                                            value: U32,
-                                        },
-                                        Type {
-                                            value: U32,
-                                        },
-                                    ],
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 20,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f02",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: U8,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
+                                },
+                                Comma,
                             ),
-                            name: Name {
-                                value: "f21",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Array {
-                                    bracket: Bracket,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f03",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: U16,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f04",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
                                         value: U32,
                                     },
-                                    semicolon: Semicolon,
-                                    size: 12,
+                                    id: Some(
+                                        Id {
+                                            value: 4,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 21,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f05",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: U64,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 5,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f06",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: U128,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 6,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f07",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: I8,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 7,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f08",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: I16,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 8,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f09",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: I32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 9,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f10",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: I64,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 10,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f11",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: I128,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 11,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f12",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: F32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 12,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f13",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: F64,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 13,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f14",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: String,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 14,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f15",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: StringRef,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 15,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f16",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: Bytes,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 16,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f17",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: BytesRef,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 17,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f18",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: BoxString,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 18,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f19",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: BoxBytes,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 19,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f20",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: Tuple {
+                                            paren: Parenthesis,
+                                            types: Punctuated {
+                                                values: [
+                                                    (
+                                                        Type {
+                                                            value: U32,
+                                                        },
+                                                        Comma,
+                                                    ),
+                                                    (
+                                                        Type {
+                                                            value: U32,
+                                                        },
+                                                        Comma,
+                                                    ),
+                                                ],
+                                                last: (
+                                                    Type {
+                                                        value: U32,
+                                                    },
+                                                    None,
+                                                ),
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 20,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "f21",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: Array {
+                                        bracket: Bracket,
+                                        ty: Type {
+                                            value: U32,
+                                        },
+                                        semicolon: Semicolon,
+                                        size: 12,
+                                    },
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 21,
+                                    },
+                                ),
+                            },
+                            Some(
+                                Comma,
+                            ),
+                        ),
+                    },
                 ),
             },
         ),

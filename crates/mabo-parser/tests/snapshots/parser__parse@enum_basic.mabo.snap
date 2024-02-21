@@ -28,143 +28,153 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 brace: Brace,
-                variants: [
-                    Variant {
-                        comment: Comment(
-                            [],
-                        ),
-                        name: Name {
-                            value: "One",
-                        },
-                        fields: Unit,
-                        id: Some(
-                            Id {
-                                value: 1,
+                variants: Punctuated {
+                    values: [
+                        (
+                            Variant {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "One",
+                                },
+                                fields: Unit,
+                                id: Some(
+                                    Id {
+                                        value: 1,
+                                    },
+                                ),
                             },
-                        ),
-                        comma: Some(
                             Comma,
                         ),
-                    },
-                    Variant {
-                        comment: Comment(
-                            [
-                                CommentLine {
-                                    value: "Second variant",
-                                },
-                            ],
-                        ),
-                        name: Name {
-                            value: "Two",
-                        },
-                        fields: Unnamed(
-                            Parenthesis,
-                            [
-                                UnnamedField {
-                                    ty: Type {
-                                        value: U32,
-                                    },
-                                    id: Some(
-                                        Id {
-                                            value: 1,
+                        (
+                            Variant {
+                                comment: Comment(
+                                    [
+                                        CommentLine {
+                                            value: "Second variant",
                                         },
-                                    ),
-                                    comma: Some(
-                                        Comma,
-                                    ),
+                                    ],
+                                ),
+                                name: Name {
+                                    value: "Two",
                                 },
-                                UnnamedField {
-                                    ty: Type {
-                                        value: U64,
-                                    },
-                                    id: Some(
-                                        Id {
-                                            value: 2,
-                                        },
-                                    ),
-                                    comma: None,
-                                },
-                            ],
-                        ),
-                        id: Some(
-                            Id {
-                                value: 2,
-                            },
-                        ),
-                        comma: Some(
-                            Comma,
-                        ),
-                    },
-                    Variant {
-                        comment: Comment(
-                            [],
-                        ),
-                        name: Name {
-                            value: "Three",
-                        },
-                        fields: Named(
-                            Brace,
-                            [
-                                NamedField {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "field1",
-                                    },
-                                    colon: Colon,
-                                    ty: Type {
-                                        value: U32,
-                                    },
-                                    id: Some(
-                                        Id {
-                                            value: 1,
-                                        },
-                                    ),
-                                    comma: Some(
-                                        Comma,
-                                    ),
-                                },
-                                NamedField {
-                                    comment: Comment(
-                                        [
-                                            CommentLine {
-                                                value: "Second field of third variant",
-                                            },
+                                fields: Unnamed(
+                                    Parenthesis,
+                                    Punctuated {
+                                        values: [
+                                            (
+                                                UnnamedField {
+                                                    ty: Type {
+                                                        value: U32,
+                                                    },
+                                                    id: Some(
+                                                        Id {
+                                                            value: 1,
+                                                        },
+                                                    ),
+                                                },
+                                                Comma,
+                                            ),
                                         ],
-                                    ),
-                                    name: Name {
-                                        value: "field2",
+                                        last: (
+                                            UnnamedField {
+                                                ty: Type {
+                                                    value: U64,
+                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 2,
+                                                    },
+                                                ),
+                                            },
+                                            None,
+                                        ),
                                     },
-                                    colon: Colon,
-                                    ty: Type {
-                                        value: Bool,
+                                ),
+                                id: Some(
+                                    Id {
+                                        value: 2,
                                     },
-                                    id: Some(
-                                        Id {
-                                            value: 2,
-                                        },
-                                    ),
-                                    comma: Some(
-                                        Comma,
-                                    ),
-                                },
-                            ],
-                        ),
-                        id: Some(
-                            Id {
-                                value: 3,
+                                ),
                             },
-                        ),
-                        comma: Some(
                             Comma,
                         ),
-                    },
-                ],
+                    ],
+                    last: (
+                        Variant {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "Three",
+                            },
+                            fields: Named(
+                                Brace,
+                                Punctuated {
+                                    values: [
+                                        (
+                                            NamedField {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "field1",
+                                                },
+                                                colon: Colon,
+                                                ty: Type {
+                                                    value: U32,
+                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 1,
+                                                    },
+                                                ),
+                                            },
+                                            Comma,
+                                        ),
+                                    ],
+                                    last: (
+                                        NamedField {
+                                            comment: Comment(
+                                                [
+                                                    CommentLine {
+                                                        value: "Second field of third variant",
+                                                    },
+                                                ],
+                                            ),
+                                            name: Name {
+                                                value: "field2",
+                                            },
+                                            colon: Colon,
+                                            ty: Type {
+                                                value: Bool,
+                                            },
+                                            id: Some(
+                                                Id {
+                                                    value: 2,
+                                                },
+                                            ),
+                                        },
+                                        Some(
+                                            Comma,
+                                        ),
+                                    ),
+                                },
+                            ),
+                            id: Some(
+                                Id {
+                                    value: 3,
+                                },
+                            ),
+                        },
+                        Some(
+                            Comma,
+                        ),
+                    ),
+                },
             },
         ),
     ],

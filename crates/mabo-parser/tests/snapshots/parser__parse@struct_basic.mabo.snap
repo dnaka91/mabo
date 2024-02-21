@@ -28,57 +28,59 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "a",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [
-                                    CommentLine {
-                                        value: "Second field",
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "a",
                                     },
-                                ],
-                            ),
-                            name: Name {
-                                value: "b",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Bool,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: U32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [
+                                        CommentLine {
+                                            value: "Second field",
+                                        },
+                                    ],
+                                ),
+                                name: Name {
+                                    value: "b",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: Bool,
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 2,
+                                    },
+                                ),
+                            },
+                            Some(
+                                Comma,
+                            ),
+                        ),
+                    },
                 ),
             },
         ),

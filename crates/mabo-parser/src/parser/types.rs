@@ -11,7 +11,7 @@ use winnow::{
     Parser,
 };
 
-use super::{imports, ws, Input, ParserExt, Result};
+use super::{imports, punctuate, ws, Input, ParserExt, Result};
 use crate::{
     highlight,
     token::{self, Delimiter, Punctuation},
@@ -178,10 +178,15 @@ fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     (
         token::Parenthesis::OPEN.span(),
         cut_err((
-            separated(
-                0..,
-                ws(parse.map_err(Cause::from)),
-                ws(token::Comma::VALUE.span()),
+            punctuate(
+                (
+                    ws(parse.map_err(Cause::from)),
+                    ws(token::Comma::VALUE.span()),
+                ),
+                (
+                    ws(parse.map_err(Cause::from)),
+                    opt(ws(token::Comma::VALUE.span())),
+                ),
             ),
             ws(token::Parenthesis::CLOSE.span()),
         )),
@@ -229,7 +234,16 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
         opt((
             token::Angle::OPEN.span(),
             cut_err((
-                separated(1.., ws(parse.map_err(Cause::from)), ws(token::Comma::VALUE)),
+                punctuate(
+                    (
+                        ws(parse.map_err(Cause::from)),
+                        ws(token::Comma::VALUE.span()),
+                    ),
+                    (
+                        ws(parse.map_err(Cause::from)),
+                        opt(ws(token::Comma::VALUE.span())),
+                    ),
+                ),
                 ws(token::Angle::CLOSE.span()),
             )),
         )),
@@ -237,8 +251,8 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
         .parse_next(input)
         .map(|(path, name, generics)| {
             let (angle, generics) = match generics {
-                Some((open, (generics, close))) => (Some((open, close).into()), generics),
-                None => (None, Vec::default()),
+                Some((open, (generics, close))) => (Some((open, close).into()), Some(generics)),
+                None => (None, None),
             };
             ExternalType {
                 path,

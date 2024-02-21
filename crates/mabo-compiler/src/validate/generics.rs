@@ -47,12 +47,15 @@ pub struct UnusedGeneric {
 
 /// Ensure all generics in a struct are unique and used.
 pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGenericType> {
-    validate_duplicate_generics(&value.generics)?;
+    let Some(generics) = &value.generics else {
+        return Ok(());
+    };
 
-    let mut unvisited = value
-        .generics
-        .0
-        .iter()
+    validate_duplicate_generics(generics)?;
+
+    let mut unvisited = generics
+        .types
+        .values()
         .map(|gen| (gen.get(), gen.span()))
         .collect::<FxHashMap<_, _>>();
 
@@ -69,16 +72,19 @@ pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGeneric
 
 /// Ensure all generics in an enum are unique and used.
 pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType> {
-    validate_duplicate_generics(&value.generics)?;
+    let Some(generics) = &value.generics else {
+        return Ok(());
+    };
 
-    let mut unvisited = value
-        .generics
-        .0
-        .iter()
+    validate_duplicate_generics(generics)?;
+
+    let mut unvisited = generics
+        .types
+        .values()
         .map(|gen| (gen.get(), gen.span()))
         .collect::<FxHashMap<_, _>>();
 
-    for variant in &value.variants {
+    for variant in value.variants.values() {
         validate_field_generics(&variant.fields, &mut unvisited);
     }
 
@@ -94,10 +100,10 @@ pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType
 /// Ensure all generic type arguments are unique within a struct or enum.
 fn validate_duplicate_generics(value: &Generics<'_>) -> Result<(), DuplicateGenericName> {
     let mut visited =
-        FxHashMap::with_capacity_and_hasher(value.0.len(), BuildHasherDefault::default());
+        FxHashMap::with_capacity_and_hasher(value.types.len(), BuildHasherDefault::default());
     value
-        .0
-        .iter()
+        .types
+        .values()
         .find_map(|name| {
             visited
                 .insert(name.get(), name.span())
@@ -115,18 +121,18 @@ fn validate_duplicate_generics(value: &Generics<'_>) -> Result<(), DuplicateGene
 fn validate_field_generics(value: &Fields<'_>, unvisited: &mut FxHashMap<&str, Span>) {
     match &value {
         Fields::Named(_, named) => {
-            for field in named {
+            for field in named.values() {
                 visit_externals(&field.ty, &mut |external| {
-                    if external.path.is_empty() && external.generics.is_empty() {
+                    if external.path.is_empty() && external.generics.is_none() {
                         unvisited.remove(external.name.get());
                     }
                 });
             }
         }
         Fields::Unnamed(_, unnamed) => {
-            for field in unnamed {
+            for field in unnamed.values() {
                 visit_externals(&field.ty, &mut |external| {
-                    if external.path.is_empty() && external.generics.is_empty() {
+                    if external.path.is_empty() && external.generics.is_none() {
                         unvisited.remove(external.name.get());
                     }
                 });
@@ -169,15 +175,17 @@ fn visit_externals(value: &Type<'_>, visit: &mut impl FnMut(&ExternalType<'_>)) 
             visit_externals(value, visit);
         }
         DataType::Tuple { types, .. } => {
-            for ty in types {
+            for ty in types.values() {
                 visit_externals(ty, visit);
             }
         }
         DataType::External(ty) => {
             visit(ty);
 
-            for ty in &ty.generics {
-                visit_externals(ty, visit);
+            if let Some(generics) = &ty.generics {
+                for ty in generics.values() {
+                    visit_externals(ty, visit);
+                }
             }
         }
     }

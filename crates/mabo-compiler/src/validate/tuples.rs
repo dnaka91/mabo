@@ -1,6 +1,8 @@
 use std::ops::Range;
 
-use mabo_parser::{Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias};
+use mabo_parser::{
+    punctuated::ValuesIter, Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias,
+};
 use miette::{diagnostic, Diagnostic};
 use thiserror::Error;
 
@@ -43,17 +45,17 @@ pub(crate) fn validate_struct_tuples(value: &Struct<'_>) -> Result<(), TupleSize
 pub(crate) fn validate_enum_tuples(value: &Enum<'_>) -> Result<(), TupleSize> {
     value
         .variants
-        .iter()
+        .values()
         .try_for_each(|variant| validate_field_tuples(&variant.fields))
 }
 
 fn validate_field_tuples(value: &Fields<'_>) -> Result<(), TupleSize> {
     match value {
         Fields::Named(_, named) => named
-            .iter()
+            .values()
             .try_for_each(|field| validate_tuple_size(&field.ty)),
         Fields::Unnamed(_, unnamed) => unnamed
-            .iter()
+            .values()
             .try_for_each(|field| validate_tuple_size(&field.ty)),
         Fields::Unit => Ok(()),
     }
@@ -86,7 +88,7 @@ fn validate_tuple_size(value: &Type<'_>) -> Result<(), TupleSize> {
 /// type.
 fn visit_tuples<E>(
     value: &Type<'_>,
-    visit: &mut impl FnMut(&[Type<'_>]) -> Result<(), E>,
+    visit: &mut impl FnMut(ValuesIter<'_, Type<'_>>) -> Result<(), E>,
 ) -> Result<(), E> {
     match &value.value {
         DataType::Bool
@@ -118,12 +120,16 @@ fn visit_tuples<E>(
             visit_tuples(value, visit)
         }
         DataType::Tuple { types, .. } => {
-            visit(types)?;
-            types.iter().try_for_each(|ty| visit_tuples(ty, visit))
+            visit(types.values())?;
+            types.values().try_for_each(|ty| visit_tuples(ty, visit))
         }
-        DataType::External(ty) => ty
-            .generics
-            .iter()
-            .try_for_each(|ty| visit_tuples(ty, visit)),
+        DataType::External(ty) => {
+            if let Some(generics) = &ty.generics {
+                generics
+                    .values()
+                    .try_for_each(|ty| visit_tuples(ty, visit))?;
+            }
+            Ok(())
+        }
     }
 }

@@ -71,7 +71,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseErr
         terminated(token::Type::NAME.span(), space1),
         cut_err((
             parse_name,
-            opt(generics::parse.map_err(Cause::Generics)).map(Option::unwrap_or_default),
+            opt(generics::parse.map_err(Cause::Generics)),
             preceded(space0, token::Equal::VALUE.span()),
             preceded(space0, types::parse.map_err(Cause::from)),
             preceded(space0, token::Semicolon::VALUE.span()),

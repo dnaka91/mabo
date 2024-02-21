@@ -24,38 +24,39 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "value",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Vec {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: Option {
-                                            angle: Angle,
-                                            ty: Type {
-                                                value: NonZero {
-                                                    angle: Angle,
-                                                    ty: Type {
-                                                        value: HashMap {
-                                                            angle: Angle,
-                                                            key: Type {
-                                                                value: I64,
-                                                            },
-                                                            comma: Comma,
-                                                            value: Type {
-                                                                value: BoxString,
+                    Punctuated {
+                        values: [],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "value",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: Vec {
+                                        angle: Angle,
+                                        ty: Type {
+                                            value: Option {
+                                                angle: Angle,
+                                                ty: Type {
+                                                    value: NonZero {
+                                                        angle: Angle,
+                                                        ty: Type {
+                                                            value: HashMap {
+                                                                angle: Angle,
+                                                                key: Type {
+                                                                    value: I64,
+                                                                },
+                                                                comma: Comma,
+                                                                value: Type {
+                                                                    value: BoxString,
+                                                                },
                                                             },
                                                         },
                                                     },
@@ -64,17 +65,17 @@ Schema {
                                         },
                                     },
                                 },
+                                id: Some(
+                                    Id {
+                                        value: 1,
+                                    },
+                                ),
                             },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
+                            Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ),
+                    },
                 ),
             },
         ),

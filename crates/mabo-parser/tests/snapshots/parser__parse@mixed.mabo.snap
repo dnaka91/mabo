@@ -41,133 +41,135 @@ Schema {
                 name: Name {
                     value: "User",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "name",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: External(
-                                    ExternalType {
-                                        path: [],
-                                        name: Name {
-                                            value: "FullName",
-                                        },
-                                        angle: None,
-                                        generics: [],
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "name",
                                     },
-                                ),
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [
-                                    CommentLine {
-                                        value: "Physical address, might not be specified by the user.",
-                                    },
-                                ],
-                            ),
-                            name: Name {
-                                value: "address",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Option {
-                                    angle: Angle,
+                                    colon: Colon,
                                     ty: Type {
                                         value: External(
                                             ExternalType {
                                                 path: [],
                                                 name: Name {
-                                                    value: "Address",
+                                                    value: "FullName",
                                                 },
                                                 angle: None,
-                                                generics: [],
+                                                generics: None,
                                             },
                                         ),
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "age",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U8,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "birthday",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: External(
-                                    ExternalType {
-                                        path: [
-                                            Name {
-                                                value: "birthday",
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [
+                                            CommentLine {
+                                                value: "Physical address, might not be specified by the user.",
                                             },
                                         ],
-                                        name: Name {
-                                            value: "DayOfBirth",
+                                    ),
+                                    name: Name {
+                                        value: "address",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: Option {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: External(
+                                                    ExternalType {
+                                                        path: [],
+                                                        name: Name {
+                                                            value: "Address",
+                                                        },
+                                                        angle: None,
+                                                        generics: None,
+                                                    },
+                                                ),
+                                            },
                                         },
-                                        angle: None,
-                                        generics: [],
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "age",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: U8,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "birthday",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: External(
+                                        ExternalType {
+                                            path: [
+                                                Name {
+                                                    value: "birthday",
+                                                },
+                                            ],
+                                            name: Name {
+                                                value: "DayOfBirth",
+                                            },
+                                            angle: None,
+                                            generics: None,
+                                        },
+                                    ),
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 4,
                                     },
                                 ),
                             },
-                            id: Some(
-                                Id {
-                                    value: 4,
-                                },
-                            ),
-                            comma: Some(
+                            Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ),
+                    },
                 ),
             },
         ),
@@ -187,78 +189,80 @@ Schema {
                 name: Name {
                     value: "FullName",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "first",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: String,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "middle",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Option {
-                                    angle: Angle,
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "first",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
                                         value: String,
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "last",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: String,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "middle",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: Option {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: String,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "last",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: String,
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 3,
+                                    },
+                                ),
+                            },
+                            Some(
+                                Comma,
+                            ),
+                        ),
+                    },
                 ),
             },
         ),
@@ -284,9 +288,7 @@ Schema {
                 name: Name {
                     value: "Name",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 equal: Equal,
                 target: Type {
                     value: External(
@@ -296,7 +298,7 @@ Schema {
                                 value: "FullName",
                             },
                             angle: None,
-                            generics: [],
+                            generics: None,
                         },
                     ),
                 },
@@ -315,90 +317,92 @@ Schema {
                 name: Name {
                     value: "Address",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [
-                                    CommentLine {
-                                        value: "Street name.",
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [
+                                            CommentLine {
+                                                value: "Street name.",
+                                            },
+                                        ],
+                                    ),
+                                    name: Name {
+                                        value: "street",
                                     },
-                                ],
-                            ),
-                            name: Name {
-                                value: "street",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: String,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: String,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [
-                                    CommentLine {
-                                        value: "Number of the house in the street.",
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [
+                                            CommentLine {
+                                                value: "Number of the house in the street.",
+                                            },
+                                        ],
+                                    ),
+                                    name: Name {
+                                        value: "house_no",
                                     },
-                                ],
-                            ),
-                            name: Name {
-                                value: "house_no",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: External(
-                                    ExternalType {
-                                        path: [],
-                                        name: Name {
-                                            value: "HouseNumber",
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: External(
+                                            ExternalType {
+                                                path: [],
+                                                name: Name {
+                                                    value: "HouseNumber",
+                                                },
+                                                angle: None,
+                                                generics: None,
+                                            },
+                                        ),
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
                                         },
-                                        angle: None,
-                                        generics: [],
+                                    ),
+                                },
+                                Comma,
+                            ),
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "city",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: String,
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 3,
                                     },
                                 ),
                             },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
+                            Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "city",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: String,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                    ],
+                        ),
+                    },
                 ),
             },
         ),
@@ -424,84 +428,92 @@ Schema {
                 name: Name {
                     value: "HouseNumber",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 brace: Brace,
-                variants: [
-                    Variant {
-                        comment: Comment(
-                            [
-                                CommentLine {
-                                    value: "Digit only number.",
-                                },
-                            ],
-                        ),
-                        name: Name {
-                            value: "Digit",
-                        },
-                        fields: Unnamed(
-                            Parenthesis,
-                            [
-                                UnnamedField {
-                                    ty: Type {
-                                        value: U16,
-                                    },
-                                    id: Some(
-                                        Id {
-                                            value: 1,
+                variants: Punctuated {
+                    values: [
+                        (
+                            Variant {
+                                comment: Comment(
+                                    [
+                                        CommentLine {
+                                            value: "Digit only number.",
                                         },
-                                    ),
-                                    comma: None,
+                                    ],
+                                ),
+                                name: Name {
+                                    value: "Digit",
                                 },
-                            ],
-                        ),
-                        id: Some(
-                            Id {
-                                value: 1,
+                                fields: Unnamed(
+                                    Parenthesis,
+                                    Punctuated {
+                                        values: [],
+                                        last: (
+                                            UnnamedField {
+                                                ty: Type {
+                                                    value: U16,
+                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 1,
+                                                    },
+                                                ),
+                                            },
+                                            None,
+                                        ),
+                                    },
+                                ),
+                                id: Some(
+                                    Id {
+                                        value: 1,
+                                    },
+                                ),
                             },
-                        ),
-                        comma: Some(
                             Comma,
                         ),
-                    },
-                    Variant {
-                        comment: Comment(
-                            [
-                                CommentLine {
-                                    value: "Mixed _number_ with characters like `1a`.",
-                                },
-                            ],
-                        ),
-                        name: Name {
-                            value: "Text",
-                        },
-                        fields: Unnamed(
-                            Parenthesis,
-                            [
-                                UnnamedField {
-                                    ty: Type {
-                                        value: String,
+                    ],
+                    last: (
+                        Variant {
+                            comment: Comment(
+                                [
+                                    CommentLine {
+                                        value: "Mixed _number_ with characters like `1a`.",
                                     },
-                                    id: Some(
-                                        Id {
-                                            value: 1,
-                                        },
-                                    ),
-                                    comma: None,
-                                },
-                            ],
-                        ),
-                        id: Some(
-                            Id {
-                                value: 2,
+                                ],
+                            ),
+                            name: Name {
+                                value: "Text",
                             },
-                        ),
-                        comma: Some(
+                            fields: Unnamed(
+                                Parenthesis,
+                                Punctuated {
+                                    values: [],
+                                    last: (
+                                        UnnamedField {
+                                            ty: Type {
+                                                value: String,
+                                            },
+                                            id: Some(
+                                                Id {
+                                                    value: 1,
+                                                },
+                                            ),
+                                        },
+                                        None,
+                                    ),
+                                },
+                            ),
+                            id: Some(
+                                Id {
+                                    value: 2,
+                                },
+                            ),
+                        },
+                        Some(
                             Comma,
                         ),
-                    },
-                ],
+                    ),
+                },
             },
         ),
         Const(
@@ -561,180 +573,189 @@ Schema {
                             name: Name {
                                 value: "DayOfBirth",
                             },
-                            generics: Generics(
-                                [],
-                            ),
+                            generics: None,
                             brace: Brace,
-                            variants: [
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "Specific",
-                                    },
-                                    fields: Named(
-                                        Brace,
-                                        [
-                                            NamedField {
-                                                comment: Comment(
-                                                    [],
-                                                ),
-                                                name: Name {
-                                                    value: "year",
-                                                },
-                                                colon: Colon,
-                                                ty: Type {
-                                                    value: U16,
-                                                },
-                                                id: Some(
-                                                    Id {
-                                                        value: 1,
-                                                    },
-                                                ),
-                                                comma: Some(
-                                                    Comma,
-                                                ),
+                            variants: Punctuated {
+                                values: [
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "Specific",
                                             },
-                                            NamedField {
-                                                comment: Comment(
-                                                    [],
-                                                ),
-                                                name: Name {
-                                                    value: "month",
-                                                },
-                                                colon: Colon,
-                                                ty: Type {
-                                                    value: External(
-                                                        ExternalType {
-                                                            path: [],
-                                                            name: Name {
-                                                                value: "Month",
+                                            fields: Named(
+                                                Brace,
+                                                Punctuated {
+                                                    values: [
+                                                        (
+                                                            NamedField {
+                                                                comment: Comment(
+                                                                    [],
+                                                                ),
+                                                                name: Name {
+                                                                    value: "year",
+                                                                },
+                                                                colon: Colon,
+                                                                ty: Type {
+                                                                    value: U16,
+                                                                },
+                                                                id: Some(
+                                                                    Id {
+                                                                        value: 1,
+                                                                    },
+                                                                ),
                                                             },
-                                                            angle: None,
-                                                            generics: [],
+                                                            Comma,
+                                                        ),
+                                                        (
+                                                            NamedField {
+                                                                comment: Comment(
+                                                                    [],
+                                                                ),
+                                                                name: Name {
+                                                                    value: "month",
+                                                                },
+                                                                colon: Colon,
+                                                                ty: Type {
+                                                                    value: External(
+                                                                        ExternalType {
+                                                                            path: [],
+                                                                            name: Name {
+                                                                                value: "Month",
+                                                                            },
+                                                                            angle: None,
+                                                                            generics: None,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                                id: Some(
+                                                                    Id {
+                                                                        value: 2,
+                                                                    },
+                                                                ),
+                                                            },
+                                                            Comma,
+                                                        ),
+                                                    ],
+                                                    last: (
+                                                        NamedField {
+                                                            comment: Comment(
+                                                                [],
+                                                            ),
+                                                            name: Name {
+                                                                value: "day",
+                                                            },
+                                                            colon: Colon,
+                                                            ty: Type {
+                                                                value: U8,
+                                                            },
+                                                            id: Some(
+                                                                Id {
+                                                                    value: 3,
+                                                                },
+                                                            ),
                                                         },
+                                                        Some(
+                                                            Comma,
+                                                        ),
                                                     ),
                                                 },
-                                                id: Some(
-                                                    Id {
-                                                        value: 2,
-                                                    },
-                                                ),
-                                                comma: Some(
-                                                    Comma,
-                                                ),
-                                            },
-                                            NamedField {
-                                                comment: Comment(
-                                                    [],
-                                                ),
-                                                name: Name {
-                                                    value: "day",
+                                            ),
+                                            id: Some(
+                                                Id {
+                                                    value: 1,
                                                 },
-                                                colon: Colon,
-                                                ty: Type {
-                                                    value: U8,
-                                                },
-                                                id: Some(
-                                                    Id {
-                                                        value: 3,
-                                                    },
-                                                ),
-                                                comma: Some(
-                                                    Comma,
-                                                ),
-                                            },
-                                        ],
-                                    ),
-                                    id: Some(
-                                        Id {
-                                            value: 1,
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [
-                                            CommentLine {
-                                                value: "The user didn't want to say.",
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [
+                                                    CommentLine {
+                                                        value: "The user didn't want to say.",
+                                                    },
+                                                ],
+                                            ),
+                                            name: Name {
+                                                value: "Secret",
                                             },
-                                        ],
+                                            fields: Named(
+                                                Brace,
+                                                Punctuated {
+                                                    values: [],
+                                                    last: (
+                                                        NamedField {
+                                                            comment: Comment(
+                                                                [
+                                                                    CommentLine {
+                                                                        value: "Optional info from the user about why they didn't want to",
+                                                                    },
+                                                                    CommentLine {
+                                                                        value: "reveal their birthday.",
+                                                                    },
+                                                                ],
+                                                            ),
+                                                            name: Name {
+                                                                value: "reason",
+                                                            },
+                                                            colon: Colon,
+                                                            ty: Type {
+                                                                value: Option {
+                                                                    angle: Angle,
+                                                                    ty: Type {
+                                                                        value: String,
+                                                                    },
+                                                                },
+                                                            },
+                                                            id: Some(
+                                                                Id {
+                                                                    value: 1,
+                                                                },
+                                                            ),
+                                                        },
+                                                        Some(
+                                                            Comma,
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                            id: Some(
+                                                Id {
+                                                    value: 2,
+                                                },
+                                            ),
+                                        },
+                                        Comma,
                                     ),
-                                    name: Name {
-                                        value: "Secret",
+                                ],
+                                last: (
+                                    Variant {
+                                        comment: Comment(
+                                            [
+                                                CommentLine {
+                                                    value: "We never asked and nobody knows.",
+                                                },
+                                            ],
+                                        ),
+                                        name: Name {
+                                            value: "Unknown",
+                                        },
+                                        fields: Unit,
+                                        id: Some(
+                                            Id {
+                                                value: 3,
+                                            },
+                                        ),
                                     },
-                                    fields: Named(
-                                        Brace,
-                                        [
-                                            NamedField {
-                                                comment: Comment(
-                                                    [
-                                                        CommentLine {
-                                                            value: "Optional info from the user about why they didn't want to",
-                                                        },
-                                                        CommentLine {
-                                                            value: "reveal their birthday.",
-                                                        },
-                                                    ],
-                                                ),
-                                                name: Name {
-                                                    value: "reason",
-                                                },
-                                                colon: Colon,
-                                                ty: Type {
-                                                    value: Option {
-                                                        angle: Angle,
-                                                        ty: Type {
-                                                            value: String,
-                                                        },
-                                                    },
-                                                },
-                                                id: Some(
-                                                    Id {
-                                                        value: 1,
-                                                    },
-                                                ),
-                                                comma: Some(
-                                                    Comma,
-                                                ),
-                                            },
-                                        ],
-                                    ),
-                                    id: Some(
-                                        Id {
-                                            value: 2,
-                                        },
-                                    ),
-                                    comma: Some(
+                                    Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [
-                                            CommentLine {
-                                                value: "We never asked and nobody knows.",
-                                            },
-                                        ],
-                                    ),
-                                    name: Name {
-                                        value: "Unknown",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 3,
-                                        },
-                                    ),
-                                    comma: Some(
-                                        Comma,
-                                    ),
-                                },
-                            ],
+                                ),
+                            },
                         },
                     ),
                     Const(
@@ -808,216 +829,218 @@ Schema {
                             name: Name {
                                 value: "Month",
                             },
-                            generics: Generics(
-                                [],
-                            ),
+                            generics: None,
                             brace: Brace,
-                            variants: [
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "January",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 1,
+                            variants: Punctuated {
+                                values: [
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "January",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 1,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "February",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 2,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "February",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 2,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "March",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 3,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "March",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 3,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "April",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 4,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "April",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 4,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "May",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 5,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "May",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 5,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "June",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 6,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "June",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 6,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "July",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 7,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "July",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 7,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "August",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 8,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "August",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 8,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "September",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 9,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "September",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 9,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "October",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 10,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "October",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 10,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "November",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 11,
+                                    (
+                                        Variant {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "November",
+                                            },
+                                            fields: Unit,
+                                            id: Some(
+                                                Id {
+                                                    value: 11,
+                                                },
+                                            ),
                                         },
-                                    ),
-                                    comma: Some(
                                         Comma,
                                     ),
-                                },
-                                Variant {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "December",
-                                    },
-                                    fields: Unit,
-                                    id: Some(
-                                        Id {
-                                            value: 12,
+                                ],
+                                last: (
+                                    Variant {
+                                        comment: Comment(
+                                            [],
+                                        ),
+                                        name: Name {
+                                            value: "December",
                                         },
-                                    ),
-                                    comma: Some(
+                                        fields: Unit,
+                                        id: Some(
+                                            Id {
+                                                value: 12,
+                                            },
+                                        ),
+                                    },
+                                    Some(
                                         Comma,
                                     ),
-                                },
-                            ],
+                                ),
+                            },
                         },
                     ),
                 ],

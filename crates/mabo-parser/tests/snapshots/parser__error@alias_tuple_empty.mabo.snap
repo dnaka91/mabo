@@ -1,0 +1,42 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: type Sample = ();
+input_file: crates/mabo-parser/tests/inputs/invalid/alias_tuple_empty.mabo
+---
+mabo::parse::alias_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseAliasError.html)
+
+  × Failed to parse type alias declaration
+  ├─▶ Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/alias_tuple_empty.mabo:1:16]
+ 1 │ type Sample = ();
+   ·                ▲
+   ·                ╰── In this declaration
+   ╰────
+  help: Expected type alias declaration in the form `❬B❭type <Alias> = <Type>;❬B❭`
+
+Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
+
+  × Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/alias_tuple_empty.mabo:1:15]
+ 1 │ type Sample = ();
+   ·               ┬
+   ·               ╰── In this declaration
+   ╰────
+  help: Expected type definition in the form `❬B❭<Name>❬B❭`
+
+Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
+
+  × Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/alias_tuple_empty.mabo:1:16]
+ 1 │ type Sample = ();
+   ·                ▲
+   ·                ╰── In this declaration
+   ╰────
+  help: Expected type definition in the form `❬B❭<Name>❬B❭`
+
+Error:   × error Verify

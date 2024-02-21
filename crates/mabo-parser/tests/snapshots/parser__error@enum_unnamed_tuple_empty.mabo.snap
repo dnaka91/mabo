@@ -1,0 +1,65 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "enum Sample {\n    One @1,\n    Two(() @1) @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/invalid/enum_unnamed_tuple_empty.mabo
+---
+mabo::parse::enum_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseEnumError.html)
+
+  × Failed to parse enum declaration
+  ├─▶ Failed to parse fields declaration
+  ├─▶ Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/enum_unnamed_tuple_empty.mabo:3:10]
+ 2 │     One @1,
+ 3 │     Two(() @1) @2,
+   ·          ▲
+   ·          ╰── In this declaration
+ 4 │ }
+   ╰────
+  help: Expected enum declaration in the form `❬B❭enum <Name> {...}❬B❭`
+
+Error: mabo::parse::id (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseFieldsError.html)
+
+  × Failed to parse fields declaration
+  ├─▶ Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/enum_unnamed_tuple_empty.mabo:3:8]
+ 2 │     One @1,
+ 3 │     Two(() @1) @2,
+   ·        ▲
+   ·        ╰── In this declaration
+ 4 │ }
+   ╰────
+  help: Expected fields declaration in the form `❬B❭{ <named>, <named>, ... }❬B❭`, `❬B❭( <unnamed>, <unnamed>, ... )
+        ❬B❭` or `❬B❭_nothing_❬B❭`
+
+Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
+
+  × Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/enum_unnamed_tuple_empty.mabo:3:9]
+ 2 │     One @1,
+ 3 │     Two(() @1) @2,
+   ·         ┬
+   ·         ╰── In this declaration
+ 4 │ }
+   ╰────
+  help: Expected type definition in the form `❬B❭<Name>❬B❭`
+
+Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
+
+  × Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/enum_unnamed_tuple_empty.mabo:3:10]
+ 2 │     One @1,
+ 3 │     Two(() @1) @2,
+   ·          ▲
+   ·          ╰── In this declaration
+ 4 │ }
+   ╰────
+  help: Expected type definition in the form `❬B❭<Name>❬B❭`
+
+Error:   × error Verify

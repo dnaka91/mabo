@@ -24,142 +24,144 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f1",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Vec {
-                                    angle: Angle,
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f1",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
-                                        value: U32,
+                                        value: Vec {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f2",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: HashMap {
-                                    angle: Angle,
-                                    key: Type {
-                                        value: U32,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f2",
                                     },
-                                    comma: Comma,
-                                    value: Type {
-                                        value: String,
-                                    },
-                                },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f3",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: HashSet {
-                                    angle: Angle,
+                                    colon: Colon,
                                     ty: Type {
-                                        value: U32,
+                                        value: HashMap {
+                                            angle: Angle,
+                                            key: Type {
+                                                value: U32,
+                                            },
+                                            comma: Comma,
+                                            value: Type {
+                                                value: String,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f4",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: Option {
-                                    angle: Angle,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f3",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
-                                        value: U32,
+                                        value: HashSet {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 4,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f5",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f4",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
-                                        value: U32,
+                                        value: Option {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 4,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 5,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "f5",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: NonZero {
+                                        angle: Angle,
+                                        ty: Type {
+                                            value: U32,
+                                        },
+                                    },
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 5,
+                                    },
+                                ),
+                            },
+                            Some(
+                                Comma,
+                            ),
+                        ),
+                    },
                 ),
             },
         ),
@@ -175,107 +177,109 @@ Schema {
                 name: Name {
                     value: "SampleUnnamed",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Unnamed(
                     Parenthesis,
-                    [
-                        UnnamedField {
-                            ty: Type {
-                                value: Vec {
-                                    angle: Angle,
+                    Punctuated {
+                        values: [
+                            (
+                                UnnamedField {
                                     ty: Type {
-                                        value: U32,
+                                        value: Vec {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: HashMap {
-                                    angle: Angle,
-                                    key: Type {
-                                        value: U32,
-                                    },
-                                    comma: Comma,
-                                    value: Type {
-                                        value: String,
-                                    },
-                                },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: HashSet {
-                                    angle: Angle,
+                            (
+                                UnnamedField {
                                     ty: Type {
-                                        value: U32,
+                                        value: HashMap {
+                                            angle: Angle,
+                                            key: Type {
+                                                value: U32,
+                                            },
+                                            comma: Comma,
+                                            value: Type {
+                                                value: String,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: Option {
-                                    angle: Angle,
+                            (
+                                UnnamedField {
                                     ty: Type {
-                                        value: U32,
+                                        value: HashSet {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 4,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
+                            (
+                                UnnamedField {
                                     ty: Type {
-                                        value: U32,
+                                        value: Option {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 4,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 5,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ],
+                        last: (
+                            UnnamedField {
+                                ty: Type {
+                                    value: NonZero {
+                                        angle: Angle,
+                                        ty: Type {
+                                            value: U32,
+                                        },
+                                    },
+                                },
+                                id: Some(
+                                    Id {
+                                        value: 5,
+                                    },
+                                ),
+                            },
+                            Some(
+                                Comma,
+                            ),
+                        ),
+                    },
                 ),
             },
         ),

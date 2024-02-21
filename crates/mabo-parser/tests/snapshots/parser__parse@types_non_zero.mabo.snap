@@ -24,407 +24,409 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f01",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: U8,
+                    Punctuated {
+                        values: [
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f01",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U8,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f02",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: U16,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f02",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U16,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 2,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f03",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: U32,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f03",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 3,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 3,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f04",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: U64,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f04",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U64,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 4,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 4,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f05",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: U128,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f05",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: U128,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 5,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 5,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f06",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: I8,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f06",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: I8,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 6,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 6,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f07",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: I16,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f07",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: I16,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 7,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 7,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f08",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: I32,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f08",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: I32,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 8,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 8,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f09",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: I64,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f09",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: I64,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 9,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 9,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f10",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: I128,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f10",
                                     },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: I128,
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 10,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 10,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f11",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: String,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f11",
                                     },
-                                },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 11,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f12",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
+                                    colon: Colon,
                                     ty: Type {
-                                        value: Bytes,
-                                    },
-                                },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 12,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f13",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
-                                    ty: Type {
-                                        value: Vec {
+                                        value: NonZero {
                                             angle: Angle,
                                             ty: Type {
                                                 value: String,
                                             },
                                         },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 11,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 13,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f14",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f12",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
-                                        value: HashMap {
+                                        value: NonZero {
                                             angle: Angle,
-                                            key: Type {
-                                                value: String,
-                                            },
-                                            comma: Comma,
-                                            value: Type {
+                                            ty: Type {
                                                 value: Bytes,
                                             },
                                         },
                                     },
+                                    id: Some(
+                                        Id {
+                                            value: 12,
+                                        },
+                                    ),
                                 },
-                            },
-                            id: Some(
-                                Id {
-                                    value: 14,
-                                },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "f15",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: NonZero {
-                                    angle: Angle,
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f13",
+                                    },
+                                    colon: Colon,
                                     ty: Type {
-                                        value: HashSet {
+                                        value: NonZero {
                                             angle: Angle,
                                             ty: Type {
-                                                value: String,
+                                                value: Vec {
+                                                    angle: Angle,
+                                                    ty: Type {
+                                                        value: String,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 13,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                            (
+                                NamedField {
+                                    comment: Comment(
+                                        [],
+                                    ),
+                                    name: Name {
+                                        value: "f14",
+                                    },
+                                    colon: Colon,
+                                    ty: Type {
+                                        value: NonZero {
+                                            angle: Angle,
+                                            ty: Type {
+                                                value: HashMap {
+                                                    angle: Angle,
+                                                    key: Type {
+                                                        value: String,
+                                                    },
+                                                    comma: Comma,
+                                                    value: Type {
+                                                        value: Bytes,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 14,
+                                        },
+                                    ),
+                                },
+                                Comma,
+                            ),
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "f15",
+                                },
+                                colon: Colon,
+                                ty: Type {
+                                    value: NonZero {
+                                        angle: Angle,
+                                        ty: Type {
+                                            value: HashSet {
+                                                angle: Angle,
+                                                ty: Type {
+                                                    value: String,
+                                                },
                                             },
                                         },
                                     },
                                 },
+                                id: Some(
+                                    Id {
+                                        value: 15,
+                                    },
+                                ),
                             },
-                            id: Some(
-                                Id {
-                                    value: 15,
-                                },
-                            ),
-                            comma: Some(
+                            Some(
                                 Comma,
                             ),
-                        },
-                    ],
+                        ),
+                    },
                 ),
             },
         ),

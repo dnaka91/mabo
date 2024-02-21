@@ -27,7 +27,7 @@ pub use miette::{Diagnostic, LabeledSpan};
 use miette::{IntoDiagnostic, NamedSource, Result};
 use winnow::Parser;
 
-use self::{error::ParseSchemaError, token::Punctuation};
+use self::{error::ParseSchemaError, punctuated::Punctuated, token::Punctuation};
 use crate::token::Delimiter;
 
 pub mod error;
@@ -35,17 +35,27 @@ mod ext;
 mod highlight;
 mod location;
 mod parser;
+pub mod punctuated;
 pub mod token;
 
-trait Print {
+/// Format trait like [`Display`], with the addition of indentation awareness.
+pub trait Print {
     /// Default indentation, 4 spaces.
     const INDENT: &'static str = "    ";
 
     /// Write to the given formatter (like [`Display::fmt`]) but in addition, take the current
     /// indentation level into account.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if any of the formatting calls fails.
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result;
 
     /// Helper to write out the indentation for the given level.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if any of the formatting calls fails.
     fn indent(f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         for _ in 0..level {
             f.write_str(Self::INDENT)?;
@@ -318,7 +328,7 @@ pub struct Struct<'a> {
     /// Unique name for this struct (within its scope).
     pub name: Name<'a>,
     /// Potential generics.
-    pub generics: Generics<'a>,
+    pub generics: Option<Generics<'a>>,
     /// Fields of the struct, if any.
     pub fields: Fields<'a>,
 }
@@ -338,7 +348,10 @@ impl Print for Struct<'_> {
         attributes.print(f, level)?;
         keyword.print(f, level)?;
 
-        write!(f, " {name}{generics}")?;
+        write!(f, " {name}")?;
+        if let Some(generics) = generics {
+            generics.fmt(f)?;
+        }
         kind.print(f, level)?;
 
         f.write_str("\n")
@@ -377,11 +390,11 @@ pub struct Enum<'a> {
     /// Unique name for this enum, within its current scope.
     pub name: Name<'a>,
     /// Potential generics.
-    pub generics: Generics<'a>,
+    pub generics: Option<Generics<'a>>,
     /// Braces `{`...`}` around the variants.
     pub brace: token::Brace,
     /// List of possible variants that the enum can represent.
-    pub variants: Vec<Variant<'a>>,
+    pub variants: Punctuated<Variant<'a>>,
 }
 
 impl Print for Enum<'_> {
@@ -400,15 +413,14 @@ impl Print for Enum<'_> {
         attributes.print(f, level)?;
         keyword.print(f, level)?;
 
-        writeln!(f, " {name}{generics} {}", token::Brace::OPEN)?;
-
-        for variant in variants {
-            variant.print(f, level + 1)?;
-            f.write_str("\n")?;
+        write!(f, " {name}")?;
+        if let Some(generics) = generics {
+            generics.fmt(f)?;
         }
 
-        Self::indent(f, level)?;
-        writeln!(f, "{}", token::Brace::CLOSE)
+        f.write_char(' ')?;
+        variants.surround::<token::Brace>(f, level, true)?;
+        f.write_char('\n')
     }
 }
 
@@ -429,8 +441,6 @@ pub struct Variant<'a> {
     pub fields: Fields<'a>,
     /// Identifier for this variant, that must be unique within the current enum.
     pub id: Option<Id>,
-    /// Trailing comma to separate variants (might be missing if this is the last element).
-    pub comma: Option<token::Comma>,
     /// Source code location.
     span: Span,
 }
@@ -442,7 +452,6 @@ impl Print for Variant<'_> {
             name,
             fields,
             id,
-            comma,
             ..
         } = self;
 
@@ -453,9 +462,6 @@ impl Print for Variant<'_> {
         fields.print(f, level)?;
         if let Some(id) = id {
             write!(f, " {id}")?;
-        }
-        if let Some(comma) = comma {
-            write!(f, "{comma}")?;
         }
         Ok(())
     }
@@ -491,7 +497,7 @@ pub struct TypeAlias<'a> {
     /// Unique name of the type alias within the current scope.
     pub name: Name<'a>,
     /// Potential generic type arguments.
-    pub generics: Generics<'a>,
+    pub generics: Option<Generics<'a>>,
     /// Equal operator that assigns the target type.
     pub equal: token::Equal,
     /// Original type that is being aliased.
@@ -515,7 +521,11 @@ impl Print for TypeAlias<'_> {
         comment.print(f, level)?;
         keyword.print(f, level)?;
 
-        write!(f, " {name}{generics} {equal} {target}{semicolon}")
+        write!(f, " {name}")?;
+        if let Some(generics) = generics {
+            generics.fmt(f)?;
+        }
+        write!(f, " {equal} {target}{semicolon}")
     }
 }
 
@@ -537,13 +547,13 @@ pub enum Fields<'a> {
     ///     c: i32 @3,
     /// }
     /// ```
-    Named(token::Brace, Vec<NamedField<'a>>),
+    Named(token::Brace, Punctuated<NamedField<'a>>),
     /// List of types without an explicit name.
     ///
     /// ```txt
     /// Sample(u8 @1, bool @2, i32 @3)
     /// ```
-    Unnamed(token::Parenthesis, Vec<UnnamedField<'a>>),
+    Unnamed(token::Parenthesis, Punctuated<UnnamedField<'a>>),
     /// No attached value.
     ///
     /// ```txt
@@ -556,17 +566,10 @@ impl Print for Fields<'_> {
     fn print(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
         match self {
             Fields::Named(_, fields) => {
-                writeln!(f, " {}", token::Brace::OPEN)?;
-
-                for field in fields {
-                    field.print(f, level + 1)?;
-                    f.write_char('\n')?;
-                }
-
-                Self::indent(f, level)?;
-                f.write_char(token::Brace::CLOSE)
+                f.write_char(' ')?;
+                fields.surround::<token::Brace>(f, level, true)
             }
-            Fields::Unnamed(_, elements) => concat::<token::Parenthesis>(f, elements, " "),
+            Fields::Unnamed(_, elements) => elements.surround::<token::Parenthesis>(f, 0, false),
             Fields::Unit => Ok(()),
         }
     }
@@ -599,8 +602,6 @@ pub struct NamedField<'a> {
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Option<Id>,
-    /// Trailing comma to separate fields (might be missing if this is the last element).
-    pub comma: Option<token::Comma>,
     /// Source code location.
     span: Span,
 }
@@ -613,7 +614,6 @@ impl Print for NamedField<'_> {
             colon,
             ty,
             id,
-            comma,
             ..
         } = self;
 
@@ -624,10 +624,6 @@ impl Print for NamedField<'_> {
 
         if let Some(id) = id {
             write!(f, " {id}")?;
-        }
-
-        if let Some(comma) = comma {
-            comma.fmt(f)?;
         }
 
         Ok(())
@@ -660,8 +656,6 @@ pub struct UnnamedField<'a> {
     pub ty: Type<'a>,
     /// Identifier for this field, that must be unique within the current element.
     pub id: Option<Id>,
-    /// Trailing comma to separate fields (might be missing if this is the last element).
-    pub comma: Option<token::Comma>,
     /// Source code location.
     span: Span,
 }
@@ -672,20 +666,22 @@ impl Spanned for UnnamedField<'_> {
     }
 }
 
-impl Display for UnnamedField<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let Self { ty, id, comma, .. } = self;
+impl Print for UnnamedField<'_> {
+    fn print(&self, f: &mut fmt::Formatter<'_>, _level: usize) -> fmt::Result {
+        let Self { ty, id, .. } = self;
         write!(f, "{ty}")?;
 
         if let Some(id) = id {
             write!(f, " {id}")?;
         }
 
-        if let Some(comma) = comma {
-            comma.fmt(f)?;
-        }
-
         Ok(())
+    }
+}
+
+impl Display for UnnamedField<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.print(f, 0)
     }
 }
 
@@ -854,9 +850,15 @@ impl Spanned for Type<'_> {
     }
 }
 
+impl Print for Type<'_> {
+    fn print(&self, f: &mut fmt::Formatter<'_>, _level: usize) -> fmt::Result {
+        self.value.fmt(f)
+    }
+}
+
 impl Display for Type<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.value.fmt(f)
+        self.print(f, 0)
     }
 }
 
@@ -966,7 +968,7 @@ pub enum DataType<'a> {
         /// Parenthesis `(`...`)` that delimits the tuple.
         paren: token::Parenthesis,
         /// List of types that make up the tuple.
-        types: Vec<Type<'a>>,
+        types: Punctuated<Type<'a>>,
     },
     /// Continuous list of values with a single time and known length.
     Array {
@@ -1010,7 +1012,7 @@ impl Display for DataType<'_> {
             Self::NonZero { ty, .. } => write!(f, "non_zero<{ty}>"),
             Self::BoxString => f.write_str("box<string>"),
             Self::BoxBytes => f.write_str("box<bytes>"),
-            Self::Tuple { types, .. } => concat::<token::Parenthesis>(f, types, ", "),
+            Self::Tuple { types, .. } => types.surround::<token::Parenthesis>(f, 0, false),
             Self::Array { ty, size, .. } => write!(f, "[{ty}; {size}]"),
             Self::External(t) => t.fmt(f),
         }
@@ -1030,7 +1032,7 @@ pub struct ExternalType<'a> {
     /// Angles `<`...`>` to delimit the generic type parameters.
     pub angle: Option<token::Angle>,
     /// Potential generic type arguments.
-    pub generics: Vec<Type<'a>>,
+    pub generics: Option<Punctuated<Type<'a>>>,
 }
 
 impl Display for ExternalType<'_> {
@@ -1046,7 +1048,10 @@ impl Display for ExternalType<'_> {
             write!(f, "{segment}::")?;
         }
         name.fmt(f)?;
-        concat::<token::Angle>(f, generics, ", ")
+        if let Some(generics) = generics {
+            generics.surround::<token::Angle>(f, 0, false)?;
+        }
+        Ok(())
     }
 }
 
@@ -1055,12 +1060,17 @@ impl Display for ExternalType<'_> {
 /// ```txt
 /// <A, B, ...>
 /// ```
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct Generics<'a>(pub Vec<Name<'a>>);
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Generics<'a> {
+    /// Angles `<`...`>` to delimit the generic type parameters.
+    pub angle: token::Angle,
+    /// The generic types, separated by commas `,`.
+    pub types: Punctuated<Name<'a>>,
+}
 
 impl Display for Generics<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        concat::<token::Angle>(f, &self.0, ", ")
+        self.types.surround::<token::Angle>(f, 0, false)
     }
 }
 
@@ -1131,9 +1141,15 @@ impl Spanned for Name<'_> {
     }
 }
 
+impl Print for Name<'_> {
+    fn print(&self, f: &mut fmt::Formatter<'_>, _level: usize) -> fmt::Result {
+        self.value.fmt(f)
+    }
+}
+
 impl Display for Name<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.value.fmt(f)
+        self.print(f, 0)
     }
 }
 

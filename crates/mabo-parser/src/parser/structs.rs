@@ -69,7 +69,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Struct<'i>, ParseError>
         terminated(token::Struct::NAME.span(), space1),
         cut_err((
             parse_name,
-            opt(generics::parse.map_err(Cause::Generics)).map(Option::unwrap_or_default),
+            opt(generics::parse.map_err(Cause::Generics)),
             preceded(space0, fields::parse.map_err(Cause::Fields)),
         )),
     )

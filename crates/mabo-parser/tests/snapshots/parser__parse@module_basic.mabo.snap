@@ -50,29 +50,30 @@ Schema {
                                         name: Name {
                                             value: "Sample",
                                         },
-                                        generics: Generics(
-                                            [],
-                                        ),
+                                        generics: None,
                                         brace: Brace,
-                                        variants: [
-                                            Variant {
-                                                comment: Comment(
-                                                    [],
-                                                ),
-                                                name: Name {
-                                                    value: "One",
-                                                },
-                                                fields: Unit,
-                                                id: Some(
-                                                    Id {
-                                                        value: 1,
+                                        variants: Punctuated {
+                                            values: [],
+                                            last: (
+                                                Variant {
+                                                    comment: Comment(
+                                                        [],
+                                                    ),
+                                                    name: Name {
+                                                        value: "One",
                                                     },
-                                                ),
-                                                comma: Some(
+                                                    fields: Unit,
+                                                    id: Some(
+                                                        Id {
+                                                            value: 1,
+                                                        },
+                                                    ),
+                                                },
+                                                Some(
                                                     Comma,
                                                 ),
-                                            },
-                                        ],
+                                            ),
+                                        },
                                     },
                                 ),
                             ],
@@ -90,66 +91,68 @@ Schema {
                             name: Name {
                                 value: "Sample",
                             },
-                            generics: Generics(
-                                [],
-                            ),
+                            generics: None,
                             fields: Named(
                                 Brace,
-                                [
-                                    NamedField {
-                                        comment: Comment(
-                                            [],
-                                        ),
-                                        name: Name {
-                                            value: "value",
-                                        },
-                                        colon: Colon,
-                                        ty: Type {
-                                            value: U32,
-                                        },
-                                        id: Some(
-                                            Id {
-                                                value: 1,
+                                Punctuated {
+                                    values: [
+                                        (
+                                            NamedField {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "value",
+                                                },
+                                                colon: Colon,
+                                                ty: Type {
+                                                    value: U32,
+                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 1,
+                                                    },
+                                                ),
                                             },
-                                        ),
-                                        comma: Some(
                                             Comma,
                                         ),
-                                    },
-                                    NamedField {
-                                        comment: Comment(
-                                            [],
-                                        ),
-                                        name: Name {
-                                            value: "inner",
-                                        },
-                                        colon: Colon,
-                                        ty: Type {
-                                            value: External(
-                                                ExternalType {
-                                                    path: [
-                                                        Name {
-                                                            value: "b",
+                                    ],
+                                    last: (
+                                        NamedField {
+                                            comment: Comment(
+                                                [],
+                                            ),
+                                            name: Name {
+                                                value: "inner",
+                                            },
+                                            colon: Colon,
+                                            ty: Type {
+                                                value: External(
+                                                    ExternalType {
+                                                        path: [
+                                                            Name {
+                                                                value: "b",
+                                                            },
+                                                        ],
+                                                        name: Name {
+                                                            value: "Sample",
                                                         },
-                                                    ],
-                                                    name: Name {
-                                                        value: "Sample",
+                                                        angle: None,
+                                                        generics: None,
                                                     },
-                                                    angle: None,
-                                                    generics: [],
+                                                ),
+                                            },
+                                            id: Some(
+                                                Id {
+                                                    value: 2,
                                                 },
                                             ),
                                         },
-                                        id: Some(
-                                            Id {
-                                                value: 2,
-                                            },
-                                        ),
-                                        comma: Some(
+                                        Some(
                                             Comma,
                                         ),
-                                    },
-                                ],
+                                    ),
+                                },
                             ),
                         },
                     ),

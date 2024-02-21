@@ -24,146 +24,12 @@ Schema {
                 name: Name {
                     value: "SampleNamed",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Named(
                     Brace,
-                    [
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "field1",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: None,
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "field2",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 100,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        NamedField {
-                            comment: Comment(
-                                [],
-                            ),
-                            name: Name {
-                                value: "field3",
-                            },
-                            colon: Colon,
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: None,
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                    ],
-                ),
-            },
-        ),
-        Struct(
-            Struct {
-                comment: Comment(
-                    [],
-                ),
-                attributes: Attributes(
-                    [],
-                ),
-                keyword: Struct,
-                name: Name {
-                    value: "SampleUnnamed",
-                },
-                generics: Generics(
-                    [],
-                ),
-                fields: Unnamed(
-                    Parenthesis,
-                    [
-                        UnnamedField {
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: None,
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 100,
-                                },
-                            ),
-                            comma: Some(
-                                Comma,
-                            ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: None,
-                            comma: None,
-                        },
-                    ],
-                ),
-            },
-        ),
-        Enum(
-            Enum {
-                comment: Comment(
-                    [],
-                ),
-                attributes: Attributes(
-                    [],
-                ),
-                keyword: Enum,
-                name: Name {
-                    value: "SampleEnum",
-                },
-                generics: Generics(
-                    [],
-                ),
-                brace: Brace,
-                variants: [
-                    Variant {
-                        comment: Comment(
-                            [],
-                        ),
-                        name: Name {
-                            value: "Named",
-                        },
-                        fields: Named(
-                            Brace,
-                            [
+                    Punctuated {
+                        values: [
+                            (
                                 NamedField {
                                     comment: Comment(
                                         [],
@@ -176,10 +42,10 @@ Schema {
                                         value: U32,
                                     },
                                     id: None,
-                                    comma: Some(
-                                        Comma,
-                                    ),
                                 },
+                                Comma,
+                            ),
+                            (
                                 NamedField {
                                     comment: Comment(
                                         [],
@@ -196,69 +62,59 @@ Schema {
                                             value: 100,
                                         },
                                     ),
-                                    comma: Some(
-                                        Comma,
-                                    ),
                                 },
-                                NamedField {
-                                    comment: Comment(
-                                        [],
-                                    ),
-                                    name: Name {
-                                        value: "field3",
-                                    },
-                                    colon: Colon,
-                                    ty: Type {
-                                        value: U32,
-                                    },
-                                    id: None,
-                                    comma: Some(
-                                        Comma,
-                                    ),
+                                Comma,
+                            ),
+                        ],
+                        last: (
+                            NamedField {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "field3",
                                 },
-                            ],
-                        ),
-                        id: None,
-                        comma: Some(
-                            Comma,
-                        ),
-                    },
-                    Variant {
-                        comment: Comment(
-                            [],
-                        ),
-                        name: Name {
-                            value: "Unit",
-                        },
-                        fields: Unit,
-                        id: Some(
-                            Id {
-                                value: 50,
+                                colon: Colon,
+                                ty: Type {
+                                    value: U32,
+                                },
+                                id: None,
                             },
-                        ),
-                        comma: Some(
-                            Comma,
+                            Some(
+                                Comma,
+                            ),
                         ),
                     },
-                    Variant {
-                        comment: Comment(
-                            [],
-                        ),
-                        name: Name {
-                            value: "Unnamed",
-                        },
-                        fields: Unnamed(
-                            Parenthesis,
-                            [
+                ),
+            },
+        ),
+        Struct(
+            Struct {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                keyword: Struct,
+                name: Name {
+                    value: "SampleUnnamed",
+                },
+                generics: None,
+                fields: Unnamed(
+                    Parenthesis,
+                    Punctuated {
+                        values: [
+                            (
                                 UnnamedField {
                                     ty: Type {
                                         value: U32,
                                     },
                                     id: None,
-                                    comma: Some(
-                                        Comma,
-                                    ),
                                 },
+                                Comma,
+                            ),
+                            (
                                 UnnamedField {
                                     ty: Type {
                                         value: U32,
@@ -268,25 +124,183 @@ Schema {
                                             value: 100,
                                         },
                                     ),
-                                    comma: Some(
-                                        Comma,
-                                    ),
                                 },
-                                UnnamedField {
-                                    ty: Type {
-                                        value: U32,
-                                    },
-                                    id: None,
-                                    comma: None,
+                                Comma,
+                            ),
+                        ],
+                        last: (
+                            UnnamedField {
+                                ty: Type {
+                                    value: U32,
                                 },
-                            ],
-                        ),
-                        id: None,
-                        comma: Some(
-                            Comma,
+                                id: None,
+                            },
+                            None,
                         ),
                     },
-                ],
+                ),
+            },
+        ),
+        Enum(
+            Enum {
+                comment: Comment(
+                    [],
+                ),
+                attributes: Attributes(
+                    [],
+                ),
+                keyword: Enum,
+                name: Name {
+                    value: "SampleEnum",
+                },
+                generics: None,
+                brace: Brace,
+                variants: Punctuated {
+                    values: [
+                        (
+                            Variant {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "Named",
+                                },
+                                fields: Named(
+                                    Brace,
+                                    Punctuated {
+                                        values: [
+                                            (
+                                                NamedField {
+                                                    comment: Comment(
+                                                        [],
+                                                    ),
+                                                    name: Name {
+                                                        value: "field1",
+                                                    },
+                                                    colon: Colon,
+                                                    ty: Type {
+                                                        value: U32,
+                                                    },
+                                                    id: None,
+                                                },
+                                                Comma,
+                                            ),
+                                            (
+                                                NamedField {
+                                                    comment: Comment(
+                                                        [],
+                                                    ),
+                                                    name: Name {
+                                                        value: "field2",
+                                                    },
+                                                    colon: Colon,
+                                                    ty: Type {
+                                                        value: U32,
+                                                    },
+                                                    id: Some(
+                                                        Id {
+                                                            value: 100,
+                                                        },
+                                                    ),
+                                                },
+                                                Comma,
+                                            ),
+                                        ],
+                                        last: (
+                                            NamedField {
+                                                comment: Comment(
+                                                    [],
+                                                ),
+                                                name: Name {
+                                                    value: "field3",
+                                                },
+                                                colon: Colon,
+                                                ty: Type {
+                                                    value: U32,
+                                                },
+                                                id: None,
+                                            },
+                                            Some(
+                                                Comma,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                id: None,
+                            },
+                            Comma,
+                        ),
+                        (
+                            Variant {
+                                comment: Comment(
+                                    [],
+                                ),
+                                name: Name {
+                                    value: "Unit",
+                                },
+                                fields: Unit,
+                                id: Some(
+                                    Id {
+                                        value: 50,
+                                    },
+                                ),
+                            },
+                            Comma,
+                        ),
+                    ],
+                    last: (
+                        Variant {
+                            comment: Comment(
+                                [],
+                            ),
+                            name: Name {
+                                value: "Unnamed",
+                            },
+                            fields: Unnamed(
+                                Parenthesis,
+                                Punctuated {
+                                    values: [
+                                        (
+                                            UnnamedField {
+                                                ty: Type {
+                                                    value: U32,
+                                                },
+                                                id: None,
+                                            },
+                                            Comma,
+                                        ),
+                                        (
+                                            UnnamedField {
+                                                ty: Type {
+                                                    value: U32,
+                                                },
+                                                id: Some(
+                                                    Id {
+                                                        value: 100,
+                                                    },
+                                                ),
+                                            },
+                                            Comma,
+                                        ),
+                                    ],
+                                    last: (
+                                        UnnamedField {
+                                            ty: Type {
+                                                value: U32,
+                                            },
+                                            id: None,
+                                        },
+                                        None,
+                                    ),
+                                },
+                            ),
+                            id: None,
+                        },
+                        Some(
+                            Comma,
+                        ),
+                    ),
+                },
             },
         ),
     ],

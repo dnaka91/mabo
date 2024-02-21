@@ -54,7 +54,7 @@ fn visit_enum(index: &Index, item: &Enum<'_>) -> Result<DocumentSymbol> {
         SymbolKind::ENUM,
         index.get_range(item.name.span())?,
         item.variants
-            .iter()
+            .values()
             .map(|variant| visit_variant(index, variant))
             .collect::<Result<_>>()?,
     ))
@@ -72,11 +72,11 @@ fn visit_variant(index: &Index, item: &Variant<'_>) -> Result<DocumentSymbol> {
 fn visit_fields(index: &Index, item: &Fields<'_>) -> Result<Vec<DocumentSymbol>> {
     match item {
         Fields::Named(_, named) => named
-            .iter()
+            .values()
             .map(|field| visit_named_field(index, field))
             .collect(),
         Fields::Unnamed(_, unnamed) => unnamed
-            .iter()
+            .values()
             .enumerate()
             .map(|(pos, field)| visit_unnamed_field(index, field, pos))
             .collect(),

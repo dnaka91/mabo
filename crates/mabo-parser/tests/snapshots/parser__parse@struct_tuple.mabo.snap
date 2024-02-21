@@ -28,37 +28,39 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 fields: Unnamed(
                     Parenthesis,
-                    [
-                        UnnamedField {
-                            ty: Type {
-                                value: U32,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 1,
+                    Punctuated {
+                        values: [
+                            (
+                                UnnamedField {
+                                    ty: Type {
+                                        value: U32,
+                                    },
+                                    id: Some(
+                                        Id {
+                                            value: 1,
+                                        },
+                                    ),
                                 },
-                            ),
-                            comma: Some(
                                 Comma,
                             ),
-                        },
-                        UnnamedField {
-                            ty: Type {
-                                value: Bool,
-                            },
-                            id: Some(
-                                Id {
-                                    value: 2,
+                        ],
+                        last: (
+                            UnnamedField {
+                                ty: Type {
+                                    value: Bool,
                                 },
-                            ),
-                            comma: None,
-                        },
-                    ],
+                                id: Some(
+                                    Id {
+                                        value: 2,
+                                    },
+                                ),
+                            },
+                            None,
+                        ),
+                    },
                 ),
             },
         ),

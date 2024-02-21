@@ -25,9 +25,7 @@ Schema {
                 name: Name {
                     value: "Sample",
                 },
-                generics: Generics(
-                    [],
-                ),
+                generics: None,
                 equal: Equal,
                 target: Type {
                     value: U32,

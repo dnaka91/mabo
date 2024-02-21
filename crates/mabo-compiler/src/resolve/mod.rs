@@ -2,7 +2,8 @@
 //! correct.
 
 use mabo_parser::{
-    DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
+    punctuated::Punctuated, DataType, Definition, ExternalType, Fields, Generics, Import, Name,
+    Schema, Spanned, Type,
 };
 use miette::NamedSource;
 use rustc_hash::FxHashMap;
@@ -153,11 +154,11 @@ impl Module<'_> {
 
         match definition.kind {
             DeclarationKind::Struct { generics } | DeclarationKind::Enum { generics }
-                if generics != ty.generics.len() =>
+                if generics != ty.generics.as_ref().map_or(0, Punctuated::len) =>
             {
                 Err(GenericsCount {
                     definition: generics,
-                    usage: ty.generics.len(),
+                    usage: ty.generics.as_ref().map_or(0, Punctuated::len),
                     declared: definition.name.span().into(),
                     used: ty.name.span().into(),
                 }
@@ -256,10 +257,10 @@ impl Module<'_> {
 
         match definition.kind {
             DeclarationKind::Struct { generics } | DeclarationKind::Enum { generics }
-                if generics != ty.generics.len() =>
+                if generics != ty.generics.as_ref().map_or(0, Punctuated::len) =>
             {
                 Err(RemoteGenericsCount {
-                    amount: ty.generics.len(),
+                    amount: ty.generics.as_ref().map_or(0, Punctuated::len),
                     used: ty.name.span().into(),
                     declaration: [RemoteGenericsCountDeclaration {
                         amount: generics,
@@ -321,19 +322,18 @@ pub(crate) fn resolve_module_types<'a>(
     module: &'a Module<'_>,
     missing: &mut Vec<LocallyMissingType<'a>>,
 ) {
-    fn is_generic(external: &ExternalType<'_>, generics: &Generics<'_>) -> bool {
-        external.generics.is_empty()
+    fn is_generic(external: &ExternalType<'_>, generics: &Option<Generics<'_>>) -> bool {
+        external.generics.is_none()
             && external.path.is_empty()
-            && generics
-                .0
-                .iter()
-                .any(|gen| gen.get() == external.name.get())
+            && generics.as_ref().map_or(false, |g| {
+                g.types.values().any(|gen| gen.get() == external.name.get())
+            })
     }
 
     fn resolve<'a>(
         missing: &mut Vec<LocallyMissingType<'a>>,
         ty: &'a Type<'_>,
-        generics: &Generics<'_>,
+        generics: &Option<Generics<'_>>,
         module: &'a Module<'_>,
     ) {
         visit_externals(ty, &mut |external| {
@@ -348,17 +348,17 @@ pub(crate) fn resolve_module_types<'a>(
     fn resolve_fields<'a>(
         missing: &mut Vec<LocallyMissingType<'a>>,
         fields: &'a Fields<'_>,
-        generics: &Generics<'_>,
+        generics: &Option<Generics<'_>>,
         module: &'a Module<'_>,
     ) {
         match fields {
             Fields::Named(_, named) => {
-                for field in named {
+                for field in named.values() {
                     resolve(missing, &field.ty, generics, module);
                 }
             }
             Fields::Unnamed(_, unnamed) => {
-                for field in unnamed {
+                for field in unnamed.values() {
                     resolve(missing, &field.ty, generics, module);
                 }
             }
@@ -370,7 +370,7 @@ pub(crate) fn resolve_module_types<'a>(
         match def {
             Definition::Struct(s) => resolve_fields(missing, &s.fields, &s.generics, module),
             Definition::Enum(e) => {
-                for variant in &e.variants {
+                for variant in e.variants.values() {
                     resolve_fields(missing, &variant.fields, &e.generics, module);
                 }
             }
@@ -424,13 +424,13 @@ fn visit_module_tree<'a>(
             }
             Definition::Struct(s) => module.types.push(Declaration {
                 kind: DeclarationKind::Struct {
-                    generics: s.generics.0.len(),
+                    generics: s.generics.as_ref().map_or(0, |g| g.types.len()),
                 },
                 name: s.name.clone(),
             }),
             Definition::Enum(e) => module.types.push(Declaration {
                 kind: DeclarationKind::Enum {
-                    generics: e.generics.0.len(),
+                    generics: e.generics.as_ref().map_or(0, |g| g.types.len()),
                 },
                 name: e.name.clone(),
             }),
@@ -484,15 +484,17 @@ fn visit_externals<'a>(value: &'a Type<'_>, visit: &mut impl FnMut(&'a ExternalT
             visit_externals(value, visit);
         }
         DataType::Tuple { types, .. } => {
-            for ty in types {
+            for ty in types.values() {
                 visit_externals(ty, visit);
             }
         }
         DataType::External(ty) => {
             visit(ty);
 
-            for ty in &ty.generics {
-                visit_externals(ty, visit);
+            if let Some(generics) = &ty.generics {
+                for ty in generics.values() {
+                    visit_externals(ty, visit);
+                }
             }
         }
     }
@@ -564,12 +566,12 @@ pub(crate) fn resolve_type_remotely(
         });
 
         if let Some((schema, name, generics)) = found {
-            if generics == ty.external.generics.len() {
+            if generics == ty.external.generics.as_ref().map_or(0, Punctuated::len) {
                 return Ok(());
             }
 
             return Err(ResolveRemote::GenericsCount(RemoteGenericsCount {
-                amount: ty.external.generics.len(),
+                amount: ty.external.generics.as_ref().map_or(0, Punctuated::len),
                 used: ty.external.name.span().into(),
                 declaration: [RemoteGenericsCountDeclaration {
                     amount: generics,

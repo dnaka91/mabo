@@ -104,7 +104,7 @@ pub(crate) fn validate_enum_ids(value: &Enum<'_>) -> Result<(), DuplicateId> {
 
     value
         .variants
-        .iter()
+        .values()
         .find_map(|variant| {
             let id = id_gen.next_with_span(variant.id.as_ref(), || variant.span());
 
@@ -138,7 +138,7 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
             let mut id_gen = IdGenerator::new();
 
             named
-                .iter()
+                .values()
                 .find_map(|field| {
                     let id = id_gen.next_with_span(field.id.as_ref(), || field.span());
 
@@ -160,7 +160,7 @@ fn validate_field_ids(value: &Fields<'_>) -> Result<(), DuplicateFieldId> {
             let mut id_gen = IdGenerator::new();
 
             unnamed
-                .iter()
+                .values()
                 .enumerate()
                 .find_map(|(pos, field)| {
                     let id = id_gen.next_with_span(field.id.as_ref(), || field.span());

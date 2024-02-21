@@ -249,8 +249,11 @@ impl<'a> Visitor<'a> {
         self.visit_generics(&item.generics)?;
         self.add_span(&item.brace.open(), &types::BRACE, &[])?;
 
-        for variant in &item.variants {
+        for (variant, comma) in &item.variants {
             self.visit_variant(variant)?;
+            if let Some(comma) = &comma {
+                self.add_span(comma, &types::COMMA, &[])?;
+            }
         }
 
         self.add_span(&item.brace.close(), &types::BRACE, &[])
@@ -261,9 +264,7 @@ impl<'a> Visitor<'a> {
         self.add_span(&item.name, &types::ENUM_MEMBER, &[modifiers::DECLARATION])?;
         self.visit_fields(&item.fields)?;
         self.visit_id(&item.id)?;
-        if let Some(comma) = &item.comma {
-            self.add_span(comma, &types::COMMA, &[])?;
-        }
+
         Ok(())
     }
 
@@ -271,15 +272,21 @@ impl<'a> Visitor<'a> {
         match item {
             Fields::Named(brace, named) => {
                 self.add_span(&brace.open(), &types::BRACE, &[])?;
-                for field in named {
+                for (field, comma) in named {
                     self.visit_named_field(field)?;
+                    if let Some(comma) = &comma {
+                        self.add_span(comma, &types::COMMA, &[])?;
+                    }
                 }
                 self.add_span(&brace.close(), &types::BRACE, &[])?;
             }
             Fields::Unnamed(paren, unnamed) => {
                 self.add_span(&paren.open(), &types::PARENTHESIS, &[])?;
-                for field in unnamed {
+                for (field, comma) in unnamed {
                     self.visit_unnamed_field(field)?;
+                    if let Some(comma) = &comma {
+                        self.add_span(comma, &types::COMMA, &[])?;
+                    }
                 }
                 self.add_span(&paren.close(), &types::PARENTHESIS, &[])?;
             }
@@ -295,9 +302,6 @@ impl<'a> Visitor<'a> {
         self.add_span(&item.colon, &types::COLON, &[])?;
         self.visit_type(&item.ty)?;
         self.visit_id(&item.id)?;
-        if let Some(comma) = &item.comma {
-            self.add_span(comma, &types::COMMA, &[])?;
-        }
         Ok(())
     }
 
@@ -389,8 +393,11 @@ impl<'a> Visitor<'a> {
             }
             DataType::Tuple { paren, types } => {
                 self.add_span(&paren.open(), &types::PARENTHESIS, &[])?;
-                for ty in types {
+                for (ty, comma) in types {
                     self.visit_type(ty)?;
+                    if let Some(comma) = &comma {
+                        self.add_span(comma, &types::COMMA, &[])?;
+                    }
                 }
                 self.add_span(&paren.close(), &types::PARENTHESIS, &[])
             }
@@ -418,8 +425,13 @@ impl<'a> Visitor<'a> {
                 if let Some(angle) = angle {
                     self.add_span(&angle.open(), &types::ANGLE, &[])?;
                 }
-                for ty in generics {
-                    self.visit_type(ty)?;
+                if let Some(generics) = generics {
+                    for (ty, comma) in generics {
+                        self.visit_type(ty)?;
+                        if let Some(comma) = &comma {
+                            self.add_span(comma, &types::COMMA, &[])?;
+                        }
+                    }
                 }
                 if let Some(angle) = angle {
                     self.add_span(&angle.close(), &types::ANGLE, &[])?;
@@ -442,9 +454,14 @@ impl<'a> Visitor<'a> {
         self.add_span(item, &token_type, &[])
     }
 
-    fn visit_generics(&mut self, item: &Generics<'_>) -> Result<()> {
-        for generic in &item.0 {
-            self.add_span(generic, &types::TYPE_PARAMETER, &[modifiers::DECLARATION])?;
+    fn visit_generics(&mut self, item: &Option<Generics<'_>>) -> Result<()> {
+        if let Some(generics) = item {
+            for (generic, comma) in &generics.types {
+                self.add_span(generic, &types::TYPE_PARAMETER, &[modifiers::DECLARATION])?;
+                if let Some(comma) = &comma {
+                    self.add_span(comma, &types::COMMA, &[])?;
+                }
+            }
         }
 
         Ok(())

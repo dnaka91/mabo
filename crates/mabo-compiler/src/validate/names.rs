@@ -81,7 +81,7 @@ pub(crate) fn validate_enum_names(value: &Enum<'_>) -> Result<(), DuplicateName>
         FxHashMap::with_capacity_and_hasher(value.variants.len(), BuildHasherDefault::default());
     value
         .variants
-        .iter()
+        .values()
         .find_map(|variant| {
             visited
                 .insert(variant.name.get(), variant.name.span())
@@ -109,7 +109,7 @@ fn validate_field_names(value: &Fields<'_>) -> Result<(), DuplicateFieldName> {
             let mut visited =
                 FxHashMap::with_capacity_and_hasher(named.len(), BuildHasherDefault::default());
             named
-                .iter()
+                .values()
                 .find_map(|field| {
                     visited
                         .insert(field.name.get(), field.name.span())

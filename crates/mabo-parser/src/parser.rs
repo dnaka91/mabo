@@ -1,8 +1,10 @@
+use std::ops::Range;
+
 use winnow::{
     ascii::{multispace0, newline, space0},
     combinator::{fail, opt, peek, preceded, repeat, terminated, trace},
     dispatch,
-    error::ParserError,
+    error::{ErrMode, ParserError},
     prelude::*,
     stream::{AsChar, Stream, StreamIsPartial},
     token::any,
@@ -26,6 +28,7 @@ pub use self::{
 use crate::{
     error::{ParseDefinitionError, ParseSchemaCause},
     ext::ParserExt,
+    punctuated::Punctuated,
     Definition, Schema,
 };
 
@@ -209,4 +212,58 @@ where
     F: Parser<I, O, E>,
 {
     trace("ws", preceded(multispace0, inner))
+}
+
+pub fn punctuate<I, O, P, E, F, G>(mut f: F, mut g: G) -> impl Parser<I, Punctuated<O, P>, E>
+where
+    I: Stream,
+    P: Copy + From<Range<usize>>,
+    E: ParserError<I>,
+    F: Parser<I, (O, Range<usize>), E>,
+    G: Parser<I, (O, Option<Range<usize>>), E>,
+{
+    trace("punctuate", move |i: &mut I| {
+        let mut values = Vec::new();
+        let mut start_prev = None;
+
+        loop {
+            let start = i.checkpoint();
+            let len = i.eof_offset();
+
+            match f.parse_next(i) {
+                Ok((o, range)) => {
+                    if i.eof_offset() == len {
+                        return Err(ErrMode::assert(i, "`repeat` parsers must always consume"));
+                    }
+
+                    values.push((o, range.into()));
+                    start_prev = Some(start);
+                }
+                Err(ErrMode::Backtrack(_)) => {
+                    i.reset(&start);
+                    let (o, range) = match g.parse_next(i) {
+                        Ok(o) => Ok(o),
+                        // Both parsers failed. Lets undo the last successful action from the first
+                        // parser and redo it with the second one to get the last value.
+                        //
+                        // Technically we could just take the parsed data from the first parser and
+                        // transform it, but there is no guarantee that the parsers are similar
+                        // enough to do this transformation.
+                        Err(ErrMode::Backtrack(e)) => {
+                            if let Some(start) = start_prev {
+                                values.pop();
+                                i.reset(&start);
+                                g.parse_next(i)
+                            } else {
+                                Err(ErrMode::Backtrack(e))
+                            }
+                        }
+                        Err(e) => Err(e),
+                    }?;
+                    return Ok(Punctuated::new(values, (o, range.map(Into::into))));
+                }
+                Err(e) => return Err(e),
+            }
+        }
+    })
 }

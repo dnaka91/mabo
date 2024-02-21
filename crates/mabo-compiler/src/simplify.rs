@@ -311,8 +311,10 @@ fn comment<'a>(item: &'a mabo_parser::Comment<'_>) -> Box<[&'a str]> {
 }
 
 #[inline]
-fn generics<'a>(item: &'a mabo_parser::Generics<'_>) -> Box<[&'a str]> {
-    item.0.iter().map(mabo_parser::Name::get).collect()
+fn generics<'a>(item: &'a Option<mabo_parser::Generics<'_>>) -> Box<[&'a str]> {
+    item.as_ref().map_or(Box::default(), |g| {
+        g.types.values().map(mabo_parser::Name::get).collect()
+    })
 }
 
 #[inline]
@@ -360,7 +362,7 @@ fn simplify_enum<'a>(item: &'a mabo_parser::Enum<'_>) -> Enum<'a> {
         generics: generics(&item.generics),
         variants: item
             .variants
-            .iter()
+            .values()
             .map(|variant| simplify_variant(variant, &mut id_gen))
             .collect(),
     }
@@ -386,7 +388,7 @@ fn simplify_fields<'a>(item: &'a mabo_parser::Fields<'_>) -> Fields<'a> {
         mabo_parser::Fields::Named(_, named) => Fields {
             source: item,
             fields: named
-                .iter()
+                .values()
                 .map(|field| Field {
                     source: ParserField::Named(field),
                     comment: comment(&field.comment),
@@ -400,7 +402,7 @@ fn simplify_fields<'a>(item: &'a mabo_parser::Fields<'_>) -> Fields<'a> {
         mabo_parser::Fields::Unnamed(_, unnamed) => Fields {
             source: item,
             fields: unnamed
-                .iter()
+                .values()
                 .enumerate()
                 .map(|(i, field)| Field {
                     source: ParserField::Unnamed(field),
@@ -449,7 +451,7 @@ fn simplify_type<'a>(item: &'a mabo_parser::Type<'_>) -> Type<'a> {
         mabo_parser::DataType::BoxString => Type::BoxString,
         mabo_parser::DataType::BoxBytes => Type::BoxBytes,
         mabo_parser::DataType::Tuple { ref types, .. } => {
-            Type::Tuple(types.iter().map(|ty| simplify_type(ty)).collect())
+            Type::Tuple(types.values().map(|ty| simplify_type(ty)).collect())
         }
         mabo_parser::DataType::Array { ref ty, size, .. } => {
             Type::Array(simplify_type(ty).into(), size)
@@ -457,7 +459,9 @@ fn simplify_type<'a>(item: &'a mabo_parser::Type<'_>) -> Type<'a> {
         mabo_parser::DataType::External(ref ty) => Type::External(ExternalType {
             path: ty.path.iter().map(mabo_parser::Name::get).collect(),
             name: ty.name.get(),
-            generics: ty.generics.iter().map(|ty| simplify_type(ty)).collect(),
+            generics: ty.generics.as_ref().map_or(Vec::default(), |g| {
+                g.values().map(|ty| simplify_type(ty)).collect()
+            }),
         }),
     }
 }

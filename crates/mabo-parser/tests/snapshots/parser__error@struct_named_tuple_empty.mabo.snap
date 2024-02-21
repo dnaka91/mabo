@@ -1,0 +1,63 @@
+---
+source: crates/mabo-parser/tests/parser.rs
+description: "struct Sample {\n    field: () @1,\n}"
+input_file: crates/mabo-parser/tests/inputs/invalid/struct_named_tuple_empty.mabo
+---
+mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseStructError.html)
+
+  × Failed to parse struct declaration
+  ├─▶ Failed to parse fields declaration
+  ├─▶ Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/struct_named_tuple_empty.mabo:1:1]
+ 1 │ ╭─▶ struct Sample {
+ 2 │ │       field: () @1,
+ 3 │ ├─▶ }
+   · ╰──── In this declaration
+   ╰────
+  help: Expected struct declaration in the form `❬B❭struct <Name> {...}❬B❭`
+
+Error: mabo::parse::id (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseFieldsError.html)
+
+  × Failed to parse fields declaration
+  ├─▶ Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/struct_named_tuple_empty.mabo:1:15]
+ 1 │ ╭─▶ struct Sample {
+ 2 │ ├─▶     field: () @1,
+   · ╰──── In this declaration
+ 3 │     }
+   ╰────
+  help: Expected fields declaration in the form `❬B❭{ <named>, <named>, ... }❬B❭`, `❬B❭( <unnamed>, <unnamed>, ... )
+        ❬B❭` or `❬B❭_nothing_❬B❭`
+
+Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
+
+  × Failed to parse type definition
+  ├─▶ Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/struct_named_tuple_empty.mabo:2:12]
+ 1 │ struct Sample {
+ 2 │     field: () @1,
+   ·            ┬
+   ·            ╰── In this declaration
+ 3 │ }
+   ╰────
+  help: Expected type definition in the form `❬B❭<Name>❬B❭`
+
+Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
+
+  × Failed to parse type definition
+  ╰─▶ error Verify
+   ╭─[invalid/struct_named_tuple_empty.mabo:2:13]
+ 1 │ struct Sample {
+ 2 │     field: () @1,
+   ·             ▲
+   ·             ╰── In this declaration
+ 3 │ }
+   ╰────
+  help: Expected type definition in the form `❬B❭<Name>❬B❭`
+
+Error:   × error Verify

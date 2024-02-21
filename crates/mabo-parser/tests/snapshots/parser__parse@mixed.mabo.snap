@@ -147,9 +147,12 @@ Schema {
                                     value: External(
                                         ExternalType {
                                             path: [
-                                                Name {
-                                                    value: "birthday",
-                                                },
+                                                (
+                                                    Name {
+                                                        value: "birthday",
+                                                    },
+                                                    DoubleColon,
+                                                ),
                                             ],
                                             name: Name {
                                                 value: "DayOfBirth",

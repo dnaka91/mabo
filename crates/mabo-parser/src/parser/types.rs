@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{dec_uint, space0},
-    combinator::{alt, cut_err, empty, fail, opt, preceded, separated, terminated},
+    combinator::{alt, cut_err, empty, fail, opt, preceded, repeat},
     dispatch,
     error::ErrorKind,
     stream::Location,
@@ -221,13 +221,13 @@ fn parse_array<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 
 fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> {
     (
-        opt(terminated(
-            separated(
-                1..,
+        opt(repeat(
+            1..,
+            (
                 imports::parse_segment.map_err(Cause::from),
-                token::DoubleColon::VALUE,
-            ),
-            token::DoubleColon::VALUE,
+                token::DoubleColon::VALUE.span(),
+            )
+                .map(|(segment, token)| (segment, token.into())),
         ))
         .map(Option::unwrap_or_default),
         parse_external_name,

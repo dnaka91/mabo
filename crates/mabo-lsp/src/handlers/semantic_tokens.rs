@@ -418,8 +418,9 @@ impl<'a> Visitor<'a> {
                 angle,
                 generics,
             }) => {
-                for name in path {
+                for (name, token) in path {
                     self.add_span(name, &types::NAMESPACE, &[])?;
+                    self.add_span(token, &types::DOUBLE_COLON, &[])?;
                 }
                 self.add_span(name, &types::TYPE, &[])?;
                 if let Some(angle) = angle {

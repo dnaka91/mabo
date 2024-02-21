@@ -2,8 +2,9 @@
 //! correct.
 
 use mabo_parser::{
-    punctuated::Punctuated, DataType, Definition, ExternalType, Fields, Generics, Import, Name,
-    Schema, Spanned, Type,
+    punctuated::Punctuated,
+    token::{self, Punctuation},
+    DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
 };
 use miette::NamedSource;
 use rustc_hash::FxHashMap;
@@ -133,7 +134,7 @@ impl Module<'_> {
         let module = if ty.path.is_empty() {
             self
         } else {
-            ty.path.iter().try_fold(self, |module, name| {
+            ty.path.iter().try_fold(self, |module, (name, _)| {
                 module.modules.get(name.get()).ok_or_else(|| MissingModule {
                     name: name.get().to_owned(),
                     path: module.path_to_string(),
@@ -232,11 +233,11 @@ impl Module<'_> {
         let module = if ty
             .path
             .first()
-            .is_some_and(|first| first.get() == self.name)
+            .is_some_and(|(first, _)| first.get() == self.name)
         {
             self
         } else {
-            ty.path.iter().try_fold(self, |module, name| {
+            ty.path.iter().try_fold(self, |module, (name, _)| {
                 module.modules.get(name.get()).ok_or_else(|| MissingModule {
                     name: name.get().to_owned(),
                     path: module.path_to_string(),
@@ -528,7 +529,7 @@ pub(crate) fn resolve_type_remotely(
 ) -> Result<(), ResolveError> {
     if imports.is_empty() {
         return Err(ty.error.into());
-    } else if let Some(name) = ty.external.path.first() {
+    } else if let Some((name, _)) = ty.external.path.first() {
         let module = imports.iter().find_map(|import| match import {
             ResolvedImport::Module(module) => (module.name == name.get()).then_some(module),
             ResolvedImport::Type { .. } => None,
@@ -543,9 +544,9 @@ pub(crate) fn resolve_type_remotely(
                         ty.external
                             .path
                             .iter()
-                            .fold(String::new(), |mut acc, part| {
+                            .fold(String::new(), |mut acc, (part, _)| {
                                 acc.push_str(part.get());
-                                acc.push_str("::");
+                                acc.push_str(token::DoubleColon::VALUE);
                                 acc
                             }),
                         ty.external.name

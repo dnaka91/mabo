@@ -1026,7 +1026,7 @@ impl Display for DataType<'_> {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ExternalType<'a> {
     /// Optional path, if the type wasn't fully imported with a `use` statement.
-    pub path: Vec<Name<'a>>,
+    pub path: Vec<(Name<'a>, token::DoubleColon)>,
     /// Unique name of the type within the current scope (or the module if prefixed with a path).
     pub name: Name<'a>,
     /// Angles `<`...`>` to delimit the generic type parameters.
@@ -1044,8 +1044,8 @@ impl Display for ExternalType<'_> {
             ..
         } = self;
 
-        for segment in path {
-            write!(f, "{segment}::")?;
+        for (segment, token) in path {
+            write!(f, "{segment}{token}")?;
         }
         name.fmt(f)?;
         if let Some(generics) = generics {

@@ -457,7 +457,7 @@ fn simplify_type<'a>(item: &'a mabo_parser::Type<'_>) -> Type<'a> {
             Type::Array(simplify_type(ty).into(), size)
         }
         mabo_parser::DataType::External(ref ty) => Type::External(ExternalType {
-            path: ty.path.iter().map(mabo_parser::Name::get).collect(),
+            path: ty.path.iter().map(|(segment, _)| segment.get()).collect(),
             name: ty.name.get(),
             generics: ty.generics.as_ref().map_or(Vec::default(), |g| {
                 g.values().map(|ty| simplify_type(ty)).collect()

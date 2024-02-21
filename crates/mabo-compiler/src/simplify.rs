@@ -503,7 +503,7 @@ fn simplify_import<'a>(item: &'a mabo_parser::Import<'_>) -> Import<'a> {
         element: item
             .element
             .as_ref()
-            .map(|(_,element)| element.get().into()),
+            .map(|(_, element)| element.get().into()),
     }
 }
 

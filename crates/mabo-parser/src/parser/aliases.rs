@@ -11,11 +11,7 @@ use winnow::{
 };
 
 use super::{generics, types, Input, ParserExt, Result};
-use crate::{
-    highlight,
-    token::{self, Punctuation},
-    Comment, Name, TypeAlias,
-};
+use crate::{highlight, token, Comment, Name, TypeAlias};
 
 /// Encountered an invalid `type` alias declaration.
 #[derive(Debug, ParserError)]
@@ -68,25 +64,25 @@ pub enum Cause {
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseError> {
     (
-        terminated(token::Type::NAME.span(), space1),
+        terminated(token::Type::parser(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err(Cause::Generics)),
-            preceded(space0, token::Equal::VALUE.span()),
+            preceded(space0, token::Equal::parser()),
             preceded(space0, types::parse.map_err(Cause::from)),
-            preceded(space0, token::Semicolon::VALUE.span()),
+            preceded(space0, token::Semicolon::parser()),
         )),
     )
         .parse_next(input)
         .map(
             |(keyword, (name, generics, equal, target, semicolon))| TypeAlias {
                 comment: Comment::default(),
-                keyword: keyword.into(),
+                keyword,
                 name,
                 generics,
-                equal: equal.into(),
+                equal,
                 target,
-                semicolon: semicolon.into(),
+                semicolon,
             },
         )
         .map_err(|e| {

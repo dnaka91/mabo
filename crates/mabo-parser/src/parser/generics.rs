@@ -2,20 +2,12 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
-    ascii::alphanumeric0,
-    combinator::{cut_err, opt},
-    error::ErrorKind,
-    stream::Location,
-    token::one_of,
+    ascii::alphanumeric0, combinator::opt, error::ErrorKind, stream::Location, token::one_of,
     Parser,
 };
 
-use super::{punctuate, ws, Input, Result};
-use crate::{
-    highlight,
-    token::{self, Delimiter, Punctuation},
-    Generics, Name,
-};
+use super::{punctuate, surround, ws, Input, Result};
+use crate::{highlight, token, Generics, Name};
 
 /// Encountered an invalid `<...>` generics declaration.
 #[derive(Debug, ParserError)]
@@ -52,27 +44,18 @@ pub enum Cause {
 }
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Generics<'i>, ParseError> {
-    (
-        token::Angle::OPEN.span(),
-        cut_err((
-            punctuate(
-                (ws(parse_name), ws(token::Comma::VALUE.span())),
-                (ws(parse_name), opt(ws(token::Comma::VALUE.span()))),
-            ),
-            ws(token::Angle::CLOSE.span()),
-        )),
-    )
-        .parse_next(input)
-        .map(|(angle_open, (types, angle_close))| Generics {
-            angle: (angle_open, angle_close).into(),
-            types,
+    surround(punctuate(
+        (ws(parse_name), ws(token::Comma::parser())),
+        (ws(parse_name), opt(ws(token::Comma::parser()))),
+    ))
+    .parse_next(input)
+    .map(|(angle, types)| Generics { angle, types })
+    .map_err(|e| {
+        e.map(|cause| ParseError {
+            at: input.location()..input.location(),
+            cause,
         })
-        .map_err(|e| {
-            e.map(|cause| ParseError {
-                at: input.location()..input.location(),
-                cause,
-            })
-        })
+    })
 }
 
 fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {

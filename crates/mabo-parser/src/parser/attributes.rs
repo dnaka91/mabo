@@ -11,7 +11,11 @@ use winnow::{
 };
 
 use super::{literals, ws, Input, ParserExt, Result};
-use crate::{highlight, Attribute, AttributeValue, Attributes, Literal};
+use crate::{
+    highlight,
+    token::{self, Delimiter},
+    Attribute, AttributeValue, Attributes, Literal,
+};
 
 /// Encountered an invalid `#[...]` attribute declaration.
 #[derive(Debug, ParserError)]
@@ -63,17 +67,17 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Attributes<'i>, ParseEr
 
 fn parse_attribute<'i>(input: &mut Input<'i>) -> Result<Vec<Attribute<'i>>, Cause> {
     preceded(
-        "#[",
+        (token::Pound::parser(), token::Bracket::OPEN),
         cut_err(terminated(
             terminated(
                 separated(
                     1..,
                     ws((parse_name, parse_value)).map(|(name, value)| Attribute { name, value }),
-                    ws(','),
+                    ws(token::Comma::parser()),
                 ),
-                opt(','),
+                opt(token::Comma::parser()),
             ),
-            ws(']'),
+            ws(token::Bracket::CLOSE),
         )),
     )
     .parse_next(input)
@@ -99,24 +103,28 @@ fn parse_value<'i>(input: &mut Input<'i>) -> Result<AttributeValue<'i>, Cause> {
 
 fn parse_multi_value<'i>(input: &mut Input<'i>) -> Result<Vec<Attribute<'i>>, Cause> {
     preceded(
-        '(',
+        token::Parenthesis::OPEN,
         cut_err(terminated(
             terminated(
                 separated(
                     1..,
                     ws((parse_name, parse_value)).map(|(name, value)| Attribute { name, value }),
-                    ws(','),
+                    ws(token::Comma::parser()),
                 ),
-                opt(','),
+                opt(token::Comma::parser()),
             ),
-            ws(')'),
+            ws(token::Parenthesis::CLOSE),
         )),
     )
     .parse_next(input)
 }
 
 fn parse_single_value(input: &mut Input<'_>) -> Result<Literal, Cause> {
-    preceded((space0, '=', space0), literals::parse.map_err(Cause::from)).parse_next(input)
+    preceded(
+        (space0, token::Equal::parser(), space0),
+        literals::parse.map_err(Cause::from),
+    )
+    .parse_next(input)
 }
 
 fn parse_unit_value(input: &mut Input<'_>) -> Result<(), Cause> {

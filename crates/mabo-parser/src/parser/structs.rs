@@ -66,7 +66,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Struct<'i>, ParseError>
     let start = input.checkpoint();
 
     (
-        terminated(token::Struct::NAME.span(), space1),
+        terminated(token::Struct::parser(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err(Cause::Generics)),
@@ -77,7 +77,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Struct<'i>, ParseError>
         .map(|(keyword, (name, generics, kind))| Struct {
             comment: Comment::default(),
             attributes: Attributes::default(),
-            keyword: keyword.into(),
+            keyword,
             name,
             generics,
             fields: kind,

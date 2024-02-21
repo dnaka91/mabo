@@ -10,13 +10,8 @@ use winnow::{
     Parser,
 };
 
-use super::{comments, fields, generics, ids, punctuate, ws, Input, ParserExt, Result};
-use crate::{
-    highlight,
-    punctuated::Punctuated,
-    token::{self, Delimiter, Punctuation},
-    Attributes, Comment, Enum, Name, Variant,
-};
+use super::{comments, fields, generics, ids, punctuate, surround, ws, Input, ParserExt, Result};
+use crate::{highlight, punctuated::Punctuated, token, Attributes, Comment, Enum, Name, Variant};
 
 /// Encountered an invalid `enum` declaration.
 #[derive(Debug, ParserError)]
@@ -91,7 +86,7 @@ pub enum Cause {
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Enum<'i>, ParseError> {
     (
-        terminated(token::Enum::NAME.span(), space1),
+        terminated(token::Enum::parser(), space1),
         cut_err((
             parse_name,
             opt(generics::parse.map_err(Cause::from)),
@@ -102,7 +97,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Enum<'i>, ParseError> {
         .map(|(keyword, (name, generics, (brace, variants)))| Enum {
             comment: Comment::default(),
             attributes: Attributes::default(),
-            keyword: keyword.into(),
+            keyword,
             name,
             generics,
             brace,
@@ -132,18 +127,11 @@ pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
 fn parse_variants<'i>(
     input: &mut Input<'i>,
 ) -> Result<(token::Brace, Punctuated<Variant<'i>>), Cause> {
-    (
-        token::Brace::OPEN.span(),
-        cut_err((
-            punctuate(
-                (parse_variant, ws(token::Comma::VALUE.span())),
-                (parse_variant, opt(ws(token::Comma::VALUE.span()))),
-            ),
-            ws(token::Brace::CLOSE.span()),
-        )),
-    )
-        .parse_next(input)
-        .map(|(brace_open, (variants, brace_close))| ((brace_open, brace_close).into(), variants))
+    surround(punctuate(
+        (parse_variant, ws(token::Comma::parser())),
+        (parse_variant, opt(ws(token::Comma::parser()))),
+    ))
+    .parse_next(input)
 }
 
 fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {

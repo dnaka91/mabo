@@ -14,7 +14,11 @@ use winnow::{
 };
 
 use super::{ws, Input, Result};
-use crate::{highlight, Literal, LiteralValue};
+use crate::{
+    highlight,
+    token::{self, Delimiter, Punctuation},
+    Literal, LiteralValue,
+};
 
 /// Encountered an invalid literal declaration.
 #[derive(Debug, ParserError)]
@@ -206,9 +210,9 @@ fn parse_string_unicode(input: &mut Input<'_>) -> Result<char, Cause> {
     preceded(
         'u',
         cut_err(delimited(
-            '{',
+            token::Brace::OPEN,
             take_while(1..=6, ('0'..='9', 'a'..='f', 'A'..='F')),
-            '}',
+            token::Brace::CLOSE,
         )),
     )
     .try_map(|hex| u32::from_str_radix(hex, 16))
@@ -222,10 +226,10 @@ fn parse_string_escaped_whitespace<'i>(input: &mut Input<'i>) -> Result<&'i str,
 
 fn parse_bytes(input: &mut Input<'_>) -> Result<Vec<u8>, Cause> {
     preceded(
-        '[',
+        token::Bracket::OPEN,
         cut_err(terminated(
-            separated(1.., ws(dec_uint::<_, u8, _>), ws(',')),
-            (opt(ws(',')), ws(']')),
+            separated(1.., ws(dec_uint::<_, u8, _>), ws(token::Comma::VALUE)),
+            (opt(ws(token::Comma::VALUE)), ws(token::Bracket::CLOSE)),
         )),
     )
     .parse_next(input)

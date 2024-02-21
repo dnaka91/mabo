@@ -10,13 +10,8 @@ use winnow::{
     Parser,
 };
 
-use super::{parse_definition, ws, Input, ParserExt, Result};
-use crate::{
-    error::ParseDefinitionError,
-    highlight, location,
-    token::{self, Delimiter},
-    Comment, Module, Name,
-};
+use super::{parse_definition, surround, ws, Input, ParserExt, Result};
+use crate::{error::ParseDefinitionError, highlight, location, token, Comment, Module, Name};
 
 /// Encountered an invalid `mod` declaration.
 #[derive(Debug, ParserError)]
@@ -68,24 +63,23 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Module<'i>, ParseError>
     let start = input.checkpoint();
 
     (
-        terminated(token::Mod::NAME.span(), space1),
+        terminated(token::Mod::parser(), space1),
         cut_err((
             parse_name,
-            preceded(space0, token::Brace::OPEN.span()),
-            repeat(0.., ws(parse_definition.map_err(Cause::from))),
-            ws(token::Brace::CLOSE.span()),
+            preceded(
+                space0,
+                surround(repeat(0.., ws(parse_definition.map_err(Cause::from)))),
+            ),
         )),
     )
         .parse_next(input)
-        .map(
-            |(keyword, (name, brace_open, definitions, brace_close))| Module {
-                comment: Comment::default(),
-                keyword: keyword.into(),
-                name,
-                brace: (brace_open, brace_close).into(),
-                definitions,
-            },
-        )
+        .map(|(keyword, (name, (brace, definitions)))| Module {
+            comment: Comment::default(),
+            keyword,
+            name,
+            brace,
+            definitions,
+        })
         .map_err(|e| {
             e.map(|cause| ParseError {
                 at: location::from_until(*input, &start, ['}', '\n']),

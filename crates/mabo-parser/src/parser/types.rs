@@ -12,11 +12,7 @@ use winnow::{
 };
 
 use super::{imports, punctuate, ws, Input, ParserExt, Result};
-use crate::{
-    highlight,
-    token::{self, Delimiter, Punctuation},
-    DataType, ExternalType, Name, Type,
-};
+use crate::{highlight, parser::surround, token, DataType, ExternalType, Name, Type};
 
 /// Encountered an invalid type definition.
 #[derive(Debug, ParserError)]
@@ -109,13 +105,9 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
         convert: impl Fn(token::Angle, Type<'i>) -> DataType<'i>,
     ) -> impl Fn(&mut Input<'i>) -> Result<DataType<'i>, Cause> {
         move |input| {
-            cut_err((
-                token::Angle::OPEN.span(),
-                parse.map_err(Cause::from),
-                token::Angle::CLOSE.span(),
-            ))
-            .parse_next(input)
-            .map(|(open, ty, close)| convert((open, close).into(), ty))
+            cut_err(surround(parse.map_err(Cause::from)))
+                .parse_next(input)
+                .map(|(angle, ty)| convert(angle, ty))
         }
     }
 
@@ -126,17 +118,13 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
         convert: impl Fn(token::Angle, Type<'i>, token::Comma, Type<'i>) -> DataType<'i>,
     ) -> impl Fn(&mut Input<'i>) -> Result<DataType<'i>, Cause> {
         move |input| {
-            cut_err((
-                token::Angle::OPEN.span(),
+            cut_err(surround((
                 parse.map_err(Cause::from),
-                preceded(space0, token::Comma::VALUE.span()),
+                preceded(space0, token::Comma::parser()),
                 preceded(space0, parse.map_err(Cause::from)),
-                token::Angle::CLOSE.span(),
-            ))
+            )))
             .parse_next(input)
-            .map(|(open, ty1, comma, ty2, close)| {
-                convert((open, close).into(), ty1, comma.into(), ty2)
-            })
+            .map(|(angle, (ty1, comma, ty2))| convert(angle, ty1, comma, ty2))
         }
     }
 
@@ -175,48 +163,30 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 }
 
 fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
-    (
-        token::Parenthesis::OPEN.span(),
-        cut_err((
-            punctuate(
-                (
-                    ws(parse.map_err(Cause::from)),
-                    ws(token::Comma::VALUE.span()),
-                ),
-                (
-                    ws(parse.map_err(Cause::from)),
-                    opt(ws(token::Comma::VALUE.span())),
-                ),
-            ),
-            ws(token::Parenthesis::CLOSE.span()),
-        )),
-    )
-        .parse_next(input)
-        .map(|(paren_open, (types, paren_close))| DataType::Tuple {
-            paren: (paren_open, paren_close).into(),
-            types,
-        })
+    surround(punctuate(
+        (ws(parse.map_err(Cause::from)), ws(token::Comma::parser())),
+        (
+            ws(parse.map_err(Cause::from)),
+            opt(ws(token::Comma::parser())),
+        ),
+    ))
+    .parse_next(input)
+    .map(|(paren, types)| DataType::Tuple { paren, types })
 }
 
 fn parse_array<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
-    (
-        token::Bracket::OPEN.span(),
-        cut_err((
-            ws(parse.map_err(Cause::from)),
-            ws(token::Semicolon::VALUE.span()),
-            ws(dec_uint),
-            ws(token::Bracket::CLOSE.span()),
-        )),
-    )
-        .parse_next(input)
-        .map(
-            |(bracket_open, (ty, semicolon, size, bracket_close))| DataType::Array {
-                bracket: (bracket_open, bracket_close).into(),
-                ty: Box::new(ty),
-                semicolon: semicolon.into(),
-                size,
-            },
-        )
+    surround((
+        ws(parse.map_err(Cause::from)),
+        ws(token::Semicolon::parser()),
+        ws(dec_uint),
+    ))
+    .parse_next(input)
+    .map(|(bracket, (ty, semicolon, size))| DataType::Array {
+        bracket,
+        ty: Box::new(ty),
+        semicolon,
+        size,
+    })
 }
 
 fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> {
@@ -225,34 +195,22 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
             1..,
             (
                 imports::parse_segment.map_err(Cause::from),
-                token::DoubleColon::VALUE.span().output_into(),
+                token::DoubleColon::parser(),
             ),
         ))
         .map(Option::unwrap_or_default),
         parse_external_name,
-        opt((
-            token::Angle::OPEN.span(),
-            cut_err((
-                punctuate(
-                    (
-                        ws(parse.map_err(Cause::from)),
-                        ws(token::Comma::VALUE.span()),
-                    ),
-                    (
-                        ws(parse.map_err(Cause::from)),
-                        opt(ws(token::Comma::VALUE.span())),
-                    ),
-                ),
-                ws(token::Angle::CLOSE.span()),
-            )),
-        )),
+        opt(surround(punctuate(
+            (ws(parse.map_err(Cause::from)), ws(token::Comma::parser())),
+            (
+                ws(parse.map_err(Cause::from)),
+                opt(ws(token::Comma::parser())),
+            ),
+        ))),
     )
         .parse_next(input)
         .map(|(path, name, generics)| {
-            let (angle, generics) = match generics {
-                Some((open, (generics, close))) => (Some((open, close).into()), Some(generics)),
-                None => (None, None),
-            };
+            let (angle, generics) = generics.unzip();
             ExternalType {
                 path,
                 name,

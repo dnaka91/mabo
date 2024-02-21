@@ -2,11 +2,11 @@ use std::ops::Range;
 
 use winnow::{
     ascii::{multispace0, newline, space0},
-    combinator::{fail, opt, peek, preceded, repeat, terminated, trace},
+    combinator::{cut_err, fail, opt, peek, preceded, repeat, terminated, trace},
     dispatch,
     error::{ErrMode, ParserError},
     prelude::*,
-    stream::{AsChar, Stream, StreamIsPartial},
+    stream::{AsChar, Compare, Location, Stream, StreamIsPartial},
     token::any,
 };
 
@@ -29,6 +29,7 @@ use crate::{
     error::{ParseDefinitionError, ParseSchemaCause},
     ext::ParserExt,
     punctuated::Punctuated,
+    token::Delimiter,
     Definition, Schema,
 };
 
@@ -217,10 +218,9 @@ where
 pub fn punctuate<I, O, P, E, F, G>(mut f: F, mut g: G) -> impl Parser<I, Punctuated<O, P>, E>
 where
     I: Stream,
-    P: Copy + From<Range<usize>>,
     E: ParserError<I>,
-    F: Parser<I, (O, Range<usize>), E>,
-    G: Parser<I, (O, Option<Range<usize>>), E>,
+    F: Parser<I, (O, P), E>,
+    G: Parser<I, (O, Option<P>), E>,
 {
     trace("punctuate", move |i: &mut I| {
         let mut values = Vec::new();
@@ -236,7 +236,7 @@ where
                         return Err(ErrMode::assert(i, "`repeat` parsers must always consume"));
                     }
 
-                    values.push((o, range.into()));
+                    values.push((o, range));
                     start_prev = Some(start);
                 }
                 Err(ErrMode::Backtrack(_)) => {
@@ -265,5 +265,22 @@ where
                 Err(e) => return Err(e),
             }
         }
+    })
+}
+
+pub fn surround<I, O, D, E, F>(f: F) -> impl Parser<I, (D, O), E>
+where
+    I: Compare<char> + Location + Stream + StreamIsPartial,
+    I::Token: Clone + AsChar,
+    D: Delimiter + From<(Range<usize>, Range<usize>)>,
+    E: ParserError<I>,
+    F: Parser<I, O, E>,
+{
+    let mut parser = (D::OPEN.span(), cut_err((f, ws(D::CLOSE.span()))));
+
+    trace("surround", move |i: &mut I| {
+        parser
+            .parse_next(i)
+            .map(|(open, (o, close))| ((open, close).into(), o))
     })
 }

@@ -11,11 +11,7 @@ use winnow::{
 };
 
 use super::{literals, types, Input, ParserExt, Result};
-use crate::{
-    highlight, location,
-    token::{self, Punctuation},
-    Comment, Const, Name,
-};
+use crate::{highlight, location, token, Comment, Const, Name};
 
 /// Encountered an invalid `const` declaration.
 #[derive(Debug, ParserError)]
@@ -83,15 +79,14 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Const<'i>, ParseError> 
     let start = input.checkpoint();
 
     (
-        terminated(token::Const::NAME.span(), space1),
+        terminated(token::Const::parser(), space1),
         cut_err((
             parse_name,
-            token::Colon::VALUE.span(),
+            token::Colon::parser(),
             preceded(space0, types::parse.map_err(Cause::from)),
-            preceded(space0, token::Equal::VALUE.span()),
+            preceded(space0, token::Equal::parser()),
             preceded(space0, literals::parse.map_err(Cause::from)),
-            token::Semicolon::VALUE
-                .span()
+            token::Semicolon::parser()
                 .map_err_loc(|at, ()| Cause::UnexpectedChar { at, expected: ';' }),
         )),
     )
@@ -99,13 +94,13 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Const<'i>, ParseError> 
         .map(
             |(keyword, (name, colon, ty, equal, value, semicolon))| Const {
                 comment: Comment::default(),
-                keyword: keyword.into(),
+                keyword,
                 name,
-                colon: colon.into(),
+                colon,
                 ty,
-                equal: equal.into(),
+                equal,
                 value,
-                semicolon: semicolon.into(),
+                semicolon,
             },
         )
         .map_err(|e| {

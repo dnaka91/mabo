@@ -11,11 +11,7 @@ use winnow::{
 };
 
 use super::{enums, structs, Input, ParserExt, Result};
-use crate::{
-    highlight, location,
-    token::{self, Punctuation},
-    Import, Name,
-};
+use crate::{highlight, location, token, Import, Name};
 
 /// Encountered an invalid `use` declaration.
 #[derive(Debug, ParserError)]
@@ -70,12 +66,12 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
     let start = input.checkpoint();
 
     (
-        terminated(token::Use::NAME.span(), space1),
+        terminated(token::Use::parser(), space1),
         cut_err((
             (
-                separated(1.., parse_segment, token::DoubleColon::VALUE.span()),
+                separated(1.., parse_segment, token::DoubleColon::parser()),
                 opt((
-                    token::DoubleColon::VALUE.span().output_into(),
+                    token::DoubleColon::parser(),
                     alt((
                         structs::parse_name.map_err(Cause::from),
                         enums::parse_name.map_err(Cause::from),
@@ -84,17 +80,17 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
             )
                 .with_recognized()
                 .with_span(),
-            token::Semicolon::VALUE.span(),
+            token::Semicolon::parser(),
         )),
     )
         .parse_next(input)
         .map(
             |(keyword, ((((segments, element), full), range), semicolon))| Import {
-                keyword: keyword.into(),
+                keyword,
                 full: (full, range).into(),
                 segments,
                 element,
-                semicolon: semicolon.into(),
+                semicolon,
             },
         )
         .map_err(|e| {

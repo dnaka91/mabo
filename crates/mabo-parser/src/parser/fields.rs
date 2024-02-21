@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space0,
-    combinator::{cut_err, opt, peek, preceded},
+    combinator::{opt, peek, preceded},
     dispatch,
     error::ErrorKind,
     stream::{Location, Stream},
@@ -11,12 +11,9 @@ use winnow::{
     Parser,
 };
 
-use super::{comments, ids, punctuate, types, ws, Input, ParserExt, Result};
+use super::{comments, ids, punctuate, surround, types, ws, Input, ParserExt, Result};
 use crate::{
-    highlight, location,
-    punctuated::Punctuated,
-    token::{self, Delimiter, Punctuation},
-    Fields, Name, NamedField, UnnamedField,
+    highlight, location, punctuated::Punctuated, token, Fields, Name, NamedField, UnnamedField,
 };
 
 /// Encountered an invalid field declaration.
@@ -94,35 +91,21 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Fields<'i>, ParseError>
 fn parse_named<'i>(
     input: &mut Input<'i>,
 ) -> Result<(token::Brace, Punctuated<NamedField<'i>>), Cause> {
-    (
-        token::Brace::OPEN.span(),
-        cut_err((
-            punctuate(
-                (parse_named_field, ws(token::Comma::VALUE.span())),
-                (parse_named_field, opt(ws(token::Comma::VALUE.span()))),
-            ),
-            ws(token::Brace::CLOSE.span()),
-        )),
-    )
-        .parse_next(input)
-        .map(|(brace_open, (fields, brace_close))| ((brace_open, brace_close).into(), fields))
+    surround(punctuate(
+        (parse_named_field, ws(token::Comma::parser())),
+        (parse_named_field, opt(ws(token::Comma::parser()))),
+    ))
+    .parse_next(input)
 }
 
 fn parse_unnamed<'i>(
     input: &mut Input<'i>,
 ) -> Result<(token::Parenthesis, Punctuated<UnnamedField<'i>>), Cause> {
-    (
-        token::Parenthesis::OPEN.span(),
-        cut_err((
-            punctuate(
-                (parse_unnamed_field, ws(token::Comma::VALUE.span())),
-                (parse_unnamed_field, opt(ws(token::Comma::VALUE.span()))),
-            ),
-            ws(token::Parenthesis::CLOSE.span()),
-        )),
-    )
-        .parse_next(input)
-        .map(|(paren_open, (fields, paren_close))| ((paren_open, paren_close).into(), fields))
+    surround(punctuate(
+        (parse_unnamed_field, ws(token::Comma::parser())),
+        (parse_unnamed_field, opt(ws(token::Comma::parser()))),
+    ))
+    .parse_next(input)
 }
 
 fn parse_unit(input: &mut Input<'_>) -> Result<(), Cause> {
@@ -148,7 +131,7 @@ fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause>
         ws(comments::parse.map_err(Cause::from)),
         (
             preceded(space0, parse_field_name),
-            preceded(space0, token::Colon::VALUE.span()),
+            preceded(space0, token::Colon::parser()),
             preceded(space0, types::parse.map_err(Cause::from)),
             opt(preceded(space0, ids::parse.map_err(Cause::from))),
         )
@@ -158,7 +141,7 @@ fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause>
         .map(|(comment, ((name, colon, ty, id), span))| NamedField {
             comment,
             name,
-            colon: colon.into(),
+            colon,
             ty,
             id,
             span: span.into(),

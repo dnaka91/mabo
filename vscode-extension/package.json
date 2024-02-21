@@ -247,7 +247,7 @@
     "@biomejs/biome": "^1.5.3",
     "@types/vscode": "~1.85.0",
     "@vscode/vsce": "~2.22.0",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.20.1",
     "js-yaml": "^4.1.0"
   }
 }

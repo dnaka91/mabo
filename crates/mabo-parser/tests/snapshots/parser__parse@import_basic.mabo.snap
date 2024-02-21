@@ -27,9 +27,12 @@ Schema {
                     },
                 ],
                 element: Some(
-                    Name {
-                        value: "Sample",
-                    },
+                    (
+                        DoubleColon,
+                        Name {
+                            value: "Sample",
+                        },
+                    ),
                 ),
                 semicolon: Semicolon,
             },

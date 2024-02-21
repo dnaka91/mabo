@@ -225,9 +225,8 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
             1..,
             (
                 imports::parse_segment.map_err(Cause::from),
-                token::DoubleColon::VALUE.span(),
-            )
-                .map(|(segment, token)| (segment, token.into())),
+                token::DoubleColon::VALUE.span().output_into(),
+            ),
         ))
         .map(Option::unwrap_or_default),
         parse_external_name,

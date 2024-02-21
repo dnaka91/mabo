@@ -192,7 +192,7 @@ impl Module<'_> {
                 })?
         };
 
-        if let Some(element) = import.element.as_ref() {
+        if let Some((_, element)) = import.element.as_ref() {
             let definition = module
                 .types
                 .iter()

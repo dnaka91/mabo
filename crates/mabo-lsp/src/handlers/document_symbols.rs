@@ -133,12 +133,11 @@ fn visit_import(index: &Index, item: &Import<'_>) -> Result<DocumentSymbol> {
     let mut name = item.segments[0].get().to_owned();
     let mut span = Range::from(item.segments[0].span());
 
-    for segment in item
-        .segments
-        .iter()
-        .skip(1)
-        .chain(std::iter::once(&item.element).flatten())
-    {
+    for segment in item.segments.iter().skip(1).chain(
+        std::iter::once(&item.element)
+            .flatten()
+            .map(|(_, element)| element),
+    ) {
         let _ = write!(&mut name, "::{segment}");
         span.end = Range::from(segment.span()).end;
     }

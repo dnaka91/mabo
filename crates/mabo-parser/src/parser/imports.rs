@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space1,
-    combinator::{alt, cut_err, opt, preceded, separated, terminated},
+    combinator::{alt, cut_err, opt, separated, terminated},
     error::ErrorKind,
     stream::{Location, Stream},
     token::{one_of, take_while},
@@ -74,8 +74,8 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
         cut_err((
             (
                 separated(1.., parse_segment, token::DoubleColon::VALUE.span()),
-                opt(preceded(
-                    token::DoubleColon::VALUE.span(),
+                opt((
+                    token::DoubleColon::VALUE.span().output_into(),
                     alt((
                         structs::parse_name.map_err(Cause::from),
                         enums::parse_name.map_err(Cause::from),

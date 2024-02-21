@@ -1284,7 +1284,7 @@ pub struct Import<'a> {
     pub segments: Vec<Name<'a>>,
     /// Optional final element that allows to fully import the type, making it look as it would be
     /// defined in the current schema.
-    pub element: Option<Name<'a>>,
+    pub element: Option<(token::DoubleColon, Name<'a>)>,
     /// Trailing semicolon to complete the definition.
     pub semicolon: token::Semicolon,
 }
@@ -1309,8 +1309,8 @@ impl Print for Import<'_> {
             f.write_str(segment.get())?;
         }
 
-        if let Some(element) = element {
-            write!(f, "::{element}")?;
+        if let Some((token, element)) = element {
+            write!(f, "{token}{element}")?;
         }
 
         write!(f, "{semicolon}")

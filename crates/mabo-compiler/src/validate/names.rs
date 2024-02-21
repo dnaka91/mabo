@@ -140,7 +140,7 @@ pub(crate) fn validate_names_in_module(value: &[Definition<'_>]) -> Result<(), D
                 Definition::TypeAlias(a) => &a.name,
                 Definition::Const(c) => &c.name,
                 Definition::Import(Import {
-                    element: Some(name),
+                    element: Some((_, name)),
                     ..
                 }) => name,
                 Definition::Import(Import { segments, .. }) => segments.last()?,

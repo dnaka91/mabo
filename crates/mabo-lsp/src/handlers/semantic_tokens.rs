@@ -469,6 +469,14 @@ impl<'a> Visitor<'a> {
     }
 
     fn visit_import(&mut self, item: &Import<'_>) -> Result<()> {
-        self.add_span(&item.keyword, &types::KEYWORD, &[])
+        self.add_span(&item.keyword, &types::KEYWORD, &[])?;
+        for segment in &item.segments {
+            self.add_span(segment, &types::NAMESPACE, &[])?;
+        }
+        if let Some((token, element)) = &item.element {
+            self.add_span(token, &types::DOUBLE_COLON, &[])?;
+            self.add_span(element, &types::TYPE, &[])?;
+        }
+        Ok(())
     }
 }

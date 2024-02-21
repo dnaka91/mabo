@@ -500,7 +500,10 @@ fn simplify_import<'a>(item: &'a mabo_parser::Import<'_>) -> Import<'a> {
     Import {
         source: item,
         segments: item.segments.iter().map(mabo_parser::Name::get).collect(),
-        element: item.element.as_ref().map(|element| element.get().into()),
+        element: item
+            .element
+            .as_ref()
+            .map(|(_,element)| element.get().into()),
     }
 }
 

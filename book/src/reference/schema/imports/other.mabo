@@ -1,0 +1,8 @@
+mod users {
+    mod addresses {
+        struct Street {
+            name: string @1,
+            house_no: string @2,
+        }
+    }
+}

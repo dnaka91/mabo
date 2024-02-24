@@ -1,0 +1,5 @@
+use other::users::addresses;
+
+struct MyStruct {
+    street: addresses::Street @1,
+}

@@ -238,15 +238,15 @@
   },
   "engines": {
     "node": ">=21",
-    "vscode": "^1.85.0"
+    "vscode": "^1.86.0"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
-    "@types/vscode": "~1.85.0",
-    "@vscode/vsce": "~2.22.0",
+    "@types/vscode": "~1.86.0",
+    "@vscode/vsce": "~2.24.0",
     "esbuild": "^0.20.1",
     "js-yaml": "^4.1.0"
   }

@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use line_index::{LineIndex, TextRange};
-use log::{as_debug, as_display, debug, error, warn};
+use log::{debug, error, warn};
 use lsp_types::{
     DeleteFilesParams, DidChangeConfigurationParams, DidChangeTextDocumentParams,
     DidCloseTextDocumentParams, DidOpenTextDocumentParams, DocumentSymbolParams,
@@ -52,16 +52,16 @@ pub fn initialize(
     {
         for path in projects
             .into_iter()
-            .inspect(|project| debug!(path = as_debug!(project.project_path); "found project"))
+            .inspect(|project| debug!(path:? = project.project_path; "found project"))
             .flat_map(|project| project.files)
         {
             let Ok(text) = std::fs::read_to_string(&path) else {
-                error!(path = as_debug!(path); "failed reading file content");
+                error!(path:?; "failed reading file content");
                 continue;
             };
 
             let Ok(uri) = Url::from_file_path(&path) else {
-                error!(path = as_debug!(path); "failed parsing file path as URI");
+                error!(path:?; "failed parsing file path as URI");
                 continue;
             };
 
@@ -120,7 +120,7 @@ pub fn initialize(
 
 pub fn initialized(state: &mut GlobalState<'_>, _params: InitializedParams) {
     if let Err(e) = state.reload_settings() {
-        error!(error = as_debug!(e); "failed loading initial settings");
+        error!(error:err = *e; "failed loading initial settings");
     }
 
     if let Err(e) = state.client.register_capability(vec![Registration {
@@ -128,14 +128,14 @@ pub fn initialized(state: &mut GlobalState<'_>, _params: InitializedParams) {
         method: "workspace/didChangeConfiguration".to_owned(),
         register_options: None,
     }]) {
-        error!(error = as_debug!(e); "failed registering for configuration changes");
+        error!(error:err = *e; "failed registering for configuration changes");
     }
 
     debug!("initialized");
 }
 
 pub fn did_open(state: &mut GlobalState<'_>, params: DidOpenTextDocumentParams) {
-    debug!(uri = as_display!(params.text_document.uri); "schema opened");
+    debug!(uri:% = params.text_document.uri; "schema opened");
 
     let text = params.text_document.text;
     let file = if let Some(file) = state
@@ -162,7 +162,7 @@ pub fn did_open(state: &mut GlobalState<'_>, params: DidOpenTextDocumentParams) 
             .unwrap_or_default(),
         None,
     ) {
-        error!(error = as_debug!(e); "failed publishing diagnostics");
+        error!(error:err = *e; "failed publishing diagnostics");
     }
 }
 
@@ -172,8 +172,8 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
     }
 
     debug!(
-        uri = as_display!(params.text_document.uri),
-        full = as_display!(is_full(&params.content_changes));
+        uri:% = params.text_document.uri,
+        full:% = is_full(&params.content_changes);
         "schema changed",
     );
 
@@ -191,7 +191,7 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
                 let range = match convert_range(index, change.range) {
                     Ok(range) => range,
                     Err(e) => {
-                        error!(error = as_debug!(e); "invalid change");
+                        error!(error:err = *e; "invalid change");
                         continue;
                     }
                 };
@@ -213,18 +213,18 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
             .unwrap_or_default(),
         None,
     ) {
-        error!(error = as_debug!(e); "failed publishing diagnostics");
+        error!(error:err = *e; "failed publishing diagnostics");
     }
 
     state.files.insert(params.text_document.uri, file);
 }
 
 pub fn did_close(_state: &mut GlobalState<'_>, params: DidCloseTextDocumentParams) {
-    debug!(uri = as_display!(params.text_document.uri); "schema closed");
+    debug!(uri:% = params.text_document.uri; "schema closed");
 }
 
 pub fn did_delete(state: &mut GlobalState<'_>, params: DeleteFilesParams) {
-    debug!(files = as_debug!(params.files); "files deleted");
+    debug!(files:? = params.files; "files deleted");
     state
         .files
         .retain(|uri, _| !params.files.iter().any(|file| file.uri == uri.as_str()));
@@ -234,7 +234,7 @@ pub fn hover(state: &mut GlobalState<'_>, params: HoverParams) -> Result<Option<
     let uri = params.text_document_position_params.text_document.uri;
     let position = params.text_document_position_params.position;
 
-    debug!(uri = as_display!(uri); "requested hover info");
+    debug!(uri:%; "requested hover info");
 
     Ok(
         if let Some((schema, index)) = state.files.get_mut(&uri).and_then(|file| {
@@ -260,7 +260,7 @@ pub fn document_symbol(
     state: &mut GlobalState<'_>,
     params: DocumentSymbolParams,
 ) -> Result<Option<DocumentSymbolResponse>> {
-    debug!(uri = as_display!(params.text_document.uri); "requested document symbols");
+    debug!(uri:% = params.text_document.uri; "requested document symbols");
 
     Ok(
         if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
@@ -280,7 +280,7 @@ pub fn semantic_tokens_full(
     state: &mut GlobalState<'_>,
     params: SemanticTokensParams,
 ) -> Result<Option<SemanticTokensResult>> {
-    debug!(uri = as_display!(params.text_document.uri); "requested semantic tokens");
+    debug!(uri:% = params.text_document.uri; "requested semantic tokens");
 
     Ok(
         if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
@@ -309,7 +309,7 @@ pub fn did_change_configuration(
     debug!("configuration changed");
 
     if let Err(e) = state.reload_settings() {
-        error!(error = as_debug!(e); "failed loading changed settings");
+        error!(error:err = *e; "failed loading changed settings");
     }
 }
 

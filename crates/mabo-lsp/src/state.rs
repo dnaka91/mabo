@@ -1,5 +1,5 @@
 use anyhow::{ensure, Context, Result};
-use log::{as_debug, debug};
+use log::debug;
 use lsp_server::Connection;
 use lsp_types::{ConfigurationItem, Diagnostic, PositionEncodingKind, Url};
 use mabo_parser::Schema;
@@ -57,7 +57,7 @@ impl<'a> GlobalState<'a> {
         let settings = serde_json::from_value(settings.remove(0))
             .context("failed to parse raw configuration")?;
 
-        debug!(settings = as_debug!(settings); "configuration loaded");
+        debug!(settings:?; "configuration loaded");
 
         self.settings = settings;
 

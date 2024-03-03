@@ -5,7 +5,7 @@
 use std::{net::Ipv4Addr, time::Instant};
 
 use anyhow::{bail, Result};
-use log::{as_debug, debug, error, info, warn};
+use log::{debug, error, info, warn};
 use lsp_server::{Connection, ErrorCode, ExtractError, Notification, Request, RequestId, Response};
 use lsp_types::{
     notification::{
@@ -52,7 +52,7 @@ fn main() -> Result<()> {
     info!("server initialized");
 
     if let Err(e) = main_loop(&connection, state) {
-        error!(error = as_debug!(e); "error in main loop");
+        error!(error:err = *e; "error in main loop");
         return Err(e);
     }
 
@@ -106,7 +106,7 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
                     }
 
                     _ => {
-                        debug!(request = as_debug!(req); "got unsupported request");
+                        debug!(request:? = req; "got unsupported request");
                         conn.sender.send(
                             Response::new_err(
                                 req.id,
@@ -119,7 +119,7 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
                 }
             }
             lsp_server::Message::Response(resp) => {
-                debug!(response = as_debug!(resp); "got unexpected response");
+                debug!(response:? = resp; "got unexpected response");
             }
             lsp_server::Message::Notification(notif) => match notif.method.as_str() {
                 Initialized::METHOD => {
@@ -144,7 +144,7 @@ fn main_loop(conn: &Connection, mut state: GlobalState<'_>) -> Result<()> {
                         handlers::did_change_configuration,
                     );
                 }
-                _ => debug!(notification = as_debug!(notif); "got unknown notification"),
+                _ => debug!(notification:? = notif; "got unknown notification"),
             },
         }
     }
@@ -176,7 +176,7 @@ where
     let start = Instant::now();
     let result = handler(state, params);
 
-    debug!(duration = as_debug!(start.elapsed()); "handled request");
+    debug!(duration:? = start.elapsed(); "handled request");
 
     conn.sender
         .send(
@@ -216,7 +216,7 @@ fn handle_notify<T>(
     let params = match cast_notify::<T>(notif) {
         Ok(notif) => notif,
         Err(e) => {
-            error!(error = as_debug!(e); "invalid notification parameters");
+            error!(error:err = *e; "invalid notification parameters");
             return;
         }
     };

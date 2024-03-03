@@ -2,7 +2,10 @@ use std::{fs::File, io::Write, path::PathBuf};
 
 use anyhow::{Context, Result};
 use directories::ProjectDirs;
-use log::{kv::Visitor, Level, LevelFilter, Metadata, Record};
+use log::{
+    kv::{VisitSource, VisitValue},
+    Level, LevelFilter, Metadata, Record,
+};
 use lsp_server::{Connection, Message, Notification};
 use lsp_types::{
     notification::{LogMessage, Notification as _},
@@ -52,7 +55,7 @@ fn write_message<'a>(
 
 struct FormatVisitor<'a, T>(&'a mut T);
 
-impl<T: std::io::Write> Visitor<'_> for FormatVisitor<'_, T> {
+impl<T: std::io::Write> VisitSource<'_> for FormatVisitor<'_, T> {
     fn visit_pair(
         &mut self,
         key: log::kv::Key<'_>,
@@ -63,7 +66,7 @@ impl<T: std::io::Write> Visitor<'_> for FormatVisitor<'_, T> {
     }
 }
 
-impl<T: std::io::Write> log::kv::value::Visit<'_> for FormatVisitor<'_, T> {
+impl<T: std::io::Write> VisitValue<'_> for FormatVisitor<'_, T> {
     fn visit_any(&mut self, value: log::kv::Value<'_>) -> Result<(), log::kv::Error> {
         write!(self.0, "{value}").map_err(Into::into)
     }

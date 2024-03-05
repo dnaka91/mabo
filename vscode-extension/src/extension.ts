@@ -1,9 +1,9 @@
-import { ExtensionContext, commands, workspace } from "vscode";
+import { type ExtensionContext, commands, workspace } from "vscode";
 import {
-  Executable,
+  type Executable,
   LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
+  type LanguageClientOptions,
+  type ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
 

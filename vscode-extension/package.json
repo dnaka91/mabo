@@ -230,7 +230,7 @@
     "esbuild": "esbuild src/extension.ts --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --bundle",
     "watch": "bun run esbuild --watch",
     "build": "bun run esbuild --minify",
-    "lint": "biome check --apply src/*.ts",
+    "lint": "tsc && biome check --apply src/*.ts",
     "schemas": "js-yaml schemas/mabo.yaml > schemas/mabo.json",
     "syntaxes": "js-yaml syntaxes/mabo.tmLanguage.yaml > syntaxes/mabo.tmLanguage.json",
     "vscode:prepublish": "bun run schemas && bun run syntaxes && bun run build",
@@ -238,16 +238,17 @@
   },
   "engines": {
     "node": ">=21",
-    "vscode": "^1.86.0"
+    "vscode": "^1.82.0"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
-    "@types/vscode": "~1.86.0",
+    "@types/vscode": "~1.82.0",
     "@vscode/vsce": "~2.24.0",
     "esbuild": "^0.20.1",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "typescript": "^5.3.3"
   }
 }

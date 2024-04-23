@@ -13,4 +13,4 @@ For further details about how to get started, the schema language or anything el
 
 ## License
 
-This project is licensed under [MIT License](LICENSE.md) (or <http://opensource.org/licenses/MIT>).
+This project is licensed under [MIT License](LICENSE.md) (or <https://opensource.org/license/MIT>).

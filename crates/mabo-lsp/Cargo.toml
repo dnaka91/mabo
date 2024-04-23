@@ -16,7 +16,7 @@ directories = "5.0.1"
 line-index = "0.1.1"
 log = { version = "0.4.21", features = ["kv_std", "release_max_level_info", "std"] }
 lsp-server = "0.7.6"
-lsp-types = { version = "0.95.0", features = ["proposed"] }
+lsp-types = { version = "0.95.1", features = ["proposed"] }
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-meta = { path = "../mabo-meta" }
 mabo-parser = { path = "../mabo-parser", features = ["simd"] }
@@ -27,7 +27,7 @@ ropey = "1.6.1"
 rustc-hash.workspace = true
 serde_json.workspace = true
 serde.workspace = true
-time = { version = "0.3.34", features = ["formatting", "local-offset", "macros"] }
+time = { version = "0.3.36", features = ["formatting", "local-offset", "macros"] }
 
 [lints]
 workspace = true

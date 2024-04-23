@@ -46,29 +46,31 @@ pub fn initialize(
         .cloned()
         .unwrap_or(PositionEncodingKind::UTF16);
 
-    if let Some(projects) = params
-        .root_uri
-        .and_then(|root| mabo_project::discover(root.path()).ok())
+    let projects = params
+        .workspace_folders
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|root| mabo_project::discover(root.uri.path()).ok())
+        .flatten();
+
+    for path in projects
+        .into_iter()
+        .inspect(|project| debug!(path:? = project.project_path; "found project"))
+        .flat_map(|project| project.files)
     {
-        for path in projects
-            .into_iter()
-            .inspect(|project| debug!(path:? = project.project_path; "found project"))
-            .flat_map(|project| project.files)
-        {
-            let Ok(text) = std::fs::read_to_string(&path) else {
-                error!(path:?; "failed reading file content");
-                continue;
-            };
+        let Ok(text) = std::fs::read_to_string(&path) else {
+            error!(path:?; "failed reading file content");
+            continue;
+        };
 
-            let Ok(uri) = Url::from_file_path(&path) else {
-                error!(path:?; "failed parsing file path as URI");
-                continue;
-            };
+        let Ok(uri) = Url::from_file_path(&path) else {
+            error!(path:?; "failed parsing file path as URI");
+            continue;
+        };
 
-            state
-                .files
-                .insert(uri.clone(), create_file(&state.encoding, uri, text));
-        }
+        state
+            .files
+            .insert(uri.clone(), create_file(&state.encoding, uri, text));
     }
 
     Ok(InitializeResult {

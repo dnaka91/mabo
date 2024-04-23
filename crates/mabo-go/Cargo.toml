@@ -12,7 +12,7 @@ license.workspace = true
 [dependencies]
 anyhow.workspace = true
 clap.workspace = true
-heck = "0.4.1"
+heck = "0.5.0"
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-parser = { path = "../mabo-parser", features = ["simd"] }
 mabo-project = { path = "../mabo-project" }

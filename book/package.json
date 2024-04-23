@@ -8,7 +8,7 @@
     "lint": "biome check --apply .vitepress/config.mts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.5.3",
-    "vitepress": "^1.0.0-rc.44"
+    "@biomejs/biome": "^1.7.1",
+    "vitepress": "^1.1.3"
   }
 }

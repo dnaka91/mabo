@@ -5,7 +5,6 @@ _default:
 build:
   cargo build --release
   bun install
-  cd book/highlight && bun run build
   cd book && just build
   cd vscode-extension && bun run package
 

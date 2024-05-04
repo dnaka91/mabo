@@ -23,7 +23,7 @@ pub enum Error {
     /// Failed to load the Mabo project.
     #[error("failed to load the Mabo project")]
     LoadProject(#[source] mabo_project::Error),
-    /// The required OUT_DIR env var doesn't exist.
+    /// The required `OUT_DIR` env var doesn't exist.
     #[error("missing OUT_DIR environment variable")]
     NoOutDir,
     /// The file name resulting from a glob pattern didn't produce a usable file path.

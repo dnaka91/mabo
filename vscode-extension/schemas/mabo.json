@@ -49,12 +49,12 @@
     },
     "Files": {
       "title": "Files",
-      "description": "List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that\nfile trees can be defined in a consise way like `schemas/**/*.mabo`.\n\nRegardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is\nalways filtered by the `.mabo` file extension.\n",
+      "description": "List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that\nfile trees can be defined in a concise way like `schemas/**/*.mabo`.\n\nRegardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is\nalways filtered by the `.mabo` file extension.\n",
       "type": "array",
       "items": [
         {
           "type": "string",
-          "description": "List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that\nfile trees can be defined in a consise way like `schemas/**/*.mabo`.\n\nRegardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is\nalways filtered by the `.mabo` file extension.\n"
+          "description": "List of files that make up the schema package. These are not regular file paths but glob patterns, meaning that\nfile trees can be defined in a concise way like `schemas/**/*.mabo`.\n\nRegardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined the final file list is\nalways filtered by the `.mabo` file extension.\n"
         }
       ]
     }

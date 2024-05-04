@@ -216,17 +216,6 @@ fn merge_comments(item: &[&str]) -> String {
     })
 }
 
-struct MergeComments<'a>(&'a [&'a str]);
-
-impl Display for MergeComments<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for line in self.0 {
-            writeln!(f, "{line}")?;
-        }
-        Ok(())
-    }
-}
-
 struct PrintField<'a>(&'a Field<'a>, FieldKind);
 
 impl Display for PrintField<'_> {

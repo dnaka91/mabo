@@ -90,7 +90,7 @@ pub struct Package {
     #[serde(default, deserialize_with = "de::spdx_expression_opt")]
     pub license: Option<spdx::Expression>,
     /// List of files that make up the schema package. These are not regular file paths but glob
-    /// patterns, meaning that file trees can be defined in a consise way like `schemas/**/*.mabo`.
+    /// patterns, meaning that file trees can be defined in a concise way like `schemas/**/*.mabo`.
     ///
     /// Regardless of the [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) defined
     /// the final file list is always filtered by the `.mabo` file extension.

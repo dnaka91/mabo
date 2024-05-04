@@ -23,8 +23,8 @@ pedantic = "warn"
 clone_on_ref_ptr = "warn"
 
 [workspace.dependencies]
-anstream = "0.6.13"
-anstyle = "1.0.6"
+anstream = "0.6.14"
+anstyle = "1.0.7"
 anyhow = "1.0.82"
 clap = { version = "4.5.4", features = ["derive", "wrap_help"] }
 glob = "0.3.1"
@@ -35,7 +35,7 @@ mimalloc = "0.1.41"
 proc-macro2 = { version = "1.0.81", default-features = false }
 quote = { version = "1.0.36", default-features = false }
 rustc-hash = "1.1.0"
-serde = { version = "1.0.198", features = ["derive"] }
+serde = { version = "1.0.200", features = ["derive"] }
 serde_json = "1.0.116"
 syn = "2.0.60"
 thiserror = "1.0.59"

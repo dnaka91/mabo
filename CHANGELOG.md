@@ -29,7 +29,7 @@ All notable changes to this project will be documented in this file.
   > generate local documentation for Rust files or projects.
 - _go_: Generate new `Size` interface ([5cc3c2f](https://github.com/dnaka91/mabo/commit/5cc3c2fab4cb6cc7645c7b7c51f2bf734dfa384b))
   > The newly defined `Size` interface allows to calculate the encoded size
-  > of an instance and pre-allocate a byte vector. It can be helful for
+  > of an instance and pre-allocate a byte vector. It can be helpful for
   > significantly large payloads that would do several re-allocations of a
   > buffer otherwise.
 - _go_: Implement the CLI for the Go code generator ([d3dc8d7](https://github.com/dnaka91/mabo/commit/d3dc8d70fe8655ed066155c46cb4a4e28a466b5b))
@@ -247,6 +247,25 @@ All notable changes to this project will be documented in this file.
   > This slightly increases binary size, but provides much better compile
   > speed in release mode. Overall performance should not decrease a lot and
   > if needed later, full/fat LTO can be turned back on again.
+- Track keywords, punctuation and delimiters ([e8e42ef](https://github.com/dnaka91/mabo/commit/e8e42ef2b63a2fbb13baf1a0b8070d3b9da0dba7))
+  > In addition to the more valuable parts of a schema that describe the
+  > data structures, now the remaining pieces that make up a schema are
+  > tracked as well.
+  > 
+  > That means characters like commas, semicolons, open/close braces and
+  > others are collected so their exact location in the source file can be
+  > used by the LSP and other components.
+  > 
+  > A few places still don't track this information as they need some
+  > further refactoring first, but should be doing so in the following
+  > commits.
+- Track double colon location in external type paths ([6a6de5a](https://github.com/dnaka91/mabo/commit/6a6de5a0441d01cd04049ba8505d79548edb1330))
+  > Keep track of the double colons that separate the individual segments of
+  > the path in external types.
+- Track more element locations of import statements ([ba12d5e](https://github.com/dnaka91/mabo/commit/ba12d5e3b11e04999a8d97c1b077f9a3c6b5c575))
+  > Only the keyword location was repoted as semantic token (in the LSP),
+  > but more information was already available which is now properly added
+  > to the token list.
 
 ### 🐛 Bug Fixes
 
@@ -368,6 +387,14 @@ All notable changes to this project will be documented in this file.
 - _book_: Remove implemented ideas ([d8b987f](https://github.com/dnaka91/mabo/commit/d8b987f06f30bc5700704522b5b2834140c27e96))
   > Remove the sections from the ideas sections that have already been
   > implemented recently.
+- _book_: Remove incomplete sections ([e06754d](https://github.com/dnaka91/mabo/commit/e06754d138185fb0c467df1e567c34ca8798f84d))
+  > Remove the sections from the config which are clearly not ready and
+  > basically a blank space. The Markdown files are kept in place as
+  > reminder for these features.
+- _book_: Explain the schema importing mechanism ([c6b3688](https://github.com/dnaka91/mabo/commit/c6b36889d6f27cedcc36385e8f9bc7c87af71c71))
+  > This section was still empty and despite even now being somewhat
+  > incomplete, at least provides some basic explanation of the importing
+  > system.
 - _parser_: Add missing doc for new field ([7f4ca98](https://github.com/dnaka91/mabo/commit/7f4ca98c236a41e505bcaa70a2df5fc3aae85b7a))
 - _vscode_: Add dedicated readme for the extension ([38af273](https://github.com/dnaka91/mabo/commit/38af273445a37dc56e04a90c85f0f57ae5621a1a))
 - Generate more stylish changelog ([5319fb3](https://github.com/dnaka91/mabo/commit/5319fb3417a830042e7bc220fe283046923da349))
@@ -449,6 +476,13 @@ All notable changes to this project will be documented in this file.
   > These environment variables (which controlled the logging output) were
   > originally used, but for some while the logging settings are already
   > fixed in code.
+- _vscode_: Run TypeScript compiler on the extension ([d926afa](https://github.com/dnaka91/mabo/commit/d926afa3bb41fd969ac5103ebae82ddb6de6cbea))
+  > As part of the linting step, run the `tsc` TypeScript compiler on the
+  > code base to ensure the type usage is actually correct, as esbuild only
+  > strips type information.
+  > 
+  > Also, apply the default tsconfig.json from fresh Bun projects (`bun
+  > init`).
 - Generate definitions and impls together ([b32bcfd](https://github.com/dnaka91/mabo/commit/b32bcfd8630bc445421ce32b784de6601659aade))
 - Rename test file ([86536c9](https://github.com/dnaka91/mabo/commit/86536c919c26934a439e4ebd8bac631e92941dc7))
 - Switch to more lightweight bench crate ([3870a6c](https://github.com/dnaka91/mabo/commit/3870a6c0db7dbbf720c11f812d5e0b94b57939c3))
@@ -502,6 +536,25 @@ All notable changes to this project will be documented in this file.
   > specific terminal coloring crate.
   > 
   > Also, the owo-colors crate contained some unmaintained dependencies.
+- Switch generic types from unnamed to named ([d0e6ec1](https://github.com/dnaka91/mabo/commit/d0e6ec1f095be22f98786a84debfeb6f29ec0b01))
+  > As the amount of values contained in generic built-in types grows, it's
+  > better to convert these to named structs so the values have a clearer
+  > meaning. Also, the `hash_map` type is now split into individual fields
+  > for the key and value type.
+- Introduce a container for punctuation ([554008d](https://github.com/dnaka91/mabo/commit/554008d01e8548aa1025b21475423c5077001192))
+  > Many elements in Mabo schema files use some form of punctuation to
+  > separate from another. This common logic could be centralized in a
+  > custom container that keeps track of punctuation spans and takes care of
+  > formatting logic.
+  > 
+  > This adds missing tracking of token spans that haven't be tracked before
+  > yet.
+- Simplify token parsing ([2a9167c](https://github.com/dnaka91/mabo/commit/2a9167ce264f3ff2fa623d6002cdcd53366499ee))
+  > Create a `surround` parser for delimiters that performs the common task
+  > of wrapping any parser with an opening and closing delimiter.
+  > 
+  > Also, create some helper parsers for each token to reduce the amount of
+  > boilerplate wherever the tokens are used together with other parsers.
 
 ### 🧪 Testing
 
@@ -542,5 +595,17 @@ All notable changes to this project will be documented in this file.
   > Deprecations in `winnow` as well as increases in MSRVs in the
   > dependencies. Bumping the MSRV to the very latest Rust version as there
   > are no MSRV promises as of now and `clap` bumped their MSRV.
+- Update cargo-deny config to v2 ([5cba463](https://github.com/dnaka91/mabo/commit/5cba463f8063b45756ca1591eec8005594827408))
+  > New configuration layouts were introduced for _advisories_ and
+  > _licenses_ sections. These will become the default at some point and
+  > it's good to adopt early.
+- Limit log level to info for release builds ([dda49f6](https://github.com/dnaka91/mabo/commit/dda49f6a23a8f3b90c8e445c256bfabf86e376db))
+  > Trace and debug logs are mostly useful during development and not needed
+  > for release builds. By activacting the `log` crate's feature flag, these
+  > levels can be filtered out during compile time.
+  > 
+  > The effects are likely better runtime performance and most notably
+  > reduced binary size.
+- Update license link in readme ([d8f7061](https://github.com/dnaka91/mabo/commit/d8f706154a4adc14397fcfa12e9514db9571381d))
 
 <!-- generated by git-cliff -->

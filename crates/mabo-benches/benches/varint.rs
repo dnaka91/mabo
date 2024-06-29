@@ -47,8 +47,24 @@ impl Signed for Bincode {
     }
 }
 
+struct Vu128;
+
+impl Unsigned for Vu128 {
+    fn run(value: u128, buf: &mut [u8]) -> u128 {
+        varint::vu128::encode_u128(value, buf);
+        varint::vu128::decode_u128(buf)
+    }
+}
+
+impl Signed for Vu128 {
+    fn run(value: i128, buf: &mut [u8]) -> i128 {
+        varint::vu128::encode_i128(value, buf);
+        varint::vu128::decode_i128(buf)
+    }
+}
+
 #[divan::bench(
-    types = [Leb128, Bincode],
+    types = [Bincode, Leb128, Vu128],
     args = [
         1,
         u8::MAX.into(),
@@ -59,12 +75,12 @@ impl Signed for Bincode {
     ],
 )]
 fn unsigned<T: Unsigned>(n: u128) -> u128 {
-    let mut buf = [0; 19];
+    let mut buf = [0; 32];
     T::run(n, black_box(&mut buf))
 }
 
 #[divan::bench(
-    types = [Leb128, Bincode],
+    types = [Bincode, Leb128, Vu128],
     args = [
         -1,
         i8::MIN.into(),
@@ -75,6 +91,6 @@ fn unsigned<T: Unsigned>(n: u128) -> u128 {
     ],
 )]
 fn signed<T: Signed>(n: i128) -> i128 {
-    let mut buf = [0; 19];
+    let mut buf = [0; 32];
     T::run(n, black_box(&mut buf))
 }

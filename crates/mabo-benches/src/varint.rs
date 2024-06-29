@@ -6,6 +6,7 @@ pub mod postcard {
 
     #[inline]
     pub fn encode(mut value: u128, buf: &mut [u8]) {
+        assert!(buf.len() >= max_size::<u128>());
         for b in buf.iter_mut().take(max_size::<u128>()) {
             *b = value.to_le_bytes()[0];
             if value < 128 {
@@ -31,6 +32,7 @@ pub mod postcard {
     #[inline]
     #[must_use]
     pub fn decode(buf: &[u8]) -> u128 {
+        assert!(buf.len() >= max_size::<u128>());
         let mut value = 0;
         for (i, b) in buf.iter().copied().enumerate().take(max_size::<u128>()) {
             value |= u128::from(b & 0x7f) << (7 * i);
@@ -90,6 +92,7 @@ pub mod postcard {
 pub mod bincode {
     #[inline]
     pub fn encode_u16(value: u16, buf: &mut [u8]) {
+        assert!(buf.len() > std::mem::size_of::<u16>());
         if value <= 250 {
             buf[0] = value.to_le_bytes()[0];
         } else {
@@ -112,6 +115,7 @@ pub mod bincode {
 
     #[inline]
     pub fn encode_u32(value: u32, buf: &mut [u8]) {
+        assert!(buf.len() > std::mem::size_of::<u32>());
         if value <= 250 {
             buf[0] = value.to_le_bytes()[0];
         } else if value <= u16::MAX.into() {
@@ -137,6 +141,7 @@ pub mod bincode {
 
     #[inline]
     pub fn encode_u64(value: u64, buf: &mut [u8]) {
+        assert!(buf.len() > std::mem::size_of::<u64>());
         if value <= 250 {
             buf[0] = value.to_le_bytes()[0];
         } else if value <= u16::MAX.into() {
@@ -165,6 +170,7 @@ pub mod bincode {
 
     #[inline]
     pub fn encode_u128(value: u128, buf: &mut [u8]) {
+        assert!(buf.len() > std::mem::size_of::<u128>());
         if value <= 250 {
             buf[0] = value.to_le_bytes()[0];
         } else if value <= u16::MAX.into() {
@@ -197,6 +203,7 @@ pub mod bincode {
     #[inline]
     #[must_use]
     pub fn decode_u16(buf: &[u8]) -> u16 {
+        assert!(buf.len() > std::mem::size_of::<u16>());
         match buf[0] {
             byte @ 0..=250 => byte.into(),
             251 => {
@@ -222,6 +229,7 @@ pub mod bincode {
     #[inline]
     #[must_use]
     pub fn decode_u32(buf: &[u8]) -> u32 {
+        assert!(buf.len() > std::mem::size_of::<u32>());
         match buf[0] {
             byte @ 0..=250 => byte.into(),
             251 => {
@@ -252,6 +260,7 @@ pub mod bincode {
     #[inline]
     #[must_use]
     pub fn decode_u64(buf: &[u8]) -> u64 {
+        assert!(buf.len() > std::mem::size_of::<u64>());
         match buf[0] {
             byte @ 0..=250 => byte.into(),
             251 => {
@@ -287,6 +296,7 @@ pub mod bincode {
     #[inline]
     #[must_use]
     pub fn decode_u128(buf: &[u8]) -> u128 {
+        assert!(buf.len() > std::mem::size_of::<u128>());
         match buf[0] {
             byte @ 0..=250 => byte.into(),
             251 => {
@@ -322,6 +332,176 @@ pub mod bincode {
         } else {
             !(value / 2) as i128
         }
+    }
+
+    #[test]
+    fn roundtrip() {
+        let mut buf = [0; 17];
+
+        for value in [
+            1,
+            u8::MAX.into(),
+            u16::MAX.into(),
+            u32::MAX.into(),
+            u64::MAX.into(),
+            u128::MAX,
+        ] {
+            encode_u128(value, &mut buf);
+            let output = decode_u128(&buf);
+            assert_eq!(value, output);
+        }
+
+        for value in [
+            -1,
+            i8::MIN.into(),
+            i16::MIN.into(),
+            i32::MIN.into(),
+            i64::MIN.into(),
+            i128::MIN,
+        ] {
+            encode_i128(value, &mut buf);
+            let output = decode_i128(&buf);
+            assert_eq!(value, output);
+        }
+    }
+}
+
+/// # Vu128: Efficient variable-length integers
+///
+/// <https://john-millikin.com/vu128-efficient-variable-length-integers>
+pub mod vu128 {
+    macro_rules! encode {
+        ($name:ident, $ty:ident, $len_mask:literal) => {
+            #[allow(clippy::cast_possible_truncation)]
+            #[inline]
+            pub fn $name(value: $ty, buf: &mut [u8]) {
+                assert!(buf.len() > std::mem::size_of::<$ty>());
+                if value < 0xf0 {
+                    buf[0] = value as u8;
+                    return;
+                }
+                buf[1..][..std::mem::size_of::<$ty>()].copy_from_slice(&value.to_le_bytes());
+                let len = ((value.leading_zeros() >> 3) as u8) ^ $len_mask;
+                buf[0] = 0xf0 | len;
+            }
+        };
+    }
+
+    macro_rules! decode {
+        ($name:ident, $ty:ident, $len_mask:literal) => {
+            #[inline]
+            #[must_use]
+            pub fn $name(buf: &[u8]) -> $ty {
+                assert!(buf.len() > std::mem::size_of::<$ty>());
+                if buf[0] < 0xf0 {
+                    return $ty::from(buf[0]);
+                }
+                let value =
+                    $ty::from_le_bytes(buf[1..][..std::mem::size_of::<$ty>()].try_into().unwrap());
+                let len = buf[0] & 0x0f;
+                let mask = $ty::MAX >> ((len & $len_mask) ^ $len_mask);
+                value & mask
+            }
+        };
+    }
+
+    #[inline]
+    pub fn encode_u8(value: u8, buf: &mut [u8]) {
+        assert!(buf.len() > 1);
+        if value < 0xf0 {
+            buf[0] = value;
+            return;
+        }
+        buf[0] = 0xf0;
+        buf[1] = value;
+    }
+
+    encode!(encode_u16, u16, 0x01);
+    encode!(encode_u32, u32, 0x03);
+    encode!(encode_u64, u64, 0x07);
+    encode!(encode_u128, u128, 0x0f);
+
+    #[inline]
+    #[must_use]
+    pub fn decode_u8(buf: &[u8]) -> u8 {
+        assert!(buf.len() > 1);
+        if buf[0] < 0x0f {
+            return buf[0];
+        }
+        buf[1]
+    }
+
+    decode!(decode_u16, u16, 0x01);
+    decode!(decode_u32, u32, 0x03);
+    decode!(decode_u64, u64, 0x07);
+    decode!(decode_u128, u128, 0x0f);
+
+    macro_rules! encode_i {
+        (
+            $name:ident,
+            $encode_fn:ident,
+            $ti:ident,
+            $tu:ident,
+            $zigzag_shift:literal
+        ) => {
+            #[inline]
+            pub fn $name(value: $ti, buf: &mut [u8]) {
+                let zigzag = ((value >> $zigzag_shift) as $tu) ^ ((value << 1) as $tu);
+                $encode_fn(zigzag, buf);
+            }
+        };
+    }
+
+    macro_rules! decode_i {
+        (
+            $name:ident,
+            $decode_fn:ident,
+            $ti:ident,
+            $tu:ident
+        ) => {
+            #[inline]
+            #[must_use]
+            pub fn $name(buf: &[u8]) -> $ti {
+                let zz = $decode_fn(buf);
+                ((zz >> 1) as $ti) ^ (-((zz & 1) as $ti))
+            }
+        };
+    }
+
+    encode_i!(encode_i8, encode_u8, i8, u8, 7);
+    encode_i!(encode_i16, encode_u16, i16, u16, 15);
+    encode_i!(encode_i32, encode_u32, i32, u32, 31);
+    encode_i!(encode_i64, encode_u64, i64, u64, 63);
+    encode_i!(encode_i128, encode_u128, i128, u128, 127);
+
+    decode_i!(decode_i8, decode_u8, i8, u8);
+    decode_i!(decode_i16, decode_u16, i16, u16);
+    decode_i!(decode_i32, decode_u32, i32, u32);
+    decode_i!(decode_i64, decode_u64, i64, u64);
+    decode_i!(decode_i128, decode_u128, i128, u128);
+
+    #[inline]
+    pub fn encode_f32(value: f32, buf: &mut [u8; 5]) {
+        encode_u32(value.to_bits().swap_bytes(), buf);
+    }
+
+    #[inline]
+    pub fn encode_f64(value: f64, buf: &mut [u8; 9]) {
+        encode_u64(value.to_bits().swap_bytes(), buf);
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn decode_f32(buf: &[u8]) -> f32 {
+        let swapped = decode_u32(buf);
+        f32::from_bits(swapped.swap_bytes())
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn decode_f64(buf: &[u8]) -> f64 {
+        let swapped = decode_u64(buf);
+        f64::from_bits(swapped.swap_bytes())
     }
 
     #[test]

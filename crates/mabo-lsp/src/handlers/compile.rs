@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use lsp_types::{self as lsp, Diagnostic, Url};
+use lsp_types::{self as lsp, Diagnostic, Uri};
 use mabo_compiler::validate;
 use mabo_parser::{
     error::{
@@ -14,7 +14,7 @@ use mabo_parser::{
 
 use super::index::Index;
 
-pub fn compile<'a>(file: Url, schema: &'a str, index: &'_ Index) -> Result<Schema<'a>, Diagnostic> {
+pub fn compile<'a>(file: Uri, schema: &'a str, index: &'_ Index) -> Result<Schema<'a>, Diagnostic> {
     let parsed =
         mabo_parser::Schema::parse(schema, None).map_err(|e| parse_schema_diagnostic(index, &e))?;
 
@@ -194,7 +194,7 @@ fn parse_id_diagnostic(index: &Index, e: &ParseIdError) -> Diagnostic {
     Diagnostic::new_simple(get_range(index, e.at.clone()), e.to_string())
 }
 
-fn validate_schema_diagnostic(file: Url, index: &Index, e: validate::Error) -> Diagnostic {
+fn validate_schema_diagnostic(file: Uri, index: &Index, e: validate::Error) -> Diagnostic {
     use validate::{DuplicateFieldId, DuplicateId, DuplicateName, Error, InvalidGenericType};
 
     let (message, first, second) = match e {

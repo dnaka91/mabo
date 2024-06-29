@@ -15,7 +15,7 @@ anstyle.workspace = true
 mabo-parser = { path = "../mabo-parser" }
 miette.workspace = true
 rustc-hash.workspace = true
-schemars = { version = "0.8.17", optional = true }
+schemars = { version = "0.8.21", optional = true }
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 thiserror.workspace = true

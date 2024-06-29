@@ -12,7 +12,7 @@ use lsp_types::{
     PositionEncodingKind, Registration, SemanticTokens, SemanticTokensFullOptions,
     SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams, SemanticTokensResult,
     SemanticTokensServerCapabilities, ServerCapabilities, ServerInfo,
-    TextDocumentContentChangeEvent, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
+    TextDocumentContentChangeEvent, TextDocumentSyncCapability, TextDocumentSyncKind, Uri,
     WorkDoneProgressOptions, WorkspaceFileOperationsServerCapabilities,
     WorkspaceServerCapabilities,
 };
@@ -50,7 +50,7 @@ pub fn initialize(
         .workspace_folders
         .unwrap_or_default()
         .into_iter()
-        .filter_map(|root| mabo_project::discover(root.uri.path()).ok())
+        .filter_map(|root| mabo_project::discover(root.uri.path().as_str()).ok())
         .flatten();
 
     for path in projects
@@ -63,7 +63,11 @@ pub fn initialize(
             continue;
         };
 
-        let Ok(uri) = Url::from_file_path(&path) else {
+        let Ok(uri) = path
+            .to_str()
+            .with_context(|| format!("path {path:?} is not valid UTF-8"))
+            .and_then(|path| path.parse::<Uri>().map_err(Into::into))
+        else {
             error!(path:?; "failed parsing file path as URI");
             continue;
         };
@@ -137,7 +141,7 @@ pub fn initialized(state: &mut GlobalState<'_>, _params: InitializedParams) {
 }
 
 pub fn did_open(state: &mut GlobalState<'_>, params: DidOpenTextDocumentParams) {
-    debug!(uri:% = params.text_document.uri; "schema opened");
+    debug!(uri:% = params.text_document.uri.as_str(); "schema opened");
 
     let text = params.text_document.text;
     let file = if let Some(file) = state
@@ -174,7 +178,7 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
     }
 
     debug!(
-        uri:% = params.text_document.uri,
+        uri:% = params.text_document.uri.as_str(),
         full:% = is_full(&params.content_changes);
         "schema changed",
     );
@@ -222,7 +226,7 @@ pub fn did_change(state: &mut GlobalState<'_>, mut params: DidChangeTextDocument
 }
 
 pub fn did_close(_state: &mut GlobalState<'_>, params: DidCloseTextDocumentParams) {
-    debug!(uri:% = params.text_document.uri; "schema closed");
+    debug!(uri:% = params.text_document.uri.as_str(); "schema closed");
 }
 
 pub fn did_delete(state: &mut GlobalState<'_>, params: DeleteFilesParams) {
@@ -236,7 +240,7 @@ pub fn hover(state: &mut GlobalState<'_>, params: HoverParams) -> Result<Option<
     let uri = params.text_document_position_params.text_document.uri;
     let position = params.text_document_position_params.position;
 
-    debug!(uri:%; "requested hover info");
+    debug!(uri:% = uri.as_str(); "requested hover info");
 
     Ok(
         if let Some((schema, index)) = state.files.get_mut(&uri).and_then(|file| {
@@ -262,7 +266,7 @@ pub fn document_symbol(
     state: &mut GlobalState<'_>,
     params: DocumentSymbolParams,
 ) -> Result<Option<DocumentSymbolResponse>> {
-    debug!(uri:% = params.text_document.uri; "requested document symbols");
+    debug!(uri:% = params.text_document.uri.as_str(); "requested document symbols");
 
     Ok(
         if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
@@ -282,7 +286,7 @@ pub fn semantic_tokens_full(
     state: &mut GlobalState<'_>,
     params: SemanticTokensParams,
 ) -> Result<Option<SemanticTokensResult>> {
-    debug!(uri:% = params.text_document.uri; "requested semantic tokens");
+    debug!(uri:% = params.text_document.uri.as_str(); "requested semantic tokens");
 
     Ok(
         if let Some((schema, index)) = state.files.get(&params.text_document.uri).and_then(|file| {
@@ -329,7 +333,7 @@ fn convert_range(index: &Index, range: Option<lsp_types::Range>) -> Result<TextR
     Ok(TextRange::new(start.try_into()?, end.try_into()?))
 }
 
-fn create_file(encoding: &PositionEncodingKind, uri: Url, text: String) -> state::File {
+fn create_file(encoding: &PositionEncodingKind, uri: Uri, text: String) -> state::File {
     FileBuilder {
         rope: Rope::from_str(&text),
         index: Index::new(LineIndex::new(&text), encoding),
@@ -340,7 +344,7 @@ fn create_file(encoding: &PositionEncodingKind, uri: Url, text: String) -> state
     .build()
 }
 
-fn update_file(uri: Url, file: state::File, update: impl FnOnce(&mut Rope, &Index)) -> state::File {
+fn update_file(uri: Uri, file: state::File, update: impl FnOnce(&mut Rope, &Index)) -> state::File {
     let mut heads = file.into_heads();
 
     update(&mut heads.rope, &heads.index);

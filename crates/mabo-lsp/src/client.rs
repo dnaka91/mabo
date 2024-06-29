@@ -6,7 +6,7 @@ use lsp_types::{
     notification::{Notification as LspNotification, PublishDiagnostics},
     request::{RegisterCapability, Request as LspRequest, WorkspaceConfiguration},
     ConfigurationItem, ConfigurationParams, Diagnostic, PublishDiagnosticsParams, Registration,
-    RegistrationParams, Url,
+    RegistrationParams, Uri,
 };
 
 pub struct Client<'a> {
@@ -69,7 +69,7 @@ impl<'a> Client<'a> {
 
     pub fn publish_diagnostics(
         &self,
-        uri: Url,
+        uri: Uri,
         diagnostics: Vec<Diagnostic>,
         version: Option<i32>,
     ) -> Result<()> {

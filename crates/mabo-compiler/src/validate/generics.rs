@@ -1,8 +1,8 @@
-use std::{hash::BuildHasherDefault, ops::Range};
+use std::ops::Range;
 
 use mabo_parser::{DataType, Enum, ExternalType, Fields, Generics, Span, Spanned, Struct, Type};
 use miette::Diagnostic;
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxBuildHasher, FxHashMap};
 use thiserror::Error;
 
 /// Generic type parameters are considered invalid.
@@ -99,8 +99,7 @@ pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType
 
 /// Ensure all generic type arguments are unique within a struct or enum.
 fn validate_duplicate_generics(value: &Generics<'_>) -> Result<(), DuplicateGenericName> {
-    let mut visited =
-        FxHashMap::with_capacity_and_hasher(value.types.len(), BuildHasherDefault::default());
+    let mut visited = FxHashMap::with_capacity_and_hasher(value.types.len(), FxBuildHasher);
     value
         .types
         .values()

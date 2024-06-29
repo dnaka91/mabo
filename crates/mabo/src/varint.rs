@@ -6,12 +6,14 @@ macro_rules! zigzag {
     ($from:ty, $to:ty) => {
         paste::paste! {
             #[doc = "Use the _ZigZag_ scheme to encode an `" $from "` as `" $to "`."]
+            #[allow(clippy::cast_sign_loss)]
             #[inline]
             const fn [<zigzag_encode_ $from>](value: $from) -> $to {
                 ((value << 1) ^ (value >> ($from::BITS - 1))) as $to
             }
 
             #[doc = "Convert a _ZigZag_ encoded `" $from "` back to its original data."]
+            #[allow(clippy::cast_possible_wrap)]
             #[inline]
             const fn [<zigzag_decode_ $from>](value: $to) -> $from {
                 ((value >> 1) as $from) ^ (-((value & 0b1) as $from))
@@ -99,7 +101,7 @@ macro_rules! varint {
             pub fn [<decode_ $ty>](buf: &[u8]) -> Result<($ty, usize), DecodeIntError> {
                 let mut value = 0;
                 for (i, b) in buf.iter().copied().enumerate().take(max_size::<$ty>()) {
-                    value |= ((b & 0x7f) as $ty) << (7 * i);
+                    value |= $ty::from(b & 0x7f) << (7 * i);
 
                     if b & 0x80 == 0 {
                         return Ok((value, i + 1));

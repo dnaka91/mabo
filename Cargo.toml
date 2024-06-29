@@ -25,20 +25,20 @@ clone_on_ref_ptr = "warn"
 [workspace.dependencies]
 anstream = "0.6.14"
 anstyle = "1.0.7"
-anyhow = "1.0.82"
-clap = { version = "4.5.4", features = ["derive", "wrap_help"] }
+anyhow = "1.0.86"
+clap = { version = "4.5.8", features = ["derive", "wrap_help"] }
 glob = "0.3.1"
 indoc = "2.0.5"
-insta = { version = "1.38.0", features = ["glob"] }
+insta = { version = "1.39.0", features = ["glob"] }
 miette = { version = "7.2.0", default-features = false }
-mimalloc = "0.1.41"
-proc-macro2 = { version = "1.0.81", default-features = false }
+mimalloc = "0.1.43"
+proc-macro2 = { version = "1.0.86", default-features = false }
 quote = { version = "1.0.36", default-features = false }
-rustc-hash = "1.1.0"
-serde = { version = "1.0.200", features = ["derive"] }
-serde_json = "1.0.116"
-syn = "2.0.60"
-thiserror = "1.0.59"
+rustc-hash = "2.0.0"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.118"
+syn = "2.0.68"
+thiserror = "1.0.61"
 
 [profile.release]
 lto = "thin"

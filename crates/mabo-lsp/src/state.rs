@@ -1,7 +1,7 @@
 use anyhow::{ensure, Context, Result};
 use log::debug;
 use lsp_server::Connection;
-use lsp_types::{ConfigurationItem, Diagnostic, PositionEncodingKind, Url};
+use lsp_types::{ConfigurationItem, Diagnostic, PositionEncodingKind, Uri};
 use mabo_parser::Schema;
 use ouroboros::self_referencing;
 use ropey::Rope;
@@ -13,7 +13,7 @@ use crate::{client::Client, config, handlers::index::Index};
 pub struct GlobalState<'a> {
     pub client: Client<'a>,
     pub encoding: PositionEncodingKind,
-    pub files: FxHashMap<Url, File>,
+    pub files: FxHashMap<Uri, File>,
     pub settings: config::Global,
 }
 

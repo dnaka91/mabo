@@ -1,10 +1,20 @@
 use std::path::PathBuf;
 
-use clap::{Args, Parser, Subcommand, ValueHint};
+use clap::{
+    builder::{styling::AnsiColor, Styles},
+    Args, Parser, Subcommand, ValueHint,
+};
+
+/// Customized coloring style for the CLI output.
+const STYLES: Styles = Styles::styled()
+    .header(AnsiColor::Red.on_default().bold())
+    .usage(AnsiColor::Red.on_default().bold())
+    .literal(AnsiColor::Blue.on_default().bold())
+    .placeholder(AnsiColor::Green.on_default());
 
 /// Command line interface to manage and support Mabo schema projects.
 #[derive(Parser)]
-#[command(name = "mabo", about, author, version, propagate_version = true)]
+#[command(name = "mabo", about, author, version, propagate_version = true, styles = STYLES)]
 pub struct Cli {
     #[command(subcommand)]
     pub cmd: Option<Command>,

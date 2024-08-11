@@ -113,7 +113,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Enum<'i>, ParseError> {
 
 pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (one_of('A'..='Z'), alphanumeric0)
-        .recognize()
+        .take()
         .with_span()
         .parse_next(input)
         .map(Into::into)
@@ -156,7 +156,7 @@ fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {
 
 fn parse_variant_name<'i>(input: &mut Input<'i>) -> Result<&'i str, Cause> {
     (one_of('A'..='Z'), alphanumeric0)
-        .recognize()
+        .take()
         .parse_next(input)
         .map_err(|e| {
             e.map(|()| Cause::InvalidVariantName {

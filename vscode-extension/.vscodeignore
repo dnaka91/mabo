@@ -6,3 +6,4 @@ schemas/*.yaml
 syntaxes/*.yaml
 .gitignore
 biome.json
+tsconfig.json

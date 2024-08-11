@@ -15,7 +15,7 @@ ignore = "0.4.22"
 serde.workspace = true
 spdx = "0.10.6"
 thiserror.workspace = true
-toml = "0.8.14"
+toml = "0.8.19"
 
 [lints]
 workspace = true

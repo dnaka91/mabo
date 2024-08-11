@@ -129,14 +129,14 @@ fn parse_float(input: &mut Input<'_>) -> Result<f64, Cause> {
         (digit1, '.', digit1),
         opt((one_of(['e', 'E']), opt(one_of(['+', '-'])), cut_err(digit1))),
     )
-        .recognize()
+        .take()
         .parse_to()
         .parse_next(input)
 }
 
 fn parse_int(input: &mut Input<'_>) -> Result<i128, Cause> {
     (opt(one_of(['+', '-'])), digit1)
-        .recognize()
+        .take()
         .parse_to()
         .parse_next(input)
         .map_err(|e| {

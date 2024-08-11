@@ -93,7 +93,7 @@ fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         one_of('a'..='z'),
         take_while(0.., ('a'..='z', '0'..='9', '_')),
     )
-        .recognize()
+        .take()
         .with_span()
         .parse_next(input)
         .map(Into::into)

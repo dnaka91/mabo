@@ -95,7 +95,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<TypeAlias<'i>, ParseErr
 
 fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
     (one_of('A'..='Z'), alphanumeric0)
-        .recognize()
+        .take()
         .with_span()
         .parse_next(input)
         .map(Into::into)

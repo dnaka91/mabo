@@ -78,7 +78,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
                     )),
                 )),
             )
-                .with_recognized()
+                .with_taken()
                 .with_span(),
             token::Semicolon::parser(),
         )),
@@ -106,7 +106,7 @@ pub(super) fn parse_segment<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause
         one_of('a'..='z'),
         take_while(0.., ('a'..='z', '0'..='9', '_')),
     )
-        .recognize()
+        .take()
         .with_span()
         .parse_next(input)
         .map(Into::into)

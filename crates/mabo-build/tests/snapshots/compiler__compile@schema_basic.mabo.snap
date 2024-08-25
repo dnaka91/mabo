@@ -82,7 +82,7 @@ impl ::mabo::buf::Size for SampleStruct {
         let Self { a, b } = self;
         ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*a) })
             + ::mabo::buf::size_field(2, || { ::mabo::buf::size_bool(*b) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 /// Sample enum.
@@ -222,15 +222,14 @@ impl ::mabo::buf::Size for SampleEnum {
                 ::mabo::buf::size_variant_id(2)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*n0) })
                     + ::mabo::buf::size_field(2, || { ::mabo::buf::size_u64(*n1) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
             Self::Three { field1, field2 } => {
                 ::mabo::buf::size_variant_id(3)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*field1) })
                     + ::mabo::buf::size_field(2, || { ::mabo::buf::size_bool(*field2) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
         }
     }
 }
-

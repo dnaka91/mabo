@@ -4,6 +4,9 @@ use bytes::Bytes;
 
 use crate::{varint, NonZero};
 
+/// Size of the special field identifier that marks the end of a struct or enum variant.
+pub const END_MARKER_SIZE: usize = 1;
+
 macro_rules! size_fixed {
     ($ty:ty => $size:literal) => {
         paste::paste! {

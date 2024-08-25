@@ -389,7 +389,6 @@ impl ::mabo::buf::Size for Sample {
                         |v| { ::mabo::buf::size_string(v) },
                     )
                 },
-            ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            ) + ::mabo::buf::END_MARKER_SIZE
     }
 }
-

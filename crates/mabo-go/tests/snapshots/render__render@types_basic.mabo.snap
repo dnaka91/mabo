@@ -596,8 +596,6 @@ func (v *Sample) Size() int {
 			return buf.SizeU32(v)
 		})
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
-
-

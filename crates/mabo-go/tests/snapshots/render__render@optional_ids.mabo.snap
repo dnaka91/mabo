@@ -127,7 +127,7 @@ func (v *SampleNamed) Size() int {
 	size += buf.SizeField(101, func() int {
 		return buf.SizeU32(v.Field3)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -244,7 +244,7 @@ func (v *SampleUnnamed) Size() int {
 	size += buf.SizeField(101, func() int {
 		return buf.SizeU32(v.N2)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -369,7 +369,7 @@ func (v *SampleEnum_Named) Size() int {
 	size += buf.SizeField(101, func() int {
 		return buf.SizeU32(v.Field3)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -530,8 +530,6 @@ func (v *SampleEnum_Unnamed) Size() int {
 	size += buf.SizeField(101, func() int {
 		return buf.SizeU32(v.N2)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
-
-

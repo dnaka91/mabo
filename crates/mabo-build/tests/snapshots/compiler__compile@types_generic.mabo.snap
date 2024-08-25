@@ -188,7 +188,7 @@ impl ::mabo::buf::Size for Sample {
                 f4.as_ref(),
                 |v| { ::mabo::buf::size_u32(*v) },
             ) + ::mabo::buf::size_field(5, || { ::mabo::buf::size_u32(f5.get()) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 #[derive(Clone, Debug, PartialEq)]
@@ -376,7 +376,6 @@ impl ::mabo::buf::Size for SampleUnnamed {
                 n3.as_ref(),
                 |v| { ::mabo::buf::size_u32(*v) },
             ) + ::mabo::buf::size_field(5, || { ::mabo::buf::size_u32(n4.get()) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
-

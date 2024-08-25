@@ -108,7 +108,7 @@ impl Display for RenderFields<'_> {
             }
         }
 
-        writeln!(f, "\tsize += buf.SizeU32(buf.EndMarker)")
+        writeln!(f, "\tsize += buf.EndMarkerSize")
     }
 }
 

@@ -136,7 +136,6 @@ impl ::mabo::buf::Size for Sample {
                     },
                 )
             },
-        ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+        ) + ::mabo::buf::END_MARKER_SIZE
     }
 }
-

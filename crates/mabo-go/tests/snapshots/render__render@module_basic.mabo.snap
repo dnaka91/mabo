@@ -118,7 +118,7 @@ func (v *Sample) Size() int {
 	size += buf.SizeField(2, func() int {
 		return v.Inner.Size()
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -181,5 +181,3 @@ func (v *Sample_One) Size() int {
 	size := 0
 	return size
 }
-
-

@@ -170,7 +170,7 @@ func (v *User) Size() int {
 	size += buf.SizeField(4, func() int {
 		return v.Birthday.Size()
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -290,7 +290,7 @@ func (v *FullName) Size() int {
 	size += buf.SizeField(3, func() int {
 		return buf.SizeString(v.Last)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -419,7 +419,7 @@ func (v *Address) Size() int {
 	size += buf.SizeField(3, func() int {
 		return buf.SizeString(v.City)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -500,7 +500,7 @@ func (v *HouseNumber_Digit) Size() int {
 	size += buf.SizeField(1, func() int {
 		return buf.SizeU16(v.N0)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -572,7 +572,7 @@ func (v *HouseNumber_Text) Size() int {
 	size += buf.SizeField(1, func() int {
 		return buf.SizeString(v.N0)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -716,7 +716,7 @@ func (v *DayOfBirth_Specific) Size() int {
 	size += buf.SizeField(3, func() int {
 		return buf.SizeU8(v.Day)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -792,7 +792,7 @@ func (v *DayOfBirth_Secret) Size() int {
 	size += buf.SizeFieldOption[string](1, &v.Reason, func (v string) int {
 		return buf.SizeString(v)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -1354,5 +1354,3 @@ func (v *Month_December) Size() int {
 	size := 0
 	return size
 }
-
-

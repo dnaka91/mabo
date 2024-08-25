@@ -97,7 +97,7 @@ impl ::mabo::buf::Size for SampleNamed {
         ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*field1) })
             + ::mabo::buf::size_field(100, || { ::mabo::buf::size_u32(*field2) })
             + ::mabo::buf::size_field(101, || { ::mabo::buf::size_u32(*field3) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 #[derive(Clone, Debug, PartialEq)]
@@ -190,7 +190,7 @@ impl ::mabo::buf::Size for SampleUnnamed {
         ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*n0) })
             + ::mabo::buf::size_field(100, || { ::mabo::buf::size_u32(*n1) })
             + ::mabo::buf::size_field(101, || { ::mabo::buf::size_u32(*n2) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 #[derive(Clone, Debug, PartialEq)]
@@ -357,7 +357,7 @@ impl ::mabo::buf::Size for SampleEnum {
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*field1) })
                     + ::mabo::buf::size_field(100, || { ::mabo::buf::size_u32(*field2) })
                     + ::mabo::buf::size_field(101, || { ::mabo::buf::size_u32(*field3) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
             Self::Unit => ::mabo::buf::size_variant_id(50),
             Self::Unnamed(n0, n1, n2) => {
@@ -365,9 +365,8 @@ impl ::mabo::buf::Size for SampleEnum {
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*n0) })
                     + ::mabo::buf::size_field(100, || { ::mabo::buf::size_u32(*n1) })
                     + ::mabo::buf::size_field(101, || { ::mabo::buf::size_u32(*n2) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
         }
     }
 }
-

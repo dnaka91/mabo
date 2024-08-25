@@ -66,7 +66,7 @@ fn compile_struct_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
 
         quote! {
             #(#calls +)*
-            ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            ::mabo::buf::END_MARKER_SIZE
         }
     }
 }
@@ -162,7 +162,7 @@ fn compile_variant_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
 
         quote! {
            #(#calls +)*
-           ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+           ::mabo::buf::END_MARKER_SIZE
         }
     }
 }

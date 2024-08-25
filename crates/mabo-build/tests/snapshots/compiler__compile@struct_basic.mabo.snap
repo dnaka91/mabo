@@ -83,7 +83,6 @@ impl ::mabo::buf::Size for Sample {
         let Self { a, b } = self;
         ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*a) })
             + ::mabo::buf::size_field(2, || { ::mabo::buf::size_bool(*b) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
-

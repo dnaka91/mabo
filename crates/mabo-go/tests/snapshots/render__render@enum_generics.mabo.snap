@@ -162,7 +162,7 @@ func (v *Sample_Two[A, B]) Size() int {
 	size += buf.SizeField(2, func() int {
 		return v.N1.Size()
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -265,8 +265,6 @@ func (v *Sample_Three[C, D]) Size() int {
 	size += buf.SizeField(2, func() int {
 		return v.Field2.Size()
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
-
-

@@ -160,15 +160,14 @@ where
                 ::mabo::buf::size_variant_id(2)
                     + ::mabo::buf::size_field(1, || { n0.size() })
                     + ::mabo::buf::size_field(2, || { n1.size() })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
             Self::Three { field1, field2 } => {
                 ::mabo::buf::size_variant_id(3)
                     + ::mabo::buf::size_field(1, || { field1.size() })
                     + ::mabo::buf::size_field(2, || { field2.size() })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
         }
     }
 }
-

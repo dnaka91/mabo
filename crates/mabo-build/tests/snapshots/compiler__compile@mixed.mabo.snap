@@ -115,7 +115,7 @@ impl ::mabo::buf::Size for User {
             + ::mabo::buf::size_field_option(2, address.as_ref(), |v| { v.size() })
             + ::mabo::buf::size_field(3, || { ::mabo::buf::size_u8(*age) })
             + ::mabo::buf::size_field(4, || { birthday.size() })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 /// Full name of a user.
@@ -211,7 +211,7 @@ impl ::mabo::buf::Size for FullName {
                 middle.as_ref(),
                 |v| { ::mabo::buf::size_string(v) },
             ) + ::mabo::buf::size_field(3, || { ::mabo::buf::size_string(last) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 /// Simple alias for convenience.
@@ -314,7 +314,7 @@ impl ::mabo::buf::Size for Address {
         ::mabo::buf::size_field(1, || { ::mabo::buf::size_string(street) })
             + ::mabo::buf::size_field(2, || { house_no.size() })
             + ::mabo::buf::size_field(3, || { ::mabo::buf::size_string(city) })
-            + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            + ::mabo::buf::END_MARKER_SIZE
     }
 }
 /// The number on the house.
@@ -425,12 +425,12 @@ impl ::mabo::buf::Size for HouseNumber {
             Self::Digit(n0) => {
                 ::mabo::buf::size_variant_id(1)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u16(*n0) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
             Self::Text(n0) => {
                 ::mabo::buf::size_variant_id(2)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_string(n0) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
         }
     }
@@ -578,7 +578,7 @@ pub mod birthday {
                         + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u16(*year) })
                         + ::mabo::buf::size_field(2, || { month.size() })
                         + ::mabo::buf::size_field(3, || { ::mabo::buf::size_u8(*day) })
-                        + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                        + ::mabo::buf::END_MARKER_SIZE
                 }
                 Self::Secret { reason } => {
                     ::mabo::buf::size_variant_id(2)
@@ -586,7 +586,7 @@ pub mod birthday {
                             1,
                             reason.as_ref(),
                             |v| { ::mabo::buf::size_string(v) },
-                        ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                        ) + ::mabo::buf::END_MARKER_SIZE
                 }
                 Self::Unknown => ::mabo::buf::size_variant_id(3),
             }
@@ -712,4 +712,3 @@ pub mod birthday {
         }
     }
 }
-

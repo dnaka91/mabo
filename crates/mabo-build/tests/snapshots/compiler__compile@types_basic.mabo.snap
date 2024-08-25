@@ -473,7 +473,6 @@ impl ::mabo::buf::Size for Sample {
             + ::mabo::buf::size_field(
                 21,
                 || { ::mabo::buf::size_array(f21, |v| { ::mabo::buf::size_u32(*v) }) },
-            ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+            ) + ::mabo::buf::END_MARKER_SIZE
     }
 }
-

@@ -111,7 +111,7 @@ func (v *Sample) Size() int {
 	size += buf.SizeField(2, func() int {
 		return v.WithGenerics.Size()
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -260,8 +260,6 @@ func (v *KeyValue[K, V]) Size() int {
 	size += buf.SizeField(2, func() int {
 		return v.Value.Size()
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
-
-

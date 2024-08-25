@@ -156,7 +156,7 @@ impl ::mabo::buf::Size for Sample {
                 ::mabo::buf::size_variant_id(2)
                     + ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*n0) })
                     + ::mabo::buf::size_field(2, || { ::mabo::buf::size_u8(*n1) })
-                    + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    + ::mabo::buf::END_MARKER_SIZE
             }
             Self::Variant3 { field1, field2 } => {
                 ::mabo::buf::size_variant_id(3)
@@ -169,9 +169,8 @@ impl ::mabo::buf::Size for Sample {
                                 |v| { ::mabo::buf::size_bool(*v) },
                             )
                         },
-                    ) + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                    ) + ::mabo::buf::END_MARKER_SIZE
             }
         }
     }
 }
-

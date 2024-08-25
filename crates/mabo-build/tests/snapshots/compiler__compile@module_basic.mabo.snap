@@ -134,8 +134,7 @@ pub mod a {
             let Self { value, inner } = self;
             ::mabo::buf::size_field(1, || { ::mabo::buf::size_u32(*value) })
                 + ::mabo::buf::size_field(2, || { inner.size() })
-                + ::mabo::buf::size_u32(::mabo::buf::END_MARKER)
+                + ::mabo::buf::END_MARKER_SIZE
         }
     }
 }
-

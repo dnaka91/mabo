@@ -104,7 +104,7 @@ func (v *SampleStruct) Size() int {
 	size += buf.SizeField(2, func() int {
 		return buf.SizeBool(v.B)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -248,7 +248,7 @@ func (v *SampleEnum_Two) Size() int {
 	size += buf.SizeField(2, func() int {
 		return buf.SizeU64(v.N1)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
 
@@ -343,8 +343,6 @@ func (v *SampleEnum_Three) Size() int {
 	size += buf.SizeField(2, func() int {
 		return buf.SizeBool(v.Field2)
 	})
-	size += buf.SizeU32(buf.EndMarker)
+	size += buf.EndMarkerSize
 	return size
 }
-
-

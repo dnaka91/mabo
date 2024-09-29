@@ -16,7 +16,7 @@ use lsp_types::{
         DocumentSymbolRequest, HoverRequest, Request as LspRequest, SemanticTokensFullRequest,
         Shutdown,
     },
-    DocumentSymbol, InitializeParams, SemanticTokens,
+    DocumentSymbol, InitializeParams, InitializedParams, SemanticTokens,
 };
 
 use crate::{cli::Cli, state::GlobalState};
@@ -48,6 +48,8 @@ fn main() -> Result<()> {
     let init_params = serde_json::from_value::<InitializeParams>(params)?;
     let init_result = handlers::initialize(&mut state, init_params)?;
     connection.initialize_finish(id, serde_json::to_value(init_result)?)?;
+
+    handlers::initialized(&mut state, InitializedParams {});
 
     info!("server initialized");
 

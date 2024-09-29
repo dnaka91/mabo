@@ -1,9 +1,12 @@
 #![expect(clippy::needless_pass_by_value, clippy::unnecessary_wraps)]
 
+use std::sync::LazyLock;
+
 use anyhow::{Context, Result};
 use line_index::{LineIndex, TextRange};
 use log::{debug, error, warn};
 use lsp_types::{
+    notification::{DidChangeConfiguration, Notification},
     DeleteFilesParams, DidChangeConfigurationParams, DidChangeTextDocumentParams,
     DidCloseTextDocumentParams, DidOpenTextDocumentParams, DocumentSymbolParams,
     DocumentSymbolResponse, FileOperationFilter, FileOperationPattern, FileOperationPatternKind,
@@ -125,13 +128,18 @@ pub fn initialize(
 }
 
 pub fn initialized(state: &mut GlobalState<'_>, _params: InitializedParams) {
+    static ID: LazyLock<String> = LazyLock::new(|| {
+        use rand::distributions::{Alphanumeric, DistString};
+        Alphanumeric.sample_string(&mut rand::thread_rng(), 24)
+    });
+
     if let Err(e) = state.reload_settings() {
         error!(error:err = *e; "failed loading initial settings");
     }
 
     if let Err(e) = state.client.register_capability(vec![Registration {
-        id: "1".to_owned(),
-        method: "workspace/didChangeConfiguration".to_owned(),
+        id: ID.clone(),
+        method: DidChangeConfiguration::METHOD.to_owned(),
         register_options: None,
     }]) {
         error!(error:err = *e; "failed registering for configuration changes");

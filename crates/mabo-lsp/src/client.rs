@@ -1,6 +1,7 @@
 use std::time::Duration;
 
-use anyhow::{bail, ensure, Result};
+use anyhow::{bail, ensure, Context, Result};
+use log::trace;
 use lsp_server::{Connection, Message, Notification, Request, Response};
 use lsp_types::{
     notification::{Notification as LspNotification, PublishDiagnostics},
@@ -43,19 +44,31 @@ impl<'a> Client<'a> {
         T: LspRequest,
     {
         let req_id = self.next_id();
+        let request = Request::new(req_id.into(), T::METHOD.to_owned(), params).into();
 
-        self.conn.sender.send_timeout(
-            Request::new(req_id.into(), T::METHOD.to_owned(), params).into(),
-            Duration::from_secs(2),
-        )?;
+        trace!("sending request {request:#?}");
 
-        match self.conn.receiver.recv_timeout(Duration::from_secs(2))? {
+        self.conn
+            .sender
+            .send_timeout(request, Duration::from_secs(2))
+            .context("timeout sending request")?;
+
+        match self
+            .conn
+            .receiver
+            .recv_timeout(Duration::from_secs(2))
+            .context("timeout receiving response")?
+        {
             Message::Response(Response {
                 id,
-                result: Some(result),
+                result,
                 error: None,
             }) => {
-                ensure!(id == req_id.into(), "invalid ID");
+                ensure!(
+                    id == req_id.into(),
+                    "invalid ID (wanted {id}, but got {req_id})"
+                );
+                let result = result.unwrap_or(serde_json::Value::Null);
                 serde_json::from_value(result).map_err(Into::into)
             }
             Message::Response(Response {

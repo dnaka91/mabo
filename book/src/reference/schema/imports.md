@@ -1,3 +1,7 @@
+---
+order: 8
+---
+
 # Imports
 
 When splitting data structures into multiple Schema files, imports are used to reference the types defined within. Imports are declared with the `use` statement.

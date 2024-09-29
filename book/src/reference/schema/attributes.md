@@ -1,3 +1,7 @@
+---
+order: 9
+---
+
 # Attributes
 
 The attributes allow to further apply configuration to elements, while not affecting the schema itself. These rather provide either extra information or customize how language specific code is generated.

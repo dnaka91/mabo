@@ -1,3 +1,7 @@
+---
+order: 2
+---
+
 # Ideas
 
 The following are general ideas for this project, that are not yet implemented or even close to being developed, but definitely on the list of ideas for the future.

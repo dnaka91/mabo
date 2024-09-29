@@ -1,3 +1,7 @@
+---
+order: 3
+---
+
 # Project Files
 
 Each Mabo project is identified by a `Mabo.toml` file, usually located at the root of a project. For example, if this is a Rust project, the file would be located next to the `Cargo.toml`.

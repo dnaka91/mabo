@@ -1,5 +1,7 @@
 ---
 layout: page
+title: Team
+order: 1
 ---
 <script setup>
 import {

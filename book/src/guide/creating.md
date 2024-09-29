@@ -1,3 +1,7 @@
+---
+order: 2
+---
+
 # Creating schemas
 
 ## Create the first schema

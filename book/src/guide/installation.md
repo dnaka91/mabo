@@ -1,3 +1,7 @@
+---
+order: 1
+---
+
 # Installation
 
 ## Command Line Interface

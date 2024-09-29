@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import { generateSidebar } from "vitepress-sidebar";
 import maboGrammar from "../../vscode-extension/syntaxes/mabo.tmLanguage.json";
 
 // https://vitepress.dev/reference/site-config
@@ -64,84 +65,14 @@ export default defineConfig({
       { text: "Reference", link: "/reference/schema/", activeMatch: "/reference/" },
     ],
 
-    sidebar: [
-      { text: "Introduction", link: "/introduction" },
-      { text: "Ideas", link: "/ideas" },
-      {
-        text: "User Guide",
-        items: [
-          { text: "Installation", link: "/guide/installation" },
-          { text: "Creating schemas", link: "/guide/creating" },
-          { text: "Generating code", link: "/guide/generating" },
-          { text: "Examples", link: "/guide/examples" },
-        ],
-      },
-      {
-        text: "Reference",
-        items: [
-          {
-            text: "Command Line Interface",
-            link: "/reference/cli/",
-            items: [
-              { text: "mabo init", link: "/reference/cli/init" },
-              { text: "mabo check", link: "/reference/cli/check" },
-              { text: "mabo fmt", link: "/reference/cli/fmt" },
-              { text: "mabo doc", link: "/reference/cli/doc" },
-            ],
-          },
-          {
-            text: "Schema",
-            link: "/reference/schema/",
-            items: [
-              { text: "Structs", link: "/reference/schema/structs" },
-              { text: "Enums", link: "/reference/schema/enums" },
-              { text: "Arrays", link: "/reference/schema/arrays" },
-              { text: "Tuples", link: "/reference/schema/tuples" },
-              { text: "Constants", link: "/reference/schema/constants" },
-              // { text: "Statics", link: "/reference/schema/statics" },
-              { text: "Type Aliases", link: "/reference/schema/type-aliases" },
-              { text: "Modules", link: "/reference/schema/modules" },
-              { text: "Imports", link: "/reference/schema/imports" },
-              // { text: "References", link: "/reference/schema/references" },
-              { text: "Attributes", link: "/reference/schema/attributes" },
-            ],
-          },
-          {
-            text: "Project Files",
-            link: "/reference/project/",
-            items: [{ text: "Packages", link: "/reference/project/packages" }],
-          },
-          {
-            text: "Wire Format",
-            link: "/reference/wire-format",
-          },
-          // {
-          //   text: "Compiler",
-          //   link: "/reference/compiler",
-          // },
-          {
-            text: "Generators",
-            link: "/reference/generators/",
-            items: [
-              { text: "Doc", link: "/reference/generators/doc" },
-              { text: "Rust", link: "/reference/generators/rust" },
-              { text: "Go", link: "/reference/generators/go" },
-              { text: "Kotlin", link: "/reference/generators/kotlin" },
-              { text: "TypeScript", link: "/reference/generators/typescript" },
-              { text: "Python", link: "/reference/generators/python" },
-            ],
-          },
-        ],
-      },
-      {
-        text: "Miscellaneous",
-        items: [
-          { text: "Team", link: "/misc/team" },
-          { text: "License", link: "/misc/license" },
-          { text: "Changelog", link: "/misc/changelog" },
-        ],
-      },
-    ],
+    sidebar: generateSidebar({
+      documentRootPath: "src/",
+      useTitleFromFileHeading: true,
+      useTitleFromFrontmatter: true,
+      useFolderTitleFromIndexFile: true,
+      sortMenusByFrontmatterOrder: true,
+      excludeFilesByFrontmatterFieldName: "exclude",
+    }),
 
     outline: "deep",
 

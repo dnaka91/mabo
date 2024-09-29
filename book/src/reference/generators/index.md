@@ -1,3 +1,7 @@
+---
+order: 5
+---
+
 # Generators
 
 Code generators are the part of Mabo that turn the schema into actual source code that can be consumed by projects.

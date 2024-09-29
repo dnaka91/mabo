@@ -1,4 +1,8 @@
-# Wire format
+---
+order: 4
+---
+
+# Wire Format
 
 The wire format takes a lot of inspiration from both [bincode](https://github.com/bincode-org/bincode) and [postcard](https://github.com/jamesmunns/postcard). As tags are involved to identify fields, it takes some ideas from [Protobuf](https://protobuf.dev) and [Cap'n Proto](https://capnproto.org) as well.
 

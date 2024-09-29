@@ -1,6 +1,10 @@
-# Strongly typed encoding format
+---
+order: 1
+---
 
-Schema-based binary data format, with a type system as strong as Rust's.
+# Introduction
+
+Strongly typed and schema-based binary data format, with a type system as strong as Rust's.
 
 Mabo is a data encoding format, that borrows a lot from existing schema-based formats like [Protobuf](https://protobuf.dev), [Cap'n Proto](https://capnproto.org) and [Flatbuffers](https://flatbuffers.dev). It takes some ideas from the binary data formats [Postcard](https://github.com/jamesmunns/postcard) and [Bincode](https://github.com/bincode-org/bincode) as well, which are popular choices in the Rust ecosystem.
 

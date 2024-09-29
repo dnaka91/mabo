@@ -10,8 +10,8 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-globset = "0.4.14"
-ignore = "0.4.22"
+globset = "0.4.15"
+ignore = "0.4.23"
 serde.workspace = true
 spdx = "0.10.6"
 thiserror.workspace = true

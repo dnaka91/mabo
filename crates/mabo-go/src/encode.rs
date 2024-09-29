@@ -1,4 +1,4 @@
-#![allow(clippy::too_many_lines)]
+#![expect(clippy::too_many_lines)]
 
 use std::fmt::{self, Display};
 

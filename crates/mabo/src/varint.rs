@@ -6,14 +6,14 @@ macro_rules! zigzag {
     ($from:ty, $to:ty) => {
         paste::paste! {
             #[doc = "Use the _ZigZag_ scheme to encode an `" $from "` as `" $to "`."]
-            #[allow(clippy::cast_sign_loss)]
+            #[expect(clippy::cast_sign_loss)]
             #[inline]
             const fn [<zigzag_encode_ $from>](value: $from) -> $to {
                 ((value << 1) ^ (value >> ($from::BITS - 1))) as $to
             }
 
             #[doc = "Convert a _ZigZag_ encoded `" $from "` back to its original data."]
-            #[allow(clippy::cast_possible_wrap)]
+            #[expect(clippy::cast_possible_wrap)]
             #[inline]
             const fn [<zigzag_decode_ $from>](value: $to) -> $from {
                 ((value >> 1) as $from) ^ (-((value & 0b1) as $from))

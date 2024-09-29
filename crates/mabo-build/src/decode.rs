@@ -198,7 +198,7 @@ fn compile_generics(types: &[&str]) -> (TokenStream, TokenStream) {
         .unwrap_or_default()
 }
 
-#[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
+#[expect(clippy::too_many_lines)]
 fn compile_data_type(opts: &Opts, ty: &Type<'_>, root: bool) -> TokenStream {
     match ty {
         Type::Bool => quote! { ::mabo::buf::decode_bool(r) },

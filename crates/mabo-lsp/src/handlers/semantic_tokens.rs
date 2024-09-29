@@ -108,7 +108,7 @@ define_semantic_token_modifiers! {
     }
 }
 
-#[allow(clippy::cast_possible_truncation, clippy::expect_used)]
+#[expect(clippy::cast_possible_truncation, clippy::expect_used)]
 fn token_type_pos(ty: &SemanticTokenType) -> u32 {
     // This should never fail as the above macros ensure every possible constant is in the global
     // list as well. However, if passing a `SemanticTokenType` directly from the `lsp-types` crate
@@ -145,7 +145,6 @@ impl<'a> Visitor<'a> {
         }
     }
 
-    #[allow(clippy::cast_possible_truncation)]
     fn get_range(&self, span: Span) -> Result<lsp_types::Range> {
         let range = self.index.get_range(span)?;
 

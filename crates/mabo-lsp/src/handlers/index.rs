@@ -25,7 +25,7 @@ impl Index {
         self.index = index;
     }
 
-    #[allow(clippy::cast_possible_truncation)]
+    #[expect(clippy::cast_possible_truncation)]
     pub fn get_range(&self, location: impl Into<Range<usize>>) -> Result<lsp::Range> {
         let range = location.into();
 

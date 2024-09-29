@@ -10,7 +10,7 @@ use clap::CommandFactory;
 
 use self::cli::Cli;
 
-#[allow(dead_code)]
+#[expect(dead_code)]
 #[path = "../src/cli.rs"]
 mod cli;
 

@@ -372,7 +372,7 @@ pub mod bincode {
 pub mod vu128 {
     macro_rules! encode {
         ($name:ident, $ty:ident, $len_mask:literal) => {
-            #[allow(clippy::cast_possible_truncation)]
+            #[expect(clippy::cast_possible_truncation)]
             #[inline]
             pub fn $name(value: $ty, buf: &mut [u8]) {
                 assert!(buf.len() > std::mem::size_of::<$ty>());

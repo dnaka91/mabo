@@ -1,6 +1,6 @@
 //! Runtime support crate for the Mabo encoding format.
 
-#![allow(
+#![expect(
     clippy::cast_possible_truncation,
     clippy::implicit_hasher,
     clippy::inline_always,

@@ -181,7 +181,7 @@ fn compile_generics(types: &[&str]) -> (TokenStream, TokenStream) {
         .unwrap_or_default()
 }
 
-#[allow(clippy::needless_pass_by_value, clippy::too_many_lines)]
+#[expect(clippy::needless_pass_by_value)]
 pub(crate) fn compile_data_type(opts: &Opts, ty: &Type<'_>, name: TokenStream) -> TokenStream {
     match &ty {
         Type::Bool => quote! { ::mabo::buf::size_bool(*#name) },

@@ -1,5 +1,3 @@
-#![allow(clippy::type_complexity)]
-
 use std::{
     collections::{HashMap, HashSet},
     fmt::Debug,
@@ -267,7 +265,7 @@ where
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
 /// `T` type fails to decode.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_array<const N: usize, R, T, D>(r: &mut R, decode: D) -> Result<[T; N]>
 where
     R: Buf,
@@ -332,7 +330,7 @@ decode_non_zero_int!(i8, i16, i32, i64, i128);
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, the
 /// string is not valid UTF-8, or the string is empty.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZeroString> {
     String::from_utf8(decode_non_zero_bytes_std(r)?.into_inner())
         .map(|v| NonZeroString::new(v).unwrap())
@@ -345,7 +343,7 @@ pub fn decode_non_zero_string(r: &mut impl Buf) -> Result<NonZeroString> {
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
 /// byte array is empty.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZeroBytes> {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
@@ -360,7 +358,7 @@ pub fn decode_non_zero_bytes_std(r: &mut impl Buf) -> Result<NonZeroBytes> {
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, or the
 /// byte array is empty.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
     let len = decode_u64(r)?;
     ensure_not_empty!(len);
@@ -375,7 +373,7 @@ pub fn decode_non_zero_bytes_bytes(r: &mut impl Buf) -> Result<NonZero<Bytes>> {
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, the
 /// collection is empty, or the `T` type fails to decode.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_non_zero_vec<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<Vec<T>>>
 where
     R: Buf,
@@ -401,7 +399,7 @@ where
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, the
 /// collection is empty, or the `K`/`V` type fails to decode.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_non_zero_hash_map<R, K, V, DK, DV>(
     r: &mut R,
     decode_key: DK,
@@ -433,7 +431,7 @@ where
 ///
 /// Will return `Err` if the buffer does not have enough remaining data to read the value, the
 /// collection is empty, or the `T` type fails to decode.
-#[allow(clippy::missing_panics_doc)]
+#[expect(clippy::missing_panics_doc)]
 pub fn decode_non_zero_hash_set<R, T, D>(r: &mut R, decode: D) -> Result<NonZero<HashSet<T>>>
 where
     R: Buf,

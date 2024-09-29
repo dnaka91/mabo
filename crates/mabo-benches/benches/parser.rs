@@ -1,4 +1,4 @@
-#![allow(missing_docs)]
+#![expect(missing_docs)]
 
 use divan::{black_box, Bencher};
 use indoc::indoc;

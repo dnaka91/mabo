@@ -45,7 +45,7 @@ impl<T, P> Punctuated<T, P> {
     ///
     /// **Note:** There is no `is_empty` method because this type always carries at least one
     /// element and can never be empty.
-    #[allow(clippy::len_without_is_empty)]
+    #[expect(clippy::len_without_is_empty)]
     #[must_use]
     pub fn len(&self) -> usize {
         self.values.len() + 1
@@ -134,7 +134,6 @@ impl<T, P: Copy> ExactSizeIterator for Iter<'_, T, P> {
 /// This `struct` is created by the [`values`](Punctuated::values) method on [`Punctuated`]. See
 /// its documentation for more.
 pub struct ValuesIter<'a, T, P = token::Comma> {
-    #[allow(clippy::type_complexity)]
     items: slice::Iter<'a, (T, P)>,
     last: iter::Once<&'a T>,
 }

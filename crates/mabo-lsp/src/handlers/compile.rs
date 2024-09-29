@@ -241,7 +241,7 @@ fn diagnostic_with_related(
     Diagnostic::new(range, None, None, None, message, Some(related), None)
 }
 
-#[allow(clippy::expect_used)]
+#[expect(clippy::expect_used)]
 fn get_range(index: &Index, location: Range<usize>) -> lsp::Range {
     index
         .get_range(location)

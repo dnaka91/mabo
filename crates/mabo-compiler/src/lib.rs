@@ -18,7 +18,7 @@
 //! mabo_compiler::resolve_schemas(&[("test", &schema)]).unwrap();
 //! ```
 
-#![allow(clippy::module_name_repetitions)]
+#![expect(clippy::module_name_repetitions)]
 
 use mabo_parser::Spanned;
 pub use resolve::schemas as resolve_schemas;

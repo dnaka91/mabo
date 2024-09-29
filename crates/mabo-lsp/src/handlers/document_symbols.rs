@@ -150,7 +150,7 @@ fn visit_import(index: &Index, item: &Import<'_>) -> Result<DocumentSymbol> {
     ))
 }
 
-#[allow(deprecated)]
+#[expect(deprecated)]
 fn create_symbol(
     name: &str,
     kind: SymbolKind,

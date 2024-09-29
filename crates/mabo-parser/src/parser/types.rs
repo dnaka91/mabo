@@ -99,7 +99,7 @@ fn parse_basic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 
 fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     /// Create a parser for a single generic parameter like `<T>`.
-    #[allow(clippy::inline_always)]
+    #[expect(clippy::inline_always)]
     #[inline(always)]
     fn parse_single<'i>(
         convert: impl Fn(token::Angle, Type<'i>) -> DataType<'i>,
@@ -112,7 +112,7 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     }
 
     /// Create a parser for two generic parameters like `<K, V>`.
-    #[allow(clippy::inline_always)]
+    #[expect(clippy::inline_always)]
     #[inline(always)]
     fn parse_pair<'i>(
         convert: impl Fn(token::Angle, Type<'i>, token::Comma, Type<'i>) -> DataType<'i>,

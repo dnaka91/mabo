@@ -1,4 +1,4 @@
-#![allow(clippy::needless_pass_by_value, clippy::unnecessary_wraps)]
+#![expect(clippy::needless_pass_by_value, clippy::unnecessary_wraps)]
 
 use anyhow::{Context, Result};
 use line_index::{LineIndex, TextRange};

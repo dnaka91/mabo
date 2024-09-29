@@ -180,7 +180,7 @@ fn render_wire_size(size: &WireSize) -> String {
     buf
 }
 
-#[allow(clippy::trivially_copy_pass_by_ref)]
+#[expect(clippy::trivially_copy_pass_by_ref)]
 fn path_up(len: usize, i: &usize) -> PathUp {
     debug_assert!(len > 0);
     debug_assert!(len > *i);

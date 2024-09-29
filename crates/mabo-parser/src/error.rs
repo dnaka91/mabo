@@ -4,7 +4,7 @@
 //! The root element is the [`ParseSchemaError`], which forms a tree of errors down to a specific
 //! error that caused parsing to fail.
 
-#![allow(clippy::module_name_repetitions)]
+#![expect(clippy::module_name_repetitions)]
 
 use std::{
     error::Error,

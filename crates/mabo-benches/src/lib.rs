@@ -1,9 +1,8 @@
-#![allow(
-    missing_docs,
+#![allow(missing_docs)]
+#![expect(
     clippy::cast_possible_wrap,
     clippy::cast_precision_loss,
     clippy::cast_sign_loss,
-    clippy::missing_errors_doc,
     clippy::missing_panics_doc
 )]
 

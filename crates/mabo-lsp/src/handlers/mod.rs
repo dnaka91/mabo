@@ -249,13 +249,15 @@ pub fn hover(state: &mut GlobalState<'_>, params: HoverParams) -> Result<Option<
                 .ok()
                 .zip(Some(file.borrow_index()))
         }) {
-            hover::visit_schema(index, schema, position)?.map(|(value, range)| Hover {
-                contents: HoverContents::Markup(MarkupContent {
-                    kind: MarkupKind::Markdown,
-                    value,
-                }),
-                range: Some(range),
-            })
+            hover::visit_schema(&state.settings.hover, index, schema, position)?.map(
+                |(value, range)| Hover {
+                    contents: HoverContents::Markup(MarkupContent {
+                        kind: MarkupKind::Markdown,
+                        value,
+                    }),
+                    range: Some(range),
+                },
+            )
         } else {
             None
         },

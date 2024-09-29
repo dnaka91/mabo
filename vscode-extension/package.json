@@ -79,11 +79,17 @@
     "configuration": {
       "title": "Mabo",
       "properties": {
-        "mabo.maxNumberOfProblems": {
+        "mabo.hover.showNextId": {
           "scope": "resource",
-          "type": "number",
-          "default": 100,
-          "description": "Controls the maximum number of problems produced by the server."
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show the next available ID on structs and enums."
+        },
+        "mabo.hover.showWireSize": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to calculate the approximate wire size of elements."
         }
       }
     },

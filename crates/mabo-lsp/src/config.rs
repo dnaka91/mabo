@@ -1,15 +1,24 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Global {
-    pub max_number_of_problems: u32,
+    #[serde(default)]
+    pub hover: Hover,
 }
 
-impl Default for Global {
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Hover {
+    pub show_next_id: bool,
+    pub show_wire_size: bool,
+}
+
+impl Default for Hover {
     fn default() -> Self {
         Self {
-            max_number_of_problems: 100,
+            show_next_id: true,
+            show_wire_size: true,
         }
     }
 }

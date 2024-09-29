@@ -1,3 +1,7 @@
+---
+order: 1
+---
+
 # Structs
 
 Structs are a short naming for _structures_ and define a series of data elements with their respective type. Those individual elements can be named or unnamed.

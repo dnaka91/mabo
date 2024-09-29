@@ -1,3 +1,7 @@
+---
+order: 6
+---
+
 # Type aliases
 
 | Language      | Example            |

@@ -1,3 +1,7 @@
+---
+order: 1
+---
+
 # Command Line Interface
 
 To ease and support the development of Mabo schema files, a variety of tools are available. These are all bundled together into a single binary that can be utilized through the terminal.

@@ -85,7 +85,7 @@ input_file: crates/mabo-parser/tests/inputs/enum_generics.mabo
     Enum
     <a href="index.html">enum_generics</a>::<span class="name-enum">Sample</span>
   </h2>
-  <pre class="item-definition my-2">enum Sample&lt;A, B, C, D&gt; {
+  <pre class="item-definition my-2">enum Sample&#60;A, B, C, D&#62; {
     One @1,
     Two(A @1, B @2) @2,
     Three {

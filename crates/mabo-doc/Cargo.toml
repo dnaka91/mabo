@@ -11,9 +11,10 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
-askama = { version = "0.12.1", default-features = false, features = ["markdown"] }
+comrak = { version = "0.28.0", default-features = false }
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-meta = { path = "../mabo-meta" }
+rinja = { version = "0.3.4", default-features = false }
 
 [dev-dependencies]
 glob.workspace = true

@@ -85,7 +85,7 @@ input_file: crates/mabo-parser/tests/inputs/struct_many_ws.mabo
     Struct
     <a href="index.html">struct_many_ws</a>::<span class="name-struct">Sample</span>
   </h2>
-  <pre class="item-definition my-2">struct Sample&lt;T&gt; {
+  <pre class="item-definition my-2">struct Sample&#60;T&#62; {
     a: u32 @1,
     b: bool @2,
     c: T @3,

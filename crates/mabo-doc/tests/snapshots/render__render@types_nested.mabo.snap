@@ -86,7 +86,7 @@ input_file: crates/mabo-parser/tests/inputs/types_nested.mabo
     <a href="index.html">types_nested</a>::<span class="name-struct">Sample</span>
   </h2>
   <pre class="item-definition my-2">struct Sample {
-    value: vec&lt;option&lt;non_zero&lt;hash_map&lt;i64, box&lt;string&gt;&gt;&gt;&gt;&gt; @1,
+    value: vec&#60;option&#60;non_zero&#60;hash_map&#60;i64, box&#60;string&#62;&#62;&#62;&#62;&#62; @1,
 }</pre>
   <div class="markdown pl-6">
     
@@ -104,7 +104,7 @@ input_file: crates/mabo-parser/tests/inputs/types_nested.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">value</span>:
-        <span class="field-type">vec&lt;option&lt;non_zero&lt;hash_map&lt;i64, box&lt;string&gt;&gt;&gt;&gt;&gt;</span>
+        <span class="field-type">vec&#60;option&#60;non_zero&#60;hash_map&#60;i64, box&#60;string&#62;&#62;&#62;&#62;&#62;</span>
         <span class="field-id">@1</span>
       </code>
       <div class="markdown pl-4">

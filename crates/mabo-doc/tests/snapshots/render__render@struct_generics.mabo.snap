@@ -85,7 +85,7 @@ input_file: crates/mabo-parser/tests/inputs/struct_generics.mabo
     Struct
     <a href="index.html">struct_generics</a>::<span class="name-struct">KeyValue</span>
   </h2>
-  <pre class="item-definition my-2">struct KeyValue&lt;K, V&gt; {
+  <pre class="item-definition my-2">struct KeyValue&#60;K, V&#62; {
     key: K @1,
     value: V @2,
 }</pre>

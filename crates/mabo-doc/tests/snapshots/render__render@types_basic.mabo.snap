@@ -100,11 +100,11 @@ input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
     f12: f32 @12,
     f13: f64 @13,
     f14: string @14,
-    f15: &amp;string @15,
+    f15: &#38;string @15,
     f16: bytes @16,
-    f17: &amp;bytes @17,
-    f18: box&lt;string&gt; @18,
-    f19: box&lt;bytes&gt; @19,
+    f17: &#38;bytes @17,
+    f18: box&#60;string&#62; @18,
+    f19: box&#60;bytes&#62; @19,
     f20: (u32, u32, u32) @20,
     f21: [u32; 12] @21,
 }</pre>
@@ -404,7 +404,7 @@ input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f15</span>:
-        <span class="field-type">&amp;string</span>
+        <span class="field-type">&#38;string</span>
         <span class="field-id">@15</span>
       </code>
       <div class="markdown pl-4">
@@ -444,7 +444,7 @@ input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f17</span>:
-        <span class="field-type">&amp;bytes</span>
+        <span class="field-type">&#38;bytes</span>
         <span class="field-id">@17</span>
       </code>
       <div class="markdown pl-4">
@@ -464,7 +464,7 @@ input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f18</span>:
-        <span class="field-type">box&lt;string&gt;</span>
+        <span class="field-type">box&#60;string&#62;</span>
         <span class="field-id">@18</span>
       </code>
       <div class="markdown pl-4">
@@ -484,7 +484,7 @@ input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">f19</span>:
-        <span class="field-type">box&lt;bytes&gt;</span>
+        <span class="field-type">box&#60;bytes&#62;</span>
         <span class="field-id">@19</span>
       </code>
       <div class="markdown pl-4">

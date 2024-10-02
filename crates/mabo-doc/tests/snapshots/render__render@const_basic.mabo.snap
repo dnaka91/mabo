@@ -253,7 +253,7 @@ input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
     Constant
     <a href="index.html">const_basic</a>::<span class="name-const">STRING</span>
   </h2>
-  <pre class="item-definition my-2">const STRING: string = &quot;value&quot;;</pre>
+  <pre class="item-definition my-2">const STRING: string = &#34;value&#34;;</pre>
   <div class="markdown pl-6">
     
   </div>

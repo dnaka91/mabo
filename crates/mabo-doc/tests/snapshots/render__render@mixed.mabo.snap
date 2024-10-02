@@ -135,7 +135,7 @@ input_file: crates/mabo-parser/tests/inputs/mixed.mabo
   </h2>
   <pre class="item-definition my-2">struct User {
     name: FullName @1,
-    address: option&lt;Address&gt; @2,
+    address: option&#60;Address&#62; @2,
     age: u8 @3,
     birthday: birthday::DayOfBirth @4,
 }</pre>
@@ -167,7 +167,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">address</span>:
-        <span class="field-type">option&lt;Address&gt;</span>
+        <span class="field-type">option&#60;Address&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -248,7 +248,7 @@ in a <strong>type safe</strong> way.</p>
   </h2>
   <pre class="item-definition my-2">struct FullName {
     first: string @1,
-    middle: option&lt;string&gt; @2,
+    middle: option&#60;string&#62; @2,
     last: string @3,
 }</pre>
   <div class="markdown pl-6">
@@ -287,7 +287,7 @@ in a <strong>type safe</strong> way.</p>
     <li class="field-definition">
       <code>
         <span class="field-name">middle</span>:
-        <span class="field-type">option&lt;string&gt;</span>
+        <span class="field-type">option&#60;string&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -725,7 +725,7 @@ on the month.</p>
         day: u8 @3,
     } @1,
     Secret {
-        reason: option&lt;string&gt; @1,
+        reason: option&#60;string&#62; @1,
     } @2,
     Unknown @3,
 }</pre>
@@ -814,7 +814,7 @@ on the month.</p>
           <li>
             <code>
               <span class="field-name">reason</span>:
-              <span class="field-type">option&lt;string&gt;</span>
+              <span class="field-type">option&#60;string&#62;</span>
               <span class="field-id">@1</span>
             </code>
             <div class="markdown pl-4">

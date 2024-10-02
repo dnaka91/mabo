@@ -103,7 +103,7 @@ input_file: crates/mabo-parser/tests/inputs/types_ref.mabo
   </h2>
   <pre class="item-definition my-2">struct Sample {
     basic: Test123 @1,
-    with_generics: KeyValue&lt;u32, bool&gt; @2,
+    with_generics: KeyValue&#60;u32, bool&#62; @2,
 }</pre>
   <div class="markdown pl-6">
     
@@ -131,7 +131,7 @@ input_file: crates/mabo-parser/tests/inputs/types_ref.mabo
     <li class="field-definition">
       <code>
         <span class="field-name">with_generics</span>:
-        <span class="field-type">KeyValue&lt;u32, bool&gt;</span>
+        <span class="field-type">KeyValue&#60;u32, bool&#62;</span>
         <span class="field-id">@2</span>
       </code>
       <div class="markdown pl-4">
@@ -215,7 +215,7 @@ input_file: crates/mabo-parser/tests/inputs/types_ref.mabo
     Struct
     <a href="index.html">types_ref</a>::<span class="name-struct">KeyValue</span>
   </h2>
-  <pre class="item-definition my-2">struct KeyValue&lt;K, V&gt; {
+  <pre class="item-definition my-2">struct KeyValue&#60;K, V&#62; {
     key: K @1,
     value: V @2,
 }</pre>

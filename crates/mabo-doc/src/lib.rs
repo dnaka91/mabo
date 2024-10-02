@@ -3,8 +3,8 @@
 use std::rc::Rc;
 
 use anyhow::Result;
-use askama::Template;
 use mabo_compiler::simplify::{Const, Definition, Enum, Module, Schema, Struct, TypeAlias};
+use rinja::Template;
 
 mod templates;
 

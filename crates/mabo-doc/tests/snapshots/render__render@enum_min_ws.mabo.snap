@@ -85,7 +85,7 @@ input_file: crates/mabo-parser/tests/inputs/enum_min_ws.mabo
     Enum
     <a href="index.html">enum_min_ws</a>::<span class="name-enum">Sample</span>
   </h2>
-  <pre class="item-definition my-2">enum Sample&lt;T&gt; {
+  <pre class="item-definition my-2">enum Sample&#60;T&#62; {
     One @1,
     Two(u32 @1, u64 @2, T @3) @2,
     Three {

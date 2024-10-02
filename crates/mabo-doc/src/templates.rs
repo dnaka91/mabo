@@ -3,12 +3,44 @@ use std::{
     rc::Rc,
 };
 
-use askama::Template;
 use mabo_compiler::simplify::{
     Const, Definition, Enum, ExternalType, Field, FieldKind, Literal, Module, Struct, Type,
     TypeAlias,
 };
 use mabo_meta::WireSize;
+use rinja::Template;
+
+mod filters {
+    #![expect(clippy::needless_pass_by_value, clippy::unnecessary_wraps)]
+
+    use comrak::{ExtensionOptions, ParseOptions, RenderOptions};
+    use rinja::filters::Safe;
+
+    pub fn markdown(s: String) -> rinja::Result<Safe<String>> {
+        let mut extension = ExtensionOptions::default();
+        extension.strikethrough = true;
+        extension.tagfilter = true;
+        extension.table = true;
+        extension.autolink = true;
+        extension.tasklist = true;
+        extension.superscript = true;
+        extension.footnotes = true;
+
+        let parse = ParseOptions::default();
+
+        let mut render = RenderOptions::default();
+        render.escape = true;
+
+        Ok(Safe(comrak::markdown_to_html(
+            &s,
+            &comrak::Options {
+                extension,
+                parse,
+                render,
+            },
+        )))
+    }
+}
 
 #[derive(Template)]
 #[template(path = "index.html")]

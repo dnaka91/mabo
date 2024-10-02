@@ -107,6 +107,10 @@ All notable changes to this project will be documented in this file.
   > 
   > This now allows to run the LSP server with any of the official encodings
   > UTF-8, UTF-16 and UTF-32.
+- _lsp_: Make hover info configurable ([2b22a2d](https://github.com/dnaka91/mabo/commit/2b22a2d0e333670612851e538f7a8a7887f7797a))
+  > As a way to try out config loading from the LSP, create settings that
+  > allow to hide the _next ID_ and _wire size_ information in the hover of
+  > elements.
 - _parser_: Add `simd` feature to the parser ([443c32c](https://github.com/dnaka91/mabo/commit/443c32c93622764a89cd3f0682ef8b1c6a6723dc))
   > The `winnow` crate has a `simd` feature which enables some extra
   > performance improvements. This might limit possible target platforms for
@@ -266,6 +270,9 @@ All notable changes to this project will be documented in this file.
   > Only the keyword location was repoted as semantic token (in the LSP),
   > but more information was already available which is now properly added
   > to the token list.
+- Improve CLI output coloring ([c78dd04](https://github.com/dnaka91/mabo/commit/c78dd046f25433ccdb8a81e7e922580ff804c897))
+  > Inspired by https://github.com/rustic-rs/rustic, adjust the `clap`
+  > default style for a more delightful color theme.
 
 ### 🐛 Bug Fixes
 
@@ -297,6 +304,11 @@ All notable changes to this project will be documented in this file.
 - _lsp_: Solve the hanging shutdown problem ([a9836cb](https://github.com/dnaka91/mabo/commit/a9836cb181d6292c0e53c28eabe10fd4a1e0536f))
   > The connection instance was kept alive, which caused the background
   > threads to idle as they were waiting for all channels to be dropped.
+- _lsp_: Work around missing initialized call ([c197855](https://github.com/dnaka91/mabo/commit/c19785561202254f9470022cdfa639903885ae2e))
+  > The client is supposed to send an `initialized` notification, but that
+  > never happens, so we call it ourselves and solve a few additional issues
+  > around the existing code that was never triggered due to the lack of the
+  > notification.
 - Don&apos;t double wrap optional types in decode ([a6d3d4b](https://github.com/dnaka91/mabo/commit/a6d3d4bde28d28acb0afba123949ed7e5cbfeb98))
 - Extend playground and correct issues ([ed24491](https://github.com/dnaka91/mabo/commit/ed24491a8361574bb295d34aad6fc70ed408777b))
 - Missing semicolon in tuple structs ([d616e92](https://github.com/dnaka91/mabo/commit/d616e92414072a396e448f7b8cd39607b69fbbbe))
@@ -347,6 +359,10 @@ All notable changes to this project will be documented in this file.
 - Update winnow to fix broken integer parsing ([1f1790a](https://github.com/dnaka91/mabo/commit/1f1790a188db58b01e50804566d86265b919138b))
   > Version 0.6 introduced a bug that caused the literal `0` not to be
   > parsed as valid integer anymore. This was fixed with 0.6.1.
+- Properly calculate end marker size ([27c1bf3](https://github.com/dnaka91/mabo/commit/27c1bf3232631bd49c30841cb48682f442ad9338))
+  > Properly calculate the end marker as always one byte, as the regular
+  > sizing functions for integers define it wrongly as zero-length. That is,
+  > because a value of 0 encoded as varint would have a length of zero.
 
 ### 📚 Documentation
 
@@ -395,6 +411,12 @@ All notable changes to this project will be documented in this file.
   > This section was still empty and despite even now being somewhat
   > incomplete, at least provides some basic explanation of the importing
   > system.
+- _doc_: Replace askama with rinja ([23e943b](https://github.com/dnaka91/mabo/commit/23e943b356cf2739cdc69126bef531c04344029c))
+  > The maintainers of rustdoc and docs.rs forked the `askama` crate and
+  > fixed a lot of the pain points existing in askama.
+  > 
+  > Therefore, switch to `rinja` (the fork) as a better alternative for
+  > rendering the docs of Mabo schemas.
 - _parser_: Add missing doc for new field ([7f4ca98](https://github.com/dnaka91/mabo/commit/7f4ca98c236a41e505bcaa70a2df5fc3aae85b7a))
 - _vscode_: Add dedicated readme for the extension ([38af273](https://github.com/dnaka91/mabo/commit/38af273445a37dc56e04a90c85f0f57ae5621a1a))
 - Generate more stylish changelog ([5319fb3](https://github.com/dnaka91/mabo/commit/5319fb3417a830042e7bc220fe283046923da349))
@@ -446,6 +468,10 @@ All notable changes to this project will be documented in this file.
   > 
   > This currently has the most visible impact on the compiler's validation
   > step as it internally makes heavy use of hash maps.
+- Add benchmark for vu128 varint encoding ([d9448f4](https://github.com/dnaka91/mabo/commit/d9448f4f1c12127dd70b6eec200ce58e409aa5bf))
+  > Add a benchmark for a different approach to variable-length integer
+  > encoding called `vu128`, described in
+  > https://john-millikin.com/vu128-efficient-variable-length-integers
 
 ### 🚜 Refactor
 
@@ -555,6 +581,9 @@ All notable changes to this project will be documented in this file.
   > 
   > Also, create some helper parsers for each token to reduce the amount of
   > boilerplate wherever the tokens are used together with other parsers.
+- Fix new lints and some typos ([4a782f5](https://github.com/dnaka91/mabo/commit/4a782f5bb295726a8d5b4437ba0895eb39d8cc0a))
+  > Adjust to the new lints from Rust 1.78 and fix some small typos along
+  > the way.
 
 ### 🧪 Testing
 
@@ -572,6 +601,7 @@ All notable changes to this project will be documented in this file.
 - _ci_: Setup GitHub Actions to deploy the book ([cf24bbb](https://github.com/dnaka91/mabo/commit/cf24bbb0e55955e37233f9719f046bb482a8d712))
 - _ci_: Improve path filters for book deployment ([8b79f6f](https://github.com/dnaka91/mabo/commit/8b79f6f03787edde0db881ab0e61b6e163924709))
 - _ci_: Create .nojekyll marker file for the book ([b51681f](https://github.com/dnaka91/mabo/commit/b51681f377640421249d9d9e180446f8ae16142a))
+- _ci_: Bump GH Actions versions ([88ee4f4](https://github.com/dnaka91/mabo/commit/88ee4f426308cb21d9fbfcbe40b8fb98949b609c))
 - _doc_: Fix ambiguous links in the Rust docs ([e5d73fe](https://github.com/dnaka91/mabo/commit/e5d73fe68759aab1721f74e9845c57ea74fbd911))
 - _lsp_: Remove duplicate log message ([e8cfa08](https://github.com/dnaka91/mabo/commit/e8cfa08e0798c924c61c555fc74359ad2c660bb0))
 - Initial commit ([5eb2f2b](https://github.com/dnaka91/mabo/commit/5eb2f2b9687146363974ea645de22a8441e890a1))
@@ -607,5 +637,12 @@ All notable changes to this project will be documented in this file.
   > The effects are likely better runtime performance and most notably
   > reduced binary size.
 - Update license link in readme ([d8f7061](https://github.com/dnaka91/mabo/commit/d8f706154a4adc14397fcfa12e9514db9571381d))
+- Use new `expect` attribute over `allow` ([3c71f36](https://github.com/dnaka91/mabo/commit/3c71f3636b2fdac270fea39d5ed5c291521e78bd))
+  > The latest Rust version introduced a new `expect` attribute which
+  > verifies that the allowed lint is actually being triggered by the code
+  > it's used for.
+  > 
+  > This allows to keep the amount of extra allow rules down by only really
+  > having those that are needed to make Clippy happy.
 
 <!-- generated by git-cliff -->

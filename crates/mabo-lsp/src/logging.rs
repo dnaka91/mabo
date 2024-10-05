@@ -16,6 +16,15 @@ use time::{OffsetDateTime, UtcOffset, format_description::FormatItem, macros::fo
 
 static FORMAT_HMS: &[FormatItem<'_>] = format_description!("[hour]:[minute]:[second]");
 
+#[cfg(target_os = "wasi")]
+pub fn init(conn: Option<Connection>) -> Result<()> {
+    let offset = UtcOffset::UTC;
+
+    log::set_max_level(LevelFilter::Trace);
+    log::set_boxed_logger(Box::new(StderrLogger::new(offset))).map_err(Into::into)
+}
+
+#[cfg(not(target_os = "wasi"))]
 pub fn init(conn: Option<Connection>) -> Result<()> {
     let offset = UtcOffset::current_local_offset()?;
 

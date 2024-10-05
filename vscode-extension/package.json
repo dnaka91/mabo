@@ -233,7 +233,7 @@
     "dependencies": false
   },
   "scripts": {
-    "esbuild": "esbuild src/extension.ts --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --bundle",
+    "esbuild": "esbuild src/extension.ts --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=es2020 --sourcemap --bundle",
     "watch": "bun run esbuild --watch",
     "build": "bun run esbuild --minify",
     "lint": "tsc && biome check --write src/*.ts",
@@ -244,14 +244,16 @@
   },
   "engines": {
     "node": ">=21",
-    "vscode": "^1.82.0"
+    "vscode": "^1.93.0"
   },
   "dependencies": {
-    "vscode-languageclient": "^9.0.1"
+    "@vscode/wasm-wasi": "^1.0.1",
+    "@vscode/wasm-wasi-lsp": "^0.1.0-pre.8",
+    "vscode-languageclient": "^10.0.0-next.15"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/vscode": "~1.82.0",
+    "@types/vscode": "~1.93.0",
     "@vscode/vsce": "^3.4.0",
     "esbuild": "^0.25.4",
     "js-yaml": "^4.1.0",

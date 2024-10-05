@@ -29,8 +29,22 @@ mod logging;
 mod state;
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
+    let cli = if cfg!(target_os = "wasi") {
+        Cli {
+            stdio: true,
+            pipe: None,
+            socket: None,
+            client_process_id: None,
+        }
+    } else {
+        Cli::parse()
+    };
     logging::init(None)?;
+
+    info!("server starting");
+
+    #[cfg(target_os = "wasi")]
+    std::fs::metadata("/workspace").ok();
 
     let (connection, io_threads) = if cli.stdio {
         Connection::stdio()

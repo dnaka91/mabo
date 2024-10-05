@@ -42,4 +42,4 @@ thiserror = "1.0.64"
 
 [profile.release]
 lto = "thin"
-strip = false
+strip = true

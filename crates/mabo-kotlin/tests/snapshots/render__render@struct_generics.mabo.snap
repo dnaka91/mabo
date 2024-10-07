@@ -1,0 +1,60 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Generic key-value pair.\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/struct_generics.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+/**
+ * Generic key-value pair.
+ */
+public data class KeyValue<K, V>(
+    val key: K,
+    val value: V,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> this.key.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.value.encode(w) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Key.size() } +
+        Sizer.sizeField(2) { this.Value.size() } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<KeyValue<K, V>> {
+        override fun decode(r ByteBuffer): Result<KeyValue<K, V>> = runCatching {
+            var key: K? = null
+            var value: V? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> key = K.decode(r).getOrThrow()
+                    2u -> value = V.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            KeyValue(
+                key ?: throw MissingFieldException(1u, "key"),
+                value ?: throw MissingFieldException(2u, "value"),
+            )
+        }
+    }
+}
+
+

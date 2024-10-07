@@ -1,0 +1,63 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Basic struct.\nstruct Sample {\n    a: u32 @1,\n    /// Second field\n    b: bool @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/struct_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+/**
+ * Basic struct.
+ */
+public data class Sample(
+    val a: UInt,
+    /**
+     * Second field
+     */
+    val b: Boolean,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.a) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.b) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.A) } +
+        Sizer.sizeField(2) { Sizer.sizeBool(this.B) } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var a: UInt? = null
+            var b: Boolean? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> a = Decoder.decodeU32(r).getOrThrow()
+                    2u -> b = Decoder.decodeBool(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Sample(
+                a ?: throw MissingFieldException(1u, "a"),
+                b ?: throw MissingFieldException(2u, "b"),
+            )
+        }
+    }
+}
+
+

@@ -1,0 +1,192 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct Sample {\n    f01: bool @1,\n    f02: u8 @2,\n    f03: u16 @3,\n    f04: u32 @4,\n    f05: u64 @5,\n    f06: u128 @6,\n    f07: i8 @7,\n    f08: i16 @8,\n    f09: i32 @9,\n    f10: i64 @10,\n    f11: i128 @11,\n    f12: f32 @12,\n    f13: f64 @13,\n    f14: string @14,\n    f15: &string @15,\n    f16: bytes @16,\n    f17: &bytes @17,\n    f18: box<string> @18,\n    f19: box<bytes> @19,\n    f20: (u32, u32, u32) @20,\n    f21: [u32; 12] @21,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val f01: Boolean,
+    val f02: UByte,
+    val f03: UShort,
+    val f04: UInt,
+    val f05: ULong,
+    val f06: BigInteger,
+    val f07: Byte,
+    val f08: Short,
+    val f09: Int,
+    val f10: Long,
+    val f11: BigInteger,
+    val f12: Float,
+    val f13: Double,
+    val f14: String,
+    val f15: String,
+    val f16: ByteArray,
+    val f17: ByteArray,
+    val f18: String,
+    val f19: ByteArray,
+    val f20: Tuple3<UInt, UInt, UInt>,
+    val f21: Array<UInt>,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeBool(w, this.f01) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeU8(w, this.f02) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU16(w, this.f03) }
+        Encoder.encodeField(w, 4) { w -> Encoder.encodeU32(w, this.f04) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU64(w, this.f05) }
+        Encoder.encodeField(w, 6) { w -> Encoder.encodeU128(w, this.f06) }
+        Encoder.encodeField(w, 7) { w -> Encoder.encodeI8(w, this.f07) }
+        Encoder.encodeField(w, 8) { w -> Encoder.encodeI16(w, this.f08) }
+        Encoder.encodeField(w, 9) { w -> Encoder.encodeI32(w, this.f09) }
+        Encoder.encodeField(w, 10) { w -> Encoder.encodeI64(w, this.f10) }
+        Encoder.encodeField(w, 11) { w -> Encoder.encodeI128(w, this.f11) }
+        Encoder.encodeField(w, 12) { w -> Encoder.encodeF32(w, this.f12) }
+        Encoder.encodeField(w, 13) { w -> Encoder.encodeF64(w, this.f13) }
+        Encoder.encodeField(w, 14) { w -> Encoder.encodeString(w, this.f14) }
+        Encoder.encodeField(w, 15) { w -> Encoder.encodeString(w, this.f15) }
+        Encoder.encodeField(w, 16) { w -> Encoder.encodeBytes(w, this.f16) }
+        Encoder.encodeField(w, 17) { w -> Encoder.encodeBytes(w, this.f17) }
+        Encoder.encodeField(w, 18) { w -> Encoder.encodeString(w, this.f18) }
+        Encoder.encodeField(w, 19) { w -> Encoder.encodeBytes(w, this.f19) }
+        Encoder.encodeField(w, 20) { w -> w.let { w ->
+                Encoder.encodeU32(w, this.f20.first)
+                Encoder.encodeU32(w, this.f20.second)
+                Encoder.encodeU32(w, this.f20.third)
+            } }
+        Encoder.encodeField(w, 21) { w -> Enoder.encodeArray(w, this.f21) { w, v ->
+                Encoder.encodeU32(w, v)
+            } }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeBool(this.F01) } +
+        Sizer.sizeField(2) { Sizer.sizeU8(this.F02) } +
+        Sizer.sizeField(3) { Sizer.sizeU16(this.F03) } +
+        Sizer.sizeField(4) { Sizer.sizeU32(this.F04) } +
+        Sizer.sizeField(5) { Sizer.sizeU64(this.F05) } +
+        Sizer.sizeField(6) { Sizer.sizeU128(this.F06) } +
+        Sizer.sizeField(7) { Sizer.sizeI8(this.F07) } +
+        Sizer.sizeField(8) { Sizer.sizeI16(this.F08) } +
+        Sizer.sizeField(9) { Sizer.sizeI32(this.F09) } +
+        Sizer.sizeField(10) { Sizer.sizeI64(this.F10) } +
+        Sizer.sizeField(11) { Sizer.sizeI128(this.F11) } +
+        Sizer.sizeField(12) { Sizer.sizeF32(this.F12) } +
+        Sizer.sizeField(13) { Sizer.sizeF64(this.F13) } +
+        Sizer.sizeField(14) { Sizer.sizeString(this.F14) } +
+        Sizer.sizeField(15) { Sizer.sizeString(this.F15) } +
+        Sizer.sizeField(16) { Sizer.sizeBytes(this.F16) } +
+        Sizer.sizeField(17) { Sizer.sizeBytes(this.F17) } +
+        Sizer.sizeField(18) { Sizer.sizeString(this.F18) } +
+        Sizer.sizeField(19) { Sizer.sizeBytes(this.F19) } +
+        Sizer.sizeField(20) { run {
+                0
+                + Sizer.sizeU32(this.F20.F0)
+                + Sizer.sizeU32(this.F20.F1)
+                + Sizer.sizeU32(this.F20.F2)
+            } } +
+        Sizer.sizeField(21) { Sizer.sizeArray(this.F21) { v ->
+                Sizer.sizeU32(v)
+            } } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var f01: Boolean? = null
+            var f02: UByte? = null
+            var f03: UShort? = null
+            var f04: UInt? = null
+            var f05: ULong? = null
+            var f06: BigInteger? = null
+            var f07: Byte? = null
+            var f08: Short? = null
+            var f09: Int? = null
+            var f10: Long? = null
+            var f11: BigInteger? = null
+            var f12: Float? = null
+            var f13: Double? = null
+            var f14: String? = null
+            var f15: String? = null
+            var f16: ByteArray? = null
+            var f17: ByteArray? = null
+            var f18: String? = null
+            var f19: ByteArray? = null
+            var f20: Tuple3<UInt, UInt, UInt>? = null
+            var f21: Array<UInt>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> f01 = Decoder.decodeBool(r).getOrThrow()
+                    2u -> f02 = Decoder.decodeU8(r).getOrThrow()
+                    3u -> f03 = Decoder.decodeU16(r).getOrThrow()
+                    4u -> f04 = Decoder.decodeU32(r).getOrThrow()
+                    5u -> f05 = Decoder.decodeU64(r).getOrThrow()
+                    6u -> f06 = Decoder.decodeU128(r).getOrThrow()
+                    7u -> f07 = Decoder.decodeI8(r).getOrThrow()
+                    8u -> f08 = Decoder.decodeI16(r).getOrThrow()
+                    9u -> f09 = Decoder.decodeI32(r).getOrThrow()
+                    10u -> f10 = Decoder.decodeI64(r).getOrThrow()
+                    11u -> f11 = Decoder.decodeI128(r).getOrThrow()
+                    12u -> f12 = Decoder.decodeF32(r).getOrThrow()
+                    13u -> f13 = Decoder.decodeF64(r).getOrThrow()
+                    14u -> f14 = Decoder.decodeString(r).getOrThrow()
+                    15u -> f15 = Decoder.decodeString(r).getOrThrow()
+                    16u -> f16 = Decoder.decodeBytes(r).getOrThrow()
+                    17u -> f17 = Decoder.decodeBytes(r).getOrThrow()
+                    18u -> f18 = Decoder.decodeString(r).getOrThrow()
+                    19u -> f19 = Decoder.decodeBytes(r).getOrThrow()
+                    20u -> f20 = runCatching {
+                            Tuple3(
+                                Decoder.decodeU32(r)
+                                Decoder.decodeU32(r)
+                                Decoder.decodeU32(r)
+                            )
+                        }.getOrThrow()
+                    21u -> f21 = Decoder.DecodeArray(r) { r ->
+                            Decoder.decodeU32(r)
+                        }.getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Sample(
+                f01 ?: throw MissingFieldException(1u, "f01"),
+                f02 ?: throw MissingFieldException(2u, "f02"),
+                f03 ?: throw MissingFieldException(3u, "f03"),
+                f04 ?: throw MissingFieldException(4u, "f04"),
+                f05 ?: throw MissingFieldException(5u, "f05"),
+                f06 ?: throw MissingFieldException(6u, "f06"),
+                f07 ?: throw MissingFieldException(7u, "f07"),
+                f08 ?: throw MissingFieldException(8u, "f08"),
+                f09 ?: throw MissingFieldException(9u, "f09"),
+                f10 ?: throw MissingFieldException(10u, "f10"),
+                f11 ?: throw MissingFieldException(11u, "f11"),
+                f12 ?: throw MissingFieldException(12u, "f12"),
+                f13 ?: throw MissingFieldException(13u, "f13"),
+                f14 ?: throw MissingFieldException(14u, "f14"),
+                f15 ?: throw MissingFieldException(15u, "f15"),
+                f16 ?: throw MissingFieldException(16u, "f16"),
+                f17 ?: throw MissingFieldException(17u, "f17"),
+                f18 ?: throw MissingFieldException(18u, "f18"),
+                f19 ?: throw MissingFieldException(19u, "f19"),
+                f20 ?: throw MissingFieldException(20u, "f20"),
+                f21 ?: throw MissingFieldException(21u, "f21"),
+            )
+        }
+    }
+}
+
+

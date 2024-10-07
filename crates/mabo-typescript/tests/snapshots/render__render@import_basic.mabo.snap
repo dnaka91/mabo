@@ -1,0 +1,10 @@
+---
+source: crates/mabo-typescript/tests/render.rs
+description: "use other::schema::Sample;\nuse second::submodule;"
+input_file: crates/mabo-parser/tests/inputs/import_basic.mabo
+---
+--- sample.ts
+
+import * from "mabo";
+
+

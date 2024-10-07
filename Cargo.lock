@@ -717,6 +717,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "mabo-kotlin"
+version = "0.1.0"
+dependencies = [
+ "heck 0.5.0",
+ "insta",
+ "mabo-compiler",
+ "mabo-parser",
+ "mabo-project",
+]
+
+[[package]]
 name = "mabo-lsp"
 version = "0.1.0"
 dependencies = [

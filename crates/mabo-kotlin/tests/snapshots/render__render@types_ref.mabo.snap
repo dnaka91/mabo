@@ -1,0 +1,110 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct Sample {\n    basic: Test123 @1,\n    with_generics: KeyValue<u32, bool> @2,\n}\n\nenum Test123 {\n    Value @1,\n}\n\nstruct KeyValue<K, V> {\n    key: K @1,\n    value: V @2,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_ref.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val basic: Test123,
+    val withGenerics: KeyValue<UInt, Boolean>,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> this.basic.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.withGenerics.encode(w) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Basic.size() } +
+        Sizer.sizeField(2) { this.WithGenerics.size() } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var basic: Test123? = null
+            var withGenerics: KeyValue<UInt, Boolean>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> basic = Test123.decode(r).getOrThrow()
+                    2u -> withGenerics = KeyValue<UInt, Boolean>.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Sample(
+                basic ?: throw MissingFieldException(1u, "basic"),
+                withGenerics ?: throw MissingFieldException(2u, "with_generics"),
+            )
+        }
+    }
+}
+
+public sealed class Test123 : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Value -> Encoder.encodeVariantId(w, VariantId(1u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is Value -> Sizer.sizeVariantId(1u)
+    }
+
+    public data object Value : Test123(), Decode<Value>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<Value> = Result.success(Value)
+    }
+}
+
+public data class KeyValue<K, V>(
+    val key: K,
+    val value: V,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> this.key.encode(w) }
+        Encoder.encodeField(w, 2) { w -> this.value.encode(w) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Key.size() } +
+        Sizer.sizeField(2) { this.Value.size() } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<KeyValue<K, V>> {
+        override fun decode(r ByteBuffer): Result<KeyValue<K, V>> = runCatching {
+            var key: K? = null
+            var value: V? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> key = K.decode(r).getOrThrow()
+                    2u -> value = V.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            KeyValue(
+                key ?: throw MissingFieldException(1u, "key"),
+                value ?: throw MissingFieldException(2u, "value"),
+            )
+        }
+    }
+}
+
+

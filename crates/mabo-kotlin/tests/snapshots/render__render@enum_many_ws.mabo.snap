@@ -1,0 +1,118 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Sample enum.\n enum     Sample    {\n\n       One      @1,\n\n       Two  (   u32   @1,     u64     @2)    @2,\n\n            Three     {\n\n                    field1:    u32      @1,\n\n                    field2:    bool     @2,\n\n            }    @3,\n\n }"
+input_file: crates/mabo-parser/tests/inputs/enum_many_ws.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public sealed class Sample : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is One -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Two -> Encoder.encodeVariantId(w, VariantId(2u))
+            is Three -> Encoder.encodeVariantId(w, VariantId(3u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is One -> Sizer.sizeVariantId(1u)
+        is Two -> Sizer.sizeVariantId(2u)
+        is Three -> Sizer.sizeVariantId(3u)
+    }
+
+    public data object One : Sample(), Decode<One>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<One> = Result.success(One)
+    }
+
+    public data class Two(
+        val n0: UInt,
+        val n1: ULong,
+    ) : Sample(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.n0) }
+            Encoder.encodeField(w, 2) { w -> Encoder.encodeU64(w, this.n1) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+            Sizer.sizeField(2) { Sizer.sizeU64(this.N1) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Two> {
+            override fun decode(r ByteBuffer) Result<Two> = runCatching {
+                var n0: UInt? = null
+                var n1: ULong? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = Decoder.decodeU32(r).getOrThrow()
+                        2u -> n1 = Decoder.decodeU64(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Two(
+                    n0 ?: throw MissingFieldException(1u, null),
+                    n1 ?: throw MissingFieldException(2u, null),
+                )
+            }
+        }
+    }
+
+    public data class Three(
+        val field1: UInt,
+        val field2: Boolean,
+    ) : Sample(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.field1) }
+            Encoder.encodeField(w, 2) { w -> Encoder.encodeBool(w, this.field2) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+            Sizer.sizeField(2) { Sizer.sizeBool(this.Field2) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Three> {
+            override fun decode(r ByteBuffer) Result<Three> = runCatching {
+                var field1: UInt? = null
+                var field2: Boolean? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> field1 = Decoder.decodeU32(r).getOrThrow()
+                        2u -> field2 = Decoder.decodeBool(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Three(
+                    field1 ?: throw MissingFieldException(1u, "field1"),
+                    field2 ?: throw MissingFieldException(2u, "field2"),
+                )
+            }
+        }
+    }
+}
+
+

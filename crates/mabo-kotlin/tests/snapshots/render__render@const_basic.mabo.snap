@@ -1,0 +1,32 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];"
+input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+const val BOOL_TRUE: Boolean = true
+
+const val BOOL_FALSE: Boolean = false
+
+const val INT: UInt = 100u
+
+const val FLOAT: Double = 5.5
+
+const val STRING: String = "value"
+
+const val BYTES: ByteArray = byteArrayOf(1, 2, 3)
+
+

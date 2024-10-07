@@ -1,0 +1,87 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct Sample {\n    value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_nested.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val value: List<NonZeroHashMap<Long, String>?>,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeVec(w, this.value) { w, v ->
+                Encoder.encodeOption(w, v) { w, v ->
+                    Encoder.encodeHashMap(
+                        w, v.get(),
+                        { w, k ->
+                            Encoder.encodeI64(w, k)
+                        },
+                        { w, v ->
+                            Encoder.encodeString(w, v)
+                        },
+                    )
+                }
+            } }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeVec(this.Value) { v ->
+                Sizer.sizeOption(v) { v ->
+                    Sizer.sizeHashMap(
+                        v.get(),
+                        { k ->
+                            Sizer.sizeI64(k)
+                        },
+                        { v ->
+                            Sizer.sizeString(v)
+                        },
+                    )
+                }
+            } } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var value: List<NonZeroHashMap<Long, String>?>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> value = Decoder.decodeVec(r) { r ->
+                            Decoder.decodeOption(r) { r ->
+                                Decoder.decodeNonZeroHashMap(
+                                    r,
+                                    { r ->
+                                        Decoder.decodeI64(r)
+                                    },
+                                    { r ->
+                                        Decoder.decodeString(r)
+                                    },
+                                )
+                            }
+                        }.getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Sample(
+                value ?: throw MissingFieldException(1u, "value"),
+            )
+        }
+    }
+}
+
+

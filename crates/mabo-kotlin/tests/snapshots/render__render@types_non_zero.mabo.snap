@@ -1,0 +1,171 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct Sample {\n    f01: non_zero<u8> @1,\n    f02: non_zero<u16> @2,\n    f03: non_zero<u32> @3,\n    f04: non_zero<u64> @4,\n    f05: non_zero<u128> @5,\n    f06: non_zero<i8> @6,\n    f07: non_zero<i16> @7,\n    f08: non_zero<i32> @8,\n    f09: non_zero<i64> @9,\n    f10: non_zero<i128> @10,\n    f11: non_zero<string> @11,\n    f12: non_zero<bytes> @12,\n    f13: non_zero<vec<string>> @13,\n    f14: non_zero<hash_map<string, bytes>> @14,\n    f15: non_zero<hash_set<string>> @15,\n}"
+input_file: crates/mabo-parser/tests/inputs/types_non_zero.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val f01: NonZeroUByte,
+    val f02: NonZeroUShort,
+    val f03: NonZeroUInt,
+    val f04: NonZeroULong,
+    val f05: NonZeroBigInteger,
+    val f06: NonZeroByte,
+    val f07: NonZeroShort,
+    val f08: NonZeroInt,
+    val f09: NonZeroLong,
+    val f10: NonZeroBigInteger,
+    val f11: NonZeroString,
+    val f12: NonZeroBytes,
+    val f13: NonZeroVec<String>,
+    val f14: NonZeroHashMap<String, ByteArray>,
+    val f15: NonZeroHashSet<String>,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU8(w, this.f01.get()) }
+        Encoder.encodeField(w, 2) { w -> Encoder.encodeU16(w, this.f02.get()) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU32(w, this.f03.get()) }
+        Encoder.encodeField(w, 4) { w -> Encoder.encodeU64(w, this.f04.get()) }
+        Encoder.encodeField(w, 5) { w -> Encoder.encodeU128(w, this.f05.get()) }
+        Encoder.encodeField(w, 6) { w -> Encoder.encodeI8(w, this.f06.get()) }
+        Encoder.encodeField(w, 7) { w -> Encoder.encodeI16(w, this.f07.get()) }
+        Encoder.encodeField(w, 8) { w -> Encoder.encodeI32(w, this.f08.get()) }
+        Encoder.encodeField(w, 9) { w -> Encoder.encodeI64(w, this.f09.get()) }
+        Encoder.encodeField(w, 10) { w -> Encoder.encodeI128(w, this.f10.get()) }
+        Encoder.encodeField(w, 11) { w -> Encoder.encodeString(w, this.f11.get()) }
+        Encoder.encodeField(w, 12) { w -> Encoder.encodeBytes(w, this.f12.get()) }
+        Encoder.encodeField(w, 13) { w -> Encoder.encodeVec(w, this.f13.get()) { w, v ->
+                Encoder.encodeString(w, v)
+            } }
+        Encoder.encodeField(w, 14) { w -> Encoder.encodeHashMap(
+                w, this.f14.get(),
+                { w, k ->
+                    Encoder.encodeString(w, k)
+                },
+                { w, v ->
+                    Encoder.encodeBytes(w, v)
+                },
+            ) }
+        Encoder.encodeField(w, 15) { w -> Encoder.encodeHashSet(w, this.f15.get()) { w, v ->
+                Encoder.encodeString(w, v)
+            } }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU8(this.F01.get()) } +
+        Sizer.sizeField(2) { Sizer.sizeU16(this.F02.get()) } +
+        Sizer.sizeField(3) { Sizer.sizeU32(this.F03.get()) } +
+        Sizer.sizeField(4) { Sizer.sizeU64(this.F04.get()) } +
+        Sizer.sizeField(5) { Sizer.sizeU128(this.F05.get()) } +
+        Sizer.sizeField(6) { Sizer.sizeI8(this.F06.get()) } +
+        Sizer.sizeField(7) { Sizer.sizeI16(this.F07.get()) } +
+        Sizer.sizeField(8) { Sizer.sizeI32(this.F08.get()) } +
+        Sizer.sizeField(9) { Sizer.sizeI64(this.F09.get()) } +
+        Sizer.sizeField(10) { Sizer.sizeI128(this.F10.get()) } +
+        Sizer.sizeField(11) { Sizer.sizeString(this.F11.get()) } +
+        Sizer.sizeField(12) { Sizer.sizeBytes(this.F12.get()) } +
+        Sizer.sizeField(13) { Sizer.sizeVec(this.F13.get()) { v ->
+                Sizer.sizeString(v)
+            } } +
+        Sizer.sizeField(14) { Sizer.sizeHashMap(
+                this.F14.get(),
+                { k ->
+                    Sizer.sizeString(k)
+                },
+                { v ->
+                    Sizer.sizeBytes(v)
+                },
+            ) } +
+        Sizer.sizeField(15) { Sizer.sizeHashSet(this.F15.get()) { v ->
+                Sizer.sizeString(v)
+            } } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var f01: NonZeroUByte? = null
+            var f02: NonZeroUShort? = null
+            var f03: NonZeroUInt? = null
+            var f04: NonZeroULong? = null
+            var f05: NonZeroBigInteger? = null
+            var f06: NonZeroByte? = null
+            var f07: NonZeroShort? = null
+            var f08: NonZeroInt? = null
+            var f09: NonZeroLong? = null
+            var f10: NonZeroBigInteger? = null
+            var f11: NonZeroString? = null
+            var f12: NonZeroBytes? = null
+            var f13: NonZeroVec<String>? = null
+            var f14: NonZeroHashMap<String, ByteArray>? = null
+            var f15: NonZeroHashSet<String>? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> f01 = Decoder.decodeNonZeroU8(r).getOrThrow()
+                    2u -> f02 = Decoder.decodeNonZeroU16(r).getOrThrow()
+                    3u -> f03 = Decoder.decodeNonZeroU32(r).getOrThrow()
+                    4u -> f04 = Decoder.decodeNonZeroU64(r).getOrThrow()
+                    5u -> f05 = Decoder.decodeNonZeroU128(r).getOrThrow()
+                    6u -> f06 = Decoder.decodeNonZeroI8(r).getOrThrow()
+                    7u -> f07 = Decoder.decodeNonZeroI16(r).getOrThrow()
+                    8u -> f08 = Decoder.decodeNonZeroI32(r).getOrThrow()
+                    9u -> f09 = Decoder.decodeNonZeroI64(r).getOrThrow()
+                    10u -> f10 = Decoder.decodeNonZeroI128(r).getOrThrow()
+                    11u -> f11 = Decoder.decodeNonZeroString(r).getOrThrow()
+                    12u -> f12 = Decoder.decodeNonZeroBytes(r).getOrThrow()
+                    13u -> f13 = Decoder.decodeNonZeroVec(r) { r ->
+                            Decoder.decodeString(r)
+                        }.getOrThrow()
+                    14u -> f14 = Decoder.decodeNonZeroHashMap(
+                            r,
+                            { r ->
+                                Decoder.decodeString(r)
+                            },
+                            { r ->
+                                Decoder.decodeBytes(r)
+                            },
+                        ).getOrThrow()
+                    15u -> f15 = Decoder.decodeNonZeroHashSet(r) { r ->
+                            Decoder.decodeString(r)
+                        }.getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Sample(
+                f01 ?: throw MissingFieldException(1u, "f01"),
+                f02 ?: throw MissingFieldException(2u, "f02"),
+                f03 ?: throw MissingFieldException(3u, "f03"),
+                f04 ?: throw MissingFieldException(4u, "f04"),
+                f05 ?: throw MissingFieldException(5u, "f05"),
+                f06 ?: throw MissingFieldException(6u, "f06"),
+                f07 ?: throw MissingFieldException(7u, "f07"),
+                f08 ?: throw MissingFieldException(8u, "f08"),
+                f09 ?: throw MissingFieldException(9u, "f09"),
+                f10 ?: throw MissingFieldException(10u, "f10"),
+                f11 ?: throw MissingFieldException(11u, "f11"),
+                f12 ?: throw MissingFieldException(12u, "f12"),
+                f13 ?: throw MissingFieldException(13u, "f13"),
+                f14 ?: throw MissingFieldException(14u, "f14"),
+                f15 ?: throw MissingFieldException(15u, "f15"),
+            )
+        }
+    }
+}
+
+

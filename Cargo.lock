@@ -782,6 +782,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "mabo-typescript"
+version = "0.1.0"
+dependencies = [
+ "heck 0.5.0",
+ "insta",
+ "mabo-compiler",
+ "mabo-parser",
+ "mabo-project",
+]
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -1,0 +1,15 @@
+---
+source: crates/mabo-typescript/tests/render.rs
+description: "/// Sample type alias.\ntype Sample = u32;"
+input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
+---
+--- sample.ts
+
+import * from "mabo";
+
+/**
+ * Sample type alias.
+ */
+type Sample = number;
+
+

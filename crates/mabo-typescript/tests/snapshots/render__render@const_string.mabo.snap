@@ -1,0 +1,18 @@
+---
+source: crates/mabo-typescript/tests/render.rs
+description: "const SIMPLE: string = \"value\";\n\nconst NEWLINE_ESCAPE: string = \"one \\\n    two \\\n    three\\\n\";\n\nconst ESCAPES: string = \"escape basics \\r\\n \\t \\b \\f \\\\ \\\"\\\n    hello\\\" \\n\\\n    unicode \\u{2764}  \\\n    emoji ❤ \\\n\";\n\nconst MULTILINE: string = \"a\n    b\n    c\n\";"
+input_file: crates/mabo-parser/tests/inputs/const_string.mabo
+---
+--- sample.ts
+
+import * from "mabo";
+
+const SIMPLE: string = "value";
+
+const NEWLINE_ESCAPE: string = "one two three";
+
+const ESCAPES: string = "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ";
+
+const MULTILINE: string = "a\n    b\n    c\n";
+
+

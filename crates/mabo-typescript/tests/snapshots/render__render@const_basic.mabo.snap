@@ -1,0 +1,22 @@
+---
+source: crates/mabo-typescript/tests/render.rs
+description: "const BOOL_TRUE: bool = true;\nconst BOOL_FALSE: bool = false;\nconst INT: u32 = 100;\nconst FLOAT: f64 = 5.5;\nconst STRING: string = \"value\";\nconst BYTES: bytes = [1, 2, 3];"
+input_file: crates/mabo-parser/tests/inputs/const_basic.mabo
+---
+--- sample.ts
+
+import * from "mabo";
+
+const BOOL_TRUE: boolean = true;
+
+const BOOL_FALSE: boolean = false;
+
+const INT: number = 100;
+
+const FLOAT: number = 5.5;
+
+const STRING: string = "value";
+
+const BYTES: Uint8Array = new Uint8Array([1, 2, 3]);
+
+

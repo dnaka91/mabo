@@ -1,6 +1,12 @@
 #![expect(missing_docs)]
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{
+    black_box, criterion_group, criterion_main, profiler::Profiler, BenchmarkId, Criterion,
+};
+use pprof::{
+    criterion::{Output, PProfProfiler},
+    flamegraph::{color::MultiPalette, Direction, Options, Palette},
+};
 
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
@@ -52,10 +58,17 @@ fn simplify_large_schema(c: &mut Criterion) {
     g.finish();
 }
 
+fn profiler() -> impl Profiler {
+    let mut opts = Options::default();
+    opts.colors = Palette::Multi(MultiPalette::Rust);
+    opts.direction = Direction::Inverted;
+
+    PProfProfiler::new(100, Output::Flamegraph(Some(opts)))
+}
+
 criterion_group!(
-    benches,
-    validate_large_schema,
-    resolve_large_schema,
-    simplify_large_schema,
+    name = benches;
+    config = Criterion::default().with_profiler(profiler());
+    targets = validate_large_schema, resolve_large_schema, simplify_large_schema
 );
 criterion_main!(benches);

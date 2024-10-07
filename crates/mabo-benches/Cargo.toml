@@ -30,6 +30,7 @@ mimalloc.workspace = true
 [dev-dependencies]
 criterion = "0.5.1"
 indoc.workspace = true
+pprof = { version = "0.14.0", features = ["criterion", "flamegraph"] }
 
 [lints]
 workspace = true

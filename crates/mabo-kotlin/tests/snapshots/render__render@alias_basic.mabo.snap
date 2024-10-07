@@ -1,0 +1,25 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Sample type alias.\ntype Sample = u32;"
+input_file: crates/mabo-parser/tests/inputs/alias_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+/**
+ * Sample type alias.
+ */
+typealias Sample = UInt
+
+

@@ -1,0 +1,496 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Schema with a bit of everything, to try out more complex scenarios.\n\n/// Basic user information.\n///\n/// Uses various other `structs` and `enums` to compose the information\n/// in a **type safe** way.\nstruct User {\n    name: FullName @1,\n    /// Physical address, might not be specified by the user.\n    address: option<Address> @2,\n    age: u8 @3,\n    birthday: birthday::DayOfBirth @4,\n}\n\n/// Full name of a user.\nstruct FullName {\n    first: string @1,\n    middle: option<string> @2,\n    last: string @3,\n}\n\n/// Simple alias for convenience.\n///\n/// - Might be easier to remember.\n/// - Often referenced as this.\ntype Name = FullName;\n\nstruct Address {\n    /// Street name.\n    street: string @1,\n    /// Number of the house in the street.\n    house_no: HouseNumber @2,\n    city: string @3,\n}\n\n/// The number on the house.\n///\n/// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).\nenum HouseNumber {\n    /// Digit only number.\n    Digit(u16 @1) @1,\n    /// Mixed _number_ with characters like `1a`.\n    Text(string @1) @2,\n}\n\n/// Probably the max age of a human, currently.\nconst MAX_AGE: u8 = 120;\n\n\n/// Details for defining birthdays.\nmod birthday {\n    /// As the name suggests, specifies details about birthdays.\n    enum DayOfBirth {\n        Specific {\n            year: u16 @1,\n            month: Month @2,\n            day: u8 @3,\n        } @1,\n        /// The user didn't want to say.\n        Secret {\n            /// Optional info from the user about why they didn't want to\n            /// reveal their birthday.\n            reason: option<string> @1,\n        } @2,\n        /// We never asked and nobody knows.\n        Unknown @3,\n    }\n\n    /// Let's assume we only have details of people born **after** this year.\n    const MIN_YEAR: u16 = 1900;\n\n    /// Absolute maximum for a day, but might be even less depending\n    /// on the month.\n    const MAX_DAY: u8 = 31;\n\n    /// The month of the year.\n    enum Month {\n        January @1,\n        February @2,\n        March @3,\n        April @4,\n        May @5,\n        June @6,\n        July @7,\n        August @8,\n        September @9,\n        October @10,\n        November @11,\n        December @12,\n    }\n}"
+input_file: crates/mabo-parser/tests/inputs/mixed.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+/**
+ * Basic user information.
+ * 
+ * Uses various other `structs` and `enums` to compose the information
+ * in a **type safe** way.
+ */
+public data class User(
+    val name: FullName,
+    /**
+     * Physical address, might not be specified by the user.
+     */
+    val address: Address?,
+    val age: UByte,
+    val birthday: DayOfBirth,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> this.name.encode(w) }
+        Encoder.encodeFieldOption(w, 2, this.address) { w, v -> v.encode(w) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeU8(w, this.age) }
+        Encoder.encodeField(w, 4) { w -> this.birthday.encode(w) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { this.Name.size() } +
+        Sizer.sizeFieldOption(2, this.Address) { v -> v.size() } +
+        Sizer.sizeField(3) { Sizer.sizeU8(this.Age) } +
+        Sizer.sizeField(4) { this.Birthday.size() } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<User> {
+        override fun decode(r ByteBuffer): Result<User> = runCatching {
+            var name: FullName? = null
+            var address: Address? = null
+            var age: UByte? = null
+            var birthday: DayOfBirth? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> name = FullName.decode(r).getOrThrow()
+                    2u -> address = Decoder.decodeOption(r) { r ->
+                            Address.decode(r)
+                        }.getOrThrow()
+                    3u -> age = Decoder.decodeU8(r).getOrThrow()
+                    4u -> birthday = DayOfBirth.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            User(
+                name ?: throw MissingFieldException(1u, "name"),
+                address,
+                age ?: throw MissingFieldException(3u, "age"),
+                birthday ?: throw MissingFieldException(4u, "birthday"),
+            )
+        }
+    }
+}
+
+/**
+ * Full name of a user.
+ */
+public data class FullName(
+    val first: String,
+    val middle: String?,
+    val last: String,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.first) }
+        Encoder.encodeFieldOption(w, 2, this.middle) { w, v -> Encoder.encodeString(w, v) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.last) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeString(this.First) } +
+        Sizer.sizeFieldOption(2, this.Middle) { v -> Sizer.sizeString(v) } +
+        Sizer.sizeField(3) { Sizer.sizeString(this.Last) } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<FullName> {
+        override fun decode(r ByteBuffer): Result<FullName> = runCatching {
+            var first: String? = null
+            var middle: String? = null
+            var last: String? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> first = Decoder.decodeString(r).getOrThrow()
+                    2u -> middle = Decoder.decodeOption(r) { r ->
+                            Decoder.decodeString(r)
+                        }.getOrThrow()
+                    3u -> last = Decoder.decodeString(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            FullName(
+                first ?: throw MissingFieldException(1u, "first"),
+                middle,
+                last ?: throw MissingFieldException(3u, "last"),
+            )
+        }
+    }
+}
+
+/**
+ * Simple alias for convenience.
+ * 
+ * - Might be easier to remember.
+ * - Often referenced as this.
+ */
+typealias Name = FullName
+
+public data class Address(
+    /**
+     * Street name.
+     */
+    val street: String,
+    /**
+     * Number of the house in the street.
+     */
+    val houseNo: HouseNumber,
+    val city: String,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.street) }
+        Encoder.encodeField(w, 2) { w -> this.houseNo.encode(w) }
+        Encoder.encodeField(w, 3) { w -> Encoder.encodeString(w, this.city) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeString(this.Street) } +
+        Sizer.sizeField(2) { this.HouseNo.size() } +
+        Sizer.sizeField(3) { Sizer.sizeString(this.City) } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Address> {
+        override fun decode(r ByteBuffer): Result<Address> = runCatching {
+            var street: String? = null
+            var houseNo: HouseNumber? = null
+            var city: String? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> street = Decoder.decodeString(r).getOrThrow()
+                    2u -> houseNo = HouseNumber.decode(r).getOrThrow()
+                    3u -> city = Decoder.decodeString(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Address(
+                street ?: throw MissingFieldException(1u, "street"),
+                houseNo ?: throw MissingFieldException(2u, "house_no"),
+                city ?: throw MissingFieldException(3u, "city"),
+            )
+        }
+    }
+}
+
+public sealed class HouseNumber : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Digit -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Text -> Encoder.encodeVariantId(w, VariantId(2u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is Digit -> Sizer.sizeVariantId(1u)
+        is Text -> Sizer.sizeVariantId(2u)
+    }
+
+    /**
+     * Digit only number.
+     */
+    public data class Digit(
+        val n0: UShort,
+    ) : HouseNumber(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU16(w, this.n0) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeU16(this.N0) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Digit> {
+            override fun decode(r ByteBuffer) Result<Digit> = runCatching {
+                var n0: UShort? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = Decoder.decodeU16(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Digit(
+                    n0 ?: throw MissingFieldException(1u, null),
+                )
+            }
+        }
+    }
+
+    /**
+     * Mixed _number_ with characters like `1a`.
+     */
+    public data class Text(
+        val n0: String,
+    ) : HouseNumber(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeString(w, this.n0) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeString(this.N0) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Text> {
+            override fun decode(r ByteBuffer) Result<Text> = runCatching {
+                var n0: String? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = Decoder.decodeString(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Text(
+                    n0 ?: throw MissingFieldException(1u, null),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Probably the max age of a human, currently.
+ */
+const val MAX_AGE: UByte = 120u
+
+--- sample/birthday.kt
+
+/**
+ * Details for defining birthdays.
+ */
+package birthday
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public sealed class DayOfBirth : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Specific -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Secret -> Encoder.encodeVariantId(w, VariantId(2u))
+            is Unknown -> Encoder.encodeVariantId(w, VariantId(3u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is Specific -> Sizer.sizeVariantId(1u)
+        is Secret -> Sizer.sizeVariantId(2u)
+        is Unknown -> Sizer.sizeVariantId(3u)
+    }
+
+    public data class Specific(
+        val year: UShort,
+        val month: Month,
+        val day: UByte,
+    ) : DayOfBirth(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU16(w, this.year) }
+            Encoder.encodeField(w, 2) { w -> this.month.encode(w) }
+            Encoder.encodeField(w, 3) { w -> Encoder.encodeU8(w, this.day) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeU16(this.Year) } +
+            Sizer.sizeField(2) { this.Month.size() } +
+            Sizer.sizeField(3) { Sizer.sizeU8(this.Day) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Specific> {
+            override fun decode(r ByteBuffer) Result<Specific> = runCatching {
+                var year: UShort? = null
+                var month: Month? = null
+                var day: UByte? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> year = Decoder.decodeU16(r).getOrThrow()
+                        2u -> month = Month.decode(r).getOrThrow()
+                        3u -> day = Decoder.decodeU8(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Specific(
+                    year ?: throw MissingFieldException(1u, "year"),
+                    month ?: throw MissingFieldException(2u, "month"),
+                    day ?: throw MissingFieldException(3u, "day"),
+                )
+            }
+        }
+    }
+
+    /**
+     * The user didn't want to say.
+     */
+    public data class Secret(
+        /**
+         * Optional info from the user about why they didn't want to
+         * reveal their birthday.
+         */
+        val reason: String?,
+    ) : DayOfBirth(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeFieldOption(w, 1, this.reason) { w, v -> Encoder.encodeString(w, v) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeFieldOption(1, this.Reason) { v -> Sizer.sizeString(v) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Secret> {
+            override fun decode(r ByteBuffer) Result<Secret> = runCatching {
+                var reason: String? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> reason = Decoder.decodeOption(r) { r ->
+                                Decoder.decodeString(r)
+                            }.getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Secret(
+                    reason,
+                )
+            }
+        }
+    }
+
+    /**
+     * We never asked and nobody knows.
+     */
+    public data object Unknown : DayOfBirth(), Decode<Unknown>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<Unknown> = Result.success(Unknown)
+    }
+}
+
+/**
+ * Let's assume we only have details of people born **after** this year.
+ */
+const val MIN_YEAR: UShort = 1900u
+
+/**
+ * Absolute maximum for a day, but might be even less depending
+ * on the month.
+ */
+const val MAX_DAY: UByte = 31u
+
+public sealed class Month : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is January -> Encoder.encodeVariantId(w, VariantId(1u))
+            is February -> Encoder.encodeVariantId(w, VariantId(2u))
+            is March -> Encoder.encodeVariantId(w, VariantId(3u))
+            is April -> Encoder.encodeVariantId(w, VariantId(4u))
+            is May -> Encoder.encodeVariantId(w, VariantId(5u))
+            is June -> Encoder.encodeVariantId(w, VariantId(6u))
+            is July -> Encoder.encodeVariantId(w, VariantId(7u))
+            is August -> Encoder.encodeVariantId(w, VariantId(8u))
+            is September -> Encoder.encodeVariantId(w, VariantId(9u))
+            is October -> Encoder.encodeVariantId(w, VariantId(10u))
+            is November -> Encoder.encodeVariantId(w, VariantId(11u))
+            is December -> Encoder.encodeVariantId(w, VariantId(12u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is January -> Sizer.sizeVariantId(1u)
+        is February -> Sizer.sizeVariantId(2u)
+        is March -> Sizer.sizeVariantId(3u)
+        is April -> Sizer.sizeVariantId(4u)
+        is May -> Sizer.sizeVariantId(5u)
+        is June -> Sizer.sizeVariantId(6u)
+        is July -> Sizer.sizeVariantId(7u)
+        is August -> Sizer.sizeVariantId(8u)
+        is September -> Sizer.sizeVariantId(9u)
+        is October -> Sizer.sizeVariantId(10u)
+        is November -> Sizer.sizeVariantId(11u)
+        is December -> Sizer.sizeVariantId(12u)
+    }
+
+    public data object January : Month(), Decode<January>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<January> = Result.success(January)
+    }
+
+    public data object February : Month(), Decode<February>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<February> = Result.success(February)
+    }
+
+    public data object March : Month(), Decode<March>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<March> = Result.success(March)
+    }
+
+    public data object April : Month(), Decode<April>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<April> = Result.success(April)
+    }
+
+    public data object May : Month(), Decode<May>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<May> = Result.success(May)
+    }
+
+    public data object June : Month(), Decode<June>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<June> = Result.success(June)
+    }
+
+    public data object July : Month(), Decode<July>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<July> = Result.success(July)
+    }
+
+    public data object August : Month(), Decode<August>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<August> = Result.success(August)
+    }
+
+    public data object September : Month(), Decode<September>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<September> = Result.success(September)
+    }
+
+    public data object October : Month(), Decode<October>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<October> = Result.success(October)
+    }
+
+    public data object November : Month(), Decode<November>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<November> = Result.success(November)
+    }
+
+    public data object December : Month(), Decode<December>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<December> = Result.success(December)
+    }
+}
+
+

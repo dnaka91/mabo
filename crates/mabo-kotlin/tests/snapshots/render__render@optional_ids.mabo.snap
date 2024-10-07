@@ -1,0 +1,216 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "struct SampleNamed {\n    field1: u32,\n    field2: u32 @100,\n    field3: u32,\n}\n\nstruct SampleUnnamed(u32, u32 @100, u32)\n\nenum SampleEnum {\n    Named {\n        field1: u32,\n        field2: u32 @100,\n        field3: u32,\n    },\n    Unit @50,\n    Unnamed(u32, u32 @100, u32),\n}"
+input_file: crates/mabo-parser/tests/inputs/optional_ids.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class SampleNamed(
+    val field1: UInt,
+    val field2: UInt,
+    val field3: UInt,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.field1) }
+        Encoder.encodeField(w, 100) { w -> Encoder.encodeU32(w, this.field2) }
+        Encoder.encodeField(w, 101) { w -> Encoder.encodeU32(w, this.field3) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+        Sizer.sizeField(100) { Sizer.sizeU32(this.Field2) } +
+        Sizer.sizeField(101) { Sizer.sizeU32(this.Field3) } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<SampleNamed> {
+        override fun decode(r ByteBuffer): Result<SampleNamed> = runCatching {
+            var field1: UInt? = null
+            var field2: UInt? = null
+            var field3: UInt? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> field1 = Decoder.decodeU32(r).getOrThrow()
+                    100u -> field2 = Decoder.decodeU32(r).getOrThrow()
+                    101u -> field3 = Decoder.decodeU32(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            SampleNamed(
+                field1 ?: throw MissingFieldException(1u, "field1"),
+                field2 ?: throw MissingFieldException(100u, "field2"),
+                field3 ?: throw MissingFieldException(101u, "field3"),
+            )
+        }
+    }
+}
+
+public data class SampleUnnamed(
+    val n0: UInt,
+    val n1: UInt,
+    val n2: UInt,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.n0) }
+        Encoder.encodeField(w, 100) { w -> Encoder.encodeU32(w, this.n1) }
+        Encoder.encodeField(w, 101) { w -> Encoder.encodeU32(w, this.n2) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+        Sizer.sizeField(100) { Sizer.sizeU32(this.N1) } +
+        Sizer.sizeField(101) { Sizer.sizeU32(this.N2) } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<SampleUnnamed> {
+        override fun decode(r ByteBuffer): Result<SampleUnnamed> = runCatching {
+            var n0: UInt? = null
+            var n1: UInt? = null
+            var n2: UInt? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> n0 = Decoder.decodeU32(r).getOrThrow()
+                    100u -> n1 = Decoder.decodeU32(r).getOrThrow()
+                    101u -> n2 = Decoder.decodeU32(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            SampleUnnamed(
+                n0 ?: throw MissingFieldException(1u, null),
+                n1 ?: throw MissingFieldException(100u, null),
+                n2 ?: throw MissingFieldException(101u, null),
+            )
+        }
+    }
+}
+
+public sealed class SampleEnum : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is Named -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Unit -> Encoder.encodeVariantId(w, VariantId(50u))
+            is Unnamed -> Encoder.encodeVariantId(w, VariantId(51u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is Named -> Sizer.sizeVariantId(1u)
+        is Unit -> Sizer.sizeVariantId(50u)
+        is Unnamed -> Sizer.sizeVariantId(51u)
+    }
+
+    public data class Named(
+        val field1: UInt,
+        val field2: UInt,
+        val field3: UInt,
+    ) : SampleEnum(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.field1) }
+            Encoder.encodeField(w, 100) { w -> Encoder.encodeU32(w, this.field2) }
+            Encoder.encodeField(w, 101) { w -> Encoder.encodeU32(w, this.field3) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.Field1) } +
+            Sizer.sizeField(100) { Sizer.sizeU32(this.Field2) } +
+            Sizer.sizeField(101) { Sizer.sizeU32(this.Field3) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Named> {
+            override fun decode(r ByteBuffer) Result<Named> = runCatching {
+                var field1: UInt? = null
+                var field2: UInt? = null
+                var field3: UInt? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> field1 = Decoder.decodeU32(r).getOrThrow()
+                        100u -> field2 = Decoder.decodeU32(r).getOrThrow()
+                        101u -> field3 = Decoder.decodeU32(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Named(
+                    field1 ?: throw MissingFieldException(1u, "field1"),
+                    field2 ?: throw MissingFieldException(100u, "field2"),
+                    field3 ?: throw MissingFieldException(101u, "field3"),
+                )
+            }
+        }
+    }
+
+    public data object Unit : SampleEnum(), Decode<Unit>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<Unit> = Result.success(Unit)
+    }
+
+    public data class Unnamed(
+        val n0: UInt,
+        val n1: UInt,
+        val n2: UInt,
+    ) : SampleEnum(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.n0) }
+            Encoder.encodeField(w, 100) { w -> Encoder.encodeU32(w, this.n1) }
+            Encoder.encodeField(w, 101) { w -> Encoder.encodeU32(w, this.n2) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { Sizer.sizeU32(this.N0) } +
+            Sizer.sizeField(100) { Sizer.sizeU32(this.N1) } +
+            Sizer.sizeField(101) { Sizer.sizeU32(this.N2) } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Unnamed> {
+            override fun decode(r ByteBuffer) Result<Unnamed> = runCatching {
+                var n0: UInt? = null
+                var n1: UInt? = null
+                var n2: UInt? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = Decoder.decodeU32(r).getOrThrow()
+                        100u -> n1 = Decoder.decodeU32(r).getOrThrow()
+                        101u -> n2 = Decoder.decodeU32(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Unnamed(
+                    n0 ?: throw MissingFieldException(1u, null),
+                    n1 ?: throw MissingFieldException(100u, null),
+                    n2 ?: throw MissingFieldException(101u, null),
+                )
+            }
+        }
+    }
+}
+
+

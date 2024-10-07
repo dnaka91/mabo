@@ -1,7 +1,13 @@
 #![expect(missing_docs)]
 
-use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
+use criterion::{
+    BenchmarkId, Criterion, black_box, criterion_group, criterion_main, profiler::Profiler,
+};
 use indoc::indoc;
+use pprof::{
+    criterion::{Output, PProfProfiler},
+    flamegraph::{Direction, Options, Palette, color::MultiPalette},
+};
 
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
@@ -73,5 +79,17 @@ fn print(c: &mut Criterion) {
     g.finish();
 }
 
-criterion_group!(benches, basic, large_schema, print);
+fn profiler() -> impl Profiler {
+    let mut opts = Options::default();
+    opts.colors = Palette::Multi(MultiPalette::Rust);
+    opts.direction = Direction::Inverted;
+
+    PProfProfiler::new(100, Output::Flamegraph(Some(opts)))
+}
+
+criterion_group!(
+    name = benches;
+    config = Criterion::default().with_profiler(profiler());
+    targets = basic, large_schema, print
+);
 criterion_main!(benches);

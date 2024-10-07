@@ -44,3 +44,8 @@ thiserror = "2.0.12"
 [profile.release]
 lto = "thin"
 strip = true
+
+[profile.bench]
+codegen-units = 1
+lto = "fat"
+strip = false

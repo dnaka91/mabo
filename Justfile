@@ -1,3 +1,5 @@
+profile_time := "5"
+
 _default:
   just --choose
 
@@ -11,6 +13,8 @@ build:
 # Run the benchmarks
 bench:
   cargo bench -p mabo-benches
+  cargo bench -p mabo-benches --bench compiler -- --profile-time {{profile_time}}
+  cargo bench -p mabo-benches --bench parser -- --profile-time {{profile_time}}
 
 # Run clippy over all crates, testing every feature combination
 check:

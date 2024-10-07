@@ -1,0 +1,104 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "mod a {\n    /// Inner module\n    mod b {\n        enum Sample {\n            One @1,\n        }\n    }\n\n    struct Sample {\n        value: u32 @1,\n        inner: b::Sample @2,\n    }\n}"
+input_file: crates/mabo-parser/tests/inputs/module_basic.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+--- sample/a.kt
+
+package a
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public data class Sample(
+    val value: UInt,
+    val inner: Sample,
+) : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        Encoder.encodeField(w, 1) { w -> Encoder.encodeU32(w, this.value) }
+        Encoder.encodeField(w, 2) { w -> this.inner.encode(w) }
+        Encoder.encodeU32(w, END_MARKER)
+    }
+
+    override fun size(): Int = 0 +
+        Sizer.sizeField(1) { Sizer.sizeU32(this.Value) } +
+        Sizer.sizeField(2) { this.Inner.size() } +
+        Sizer.sizeFieldId(END_MARKER)
+
+    companion object : Decode<Sample> {
+        override fun decode(r ByteBuffer): Result<Sample> = runCatching {
+            var value: UInt? = null
+            var inner: Sample? = null
+
+            while (true) {
+                val id = Decoder.decodeFieldId(r).getOrThrow()
+                when (id.value) {
+                    1u -> value = Decoder.decodeU32(r).getOrThrow()
+                    2u -> inner = Sample.decode(r).getOrThrow()
+                    END_MARKER -> break
+                }
+            }
+
+            Sample(
+                value ?: throw MissingFieldException(1u, "value"),
+                inner ?: throw MissingFieldException(2u, "inner"),
+            )
+        }
+    }
+}
+
+--- sample/a/b.kt
+
+/**
+ * Inner module
+ */
+package b
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public sealed class Sample : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is One -> Encoder.encodeVariantId(w, VariantId(1u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is One -> Sizer.sizeVariantId(1u)
+    }
+
+    public data object One : Sample(), Decode<One>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<One> = Result.success(One)
+    }
+}
+
+

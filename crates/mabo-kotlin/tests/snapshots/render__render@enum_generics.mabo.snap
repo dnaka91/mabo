@@ -1,0 +1,118 @@
+---
+source: crates/mabo-kotlin/tests/render.rs
+description: "/// Enum with generics.\nenum Sample<A, B, C, D> {\n    One @1,\n    Two(A @1, B @2) @2,\n    Three {\n        field1: C @1,\n        field2: D @2,\n    } @3,\n}"
+input_file: crates/mabo-parser/tests/inputs/enum_generics.mabo
+---
+--- sample.kt
+
+package sample
+
+import java.math.BigInteger
+import java.nio.ByteBuffer
+import kotlin.UByte
+import kotlin.UShort
+import kotlin.UInt
+import kotlin.ULong
+
+import rocks.dnaka91.mabo.*
+import rocks.dnaka91.mabo.buf.*
+
+public sealed class Sample : Encode, Size {
+    override fun encode(w: ByteBuffer) {
+        when (this) {
+            is One -> Encoder.encodeVariantId(w, VariantId(1u))
+            is Two -> Encoder.encodeVariantId(w, VariantId(2u))
+            is Three -> Encoder.encodeVariantId(w, VariantId(3u))
+        }
+    }
+
+    override fun size(): Int = when (this) {
+        is One -> Sizer.sizeVariantId(1u)
+        is Two -> Sizer.sizeVariantId(2u)
+        is Three -> Sizer.sizeVariantId(3u)
+    }
+
+    public data object One : Sample(), Decode<One>, Encode, Size {
+        override fun decode(r ByteBuffer): Result<One> = Result.success(One)
+    }
+
+    public data class Two<A, B>(
+        val n0: A,
+        val n1: B,
+    ) : Sample(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> this.n0.encode(w) }
+            Encoder.encodeField(w, 2) { w -> this.n1.encode(w) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { this.N0.size() } +
+            Sizer.sizeField(2) { this.N1.size() } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Two<A, B>> {
+            override fun decode(r ByteBuffer) Result<Two<A, B>> = runCatching {
+                var n0: A? = null
+                var n1: B? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> n0 = A.decode(r).getOrThrow()
+                        2u -> n1 = B.decode(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Two(
+                    n0 ?: throw MissingFieldException(1u, null),
+                    n1 ?: throw MissingFieldException(2u, null),
+                )
+            }
+        }
+    }
+
+    public data class Three<C, D>(
+        val field1: C,
+        val field2: D,
+    ) : Sample(), Encode, Size {
+        override fun encode(w: ByteBuffer) {
+            super.encode(w)
+            Encoder.encodeField(w, 1) { w -> this.field1.encode(w) }
+            Encoder.encodeField(w, 2) { w -> this.field2.encode(w) }
+            Encoder.encodeU32(w, END_MARKER)
+        }
+
+        override fun size(): Int = super.size() +
+            Sizer.sizeField(1) { this.Field1.size() } +
+            Sizer.sizeField(2) { this.Field2.size() } +
+            Sizer.sizeFieldId(END_MARKER)
+
+
+        companion object : Decode<Three<C, D>> {
+            override fun decode(r ByteBuffer) Result<Three<C, D>> = runCatching {
+                var field1: C? = null
+                var field2: D? = null
+
+                while (true) {
+                    val id = Decoder.decodeFieldId(r).getOrThrow()
+                    when (id.value) {
+                        1u -> field1 = C.decode(r).getOrThrow()
+                        2u -> field2 = D.decode(r).getOrThrow()
+                        END_MARKER -> break
+                    }
+                }
+
+                Three(
+                    field1 ?: throw MissingFieldException(1u, "field1"),
+                    field2 ?: throw MissingFieldException(2u, "field2"),
+                )
+            }
+        }
+    }
+}
+
+

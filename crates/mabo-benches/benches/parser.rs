@@ -1,17 +1,12 @@
 #![expect(missing_docs)]
 
-use divan::{Bencher, black_box};
+use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use indoc::indoc;
 
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-fn main() {
-    divan::main();
-}
-
-#[divan::bench]
-fn basic(bencher: Bencher<'_, '_>) {
+fn basic(c: &mut Criterion) {
     let input = indoc! {r#"
             use other::one::Type1;
             use other::two;
@@ -45,21 +40,38 @@ fn basic(bencher: Bencher<'_, '_>) {
 
     mabo_parser::Schema::parse(input, None).unwrap();
 
-    bencher.bench(|| mabo_parser::Schema::parse(black_box(input), None));
+    c.bench_function("basic", |b| {
+        b.iter(|| mabo_parser::Schema::parse(black_box(input), None));
+    });
 }
 
-#[divan::bench(args = [1, 10, 100, 1000])]
-fn large_schema(bencher: Bencher<'_, '_>, n: usize) {
-    let schema = mabo_benches::generate_schema(n);
-    mabo_parser::Schema::parse(&schema, None).unwrap();
+fn large_schema(c: &mut Criterion) {
+    let mut g = c.benchmark_group("large_schema");
+    for n in [1, 10, 100, 1000] {
+        g.bench_with_input(BenchmarkId::from_parameter(n), &n, |b, &n| {
+            let schema = mabo_benches::generate_schema(n);
+            mabo_parser::Schema::parse(&schema, None).unwrap();
 
-    bencher.bench(|| mabo_parser::Schema::parse(black_box(&schema), None));
+            b.iter(|| mabo_parser::Schema::parse(black_box(&schema), None));
+        });
+    }
+
+    g.finish();
 }
 
-#[divan::bench(args = [1, 10, 100, 1000])]
-fn print(bencher: Bencher<'_, '_>, n: usize) {
-    let schema = mabo_benches::generate_schema(n);
-    let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
+fn print(c: &mut Criterion) {
+    let mut g = c.benchmark_group("print");
+    for n in [1, 10, 100, 1000] {
+        g.bench_with_input(BenchmarkId::from_parameter(n), &n, |b, &n| {
+            let schema = mabo_benches::generate_schema(n);
+            let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
 
-    bencher.bench(|| black_box(&schema).to_string());
+            b.iter(|| black_box(&schema).to_string());
+        });
+    }
+
+    g.finish();
 }
+
+criterion_group!(benches, basic, large_schema, print);
+criterion_main!(benches);

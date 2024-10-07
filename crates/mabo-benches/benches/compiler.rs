@@ -1,39 +1,61 @@
 #![expect(missing_docs)]
 
-use divan::{Bencher, black_box};
+use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-fn main() {
-    divan::main();
+fn validate_large_schema(c: &mut Criterion) {
+    let mut g = c.benchmark_group("validate_large_schema");
+    for n in [1, 10, 100, 1000] {
+        g.bench_with_input(BenchmarkId::from_parameter(n), &n, |b, &n| {
+            let schema = mabo_benches::generate_schema(n);
+            let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
+            mabo_compiler::validate_schema(&schema).unwrap();
+
+            b.iter(|| mabo_compiler::validate_schema(black_box(&schema)));
+        });
+    }
+
+    g.finish();
 }
 
-#[divan::bench(args = [1, 10, 100, 1000])]
-fn validate_large_schema(bencher: Bencher<'_, '_>, n: usize) {
-    let schema = mabo_benches::generate_schema(n);
-    let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
-    mabo_compiler::validate_schema(&schema).unwrap();
+fn resolve_large_schema(c: &mut Criterion) {
+    let mut g = c.benchmark_group("resolve_large_schema");
+    for n in [1, 10, 100, 1000] {
+        g.bench_with_input(BenchmarkId::from_parameter(n), &n, |b, &n| {
+            let schema = mabo_benches::generate_schema(n);
+            let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
+            mabo_compiler::validate_schema(&schema).unwrap();
 
-    bencher.bench(|| mabo_compiler::validate_schema(black_box(&schema)));
+            let list = &[("bench", black_box(&schema))];
+
+            b.iter(|| mabo_compiler::resolve_schemas(black_box(list)));
+        });
+    }
+
+    g.finish();
 }
 
-#[divan::bench(args = [1, 10, 100, 1000])]
-fn resolve_large_schema(bencher: Bencher<'_, '_>, n: usize) {
-    let schema = mabo_benches::generate_schema(n);
-    let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
-    mabo_compiler::validate_schema(&schema).unwrap();
+fn simplify_large_schema(c: &mut Criterion) {
+    let mut g = c.benchmark_group("simplify_large_schema");
+    for n in [1, 10, 100, 1000] {
+        g.bench_with_input(BenchmarkId::from_parameter(n), &n, |b, &n| {
+            let schema = mabo_benches::generate_schema(n);
+            let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
+            let _ = mabo_compiler::simplify_schema(&schema);
 
-    let list = &[("bench", black_box(&schema))];
+            b.iter(|| mabo_compiler::simplify_schema(black_box(&schema)));
+        });
+    }
 
-    bencher.bench(|| mabo_compiler::resolve_schemas(black_box(list)));
+    g.finish();
 }
 
-#[divan::bench(args = [1, 10, 100, 1000])]
-fn simplify_large_schema(bencher: Bencher<'_, '_>, n: usize) {
-    let schema = mabo_benches::generate_schema(n);
-    let schema = mabo_parser::Schema::parse(&schema, None).unwrap();
-    let _ = mabo_compiler::simplify_schema(&schema);
-
-    bencher.bench(|| mabo_compiler::simplify_schema(black_box(&schema)));
-}
+criterion_group!(
+    benches,
+    validate_large_schema,
+    resolve_large_schema,
+    simplify_large_schema,
+);
+criterion_main!(benches);

@@ -15,13 +15,15 @@ allow = [
 ]
 exceptions = [
     { allow = ["MPL-2.0"], name = "option-ext" },
-    { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
+    { allow = ["Unicode-3.0"], name = "unicode-ident" },
 ]
 
 [bans]
 skip = [
     { name = "bitflags", version = "1" },
     { name = "heck", version = "0.4" },
+    { name = "thiserror", version = "1" },
+    { name = "thiserror-impl", version = "1" },
 ]
 skip-tree = [
     { name = "windows-sys", version = "0.48", depth = 3 },

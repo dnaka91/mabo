@@ -13,7 +13,7 @@ license.workspace = true
 anyhow.workspace = true
 clap.workspace = true
 directories = "5.0.1"
-line-index = "0.1.1"
+line-index = "0.1.2"
 log = { version = "0.4.22", features = ["kv_std", "release_max_level_info", "std"] }
 lsp-server = "0.7.7"
 lsp-types = { version = "0.97.0", features = ["proposed"] }

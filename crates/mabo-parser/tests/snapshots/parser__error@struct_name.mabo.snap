@@ -2,6 +2,7 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "struct sample {\n    value: u32 @1,\n}"
 input_file: crates/mabo-parser/tests/inputs/invalid/struct_name.mabo
+snapshot_kind: text
 ---
 mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseStructError.html)
 
@@ -24,6 +25,5 @@ Error: mabo::parse::struct_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/
    ·        ╰── Problematic character
  2 │     value: u32 @1,
    ╰────
-  help: Struct names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric
-        characters (❬Y❭A-Z, a-z, 0-9❬Y❭)
-
+  help: Struct names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric characters
+        (❬Y❭A-Z, a-z, 0-9❬Y❭)

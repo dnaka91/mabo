@@ -2,6 +2,7 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "const VALUE: bool = truze;"
 input_file: crates/mabo-parser/tests/inputs/invalid/const_literal_bool.mabo
+snapshot_kind: text
 ---
 mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseConstError.html)
 
@@ -31,5 +32,5 @@ Error: mabo::parse::literal (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error
         `❬B❭"..."❬B❭` for strings
         or `❬B❭[...]❬B❭` for bytes
 
-Error:   × error Tag
-
+Error: 
+  × error Tag

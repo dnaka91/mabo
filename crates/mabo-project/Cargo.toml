@@ -13,7 +13,7 @@ license.workspace = true
 globset = "0.4.15"
 ignore = "0.4.23"
 serde.workspace = true
-spdx = "0.10.6"
+spdx = "0.10.7"
 thiserror.workspace = true
 toml = "0.8.19"
 

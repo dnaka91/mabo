@@ -2,6 +2,7 @@
 source: crates/mabo-parser/tests/parser.rs
 description: struct Sample(() @1)
 input_file: crates/mabo-parser/tests/inputs/invalid/struct_unnamed_tuple_empty.mabo
+snapshot_kind: text
 ---
 mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseStructError.html)
 
@@ -54,4 +55,5 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
    ╰────
   help: Expected type definition in the form `❬B❭<Name>❬B❭`
 
-Error:   × error Verify
+Error: 
+  × error Verify

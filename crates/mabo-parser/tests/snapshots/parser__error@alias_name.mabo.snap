@@ -2,6 +2,7 @@
 source: crates/mabo-parser/tests/parser.rs
 description: type sImple = Simple;
 input_file: crates/mabo-parser/tests/inputs/invalid/alias_name.mabo
+snapshot_kind: text
 ---
 mabo::parse::alias_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseAliasError.html)
 
@@ -22,6 +23,5 @@ Error: mabo::parse::alias_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/m
    ·      ▲
    ·      ╰── Problematic character
    ╰────
-  help: Alias names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric
-        characters (❬Y❭A-Z, a-z, 0-9❬Y❭)
-
+  help: Alias names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric characters
+        (❬Y❭A-Z, a-z, 0-9❬Y❭)

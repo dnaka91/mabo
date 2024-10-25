@@ -2,6 +2,7 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "enum Sample {\n    One @1,\n    Two {\n        field: () @1,\n    } @2,\n}"
 input_file: crates/mabo-parser/tests/inputs/invalid/enum_named_tuple_empty.mabo
+snapshot_kind: text
 ---
 mabo::parse::enum_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseEnumError.html)
 
@@ -62,4 +63,5 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
    ╰────
   help: Expected type definition in the form `❬B❭<Name>❬B❭`
 
-Error:   × error Verify
+Error: 
+  × error Verify

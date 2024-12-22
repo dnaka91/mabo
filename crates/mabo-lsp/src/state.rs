@@ -1,3 +1,5 @@
+#![expect(dead_code)]
+
 use anyhow::{ensure, Context, Result};
 use log::debug;
 use lsp_server::Connection;
@@ -21,7 +23,7 @@ pub struct GlobalState<'a> {
 pub struct File {
     rope: Rope,
     pub index: Index,
-    pub content: String,
+    pub content: Box<str>,
     #[borrows(index, content)]
     #[covariant]
     pub schema: Result<Schema<'this>, Diagnostic>,

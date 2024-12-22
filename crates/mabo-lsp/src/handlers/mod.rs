@@ -155,7 +155,7 @@ pub fn did_open(state: &mut GlobalState<'_>, params: DidOpenTextDocumentParams) 
     let file = if let Some(file) = state
         .files
         .get(&params.text_document.uri)
-        .filter(|file| file.borrow_content() == &text)
+        .filter(|file| file.borrow_content().as_ref() == text)
     {
         file
     } else {
@@ -347,7 +347,7 @@ fn create_file(encoding: &PositionEncodingKind, uri: Uri, text: String) -> state
     FileBuilder {
         rope: Rope::from_str(&text),
         index: Index::new(LineIndex::new(&text), encoding),
-        content: text,
+        content: text.into_boxed_str(),
         schema_builder: |index, schema| compile::compile(uri, schema, index),
         simplified_builder: compile::simplify,
     }
@@ -365,7 +365,7 @@ fn update_file(uri: Uri, file: state::File, update: impl FnOnce(&mut Rope, &Inde
     FileBuilder {
         rope: heads.rope,
         index: heads.index,
-        content: text,
+        content: text.into_boxed_str(),
         schema_builder: |index, schema| compile::compile(uri, schema, index),
         simplified_builder: compile::simplify,
     }

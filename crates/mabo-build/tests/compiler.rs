@@ -1,3 +1,5 @@
+#![expect(missing_docs)]
+
 use std::{
     fs,
     path::{Path, PathBuf},

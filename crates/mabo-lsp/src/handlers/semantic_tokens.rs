@@ -237,7 +237,7 @@ impl<'a> Visitor<'a> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::STRUCT, &[modifiers::DECLARATION])?;
-        self.visit_generics(&item.generics)?;
+        self.visit_generics(item.generics.as_ref())?;
         self.visit_fields(&item.fields)
     }
 
@@ -245,7 +245,7 @@ impl<'a> Visitor<'a> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::ENUM, &[modifiers::DECLARATION])?;
-        self.visit_generics(&item.generics)?;
+        self.visit_generics(item.generics.as_ref())?;
         self.add_span(&item.brace.open(), &types::BRACE, &[])?;
 
         for (variant, comma) in &item.variants {
@@ -262,7 +262,7 @@ impl<'a> Visitor<'a> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.name, &types::ENUM_MEMBER, &[modifiers::DECLARATION])?;
         self.visit_fields(&item.fields)?;
-        self.visit_id(&item.id)?;
+        self.visit_id(item.id)?;
 
         Ok(())
     }
@@ -300,18 +300,18 @@ impl<'a> Visitor<'a> {
         self.add_span(&item.name, &types::PROPERTY, &[modifiers::DECLARATION])?;
         self.add_span(&item.colon, &types::COLON, &[])?;
         self.visit_type(&item.ty)?;
-        self.visit_id(&item.id)?;
+        self.visit_id(item.id)?;
         Ok(())
     }
 
     fn visit_unnamed_field(&mut self, item: &UnnamedField<'_>) -> Result<()> {
         self.visit_type(&item.ty)?;
-        self.visit_id(&item.id)
+        self.visit_id(item.id)
     }
 
-    fn visit_id(&mut self, item: &Option<Id>) -> Result<()> {
+    fn visit_id(&mut self, item: Option<Id>) -> Result<()> {
         if let Some(id) = item {
-            self.add_span(id, &types::IDENTIFIER, &[])?;
+            self.add_span(&id, &types::IDENTIFIER, &[])?;
         }
 
         Ok(())
@@ -321,7 +321,7 @@ impl<'a> Visitor<'a> {
         self.visit_comment(&item.comment)?;
         self.add_span(&item.keyword, &types::KEYWORD, &[])?;
         self.add_span(&item.name, &types::TYPE_ALIAS, &[modifiers::DECLARATION])?;
-        self.visit_generics(&item.generics)?;
+        self.visit_generics(item.generics.as_ref())?;
         self.add_span(&item.equal, &types::EQUAL, &[])?;
         self.visit_type(&item.target)?;
         self.add_span(&item.semicolon, &types::SEMICOLON, &[])
@@ -454,7 +454,7 @@ impl<'a> Visitor<'a> {
         self.add_span(item, &token_type, &[])
     }
 
-    fn visit_generics(&mut self, item: &Option<Generics<'_>>) -> Result<()> {
+    fn visit_generics(&mut self, item: Option<&Generics<'_>>) -> Result<()> {
         if let Some(generics) = item {
             for (generic, comma) in &generics.types {
                 self.add_span(generic, &types::TYPE_PARAMETER, &[modifiers::DECLARATION])?;

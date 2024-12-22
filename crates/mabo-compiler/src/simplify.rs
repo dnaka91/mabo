@@ -311,7 +311,7 @@ fn comment<'a>(item: &'a mabo_parser::Comment<'_>) -> Box<[&'a str]> {
 }
 
 #[inline]
-fn generics<'a>(item: &'a Option<mabo_parser::Generics<'_>>) -> Box<[&'a str]> {
+fn generics<'a>(item: Option<&'a mabo_parser::Generics<'_>>) -> Box<[&'a str]> {
     item.as_ref().map_or(Box::default(), |g| {
         g.types.values().map(mabo_parser::Name::get).collect()
     })
@@ -347,7 +347,7 @@ fn simplify_struct<'a>(item: &'a mabo_parser::Struct<'_>) -> Struct<'a> {
         source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
-        generics: generics(&item.generics),
+        generics: generics(item.generics.as_ref()),
         fields: simplify_fields(&item.fields),
     }
 }
@@ -359,7 +359,7 @@ fn simplify_enum<'a>(item: &'a mabo_parser::Enum<'_>) -> Enum<'a> {
         source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
-        generics: generics(&item.generics),
+        generics: generics(item.generics.as_ref()),
         variants: item
             .variants
             .values()
@@ -471,7 +471,7 @@ fn simplify_alias<'a>(item: &'a mabo_parser::TypeAlias<'_>) -> TypeAlias<'a> {
         source: item,
         comment: comment(&item.comment),
         name: item.name.get(),
-        generics: generics(&item.generics),
+        generics: generics(item.generics.as_ref()),
         target: simplify_type(&item.target),
     }
 }

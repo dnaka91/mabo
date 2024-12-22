@@ -1079,7 +1079,7 @@ impl Display for Generics<'_> {
 /// ```txt
 /// @1
 /// ```
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct Id {
     /// Raw integer value.
     value: u32,

@@ -323,7 +323,7 @@ pub(crate) fn resolve_module_types<'a>(
     module: &'a Module<'_>,
     missing: &mut Vec<LocallyMissingType<'a>>,
 ) {
-    fn is_generic(external: &ExternalType<'_>, generics: &Option<Generics<'_>>) -> bool {
+    fn is_generic(external: &ExternalType<'_>, generics: Option<&Generics<'_>>) -> bool {
         external.generics.is_none()
             && external.path.is_empty()
             && generics.as_ref().map_or(false, |g| {
@@ -334,8 +334,8 @@ pub(crate) fn resolve_module_types<'a>(
     fn resolve<'a>(
         missing: &mut Vec<LocallyMissingType<'a>>,
         ty: &'a Type<'_>,
-        generics: &Option<Generics<'_>>,
-        module: &'a Module<'_>,
+        generics: Option<&Generics<'_>>,
+        module: &Module<'_>,
     ) {
         visit_externals(ty, &mut |external| {
             if !is_generic(external, generics) {
@@ -349,8 +349,8 @@ pub(crate) fn resolve_module_types<'a>(
     fn resolve_fields<'a>(
         missing: &mut Vec<LocallyMissingType<'a>>,
         fields: &'a Fields<'_>,
-        generics: &Option<Generics<'_>>,
-        module: &'a Module<'_>,
+        generics: Option<&Generics<'_>>,
+        module: &Module<'_>,
     ) {
         match fields {
             Fields::Named(_, named) => {
@@ -369,10 +369,12 @@ pub(crate) fn resolve_module_types<'a>(
 
     for def in module.definitions {
         match def {
-            Definition::Struct(s) => resolve_fields(missing, &s.fields, &s.generics, module),
+            Definition::Struct(s) => {
+                resolve_fields(missing, &s.fields, s.generics.as_ref(), module);
+            }
             Definition::Enum(e) => {
                 for variant in e.variants.values() {
-                    resolve_fields(missing, &variant.fields, &e.generics, module);
+                    resolve_fields(missing, &variant.fields, e.generics.as_ref(), module);
                 }
             }
             _ => {}

@@ -2,12 +2,12 @@ use std::ops::Range;
 
 use winnow::{
     stream::{Checkpoint, Location, Offset, Stream},
-    Located,
+    LocatingSlice,
 };
 
 pub fn from_until<const N: usize, I>(
-    mut input: Located<I>,
-    start: &Checkpoint<<I as Stream>::Checkpoint, Located<I>>,
+    mut input: LocatingSlice<I>,
+    start: &Checkpoint<<I as Stream>::Checkpoint, LocatingSlice<I>>,
     chars: [char; N],
 ) -> Range<usize>
 where

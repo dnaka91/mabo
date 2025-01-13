@@ -17,19 +17,23 @@ mod filters {
     use rinja::filters::Safe;
 
     pub fn markdown(s: String) -> rinja::Result<Safe<String>> {
-        let mut extension = ExtensionOptions::default();
-        extension.strikethrough = true;
-        extension.tagfilter = true;
-        extension.table = true;
-        extension.autolink = true;
-        extension.tasklist = true;
-        extension.superscript = true;
-        extension.footnotes = true;
+        let extension = ExtensionOptions {
+            strikethrough: true,
+            tagfilter: true,
+            table: true,
+            autolink: true,
+            tasklist: true,
+            superscript: true,
+            footnotes: true,
+            ..ExtensionOptions::default()
+        };
 
         let parse = ParseOptions::default();
 
-        let mut render = RenderOptions::default();
-        render.escape = true;
+        let render = RenderOptions {
+            escape: true,
+            ..RenderOptions::default()
+        };
 
         Ok(Safe(comrak::markdown_to_html(
             &s,

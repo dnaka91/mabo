@@ -159,7 +159,7 @@ impl<'a> Schema<'a> {
     /// precise as possible.
     pub fn parse(input: &'a str, path: Option<&Path>) -> Result<Self, ParseSchemaError> {
         parser::parse_schema
-            .parse(winnow::Located::new(input))
+            .parse(winnow::LocatingSlice::new(input))
             .map(|mut schema| {
                 schema.path = path.map(ToOwned::to_owned);
                 schema

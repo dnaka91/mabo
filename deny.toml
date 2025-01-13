@@ -25,7 +25,3 @@ skip = [
     { name = "thiserror", version = "1" },
     { name = "thiserror-impl", version = "1" },
 ]
-skip-tree = [
-    { name = "windows-sys", version = "0.48", depth = 3 },
-    { name = "windows-sys", version = "0.52", depth = 3 },
-]

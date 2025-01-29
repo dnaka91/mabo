@@ -1,7 +1,7 @@
 //! Internal derive macros for several Mabo crates, that reduce boilerplate or create more
 //! specialized implementations that the stdlib derives.
 
-#![expect(clippy::module_name_repetitions, clippy::too_many_lines)]
+#![expect(clippy::too_many_lines)]
 
 use syn::{parse_macro_input, DeriveInput};
 

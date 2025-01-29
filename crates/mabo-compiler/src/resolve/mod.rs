@@ -326,9 +326,9 @@ pub(crate) fn resolve_module_types<'a>(
     fn is_generic(external: &ExternalType<'_>, generics: Option<&Generics<'_>>) -> bool {
         external.generics.is_none()
             && external.path.is_empty()
-            && generics.as_ref().map_or(false, |g| {
-                g.types.values().any(|gen| gen.get() == external.name.get())
-            })
+            && generics
+                .as_ref()
+                .is_some_and(|g| g.types.values().any(|gen| gen.get() == external.name.get()))
     }
 
     fn resolve<'a>(

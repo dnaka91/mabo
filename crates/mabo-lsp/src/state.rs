@@ -11,7 +11,6 @@ use rustc_hash::FxHashMap;
 
 use crate::{client::Client, config, handlers::index::Index};
 
-#[expect(clippy::module_name_repetitions)]
 pub struct GlobalState<'a> {
     pub client: Client<'a>,
     pub encoding: PositionEncodingKind,

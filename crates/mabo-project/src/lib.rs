@@ -126,7 +126,7 @@ pub fn discover(base: impl AsRef<Path>) -> Result<Vec<Project>> {
 
     Walk::new(base)
         .filter_map(Result::ok)
-        .filter(|f| f.file_type().map_or(false, |ty| ty.is_file()) && pattern.is_match(f.path()))
+        .filter(|f| f.file_type().is_some_and(|ty| ty.is_file()) && pattern.is_match(f.path()))
         .filter_map(|file| {
             file.path()
                 .parent()
@@ -205,7 +205,7 @@ fn collect_files(base: &Path, patterns: &[String]) -> Result<Vec<PathBuf>> {
             .strip_prefix(base)
             .map_err(Error::StripPrefix)?;
 
-        if patterns.is_match(path) && path.extension().map_or(false, |ext| ext == "mabo") {
+        if patterns.is_match(path) && path.extension().is_some_and(|ext| ext == "mabo") {
             files.push(entry.into_path());
         }
     }

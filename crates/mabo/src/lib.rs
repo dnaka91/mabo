@@ -3,8 +3,7 @@
 #![expect(
     clippy::cast_possible_truncation,
     clippy::implicit_hasher,
-    clippy::inline_always,
-    clippy::module_name_repetitions
+    clippy::inline_always
 )]
 
 use std::{

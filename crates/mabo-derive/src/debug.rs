@@ -140,5 +140,5 @@ fn filter_span(ty: &Type) -> bool {
 
     path.segments
         .last()
-        .map_or(false, |segment| segment.ident == "Span")
+        .is_some_and(|segment| segment.ident == "Span")
 }

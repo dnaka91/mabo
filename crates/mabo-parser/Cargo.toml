@@ -17,7 +17,7 @@ anstream.workspace = true
 anstyle.workspace = true
 mabo-derive = { path = "../mabo-derive" }
 miette = { workspace = true, features = ["derive"] }
-winnow = "0.6.24"
+winnow = "0.6.25"
 
 [dev-dependencies]
 indoc.workspace = true

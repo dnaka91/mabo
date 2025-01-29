@@ -46,7 +46,7 @@ mod structs;
 mod types;
 
 type Input<'i> = winnow::LocatingSlice<&'i str>;
-type Result<T, E = ParseSchemaCause> = winnow::PResult<T, E>;
+type Result<T, E = ParseSchemaCause> = winnow::ModalResult<T, E>;
 
 pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, ParseSchemaCause> {
     let source = *input.as_ref();

@@ -2,7 +2,7 @@
 
 use std::marker::PhantomData;
 
-use winnow::{stream::Location, PResult, Parser};
+use winnow::{stream::Location, ModalResult, Parser};
 
 pub(crate) trait ParserExt {
     fn map_err<G, I, O, E, E2>(self, map: G) -> MapErr<Self, G, I, O, E, E2>
@@ -73,7 +73,7 @@ where
     G: Fn(E) -> E2,
 {
     #[inline]
-    fn parse_next(&mut self, i: &mut I) -> PResult<O, E2> {
+    fn parse_next(&mut self, i: &mut I) -> ModalResult<O, E2> {
         match self.parser.parse_next(i) {
             Ok(o) => Ok(o),
             Err(e) => Err(e.map(|e| (self.map)(e))),
@@ -119,7 +119,7 @@ where
     I: Location,
 {
     #[inline]
-    fn parse_next(&mut self, i: &mut I) -> PResult<O, E2> {
+    fn parse_next(&mut self, i: &mut I) -> ModalResult<O, E2> {
         match self.parser.parse_next(i) {
             Ok(o) => Ok(o),
             Err(e) => Err(e.map(|e| (self.map)(i.location(), e))),

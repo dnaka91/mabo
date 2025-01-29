@@ -14,7 +14,7 @@ anyhow.workspace = true
 clap.workspace = true
 directories = "6.0.0"
 line-index = "0.1.2"
-log = { version = "0.4.22", features = ["kv_std", "release_max_level_info", "std"] }
+log = { version = "0.4.25", features = ["kv_std", "release_max_level_info", "std"] }
 lsp-server = "0.7.8"
 lsp-types = { version = "0.97.0", features = ["proposed"] }
 mabo-compiler = { path = "../mabo-compiler" }
@@ -23,7 +23,7 @@ mabo-parser = { path = "../mabo-parser", features = ["simd"] }
 mabo-project = { path = "../mabo-project" }
 ouroboros = "0.18.5"
 parking_lot = "0.12.3"
-rand = "0.8.5"
+rand = "0.9.0"
 ropey = "1.6.1"
 rustc-hash.workspace = true
 serde_json.workspace = true

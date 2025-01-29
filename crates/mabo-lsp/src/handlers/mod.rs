@@ -129,8 +129,8 @@ pub fn initialize(
 
 pub fn initialized(state: &mut GlobalState<'_>, _params: InitializedParams) {
     static ID: LazyLock<String> = LazyLock::new(|| {
-        use rand::distributions::{Alphanumeric, DistString};
-        Alphanumeric.sample_string(&mut rand::thread_rng(), 24)
+        use rand::distr::{Alphanumeric, SampleString};
+        Alphanumeric.sample_string(&mut rand::rng(), 24)
     });
 
     if let Err(e) = state.reload_settings() {

@@ -20,4 +20,3 @@ const Int uint32 = 100
 const Float float64 = 5.5
 const String string = "value"
 var Bytes []byte = []byte{1, 2, 3}
-

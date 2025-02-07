@@ -15,4 +15,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_gen_dup.mabo
  3 │ }
    ╰────
   help: the names of each generic type must be unique
-

@@ -13,4 +13,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_unnamed_dup_id.mab
    ·                       ╰── first declared here
    ╰────
   help: the IDs for each field must be unique
-

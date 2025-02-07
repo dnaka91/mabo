@@ -2,7 +2,6 @@
 source: crates/mabo-compiler/tests/compiler.rs
 description: "use datetime::timing::Timestamp;\n\nstruct Sample {\n    value: Timestamp<u32> @1,\n}"
 input_file: crates/mabo-compiler/tests/inputs/resolve/remote_gens_mismatch.mabo
-snapshot_kind: text
 ---
   × type resolution failed
   ├─▶ failed resolving type in remote modules

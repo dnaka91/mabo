@@ -13,4 +13,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_named_tuple_too_la
  3 │ }
    ╰────
   help: a tuple must have between 2 and 12 elements
-

@@ -5,4 +5,3 @@ input_file: crates/mabo-parser/tests/inputs/import_basic.mabo
 ---
 use other::schema::Sample;
 use second::submodule;
-

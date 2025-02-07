@@ -2,7 +2,6 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "struct Sample {\n    field: () @1,\n}"
 input_file: crates/mabo-parser/tests/inputs/invalid/struct_named_tuple_empty.mabo
-snapshot_kind: text
 ---
 mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseStructError.html)
 
@@ -10,7 +9,7 @@ mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/str
   ├─▶ Failed to parse fields declaration
   ├─▶ Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 28
    ╭─[invalid/struct_named_tuple_empty.mabo:1:1]
  1 │ ╭─▶ struct Sample {
  2 │ │       field: () @1,
@@ -24,7 +23,7 @@ Error: mabo::parse::id (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
   × Failed to parse fields declaration
   ├─▶ Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 28
    ╭─[invalid/struct_named_tuple_empty.mabo:1:15]
  1 │ ╭─▶ struct Sample {
  2 │ ├─▶     field: () @1,
@@ -38,7 +37,7 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
 
   × Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 28
    ╭─[invalid/struct_named_tuple_empty.mabo:2:12]
  1 │ struct Sample {
  2 │     field: () @1,
@@ -51,7 +50,7 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
 Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
 
   × Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 28
    ╭─[invalid/struct_named_tuple_empty.mabo:2:13]
  1 │ struct Sample {
  2 │     field: () @1,
@@ -62,4 +61,4 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
   help: Expected type definition in the form `❬B❭<Name>❬B❭`
 
 Error: 
-  × error Verify
+  × Parser error at offset 28

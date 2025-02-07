@@ -12,5 +12,3 @@ enum Sample<T> {
         field3: T @3
     } @3
 }
-
-

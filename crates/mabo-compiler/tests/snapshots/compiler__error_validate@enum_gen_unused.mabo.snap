@@ -15,4 +15,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_gen_unused.mabo
  4 │ }
    ╰────
   help: each declared generic must be used in some way
-

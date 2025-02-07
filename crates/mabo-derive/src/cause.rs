@@ -58,27 +58,19 @@ fn is_parser_variant(variant: &Variant) -> syn::Result<()> {
         bail!(variant, "first variant must be unnamed");
     };
 
-    if fields.unnamed.len() != 2 {
+    if fields.unnamed.len() != 1 {
         bail!(
             fields,
-            "first variant must contain exactly two unnamed fields"
+            "first variant must contain exactly one unnamed field"
         );
     };
 
     let Type::Path(ty) = &fields.unnamed[0].ty else {
-        bail!(fields.unnamed[0], "first variant type invalid");
-    };
-
-    if !compare_path(ty, &[&["ErrorKind"], &["winnow", "error", "ErrorKind"]]) {
-        bail!(ty, "first variant type must be `ErrorKind`");
-    }
-
-    let Type::Path(ty) = &fields.unnamed[1].ty else {
-        bail!(fields.unnamed[1], "second variant type invalid");
+        bail!(fields.unnamed[0], "variant type invalid");
     };
 
     if !compare_path(ty, &[&["usize"]]) {
-        bail!(ty, "second variant type must be `usize`");
+        bail!(ty, "variant type must be `usize`");
     }
 
     Ok(())
@@ -228,7 +220,7 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> TokenStream {
         impl std::error::Error for #ident {
             fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
                 match self {
-                    Self::Parser(_, _) => None,
+                    Self::Parser(_) => None,
                     #(#sources,)*
                 }
             }
@@ -237,7 +229,7 @@ fn expand_error(ident: &Ident, variants: &[VariantInfo<'_>]) -> TokenStream {
         impl std::fmt::Display for #ident {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self {
-                    Self::Parser(kind, _) => kind.fmt(f),
+                    Self::Parser(pos) => write!(f, "Parser error at offset {pos}"),
                     #(#fmts,)*
                 }
             }
@@ -399,35 +391,35 @@ fn expand_miette(
         impl miette::Diagnostic for #ident {
             fn code(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
-                    Self::Parser(_, _) => None,
+                    Self::Parser(_) => None,
                     #(#codes,)*
                 }
             }
 
             fn help(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
-                    Self::Parser(_, _) => None,
+                    Self::Parser(_) => None,
                     #(#helps,)*
                 }
             }
 
             fn labels(&self) -> Option<Box<dyn Iterator<Item = miette::LabeledSpan> +'_>> {
                 match self {
-                    Self::Parser(_, _) => None,
+                    Self::Parser(_) => None,
                     #(#labels,)*
                 }
             }
 
             fn related(&self) -> Option<Box<dyn Iterator<Item = &dyn miette::Diagnostic> + '_>> {
                 match self {
-                    Self::Parser(_, _) => None,
+                    Self::Parser(_) => None,
                     #(#relateds,)*
                 }
             }
 
             fn url(&self) -> Option<Box<dyn std::fmt::Display + '_>> {
                 match self {
-                    Self::Parser(_, _) => None,
+                    Self::Parser(_) => None,
                     #(#urls,)*
                 }
             }
@@ -436,55 +428,59 @@ fn expand_miette(
 }
 
 fn expand_winnow(ident: &Ident, variants: &[VariantInfo<'_>]) -> syn::Result<TokenStream> {
-    let externals = variants.iter()
-    .filter(|v| matches!(v.attr, VariantAttributes::External))
-    .map(|v| {
-        let variant_ident = &v.variant.ident;
+    let externals = variants
+        .iter()
+        .filter(|v| matches!(v.attr, VariantAttributes::External))
+        .map(|v| {
+            let variant_ident = &v.variant.ident;
 
-        match v.fields.len() {
-            1 => {
-                let ty = &v.fields[0].0.ty;
+            match v.fields.len() {
+                1 => {
+                    let ty = &v.fields[0].0.ty;
 
-                Ok(quote! {
-                    impl<I> ::winnow::error::FromExternalError<I, #ty> for #ident {
-                        fn from_external_error(_: &I, _: ::winnow::error::ErrorKind, e: #ty) -> Self {
-                            Self::#variant_ident(e)
-                        }
-                    }
-                })
-            }
-            2 => {
-                let ty = &v.fields[1].0.ty;
-
-                Ok(quote! {
-                    impl<I> ::winnow::error::FromExternalError<I, #ty> for #ident
-                    where
-                        I: ::winnow::stream::Location,
-                    {
-                        fn from_external_error(input: &I, _: ::winnow::error::ErrorKind, e: #ty) -> Self {
-                            Self::#variant_ident {
-                                at: input.location(),
-                                cause: e,
+                    Ok(quote! {
+                        impl<I> ::winnow::error::FromExternalError<I, #ty> for #ident {
+                            fn from_external_error(_: &I, e: #ty) -> Self {
+                                Self::#variant_ident(e)
                             }
                         }
-                    }
-                })
+                    })
+                }
+                2 => {
+                    let ty = &v.fields[1].0.ty;
+
+                    Ok(quote! {
+                        impl<I> ::winnow::error::FromExternalError<I, #ty> for #ident
+                        where
+                            I: ::winnow::stream::Location,
+                        {
+                            fn from_external_error(input: &I, e: #ty) -> Self {
+                                Self::#variant_ident {
+                                    at: input.current_token_start(),
+                                    cause: e,
+                                }
+                            }
+                        }
+                    })
+                }
+                _ => bail!(v.variant, "external variants must have 1 or 2 fields only"),
             }
-            _ => bail!(v.variant, "external variants must have 1 or 2 fields only"),
-        }
-    }).collect::<syn::Result<Vec<_>>>()?;
+        })
+        .collect::<syn::Result<Vec<_>>>()?;
 
     Ok(quote! {
         impl<I> ::winnow::error::ParserError<I> for #ident
         where
             I: ::winnow::stream::Location + ::winnow::stream::Stream,
         {
-            fn from_error_kind(input: &I, kind: ::winnow::error::ErrorKind) -> Self {
-                Self::Parser(kind, input.location())
+            type Inner = Self;
+
+            fn from_input(input: &I) -> Self {
+                Self::Parser(input.current_token_start())
             }
 
-            fn append(self, _: &I, _: &I::Checkpoint, _: ::winnow::error::ErrorKind) -> Self {
-                self
+            fn into_inner(self) -> ::winnow::Result<Self::Inner, Self> {
+                Ok(self)
             }
         }
 

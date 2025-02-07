@@ -2,8 +2,7 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
-    ascii::alphanumeric0, combinator::opt, error::ErrorKind, stream::Location, token::one_of,
-    Parser,
+    ascii::alphanumeric0, combinator::opt, error::ErrMode, stream::Location, token::one_of, Parser,
 };
 
 use super::{punctuate, surround, ws, Input, Result};
@@ -33,7 +32,7 @@ pub struct ParseError {
 #[rename(ParseGenericsCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Defined name is not considered valid.
     #[err(msg("TODO!"), code(mabo::parse::generics::invalid_name), help("TODO!"))]
     InvalidName {
@@ -52,7 +51,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Generics<'i>, ParseErro
     .map(|(angle, types)| Generics { angle, types })
     .map_err(|e| {
         e.map(|cause| ParseError {
-            at: input.location()..input.location(),
+            at: input.current_token_start()..input.current_token_start(),
             cause,
         })
     })
@@ -64,9 +63,9 @@ fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         .with_span()
         .parse_next(input)
         .map(Into::into)
-        .map_err(|e| {
+        .map_err(|e: ErrMode<_>| {
             e.map(|()| Cause::InvalidName {
-                at: input.location(),
+                at: input.current_token_start(),
             })
         })
 }

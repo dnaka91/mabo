@@ -17,4 +17,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_variant_dup_id.mabo
  4 │ }
    ╰────
   help: the IDs for each variant of an enum must be unique
-

@@ -11,4 +11,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/import_root.mabo
    ·               ──┬──
    ·                 ╰── used here
    ╰────
-

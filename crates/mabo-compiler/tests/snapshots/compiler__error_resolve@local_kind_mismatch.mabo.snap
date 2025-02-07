@@ -18,4 +18,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_kind_mismatch.mabo
    ·         ╰── declared here
    ╰────
   help: only struct and enum definitions can be used
-

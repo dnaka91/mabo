@@ -18,4 +18,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_gens_mismatch.mabo
    ·          ╰── declared here
    ╰────
   help: the amount of generics must always match
-

@@ -9,4 +9,3 @@ use ::mabo::buf::{Decode, Encode, Size};
 use super::other::schema::Sample;
 #[allow(unused_imports)]
 use super::second::submodule;
-

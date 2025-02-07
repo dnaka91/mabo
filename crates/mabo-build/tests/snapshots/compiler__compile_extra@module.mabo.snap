@@ -10,4 +10,3 @@ pub mod sample {
     #[allow(unused_imports)]
     use ::mabo::buf::{Decode, Encode, Size};
 }
-

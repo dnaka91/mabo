@@ -26,18 +26,18 @@ clone_on_ref_ptr = "warn"
 anstream = "0.6.18"
 anstyle = "1.0.10"
 anyhow = "1.0.95"
-clap = { version = "4.5.27", features = ["derive", "wrap_help"] }
+clap = { version = "4.5.28", features = ["derive", "wrap_help"] }
 glob = "0.3.2"
 indoc = "2.0.5"
 insta = { version = "1.42.1", features = ["glob"] }
-miette = { version = "7.4.0", default-features = false }
+miette = { version = "7.5.0", default-features = false }
 mimalloc = "0.1.43"
 proc-macro2 = { version = "1.0.93", default-features = false }
 quote = { version = "1.0.38", default-features = false }
-rustc-hash = "2.1.0"
+rustc-hash = "2.1.1"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.138"
-syn = "2.0.96"
+syn = "2.0.98"
 thiserror = "2.0.11"
 
 [profile.release]

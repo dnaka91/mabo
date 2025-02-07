@@ -12,4 +12,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/import_sub.mabo
    ·                 ╰── used here
    ╰────
   help: the resolution stopped at module path ❬Y❭datetime❬Y❭
-

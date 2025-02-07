@@ -16,5 +16,3 @@ import (
 
 // Sample type alias.
 type Sample uint32
-
-

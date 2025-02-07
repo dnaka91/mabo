@@ -13,4 +13,3 @@ pub const NEWLINE_ESCAPE: &str = "one two three";
 pub const ESCAPES: &str = "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ";
 #[allow(dead_code)]
 pub const MULTILINE: &str = "a\n    b\n    c\n";
-

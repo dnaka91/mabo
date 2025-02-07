@@ -2,7 +2,6 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "enum Sample {\n    One @1,\n    Two {\n        field: () @1,\n    } @2,\n}"
 input_file: crates/mabo-parser/tests/inputs/invalid/enum_named_tuple_empty.mabo
-snapshot_kind: text
 ---
 mabo::parse::enum_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseEnumError.html)
 
@@ -10,7 +9,7 @@ mabo::parse::enum_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struc
   ├─▶ Failed to parse fields declaration
   ├─▶ Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 52
    ╭─[invalid/enum_named_tuple_empty.mabo:4:17]
  3 │     Two {
  4 │         field: () @1,
@@ -25,7 +24,7 @@ Error: mabo::parse::id (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
   × Failed to parse fields declaration
   ├─▶ Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 52
    ╭─[invalid/enum_named_tuple_empty.mabo:3:9]
  2 │     One @1,
  3 │     Two {
@@ -40,7 +39,7 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
 
   × Failed to parse type definition
   ├─▶ Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 52
    ╭─[invalid/enum_named_tuple_empty.mabo:4:16]
  3 │     Two {
  4 │         field: () @1,
@@ -53,7 +52,7 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
 Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseTypeError.html)
 
   × Failed to parse type definition
-  ╰─▶ error Verify
+  ╰─▶ Parser error at offset 52
    ╭─[invalid/enum_named_tuple_empty.mabo:4:17]
  3 │     Two {
  4 │         field: () @1,
@@ -64,4 +63,4 @@ Error: mabo::parse::type_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/erro
   help: Expected type definition in the form `❬B❭<Name>❬B❭`
 
 Error: 
-  × error Verify
+  × Parser error at offset 52

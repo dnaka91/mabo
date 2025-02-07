@@ -7,7 +7,7 @@ use winnow::{
         alt, cut_err, delimited, fail, opt, peek, preceded, repeat, separated, terminated,
     },
     dispatch,
-    error::ErrorKind,
+    error::ErrMode,
     stream::Location,
     token::{any, one_of, take_till, take_while},
     Parser,
@@ -51,7 +51,7 @@ pub struct ParseError {
 #[rename(ParseLiteralCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Found a reference value, which is not allowed.
     #[err(
         msg("Found a reference value"),
@@ -89,7 +89,7 @@ pub enum Cause {
 }
 
 pub(super) fn parse(input: &mut Input<'_>) -> Result<Literal, ParseError> {
-    let start = input.location();
+    let start = input.current_token_start();
 
     dispatch! {
         peek(any);
@@ -139,9 +139,9 @@ fn parse_int(input: &mut Input<'_>) -> Result<i128, Cause> {
         .take()
         .parse_to()
         .parse_next(input)
-        .map_err(|e| {
+        .map_err(|e: ErrMode<_>| {
             e.map(|()| Cause::InvalidInt {
-                at: input.location(),
+                at: input.current_token_start(),
             })
         })
 }

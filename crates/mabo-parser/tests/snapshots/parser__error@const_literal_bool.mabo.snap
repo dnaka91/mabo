@@ -2,13 +2,12 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "const VALUE: bool = truze;"
 input_file: crates/mabo-parser/tests/inputs/invalid/const_literal_bool.mabo
-snapshot_kind: text
 ---
 mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseConstError.html)
 
   × Failed to parse const declaration
   ├─▶ Failed to parse literal value
-  ╰─▶ error Tag
+  ╰─▶ Parser error at offset 20
    ╭─[invalid/const_literal_bool.mabo:1:1]
  1 │ const VALUE: bool = truze;
    · ─────────────┬────────────
@@ -19,7 +18,7 @@ mabo::parse::const_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/stru
 Error: mabo::parse::literal (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseLiteralError.html)
 
   × Failed to parse literal value
-  ╰─▶ error Tag
+  ╰─▶ Parser error at offset 20
    ╭─[invalid/const_literal_bool.mabo:1:21]
  1 │ const VALUE: bool = truze;
    ·                     ▲
@@ -33,4 +32,4 @@ Error: mabo::parse::literal (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error
         or `❬B❭[...]❬B❭` for bytes
 
 Error: 
-  × error Tag
+  × Parser error at offset 20

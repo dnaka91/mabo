@@ -9,5 +9,3 @@ struct Sample<T> {
     b: bool @2,
     c: T @3,
 }
-
-

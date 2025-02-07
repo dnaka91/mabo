@@ -2,18 +2,18 @@
 
 use std::marker::PhantomData;
 
-use winnow::{stream::Location, ModalResult, Parser};
+use winnow::{error::ErrMode, stream::Location, ModalParser, ModalResult, Parser};
 
 pub(crate) trait ParserExt {
     fn map_err<G, I, O, E, E2>(self, map: G) -> MapErr<Self, G, I, O, E, E2>
     where
         G: Fn(E) -> E2,
-        Self: Parser<I, O, E> + Sized;
+        Self: ModalParser<I, O, E> + Sized;
 
     fn map_err_loc<G, I, O, E, E2>(self, map: G) -> MapErrLoc<Self, G, I, O, E, E2>
     where
         G: Fn(usize, E) -> E2,
-        Self: Parser<I, O, E> + Sized;
+        Self: ModalParser<I, O, E> + Sized;
 }
 
 impl<T> ParserExt for T {
@@ -21,7 +21,7 @@ impl<T> ParserExt for T {
     fn map_err<G, I, O, E, E2>(self, map: G) -> MapErr<Self, G, I, O, E, E2>
     where
         G: Fn(E) -> E2,
-        Self: Parser<I, O, E> + Sized,
+        Self: ModalParser<I, O, E> + Sized,
     {
         MapErr::new(self, map)
     }
@@ -30,7 +30,7 @@ impl<T> ParserExt for T {
     fn map_err_loc<G, I, O, E, E2>(self, map: G) -> MapErrLoc<Self, G, I, O, E, E2>
     where
         G: Fn(usize, E) -> E2,
-        Self: Parser<I, O, E> + Sized,
+        Self: ModalParser<I, O, E> + Sized,
     {
         MapErrLoc::new(self, map)
     }
@@ -38,7 +38,7 @@ impl<T> ParserExt for T {
 
 pub(crate) struct MapErr<F, G, I, O, E, E2>
 where
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
     G: Fn(E) -> E2,
 {
     parser: F,
@@ -51,7 +51,7 @@ where
 
 impl<F, G, I, O, E, E2> MapErr<F, G, I, O, E, E2>
 where
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
     G: Fn(E) -> E2,
 {
     #[inline(always)]
@@ -67,9 +67,9 @@ where
     }
 }
 
-impl<F, G, I, O, E, E2> Parser<I, O, E2> for MapErr<F, G, I, O, E, E2>
+impl<F, G, I, O, E, E2> Parser<I, O, ErrMode<E2>> for MapErr<F, G, I, O, E, E2>
 where
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
     G: Fn(E) -> E2,
 {
     #[inline]
@@ -83,7 +83,7 @@ where
 
 pub(crate) struct MapErrLoc<F, G, I, O, E, E2>
 where
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
     G: Fn(usize, E) -> E2,
 {
     parser: F,
@@ -96,7 +96,7 @@ where
 
 impl<F, G, I, O, E, E2> MapErrLoc<F, G, I, O, E, E2>
 where
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
     G: Fn(usize, E) -> E2,
 {
     #[inline(always)]
@@ -112,9 +112,9 @@ where
     }
 }
 
-impl<F, G, I, O, E, E2> Parser<I, O, E2> for MapErrLoc<F, G, I, O, E, E2>
+impl<F, G, I, O, E, E2> Parser<I, O, ErrMode<E2>> for MapErrLoc<F, G, I, O, E, E2>
 where
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
     G: Fn(usize, E) -> E2,
     I: Location,
 {
@@ -122,7 +122,7 @@ where
     fn parse_next(&mut self, i: &mut I) -> ModalResult<O, E2> {
         match self.parser.parse_next(i) {
             Ok(o) => Ok(o),
-            Err(e) => Err(e.map(|e| (self.map)(i.location(), e))),
+            Err(e) => Err(e.map(|e| (self.map)(i.current_token_start(), e))),
         }
     }
 }

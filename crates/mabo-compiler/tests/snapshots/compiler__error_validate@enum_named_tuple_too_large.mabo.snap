@@ -16,4 +16,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_tuple_too_larg
  6 │ }
    ╰────
   help: a tuple must have between 2 and 12 elements
-

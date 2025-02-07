@@ -15,4 +15,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_sub.mabo
  4 │ 
  5 │ mod inner {}
    ╰────
-

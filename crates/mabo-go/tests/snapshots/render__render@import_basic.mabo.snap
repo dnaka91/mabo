@@ -13,5 +13,3 @@ import (
 	mabo "github.com/dnaka91/mabo-go"
 	buf "github.com/dnaka91/mabo-go/buf"
 )
-
-

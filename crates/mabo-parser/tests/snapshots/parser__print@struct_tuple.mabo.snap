@@ -5,5 +5,3 @@ input_file: crates/mabo-parser/tests/inputs/struct_tuple.mabo
 ---
 /// Basic struct.
 struct Sample(u32 @1, bool @2)
-
-

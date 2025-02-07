@@ -41,4 +41,3 @@ Error: mabo::parse::fields::named::invalid_name (https://docs.rs/mabo-parser/0.1
    ╰────
   help: Field names must start with a lowercase letter (❬Y❭a-z❬Y❭), followed by zero or more lowercase alphanumeric
         characters or underscores (❬Y❭a-z, 0-9, _❬Y❭)
-

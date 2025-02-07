@@ -50,15 +50,17 @@ pub fn expand(derive: DeriveInput) -> syn::Result<TokenStream> {
         where
             I: ::winnow::stream::Location + ::winnow::stream::Stream,
         {
-            fn from_error_kind(input: &I, kind: ::winnow::error::ErrorKind) -> Self {
-                Self{
-                    at: input.location()..input.location(),
-                    cause: Cause::Parser(kind, input.location()),
+            type Inner = Self;
+
+            fn from_input(input: &I) -> Self {
+                Self {
+                    at: input.current_token_start()..input.current_token_start(),
+                    cause: Cause::Parser(input.current_token_start()),
                 }
             }
 
-            fn append(self, _: &I, _: &I::Checkpoint, _: ::winnow::error::ErrorKind) -> Self {
-                self
+            fn into_inner(self) -> ::winnow::Result<Self::Inner, Self> {
+                Ok(self)
             }
         }
     })

@@ -16,4 +16,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/local_sub_nested2.mabo
  5 │ mod inner {
    ╰────
   help: the resolution stopped at module path ❬Y❭test::inner::a❬Y❭
-

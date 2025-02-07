@@ -17,4 +17,3 @@ pub const FLOAT: f64 = 5.5;
 pub const STRING: &str = "value";
 #[allow(dead_code)]
 pub const BYTES: &[u8] = b"\x01\x02\x03";
-

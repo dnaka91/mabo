@@ -5,5 +5,3 @@ input_file: crates/mabo-parser/tests/inputs/attribute_unit.mabo
 ---
 #[deprecated]
 struct Sample
-
-

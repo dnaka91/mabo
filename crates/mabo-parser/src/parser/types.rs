@@ -5,7 +5,6 @@ use winnow::{
     ascii::{dec_uint, space0},
     combinator::{alt, cut_err, empty, fail, opt, preceded, repeat},
     dispatch,
-    error::ErrorKind,
     stream::Location,
     token::{literal, one_of, take_while},
     Parser,
@@ -38,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseTypeCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Invalid type declaration.
     #[forward]
     Type(Box<ParseError>),
@@ -48,7 +47,7 @@ pub enum Cause {
 }
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Type<'i>, ParseError> {
-    let start = input.location();
+    let start = input.current_token_start();
 
     alt((
         parse_basic,
@@ -62,7 +61,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Type<'i>, ParseError> {
     .map(Into::into)
     .map_err(|e| {
         e.map(|cause| ParseError {
-            at: start..input.location(),
+            at: start..input.current_token_start(),
             cause,
         })
     })

@@ -4,7 +4,7 @@ use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::{space0, space1},
     combinator::{cut_err, preceded, terminated},
-    error::ErrorKind,
+    error::ErrMode,
     stream::{Location, Stream},
     token::{one_of, take_while},
     Parser,
@@ -37,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseConstCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     #[err(
         msg("Unexpected character"),
         code(mabo::parse::const_def::char),
@@ -120,9 +120,9 @@ pub(super) fn parse_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         .with_span()
         .parse_next(input)
         .map(Into::into)
-        .map_err(|e| {
+        .map_err(|e: ErrMode<_>| {
             e.map(|()| Cause::InvalidName {
-                at: input.location(),
+                at: input.current_token_start(),
             })
         })
 }

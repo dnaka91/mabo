@@ -32,7 +32,7 @@ pub fn simplify<'a>(
 
 fn parse_schema_diagnostic(index: &Index, e: &ParseSchemaError) -> Diagnostic {
     match &e.cause {
-        ParseSchemaCause::Parser(_, at) => {
+        ParseSchemaCause::Parser(at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
         }
         ParseSchemaCause::Comment(e) => parse_comment_diagnostic(index, e),
@@ -42,16 +42,16 @@ fn parse_schema_diagnostic(index: &Index, e: &ParseSchemaError) -> Diagnostic {
 
 fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagnostic {
     match e {
-        ParseDefinitionError::Parser(_, at) => {
+        ParseDefinitionError::Parser(at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
         }
         ParseDefinitionError::Comment(e) => parse_comment_diagnostic(index, e),
         ParseDefinitionError::Attribute(e) => match &e.cause {
-            ParseAttributeCause::Parser(_, at) => {
+            ParseAttributeCause::Parser(at) => {
                 Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
             }
             ParseAttributeCause::Literal(e) => match &e.cause {
-                ParseLiteralCause::Parser(_, at) => {
+                ParseLiteralCause::Parser(at) => {
                     Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
                 }
                 ParseLiteralCause::FoundReference { at }
@@ -62,7 +62,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
             },
         },
         ParseDefinitionError::Module(e) => match &e.cause {
-            ParseModuleCause::Parser(_, at) => {
+            ParseModuleCause::Parser(at) => {
                 Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
             }
             ParseModuleCause::InvalidName { at } => {
@@ -71,7 +71,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
             ParseModuleCause::Definition(e) => parse_definition_diagnostic(index, e),
         },
         ParseDefinitionError::Struct(e) => match &e.cause {
-            ParseStructCause::Parser(_, at) => {
+            ParseStructCause::Parser(at) => {
                 Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
             }
             ParseStructCause::InvalidName { at } => {
@@ -81,7 +81,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
             ParseStructCause::Fields(e) => parse_fields_diagnostic(index, e),
         },
         ParseDefinitionError::Enum(e) => match &e.cause {
-            ParseEnumCause::Parser(_, at) => {
+            ParseEnumCause::Parser(at) => {
                 Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
             }
             ParseEnumCause::InvalidName { at } | ParseEnumCause::InvalidVariantName { at } => {
@@ -93,7 +93,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
             ParseEnumCause::Id(e) => parse_id_diagnostic(index, e),
         },
         ParseDefinitionError::Const(e) => match &e.cause {
-            ParseConstCause::Parser(_, at) => {
+            ParseConstCause::Parser(at) => {
                 Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
             }
             ParseConstCause::UnexpectedChar { at, .. } | ParseConstCause::InvalidName { at } => {
@@ -101,7 +101,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
             }
             ParseConstCause::Type(e) => parse_type_diagnostic(index, e),
             ParseConstCause::Literal(e) => match &e.cause {
-                ParseLiteralCause::Parser(_, at) => {
+                ParseLiteralCause::Parser(at) => {
                     Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
                 }
                 ParseLiteralCause::FoundReference { at }
@@ -112,7 +112,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
             },
         },
         ParseDefinitionError::Alias(e) => match &e.cause {
-            ParseAliasCause::Parser(_, at) => {
+            ParseAliasCause::Parser(at) => {
                 Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
             }
             ParseAliasCause::InvalidName { at } => {
@@ -127,7 +127,7 @@ fn parse_definition_diagnostic(index: &Index, e: &ParseDefinitionError) -> Diagn
 
 fn parse_type_diagnostic(index: &Index, e: &ParseTypeError) -> Diagnostic {
     match &e.cause {
-        ParseTypeCause::Parser(_, at) => {
+        ParseTypeCause::Parser(at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
         }
         ParseTypeCause::Type(e) => parse_type_diagnostic(index, e),
@@ -141,18 +141,18 @@ fn parse_comment_diagnostic(index: &Index, e: &ParseCommentError) -> Diagnostic 
 
 fn parse_import_cause_diagnostic(index: &Index, c: &ParseImportCause) -> Diagnostic {
     match c {
-        ParseImportCause::Parser(_, at) | ParseImportCause::InvalidSegmentName { at } => {
+        ParseImportCause::Parser(at) | ParseImportCause::InvalidSegmentName { at } => {
             Diagnostic::new_simple(get_range(index, *at..*at), c.to_string())
         }
         ParseImportCause::StructName(c) => match c {
-            ParseStructCause::Parser(_, at) | ParseStructCause::InvalidName { at } => {
+            ParseStructCause::Parser(at) | ParseStructCause::InvalidName { at } => {
                 Diagnostic::new_simple(get_range(index, *at..*at), c.to_string())
             }
             ParseStructCause::Generics(e) => parse_generics_diagnostic(index, e),
             ParseStructCause::Fields(e) => parse_fields_diagnostic(index, e),
         },
         ParseImportCause::EnumName(c) => match c {
-            ParseEnumCause::Parser(_, at)
+            ParseEnumCause::Parser(at)
             | ParseEnumCause::InvalidName { at }
             | ParseEnumCause::InvalidVariantName { at } => {
                 Diagnostic::new_simple(get_range(index, *at..*at), c.to_string())
@@ -167,7 +167,7 @@ fn parse_import_cause_diagnostic(index: &Index, c: &ParseImportCause) -> Diagnos
 
 fn parse_generics_diagnostic(index: &Index, e: &ParseGenericsError) -> Diagnostic {
     match &e.cause {
-        mabo_parser::error::ParseGenericsCause::Parser(_, at) => {
+        mabo_parser::error::ParseGenericsCause::Parser(at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
         }
         mabo_parser::error::ParseGenericsCause::InvalidName { at } => {
@@ -178,7 +178,7 @@ fn parse_generics_diagnostic(index: &Index, e: &ParseGenericsError) -> Diagnosti
 
 fn parse_fields_diagnostic(index: &Index, e: &ParseFieldsError) -> Diagnostic {
     match &e.cause {
-        ParseFieldsCause::Parser(_, at) => {
+        ParseFieldsCause::Parser(at) => {
             Diagnostic::new_simple(get_range(index, *at..*at), e.to_string())
         }
         ParseFieldsCause::InvalidName { at } => {

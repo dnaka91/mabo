@@ -7,4 +7,3 @@ const SIMPLE: string = "value";
 const NEWLINE_ESCAPE: string = "one two three";
 const ESCAPES: string = "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ ";
 const MULTILINE: string = "a\n    b\n    c\n";
-

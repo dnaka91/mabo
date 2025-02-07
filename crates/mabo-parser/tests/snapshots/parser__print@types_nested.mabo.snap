@@ -6,5 +6,3 @@ input_file: crates/mabo-parser/tests/inputs/types_nested.mabo
 struct Sample {
     value: vec<option<non_zero<hash_map<i64, box<string>>>>> @1,
 }
-
-

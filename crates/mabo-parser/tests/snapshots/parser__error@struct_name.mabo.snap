@@ -2,7 +2,6 @@
 source: crates/mabo-parser/tests/parser.rs
 description: "struct sample {\n    value: u32 @1,\n}"
 input_file: crates/mabo-parser/tests/inputs/invalid/struct_name.mabo
-snapshot_kind: text
 ---
 mabo::parse::struct_def (https://docs.rs/mabo-parser/0.1.0/mabo_parser/error/struct.ParseStructError.html)
 

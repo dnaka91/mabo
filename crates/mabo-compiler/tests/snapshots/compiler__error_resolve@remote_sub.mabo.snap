@@ -15,4 +15,3 @@ input_file: crates/mabo-compiler/tests/inputs/resolve/remote_sub.mabo
    ·                      ╰── used here
  5 │ }
    ╰────
-

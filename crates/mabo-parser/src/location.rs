@@ -15,7 +15,7 @@ where
 {
     input.reset(start);
 
-    let start = input.location();
+    let start = input.current_token_start();
 
     let end = chars
         .into_iter()

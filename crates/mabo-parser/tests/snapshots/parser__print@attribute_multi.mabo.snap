@@ -5,5 +5,3 @@ input_file: crates/mabo-parser/tests/inputs/attribute_multi.mabo
 ---
 #[validate(min = 1, max = 100)]
 struct Sample
-
-

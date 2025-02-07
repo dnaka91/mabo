@@ -18,4 +18,3 @@ const Simple string = "value"
 const NewlineEscape string = "one two three"
 const Escapes string = "escape basics \r\n \t \u{8} \u{c} \\ \"hello\" \nunicode ❤  emoji ❤ "
 const Multiline string = "a\n    b\n    c\n"
-

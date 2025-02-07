@@ -16,4 +16,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_gen_dup.mabo
  4 │ }
    ╰────
   help: the names of each generic type must be unique
-

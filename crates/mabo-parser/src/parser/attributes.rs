@@ -4,7 +4,6 @@ use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space0,
     combinator::{alt, cut_err, opt, preceded, repeat, separated, terminated},
-    error::ErrorKind,
     stream::Location,
     token::{one_of, take_while},
     Parser,
@@ -41,14 +40,14 @@ pub struct ParseError {
 #[rename(ParseAttributeCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Invalid literal for the attribute value.
     #[forward]
     Literal(literals::ParseError),
 }
 
 pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Attributes<'i>, ParseError> {
-    let start = input.location();
+    let start = input.current_token_start();
 
     repeat(0.., terminated(parse_attribute, '\n'))
         .fold(Vec::new, |mut acc, attrs| {

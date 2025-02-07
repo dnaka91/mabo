@@ -26,4 +26,3 @@ Error: mabo::parse::enum_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/ma
    ╰────
   help: Enum names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more alphanumeric characters
         (❬Y❭A-Z, a-z, 0-9❬Y❭)
-

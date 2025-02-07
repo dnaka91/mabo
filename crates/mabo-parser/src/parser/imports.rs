@@ -4,7 +4,7 @@ use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
     ascii::space1,
     combinator::{alt, cut_err, opt, separated, terminated},
-    error::ErrorKind,
+    error::ErrMode,
     stream::{Location, Stream},
     token::{one_of, take_while},
     Parser,
@@ -37,7 +37,7 @@ pub struct ParseError {
 #[rename(ParseImportCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Defined name is not considered valid.
     #[err(
         msg("Invalid segment name"),
@@ -110,9 +110,9 @@ pub(super) fn parse_segment<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause
         .with_span()
         .parse_next(input)
         .map(Into::into)
-        .map_err(|e| {
+        .map_err(|e: ErrMode<_>| {
             e.map(|()| Cause::InvalidSegmentName {
-                at: input.location(),
+                at: input.current_token_start(),
             })
         })
 }

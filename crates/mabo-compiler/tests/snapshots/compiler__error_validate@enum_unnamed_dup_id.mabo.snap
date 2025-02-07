@@ -16,4 +16,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_unnamed_dup_id.mabo
  4 │ }
    ╰────
   help: the IDs for each field must be unique
-

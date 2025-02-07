@@ -14,4 +14,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/struct_gen_unused.mabo
  3 │ }
    ╰────
   help: each declared generic must be used in some way
-

@@ -12,5 +12,3 @@ enum Sample {
         field2: bool @2,
     } @3,
 }
-
-

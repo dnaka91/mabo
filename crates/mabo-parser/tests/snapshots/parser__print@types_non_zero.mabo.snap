@@ -20,5 +20,3 @@ struct Sample {
     f14: non_zero<hash_map<string, bytes>> @14,
     f15: non_zero<hash_set<string>> @15,
 }
-
-

@@ -20,4 +20,3 @@ input_file: crates/mabo-compiler/tests/inputs/validate/enum_named_dup_name.mabo
  7 │ }
    ╰────
   help: the names of each field must be unique
-

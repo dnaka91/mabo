@@ -43,7 +43,7 @@ mod imports;
 mod literals;
 mod modules;
 mod structs;
-mod types;
+mod types; /*  */
 
 type Input<'i> = winnow::LocatingSlice<&'i str>;
 type Result<T, E = ParseSchemaCause> = winnow::ModalResult<T, E>;
@@ -96,9 +96,7 @@ mod ids {
     use std::ops::Range;
 
     use mabo_derive::{ParserError, ParserErrorCause};
-    use winnow::{
-        ascii::dec_uint, combinator::preceded, error::ErrorKind, stream::Location, Parser,
-    };
+    use winnow::{ascii::dec_uint, combinator::preceded, error::ErrMode, stream::Location, Parser};
 
     use super::{Input, Result};
     use crate::{highlight, Id};
@@ -123,7 +121,7 @@ mod ids {
     #[derive(Debug, ParserErrorCause)]
     pub enum Cause {
         /// Non-specific general parser error.
-        Parser(ErrorKind, usize),
+        Parser(usize),
     }
 
     pub(super) fn parse(input: &mut Input<'_>) -> Result<Id, ParseError> {
@@ -131,10 +129,10 @@ mod ids {
             .with_span()
             .parse_next(input)
             .map(Id::from)
-            .map_err(|e| {
-                e.map(|e: ErrorKind| ParseError {
-                    at: input.location()..input.location(),
-                    cause: Cause::Parser(e, input.location()),
+            .map_err(|e: ErrMode<_>| {
+                e.map(|()| ParseError {
+                    at: input.current_token_start()..input.current_token_start(),
+                    cause: Cause::Parser(input.current_token_start()),
                 })
             })
     }
@@ -147,7 +145,7 @@ mod comments {
     use winnow::{
         ascii::space0,
         combinator::{delimited, preceded, repeat},
-        error::ErrorKind,
+        error::ErrMode,
         stream::Stream,
         token::take_till,
         Parser,
@@ -179,7 +177,7 @@ mod comments {
     #[derive(Debug, ParserErrorCause)]
     pub enum Cause {
         /// Non-specific general parser error.
-        Parser(ErrorKind, usize),
+        Parser(usize),
     }
 
     pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Comment<'i>, ParseError> {
@@ -196,7 +194,7 @@ mod comments {
         )
         .parse_next(input)
         .map(Comment)
-        .map_err(|e| {
+        .map_err(|e: ErrMode<_>| {
             e.map(|cause| ParseError {
                 at: location::from_until(*input, &start, ['\n']),
                 cause,
@@ -215,12 +213,12 @@ where
     trace("ws", preceded(multispace0, inner))
 }
 
-pub fn punctuate<I, O, P, E, F, G>(mut f: F, mut g: G) -> impl Parser<I, Punctuated<O, P>, E>
+pub fn punctuate<I, O, P, E, F, G>(mut f: F, mut g: G) -> impl ModalParser<I, Punctuated<O, P>, E>
 where
     I: Stream,
     E: ParserError<I>,
-    F: Parser<I, (O, P), E>,
-    G: Parser<I, (O, Option<P>), E>,
+    F: ModalParser<I, (O, P), E>,
+    G: ModalParser<I, (O, Option<P>), E>,
 {
     trace("punctuate", move |i: &mut I| {
         let mut values = Vec::new();
@@ -268,13 +266,13 @@ where
     })
 }
 
-pub fn surround<I, O, D, E, F>(f: F) -> impl Parser<I, (D, O), E>
+pub fn surround<I, O, D, E, F>(f: F) -> impl ModalParser<I, (D, O), E>
 where
     I: Compare<char> + Location + Stream + StreamIsPartial,
     I::Token: Clone + AsChar,
     D: Delimiter + From<(Range<usize>, Range<usize>)>,
     E: ParserError<I>,
-    F: Parser<I, O, E>,
+    F: ModalParser<I, O, E>,
 {
     let mut parser = (D::OPEN.span(), cut_err((f, ws(D::CLOSE.span()))));
 

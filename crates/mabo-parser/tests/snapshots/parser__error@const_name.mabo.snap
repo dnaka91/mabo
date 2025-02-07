@@ -24,4 +24,3 @@ Error: mabo::parse::const_def::invalid_name (https://docs.rs/mabo-parser/0.1.0/m
    ╰────
   help: Const names must start with an uppercase letter (❬Y❭A-Z❬Y❭), followed by zero or more uppercase alphanumeric
         characters or underscores (❬Y❭A-Z, 0-9, _❬Y❭)
-

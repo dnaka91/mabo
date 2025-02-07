@@ -5,7 +5,7 @@ use winnow::{
     ascii::space0,
     combinator::{opt, peek, preceded},
     dispatch,
-    error::ErrorKind,
+    error::ErrMode,
     stream::{Location, Stream},
     token::{any, one_of, take_while},
     Parser,
@@ -42,7 +42,7 @@ pub struct ParseError {
 #[rename(ParseFieldsCause)]
 pub enum Cause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Defined name is not considered valid.
     #[err(
         msg("Invalid field name"),
@@ -157,9 +157,9 @@ fn parse_field_name<'i>(input: &mut Input<'i>) -> Result<Name<'i>, Cause> {
         .with_span()
         .parse_next(input)
         .map(Into::into)
-        .map_err(|e| {
+        .map_err(|e: ErrMode<_>| {
             e.map(|()| Cause::InvalidName {
-                at: input.location(),
+                at: input.current_token_start(),
             })
         })
 }

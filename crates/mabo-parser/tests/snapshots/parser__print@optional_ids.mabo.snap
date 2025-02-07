@@ -20,5 +20,3 @@ enum SampleEnum {
     Unit @50,
     Unnamed(u32, u32 @100, u32),
 }
-
-

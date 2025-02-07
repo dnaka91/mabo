@@ -20,4 +20,3 @@ pub const STRING: &str = "hello";
 /// Some bytes.
 #[allow(dead_code)]
 pub const BYTES: &[u8] = b"\x01\x02\x03";
-

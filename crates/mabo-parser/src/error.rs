@@ -12,7 +12,6 @@ use std::{
 };
 
 use miette::{Diagnostic, NamedSource};
-use winnow::error::ErrorKind;
 
 pub use crate::parser::{
     ParseAliasCause, ParseAliasError, ParseAttributeCause, ParseAttributeError, ParseCommentCause,
@@ -81,7 +80,7 @@ impl Diagnostic for ParseSchemaError {
 #[derive(Debug, Diagnostic)]
 pub enum ParseSchemaCause {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Root-level comment for the schema is invalid.
     #[diagnostic(transparent)]
     Comment(ParseCommentError),
@@ -93,7 +92,7 @@ pub enum ParseSchemaCause {
 impl Error for ParseSchemaCause {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
-            Self::Parser(kind, _) => kind.source(),
+            Self::Parser(_) => None,
             Self::Comment(inner) => inner.source(),
             Self::Definition(inner) => inner.source(),
         }
@@ -103,7 +102,7 @@ impl Error for ParseSchemaCause {
 impl Display for ParseSchemaCause {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Parser(kind, _) => kind.fmt(f),
+            Self::Parser(pos) => write!(f, "Parser error at offset {pos}"),
             Self::Comment(inner) => inner.fmt(f),
             Self::Definition(inner) => inner.fmt(f),
         }
@@ -126,12 +125,14 @@ impl<I> winnow::error::ParserError<I> for ParseSchemaCause
 where
     I: winnow::stream::Location + winnow::stream::Stream,
 {
-    fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
-        Self::Parser(kind, input.location())
+    type Inner = Self;
+
+    fn from_input(input: &I) -> Self {
+        Self::Parser(input.current_token_start())
     }
 
-    fn append(self, _: &I, _: &I::Checkpoint, _: winnow::error::ErrorKind) -> Self {
-        self
+    fn into_inner(self) -> winnow::Result<Self::Inner, Self> {
+        Ok(self)
     }
 }
 
@@ -139,7 +140,7 @@ where
 #[derive(Debug, Diagnostic)]
 pub enum ParseDefinitionError {
     /// Non-specific general parser error.
-    Parser(ErrorKind, usize),
+    Parser(usize),
     /// Invalid comment section.
     #[diagnostic(transparent)]
     Comment(ParseCommentError),
@@ -169,7 +170,7 @@ pub enum ParseDefinitionError {
 impl Error for ParseDefinitionError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
-            Self::Parser(kind, _) => kind.source(),
+            Self::Parser(_) => None,
             Self::Comment(inner) => inner.source(),
             Self::Attribute(inner) => inner.source(),
             Self::Module(inner) => inner.source(),
@@ -185,7 +186,7 @@ impl Error for ParseDefinitionError {
 impl Display for ParseDefinitionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Parser(kind, _) => kind.fmt(f),
+            Self::Parser(pos) => write!(f, "Parser error at offset {pos}"),
             Self::Comment(inner) => inner.fmt(f),
             Self::Attribute(inner) => inner.fmt(f),
             Self::Module(inner) => inner.fmt(f),
@@ -250,11 +251,13 @@ impl<I> winnow::error::ParserError<I> for ParseDefinitionError
 where
     I: winnow::stream::Location + winnow::stream::Stream,
 {
-    fn from_error_kind(input: &I, kind: winnow::error::ErrorKind) -> Self {
-        Self::Parser(kind, input.location())
+    type Inner = Self;
+
+    fn from_input(input: &I) -> Self {
+        Self::Parser(input.current_token_start())
     }
 
-    fn append(self, _: &I, _: &I::Checkpoint, _: winnow::error::ErrorKind) -> Self {
-        self
+    fn into_inner(self) -> winnow::Result<Self::Inner, Self> {
+        Ok(self)
     }
 }

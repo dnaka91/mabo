@@ -1,9 +1,9 @@
-use anyhow::{ensure, Result};
+use anyhow::{Result, ensure};
 use lsp_types::{SemanticToken, SemanticTokenModifier, SemanticTokenType};
 use mabo_parser::{
-    token::Delimiter, Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics,
-    Id, Import, Literal, LiteralValue, Module, NamedField, Schema, Span, Spanned, Struct, Type,
-    TypeAlias, UnnamedField, Variant,
+    Comment, Const, DataType, Definition, Enum, ExternalType, Fields, Generics, Id, Import,
+    Literal, LiteralValue, Module, NamedField, Schema, Span, Spanned, Struct, Type, TypeAlias,
+    UnnamedField, Variant, token::Delimiter,
 };
 
 pub(crate) use self::{modifiers::TOKEN_MODIFIERS, types::TOKEN_TYPES};

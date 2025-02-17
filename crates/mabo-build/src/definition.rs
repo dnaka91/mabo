@@ -3,7 +3,7 @@ use mabo_compiler::simplify::{
     Schema, Struct, Type, TypeAlias, Variant,
 };
 use proc_macro2::{Ident, Span, TokenStream};
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 
 use super::{decode, encode, size};
 use crate::{BytesType, Opts};

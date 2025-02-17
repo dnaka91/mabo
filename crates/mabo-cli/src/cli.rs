@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
 use clap::{
-    builder::{styling::AnsiColor, Styles},
     Args, Parser, Subcommand, ValueHint,
+    builder::{Styles, styling::AnsiColor},
 };
 
 /// Customized coloring style for the CLI output.

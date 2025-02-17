@@ -51,21 +51,20 @@ zigzag!(
 /// Calculate the maximum amount of bytes that an integer might require to be encoded as _varint_.
 #[inline]
 const fn max_size<T>() -> usize {
-    (std::mem::size_of::<T>() * 8 + 6) / 7
+    (std::mem::size_of::<T>() * 8).div_ceil(7)
 }
 
 #[inline]
 const fn size<T>(leading_zeros: usize) -> usize {
-    max(1, (std::mem::size_of::<T>() * 8 - leading_zeros + 6) / 7)
+    max(
+        1,
+        (std::mem::size_of::<T>() * 8 - leading_zeros).div_ceil(7),
+    )
 }
 
 #[inline]
 const fn max(a: usize, b: usize) -> usize {
-    if a > b {
-        a
-    } else {
-        b
-    }
+    if a > b { a } else { b }
 }
 
 macro_rules! varint {

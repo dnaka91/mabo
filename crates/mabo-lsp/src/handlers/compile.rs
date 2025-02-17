@@ -3,13 +3,13 @@ use std::ops::Range;
 use lsp_types::{self as lsp, Diagnostic, Uri};
 use mabo_compiler::validate;
 use mabo_parser::{
+    Schema,
     error::{
         ParseAliasCause, ParseAttributeCause, ParseCommentError, ParseConstCause,
         ParseDefinitionError, ParseEnumCause, ParseFieldsCause, ParseFieldsError,
         ParseGenericsError, ParseIdError, ParseImportCause, ParseLiteralCause, ParseModuleCause,
         ParseSchemaCause, ParseSchemaError, ParseStructCause, ParseTypeCause, ParseTypeError,
     },
-    Schema,
 };
 
 use super::index::Index;

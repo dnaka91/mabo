@@ -2,7 +2,7 @@
 
 use std::{env, fs, path::Path, process::Command};
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{Context, Result, bail, ensure};
 use mabo_go::{Opts, Output};
 use mabo_parser::Schema;
 

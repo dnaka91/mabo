@@ -75,11 +75,11 @@ impl StructDetail<'_> {
 
         if !self.item.generics.is_empty() {
             buf.push('<');
-            for (i, gen) in self.item.generics.iter().enumerate() {
+            for (i, g) in self.item.generics.iter().enumerate() {
                 if i > 0 {
                     buf.push_str(", ");
                 }
-                buf.push_str(gen);
+                buf.push_str(g);
             }
             buf.push('>');
         }
@@ -122,11 +122,11 @@ impl EnumDetail<'_> {
 
         if !self.item.generics.is_empty() {
             buf.push('<');
-            for (i, gen) in self.item.generics.iter().enumerate() {
+            for (i, g) in self.item.generics.iter().enumerate() {
                 if i > 0 {
                     buf.push_str(", ");
                 }
-                buf.push_str(gen);
+                buf.push_str(g);
             }
             buf.push('>');
         }
@@ -178,11 +178,11 @@ impl AliasDetail<'_> {
 
         if !self.item.generics.is_empty() {
             buf.push('<');
-            for (i, gen) in self.item.generics.iter().enumerate() {
+            for (i, g) in self.item.generics.iter().enumerate() {
                 if i > 0 {
                     buf.push_str(", ");
                 }
-                buf.push_str(gen);
+                buf.push_str(g);
             }
             buf.push('>');
         }
@@ -322,11 +322,11 @@ impl Display for PrintType<'_> {
 
                 if !generics.is_empty() {
                     f.write_char('<')?;
-                    for (i, gen) in generics.iter().enumerate() {
+                    for (i, g) in generics.iter().enumerate() {
                         if i > 0 {
                             f.write_str(", ")?;
                         }
-                        write!(f, "{}", PrintType(gen))?;
+                        write!(f, "{}", PrintType(g))?;
                     }
                     f.write_char('>')?;
                 }

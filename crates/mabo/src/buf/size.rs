@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use bytes::Bytes;
 
-use crate::{varint, NonZero};
+use crate::{NonZero, varint};
 
 /// Size of the special field identifier that marks the end of a struct or enum variant.
 pub const END_MARKER_SIZE: usize = 1;

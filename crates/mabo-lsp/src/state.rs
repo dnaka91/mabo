@@ -1,6 +1,6 @@
 #![expect(dead_code)]
 
-use anyhow::{ensure, Context, Result};
+use anyhow::{Context, Result, ensure};
 use log::debug;
 use lsp_server::Connection;
 use lsp_types::{ConfigurationItem, Diagnostic, PositionEncodingKind, Uri};

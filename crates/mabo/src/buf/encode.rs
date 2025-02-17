@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 pub use bytes::{BufMut, Bytes};
 
-use crate::{varint, FieldId, NonZero, VariantId};
+use crate::{FieldId, NonZero, VariantId, varint};
 
 /// Encode a Mabo `bool` (`true` or `false`) value.
 pub fn encode_bool(w: &mut impl BufMut, value: bool) {

@@ -7,9 +7,9 @@ use std::{
 
 use mabo_derive::Debug;
 use winnow::{
+    Parser,
     error::ParserError,
     stream::{Compare, Location, Stream, StreamIsPartial},
-    Parser,
 };
 
 use crate::{Print, Span, Spanned};
@@ -55,7 +55,7 @@ macro_rules! define_keywords {
                 pub const NAME: &'static str = $token;
 
                 #[inline]
-                pub(crate) fn parser<'a, I, E>() -> impl Parser<I, Self, E>
+                pub(crate) fn parser<'a, I, E>() -> impl Parser<I, Self, E> + use<I, E>
                 where
                     I: Compare<&'a str> + Location + Stream + StreamIsPartial,
                     E: ParserError<I>,
@@ -121,7 +121,7 @@ macro_rules! define_punctuation {
 
             impl $name {
                 #[inline]
-                pub(crate) fn parser<'a, I, E>() -> impl Parser<I, Self, E>
+                pub(crate) fn parser<'a, I, E>() -> impl Parser<I, Self, E> + use<I, E>
                 where
                     I: Compare<&'a str> + Location + Stream + StreamIsPartial,
                     E: ParserError<I>,

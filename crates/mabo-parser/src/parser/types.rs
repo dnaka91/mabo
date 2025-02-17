@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{dec_uint, space0},
     combinator::{alt, cut_err, empty, fail, opt, preceded, repeat},
     dispatch,
     stream::Location,
     token::{literal, one_of, take_while},
-    Parser,
 };
 
-use super::{imports, punctuate, ws, Input, ParserExt, Result};
-use crate::{highlight, parser::surround, token, DataType, ExternalType, Name, Type};
+use super::{Input, ParserExt, Result, imports, punctuate, ws};
+use crate::{DataType, ExternalType, Name, Type, highlight, parser::surround, token};
 
 /// Encountered an invalid type definition.
 #[derive(Debug, ParserError)]

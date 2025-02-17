@@ -3,8 +3,8 @@ use std::fmt::Write;
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 use syn::{
-    spanned::Spanned, Data, DeriveInput, Field, Fields, GenericArgument, Index, PathArguments,
-    Type, TypePath, Variant,
+    Data, DeriveInput, Field, Fields, GenericArgument, Index, PathArguments, Type, TypePath,
+    Variant, spanned::Spanned,
 };
 
 use crate::attributes::{EnumAttributes, FieldAttributes, VariantAttributes};
@@ -63,7 +63,7 @@ fn is_parser_variant(variant: &Variant) -> syn::Result<()> {
             fields,
             "first variant must contain exactly one unnamed field"
         );
-    };
+    }
 
     let Type::Path(ty) = &fields.unnamed[0].ty else {
         bail!(fields.unnamed[0], "variant type invalid");

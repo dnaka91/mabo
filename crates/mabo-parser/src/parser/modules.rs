@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{space0, space1},
     combinator::{cut_err, preceded, repeat, terminated},
     error::ErrMode,
     stream::{Location, Stream},
     token::{one_of, take_while},
-    Parser,
 };
 
-use super::{parse_definition, surround, ws, Input, ParserExt, Result};
-use crate::{error::ParseDefinitionError, highlight, location, token, Comment, Module, Name};
+use super::{Input, ParserExt, Result, parse_definition, surround, ws};
+use crate::{Comment, Module, Name, error::ParseDefinitionError, highlight, location, token};
 
 /// Encountered an invalid `mod` declaration.
 #[derive(Debug, ParserError)]

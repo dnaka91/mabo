@@ -56,7 +56,7 @@ pub fn validate_struct_generics(value: &Struct<'_>) -> Result<(), InvalidGeneric
     let mut unvisited = generics
         .types
         .values()
-        .map(|gen| (gen.get(), gen.span()))
+        .map(|g| (g.get(), g.span()))
         .collect::<FxHashMap<_, _>>();
 
     validate_field_generics(&value.fields, &mut unvisited);
@@ -81,7 +81,7 @@ pub fn validate_enum_generics(value: &Enum<'_>) -> Result<(), InvalidGenericType
     let mut unvisited = generics
         .types
         .values()
-        .map(|gen| (gen.get(), gen.span()))
+        .map(|g| (g.get(), g.span()))
         .collect::<FxHashMap<_, _>>();
 
     for variant in value.variants.values() {

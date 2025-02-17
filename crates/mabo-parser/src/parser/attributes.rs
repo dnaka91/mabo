@@ -2,18 +2,17 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::space0,
     combinator::{alt, cut_err, opt, preceded, repeat, separated, terminated},
     stream::Location,
     token::{one_of, take_while},
-    Parser,
 };
 
-use super::{literals, ws, Input, ParserExt, Result};
+use super::{Input, ParserExt, Result, literals, ws};
 use crate::{
-    highlight,
+    Attribute, AttributeValue, Attributes, Literal, highlight,
     token::{self, Delimiter},
-    Attribute, AttributeValue, Attributes, Literal,
 };
 
 /// Encountered an invalid `#[...]` attribute declaration.

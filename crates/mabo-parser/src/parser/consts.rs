@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{space0, space1},
     combinator::{cut_err, preceded, terminated},
     error::ErrMode,
     stream::{Location, Stream},
     token::{one_of, take_while},
-    Parser,
 };
 
-use super::{literals, types, Input, ParserExt, Result};
-use crate::{highlight, location, token, Comment, Const, Name};
+use super::{Input, ParserExt, Result, literals, types};
+use crate::{Comment, Const, Name, highlight, location, token};
 
 /// Encountered an invalid `const` declaration.
 #[derive(Debug, ParserError)]

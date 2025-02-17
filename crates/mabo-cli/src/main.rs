@@ -116,7 +116,7 @@ fn project_or_files(
         for pattern in patterns {
             for entry in glob::glob(&pattern).context("failed parsing glob pattern")? {
                 let entry = entry.context("failed reading entry")?;
-                if !entry.extension().is_some_and(|ext| ext == "mabo") {
+                if entry.extension().is_none_or(|ext| ext != "mabo") {
                     continue;
                 }
                 files.push(entry);

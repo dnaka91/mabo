@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{alphanumeric0, space0, space1},
     combinator::{cut_err, opt, preceded, terminated},
     error::ErrMode,
     stream::{Location, Stream},
     token::one_of,
-    Parser,
 };
 
-use super::{fields, generics, Input, ParserExt, Result};
-use crate::{highlight, location, token, Attributes, Comment, Name, Struct};
+use super::{Input, ParserExt, Result, fields, generics};
+use crate::{Attributes, Comment, Name, Struct, highlight, location, token};
 
 /// Encountered an invalid `struct` declaration.
 #[derive(Debug, ParserError)]

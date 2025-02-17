@@ -2,7 +2,7 @@ use std::fmt::Write;
 
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
-use syn::{spanned::Spanned, Data, DeriveInput, Field, Fields, FieldsNamed};
+use syn::{Data, DeriveInput, Field, Fields, FieldsNamed, spanned::Spanned};
 
 use crate::attributes::{FieldAttributes, StructAttributes};
 

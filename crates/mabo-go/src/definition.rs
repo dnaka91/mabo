@@ -5,7 +5,7 @@ use mabo_compiler::simplify::{
     Variant,
 };
 
-use crate::{decode, encode, size, Indent, Opts, Output};
+use crate::{Indent, Opts, Output, decode, encode, size};
 
 /// Take a single schema and convert it into Go source code (which can result in multiple files).
 #[must_use]
@@ -198,7 +198,7 @@ impl Display for RenderGenerics<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.fields_filter {
             Some(fields) => {
-                if !self.generics.iter().any(|gen| uses_generic(gen, fields)) {
+                if !self.generics.iter().any(|g| uses_generic(g, fields)) {
                     return Ok(());
                 }
             }
@@ -213,8 +213,8 @@ impl Display for RenderGenerics<'_> {
         for (i, value) in self
             .generics
             .iter()
-            .filter(|gen| match self.fields_filter {
-                Some(fields) => uses_generic(gen, fields),
+            .filter(|g| match self.fields_filter {
+                Some(fields) => uses_generic(g, fields),
                 None => true,
             })
             .enumerate()
@@ -237,7 +237,7 @@ impl Display for RenderGenericNames<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.fields_filter {
             Some(fields) => {
-                if !self.generics.iter().any(|gen| uses_generic(gen, fields)) {
+                if !self.generics.iter().any(|g| uses_generic(g, fields)) {
                     return Ok(());
                 }
             }
@@ -252,8 +252,8 @@ impl Display for RenderGenericNames<'_> {
         for (i, value) in self
             .generics
             .iter()
-            .filter(|gen| match self.fields_filter {
-                Some(fields) => uses_generic(gen, fields),
+            .filter(|g| match self.fields_filter {
+                Some(fields) => uses_generic(g, fields),
                 None => true,
             })
             .enumerate()

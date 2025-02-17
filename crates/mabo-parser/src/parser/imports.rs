@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::space1,
     combinator::{alt, cut_err, opt, separated, terminated},
     error::ErrMode,
     stream::{Location, Stream},
     token::{one_of, take_while},
-    Parser,
 };
 
-use super::{enums, structs, Input, ParserExt, Result};
-use crate::{highlight, location, token, Import, Name};
+use super::{Input, ParserExt, Result, enums, structs};
+use crate::{Import, Name, highlight, location, token};
 
 /// Encountered an invalid `use` declaration.
 #[derive(Debug, ParserError)]

@@ -207,5 +207,5 @@ fn wire_size_tuple(types: &[Type<'_>]) -> WireSize {
 }
 
 fn varint_size(value: u32) -> usize {
-    ((std::mem::size_of::<u32>() * 8 - value.leading_zeros() as usize + 6) / 7).max(1)
+    ((std::mem::size_of::<u32>() * 8 - value.leading_zeros() as usize).div_ceil(7)).max(1)
 }

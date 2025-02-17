@@ -1,6 +1,6 @@
 #![expect(missing_docs)]
 
-use divan::{black_box, Bencher};
+use divan::{Bencher, black_box};
 use indoc::indoc;
 
 #[global_allocator]

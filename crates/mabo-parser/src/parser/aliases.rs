@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{alphanumeric0, space0, space1},
     combinator::{cut_err, opt, preceded, terminated},
     error::ErrMode,
     stream::Location,
     token::one_of,
-    Parser,
 };
 
-use super::{generics, types, Input, ParserExt, Result};
-use crate::{highlight, token, Comment, Name, TypeAlias};
+use super::{Input, ParserExt, Result, generics, types};
+use crate::{Comment, Name, TypeAlias, highlight, token};
 
 /// Encountered an invalid `type` alias declaration.
 #[derive(Debug, ParserError)]

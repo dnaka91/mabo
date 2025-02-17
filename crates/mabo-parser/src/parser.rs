@@ -26,11 +26,11 @@ pub use self::{
     types::{Cause as ParseTypeCause, ParseError as ParseTypeError},
 };
 use crate::{
+    Definition, Schema,
     error::{ParseDefinitionError, ParseSchemaCause},
     ext::ParserExt,
     punctuated::Punctuated,
     token::Delimiter,
-    Definition, Schema,
 };
 
 mod aliases;
@@ -96,10 +96,10 @@ mod ids {
     use std::ops::Range;
 
     use mabo_derive::{ParserError, ParserErrorCause};
-    use winnow::{ascii::dec_uint, combinator::preceded, error::ErrMode, stream::Location, Parser};
+    use winnow::{Parser, ascii::dec_uint, combinator::preceded, error::ErrMode, stream::Location};
 
     use super::{Input, Result};
-    use crate::{highlight, Id};
+    use crate::{Id, highlight};
 
     /// Encountered an invalid `@...` id declaration.
     #[derive(Debug, ParserError)]
@@ -143,16 +143,16 @@ mod comments {
 
     use mabo_derive::{ParserError, ParserErrorCause};
     use winnow::{
+        Parser,
         ascii::space0,
         combinator::{delimited, preceded, repeat},
         error::ErrMode,
         stream::Stream,
         token::take_till,
-        Parser,
     };
 
     use super::{Input, Result};
-    use crate::{highlight, location, Comment, CommentLine};
+    use crate::{Comment, CommentLine, highlight, location};
 
     /// Encountered an invalid `/// ...` comment declaration.
     #[derive(Debug, ParserError)]
@@ -258,7 +258,7 @@ where
                         }
                         Err(e) => Err(e),
                     }?;
-                    return Ok(Punctuated::new(values, (o, range.map(Into::into))));
+                    return Ok(Punctuated::new(values, (o, range)));
                 }
                 Err(e) => return Err(e),
             }

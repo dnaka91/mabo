@@ -2,16 +2,16 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{alphanumeric0, space0, space1},
     combinator::{cut_err, opt, preceded, terminated},
     error::ErrMode,
     stream::Location,
     token::one_of,
-    Parser,
 };
 
-use super::{comments, fields, generics, ids, punctuate, surround, ws, Input, ParserExt, Result};
-use crate::{highlight, punctuated::Punctuated, token, Attributes, Comment, Enum, Name, Variant};
+use super::{Input, ParserExt, Result, comments, fields, generics, ids, punctuate, surround, ws};
+use crate::{Attributes, Comment, Enum, Name, Variant, highlight, punctuated::Punctuated, token};
 
 /// Encountered an invalid `enum` declaration.
 #[derive(Debug, ParserError)]

@@ -6,7 +6,7 @@ use std::{
 
 pub use bytes::{Buf, Bytes};
 
-use crate::{varint, FieldEncoding, FieldId, NonZero, NonZeroBytes, NonZeroString, VariantId};
+use crate::{FieldEncoding, FieldId, NonZero, NonZeroBytes, NonZeroString, VariantId, varint};
 
 /// Result type alias for the decoding process, which defaults to the [`Error`] type for errors.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
@@ -252,11 +252,7 @@ where
     D: Fn(&mut R) -> Result<T>,
 {
     let some = decode_u8(r)? == 1;
-    if some {
-        decode(r).map(Some)
-    } else {
-        Ok(None)
-    }
+    if some { decode(r).map(Some) } else { Ok(None) }
 }
 
 /// Decode a Mabo `[T; N]` array value.

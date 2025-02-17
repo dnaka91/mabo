@@ -1,6 +1,6 @@
 use proc_macro2::{Literal, Span, TokenStream};
 use quote::quote;
-use syn::{spanned::Spanned, Data, DeriveInput, Field, Fields, Ident, Type, TypePath};
+use syn::{Data, DeriveInput, Field, Fields, Ident, Type, TypePath, spanned::Spanned};
 
 macro_rules! bail {
     ($tokens:expr, $($arg:tt)*) => {

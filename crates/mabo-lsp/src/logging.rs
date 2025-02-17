@@ -3,16 +3,16 @@ use std::{fs::File, io::Write, path::PathBuf};
 use anyhow::{Context, Result};
 use directories::ProjectDirs;
 use log::{
-    kv::{VisitSource, VisitValue},
     Level, LevelFilter, Metadata, Record,
+    kv::{VisitSource, VisitValue},
 };
 use lsp_server::{Connection, Message, Notification};
 use lsp_types::{
-    notification::{LogMessage, Notification as _},
     LogMessageParams, MessageType,
+    notification::{LogMessage, Notification as _},
 };
 use parking_lot::Mutex;
-use time::{format_description::FormatItem, macros::format_description, OffsetDateTime, UtcOffset};
+use time::{OffsetDateTime, UtcOffset, format_description::FormatItem, macros::format_description};
 
 static FORMAT_HMS: &[FormatItem<'_>] = format_description!("[hour]:[minute]:[second]");
 

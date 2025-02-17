@@ -53,7 +53,7 @@ impl FieldId {
     #[inline]
     #[must_use]
     pub const fn into_u32(self) -> u32 {
-        self.value << 3 | self.encoding as u32
+        (self.value << 3) | self.encoding as u32
     }
 }
 

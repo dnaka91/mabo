@@ -2,9 +2,9 @@
 //! correct.
 
 use mabo_parser::{
+    DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
     punctuated::Punctuated,
     token::{self, Punctuation},
-    DataType, Definition, ExternalType, Fields, Generics, Import, Name, Schema, Spanned, Type,
 };
 use miette::NamedSource;
 use rustc_hash::FxHashMap;
@@ -328,7 +328,7 @@ pub(crate) fn resolve_module_types<'a>(
             && external.path.is_empty()
             && generics
                 .as_ref()
-                .is_some_and(|g| g.types.values().any(|gen| gen.get() == external.name.get()))
+                .is_some_and(|g| g.types.values().any(|g| g.get() == external.name.get()))
     }
 
     fn resolve<'a>(

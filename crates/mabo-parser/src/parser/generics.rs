@@ -2,11 +2,11 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
-    ascii::alphanumeric0, combinator::opt, error::ErrMode, stream::Location, token::one_of, Parser,
+    Parser, ascii::alphanumeric0, combinator::opt, error::ErrMode, stream::Location, token::one_of,
 };
 
-use super::{punctuate, surround, ws, Input, Result};
-use crate::{highlight, token, Generics, Name};
+use super::{Input, Result, punctuate, surround, ws};
+use crate::{Generics, Name, highlight, token};
 
 /// Encountered an invalid `<...>` generics declaration.
 #[derive(Debug, ParserError)]

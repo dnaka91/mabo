@@ -6,7 +6,6 @@ use anyhow::{Context, Result};
 use line_index::{LineIndex, TextRange};
 use log::{debug, error, warn};
 use lsp_types::{
-    notification::{DidChangeConfiguration, Notification},
     DeleteFilesParams, DidChangeConfigurationParams, DidChangeTextDocumentParams,
     DidCloseTextDocumentParams, DidOpenTextDocumentParams, DocumentSymbolParams,
     DocumentSymbolResponse, FileOperationFilter, FileOperationPattern, FileOperationPatternKind,
@@ -18,13 +17,14 @@ use lsp_types::{
     TextDocumentContentChangeEvent, TextDocumentSyncCapability, TextDocumentSyncKind, Uri,
     WorkDoneProgressOptions, WorkspaceFileOperationsServerCapabilities,
     WorkspaceServerCapabilities,
+    notification::{DidChangeConfiguration, Notification},
 };
 use ropey::Rope;
 
 use self::index::Index;
 use crate::{
-    state::{self, FileBuilder},
     GlobalState,
+    state::{self, FileBuilder},
 };
 
 mod compile;

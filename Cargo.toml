@@ -1,12 +1,12 @@
 [workspace]
 members = ["crates/*"]
-resolver = "2"
+resolver = "3"
 
 [workspace.package]
 version = "0.1.0"
 authors = ["Dominik Nakamura <dnaka91@gmail.com"]
-edition = "2021"
-rust-version = "1.80"
+edition = "2024"
+rust-version = "1.85"
 readme = "README.md"
 homepage = "https://github.com/dnaka91/mabo"
 repository = "https://github.com/dnaka91/mabo"

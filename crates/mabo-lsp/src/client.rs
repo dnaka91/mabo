@@ -1,13 +1,13 @@
 use std::time::Duration;
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{Context, Result, bail, ensure};
 use log::trace;
 use lsp_server::{Connection, Message, Notification, Request, Response};
 use lsp_types::{
-    notification::{Notification as LspNotification, PublishDiagnostics},
-    request::{RegisterCapability, Request as LspRequest, WorkspaceConfiguration},
     ConfigurationItem, ConfigurationParams, Diagnostic, PublishDiagnosticsParams, Registration,
     RegistrationParams, Uri,
+    notification::{Notification as LspNotification, PublishDiagnostics},
+    request::{RegisterCapability, Request as LspRequest, WorkspaceConfiguration},
 };
 
 pub struct Client<'a> {

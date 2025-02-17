@@ -4,10 +4,11 @@
 
 use std::{net::Ipv4Addr, time::Instant};
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use log::{debug, error, info, warn};
 use lsp_server::{Connection, ErrorCode, ExtractError, Notification, Request, RequestId, Response};
 use lsp_types::{
+    DocumentSymbol, InitializeParams, InitializedParams, SemanticTokens,
     notification::{
         DidChangeConfiguration, DidChangeTextDocument, DidCloseTextDocument, DidDeleteFiles,
         DidOpenTextDocument, Initialized, Notification as LspNotification,
@@ -16,7 +17,6 @@ use lsp_types::{
         DocumentSymbolRequest, HoverRequest, Request as LspRequest, SemanticTokensFullRequest,
         Shutdown,
     },
-    DocumentSymbol, InitializeParams, InitializedParams, SemanticTokens,
 };
 
 use crate::{cli::Cli, state::GlobalState};
@@ -171,7 +171,7 @@ where
             return conn
                 .sender
                 .send(Response::new_err(id, ErrorCode::InvalidParams as _, e.to_string()).into())
-                .map_err(Into::into)
+                .map_err(Into::into);
         }
     };
 

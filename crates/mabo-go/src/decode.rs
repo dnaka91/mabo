@@ -5,8 +5,8 @@ use std::fmt::{self, Display};
 use mabo_compiler::simplify::{FieldKind, Fields, Struct, Type, Variant};
 
 use crate::{
-    definition::{self, RenderGenericNames},
     Indent,
+    definition::{self, RenderGenericNames},
 };
 
 pub(super) struct RenderStruct<'a>(pub(super) &'a Struct<'a>);

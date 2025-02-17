@@ -2,18 +2,18 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::space0,
     combinator::{opt, peek, preceded},
     dispatch,
     error::ErrMode,
     stream::{Location, Stream},
     token::{any, one_of, take_while},
-    Parser,
 };
 
-use super::{comments, ids, punctuate, surround, types, ws, Input, ParserExt, Result};
+use super::{Input, ParserExt, Result, comments, ids, punctuate, surround, types, ws};
 use crate::{
-    highlight, location, punctuated::Punctuated, token, Fields, Name, NamedField, UnnamedField,
+    Fields, Name, NamedField, UnnamedField, highlight, location, punctuated::Punctuated, token,
 };
 
 /// Encountered an invalid field declaration.

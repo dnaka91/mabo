@@ -7,8 +7,8 @@ use std::{
 };
 
 use crate::{
-    token::{self, Delimiter, Punctuation},
     Print,
+    token::{self, Delimiter, Punctuation},
 };
 
 /// Container for a list of elements that are separated by punctuation.

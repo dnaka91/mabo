@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, Span};
 use syn::{
-    meta::ParseNestedMeta, parenthesized, punctuated::Punctuated, token::Comma, Attribute, Expr,
-    LitStr, Path,
+    Attribute, Expr, LitStr, Path, meta::ParseNestedMeta, parenthesized, punctuated::Punctuated,
+    token::Comma,
 };
 
 macro_rules! bail {

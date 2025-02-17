@@ -2,7 +2,7 @@
 
 use std::marker::PhantomData;
 
-use winnow::{error::ErrMode, stream::Location, ModalParser, ModalResult, Parser};
+use winnow::{ModalParser, ModalResult, Parser, error::ErrMode, stream::Location};
 
 pub(crate) trait ParserExt {
     fn map_err<G, I, O, E, E2>(self, map: G) -> MapErr<Self, G, I, O, E, E2>

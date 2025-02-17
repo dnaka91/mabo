@@ -2,6 +2,7 @@ use std::ops::Range;
 
 use mabo_derive::{ParserError, ParserErrorCause};
 use winnow::{
+    Parser,
     ascii::{dec_uint, digit1, multispace1},
     combinator::{
         alt, cut_err, delimited, fail, opt, peek, preceded, repeat, separated, terminated,
@@ -10,14 +11,12 @@ use winnow::{
     error::ErrMode,
     stream::Location,
     token::{any, one_of, take_till, take_while},
-    Parser,
 };
 
-use super::{ws, Input, Result};
+use super::{Input, Result, ws};
 use crate::{
-    highlight,
+    Literal, LiteralValue, highlight,
     token::{self, Delimiter, Punctuation},
-    Literal, LiteralValue,
 };
 
 /// Encountered an invalid literal declaration.

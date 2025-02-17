@@ -1,8 +1,8 @@
 use std::ops::Range;
 
 use winnow::{
-    stream::{Checkpoint, Location, Offset, Stream},
     LocatingSlice,
+    stream::{Checkpoint, Location, Offset, Stream},
 };
 
 pub fn from_until<const N: usize, I>(

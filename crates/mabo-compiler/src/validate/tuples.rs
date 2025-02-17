@@ -1,9 +1,9 @@
 use std::ops::Range;
 
 use mabo_parser::{
-    punctuated::ValuesIter, Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias,
+    Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias, punctuated::ValuesIter,
 };
-use miette::{diagnostic, Diagnostic};
+use miette::{Diagnostic, diagnostic};
 use thiserror::Error;
 
 use crate::highlight;

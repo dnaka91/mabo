@@ -1,27 +1,24 @@
 [graph]
 all-features = true
 
-[advisories]
-version = 2
-
 [licenses]
-version = 2
 allow = [
     "Apache-2.0",
     "BSD-2-Clause",
     "BSD-3-Clause",
     "ISC",
     "MIT",
-]
-exceptions = [
-    { allow = ["MPL-2.0"], name = "option-ext" },
-    { allow = ["Unicode-3.0"], name = "unicode-ident" },
+    "MPL-2.0",
+    "Unicode-3.0",
 ]
 
 [bans]
 skip = [
-    { name = "bitflags", version = "1" },
-    { name = "heck", version = "0.4" },
-    { name = "thiserror", version = "1" },
-    { name = "thiserror-impl", version = "1" },
+    "bitflags@1",
+    "getrandom@0.2",
+    "heck@0.4",
+    "thiserror@1",
+    "thiserror-impl@1",
+    "wasi@0.11",
+    "zerocopy@0.7",
 ]

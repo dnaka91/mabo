@@ -10,7 +10,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-globset = "0.4.15"
+globset = "0.4.16"
 ignore = "0.4.23"
 serde.workspace = true
 spdx = "0.10.8"

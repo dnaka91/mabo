@@ -3,20 +3,20 @@ use std::{
     rc::Rc,
 };
 
+use askama::Template;
 use mabo_compiler::simplify::{
     Const, Definition, Enum, ExternalType, Field, FieldKind, Literal, Module, Struct, Type,
     TypeAlias,
 };
 use mabo_meta::WireSize;
-use rinja::Template;
 
 mod filters {
     #![expect(clippy::needless_pass_by_value, clippy::unnecessary_wraps)]
 
+    use askama::filters::Safe;
     use comrak::{ExtensionOptions, ParseOptions, RenderOptions};
-    use rinja::filters::Safe;
 
-    pub fn markdown(s: String) -> rinja::Result<Safe<String>> {
+    pub fn markdown(s: String) -> askama::Result<Safe<String>> {
         let extension = ExtensionOptions {
             strikethrough: true,
             tagfilter: true,

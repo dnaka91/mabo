@@ -14,7 +14,7 @@ mabo-compiler = { path = "../mabo-compiler" }
 mabo-parser = { path = "../mabo-parser" }
 mabo-project = { path = "../mabo-project" }
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
-prettyplease = "0.2.29"
+prettyplease = "0.2.31"
 proc-macro2.workspace = true
 quote.workspace = true
 syn.workspace = true

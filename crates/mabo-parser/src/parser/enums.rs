@@ -89,7 +89,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Enum<'i>, ParseError> {
         terminated(token::Enum::parser(), space1),
         cut_err((
             parse_name,
-            opt(generics::parse.map_err(Cause::from)),
+            opt(generics::parse.map_err2(Cause::from)),
             preceded(space0, parse_variants),
         )),
     )
@@ -136,11 +136,11 @@ fn parse_variants<'i>(
 
 fn parse_variant<'i>(input: &mut Input<'i>) -> Result<Variant<'i>, Cause> {
     (
-        ws(comments::parse.map_err(Cause::from)),
+        ws(comments::parse.map_err2(Cause::from)),
         (
             preceded(space0, parse_variant_name.with_span()),
-            preceded(space0, fields::parse.map_err(Cause::from)),
-            opt(preceded(space0, ids::parse.map_err(Cause::from))),
+            preceded(space0, fields::parse.map_err2(Cause::from)),
+            opt(preceded(space0, ids::parse.map_err2(Cause::from))),
         )
             .with_span(),
     )

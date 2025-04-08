@@ -114,8 +114,8 @@ fn parse_unit(input: &mut Input<'_>) -> Result<(), Cause> {
 
 fn parse_unnamed_field<'i>(input: &mut Input<'i>) -> Result<UnnamedField<'i>, Cause> {
     (
-        ws(types::parse.map_err(Cause::from)),
-        opt(preceded(space0, ids::parse.map_err(Cause::from))),
+        ws(types::parse.map_err2(Cause::from)),
+        opt(preceded(space0, ids::parse.map_err2(Cause::from))),
     )
         .with_span()
         .parse_next(input)
@@ -128,12 +128,12 @@ fn parse_unnamed_field<'i>(input: &mut Input<'i>) -> Result<UnnamedField<'i>, Ca
 
 fn parse_named_field<'i>(input: &mut Input<'i>) -> Result<NamedField<'i>, Cause> {
     (
-        ws(comments::parse.map_err(Cause::from)),
+        ws(comments::parse.map_err2(Cause::from)),
         (
             preceded(space0, parse_field_name),
             preceded(space0, token::Colon::parser()),
-            preceded(space0, types::parse.map_err(Cause::from)),
-            opt(preceded(space0, ids::parse.map_err(Cause::from))),
+            preceded(space0, types::parse.map_err2(Cause::from)),
+            opt(preceded(space0, ids::parse.map_err2(Cause::from))),
         )
             .with_span(),
     )

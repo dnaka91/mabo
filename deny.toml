@@ -1,6 +1,9 @@
 [graph]
 all-features = true
 
+[advisories]
+ignore = ["RUSTSEC-2024-0436"]
+
 [licenses]
 allow = [
     "Apache-2.0",
@@ -17,8 +20,6 @@ skip = [
     "bitflags@1",
     "getrandom@0.2",
     "heck@0.4",
-    "thiserror@1",
-    "thiserror-impl@1",
     "unicode-width@0.1",
     "wasi@0.11",
 ]

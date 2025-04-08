@@ -104,7 +104,7 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
         convert: impl Fn(token::Angle, Type<'i>) -> DataType<'i>,
     ) -> impl Fn(&mut Input<'i>) -> Result<DataType<'i>, Cause> {
         move |input| {
-            cut_err(surround(parse.map_err(Cause::from)))
+            cut_err(surround(parse.map_err2(Cause::from)))
                 .parse_next(input)
                 .map(|(angle, ty)| convert(angle, ty))
         }
@@ -118,9 +118,9 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     ) -> impl Fn(&mut Input<'i>) -> Result<DataType<'i>, Cause> {
         move |input| {
             cut_err(surround((
-                parse.map_err(Cause::from),
+                parse.map_err2(Cause::from),
                 preceded(space0, token::Comma::parser()),
-                preceded(space0, parse.map_err(Cause::from)),
+                preceded(space0, parse.map_err2(Cause::from)),
             )))
             .parse_next(input)
             .map(|(angle, (ty1, comma, ty2))| convert(angle, ty1, comma, ty2))
@@ -163,9 +163,9 @@ fn parse_generic<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 
 fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     surround(punctuate(
-        (ws(parse.map_err(Cause::from)), ws(token::Comma::parser())),
+        (ws(parse.map_err2(Cause::from)), ws(token::Comma::parser())),
         (
-            ws(parse.map_err(Cause::from)),
+            ws(parse.map_err2(Cause::from)),
             opt(ws(token::Comma::parser())),
         ),
     ))
@@ -175,7 +175,7 @@ fn parse_tuple<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
 
 fn parse_array<'i>(input: &mut Input<'i>) -> Result<DataType<'i>, Cause> {
     surround((
-        ws(parse.map_err(Cause::from)),
+        ws(parse.map_err2(Cause::from)),
         ws(token::Semicolon::parser()),
         ws(dec_uint),
     ))
@@ -193,16 +193,16 @@ fn parse_external<'i>(input: &mut Input<'i>) -> Result<ExternalType<'i>, Cause> 
         opt(repeat(
             1..,
             (
-                imports::parse_segment.map_err(Cause::from),
+                imports::parse_segment.map_err2(Cause::from),
                 token::DoubleColon::parser(),
             ),
         ))
         .map(Option::unwrap_or_default),
         parse_external_name,
         opt(surround(punctuate(
-            (ws(parse.map_err(Cause::from)), ws(token::Comma::parser())),
+            (ws(parse.map_err2(Cause::from)), ws(token::Comma::parser())),
             (
-                ws(parse.map_err(Cause::from)),
+                ws(parse.map_err2(Cause::from)),
                 opt(ws(token::Comma::parser())),
             ),
         ))),

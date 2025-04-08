@@ -11,8 +11,8 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
-askama = { version = "0.13.0", default-features = false, features = ["derive", "std"] }
-comrak = { version = "0.37.0", default-features = false }
+askama = { version = "0.14.0", default-features = false, features = ["derive", "std"] }
+comrak = { version = "0.39.0", default-features = false }
 mabo-compiler = { path = "../mabo-compiler" }
 mabo-meta = { path = "../mabo-meta" }
 

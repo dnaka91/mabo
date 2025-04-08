@@ -68,7 +68,7 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Module<'i>, ParseError>
             parse_name,
             preceded(
                 space0,
-                surround(repeat(0.., ws(parse_definition.map_err(Cause::from)))),
+                surround(repeat(0.., ws(parse_definition.map_err2(Cause::from)))),
             ),
         )),
     )

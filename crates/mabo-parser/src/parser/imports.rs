@@ -73,8 +73,8 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Import<'i>, ParseError>
                 opt((
                     token::DoubleColon::parser(),
                     alt((
-                        structs::parse_name.map_err(Cause::from),
-                        enums::parse_name.map_err(Cause::from),
+                        structs::parse_name.map_err2(Cause::from),
+                        enums::parse_name.map_err2(Cause::from),
                     )),
                 )),
             )

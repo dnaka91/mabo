@@ -83,9 +83,9 @@ pub(super) fn parse<'i>(input: &mut Input<'i>) -> Result<Const<'i>, ParseError> 
         cut_err((
             parse_name,
             token::Colon::parser(),
-            preceded(space0, types::parse.map_err(Cause::from)),
+            preceded(space0, types::parse.map_err2(Cause::from)),
             preceded(space0, token::Equal::parser()),
-            preceded(space0, literals::parse.map_err(Cause::from)),
+            preceded(space0, literals::parse.map_err2(Cause::from)),
             token::Semicolon::parser()
                 .map_err_loc(|at, ()| Cause::UnexpectedChar { at, expected: ';' }),
         )),

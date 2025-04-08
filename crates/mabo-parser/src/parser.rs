@@ -54,9 +54,12 @@ pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, Pars
     trace(
         "schema",
         (
-            opt(terminated(ws(comments::parse.map_err(Into::into)), newline)),
+            opt(terminated(
+                ws(comments::parse.map_err2(Into::into)),
+                newline,
+            )),
             terminated(
-                repeat(0.., parse_definition.map_err(Into::into)),
+                repeat(0.., parse_definition.map_err2(Into::into)),
                 multispace0,
             ),
         ),
@@ -72,18 +75,18 @@ pub(crate) fn parse_schema<'i>(input: &mut Input<'i>) -> Result<Schema<'i>, Pars
 
 fn parse_definition<'i>(input: &mut Input<'i>) -> Result<Definition<'i>, ParseDefinitionError> {
     (
-        ws(comments::parse.map_err(Into::into)),
-        ws(attributes::parse.map_err(Into::into)),
+        ws(comments::parse.map_err2(Into::into)),
+        ws(attributes::parse.map_err2(Into::into)),
         preceded(
             space0,
             dispatch! {
                 peek(any);
-                'm' => modules::parse.map(Definition::Module).map_err(Into::into),
-                's' => structs::parse.map(Definition::Struct).map_err(Into::into),
-                'e' => enums::parse.map(Definition::Enum).map_err(Into::into),
-                'c' => consts::parse.map(Definition::Const).map_err(Into::into),
-                't' => aliases::parse.map(Definition::TypeAlias).map_err(Into::into),
-                'u' => imports::parse.map(Definition::Import).map_err(Into::into),
+                'm' => modules::parse.map(Definition::Module).map_err2(Into::into),
+                's' => structs::parse.map(Definition::Struct).map_err2(Into::into),
+                'e' => enums::parse.map(Definition::Enum).map_err2(Into::into),
+                'c' => consts::parse.map(Definition::Const).map_err2(Into::into),
+                't' => aliases::parse.map(Definition::TypeAlias).map_err2(Into::into),
+                'u' => imports::parse.map(Definition::Import).map_err2(Into::into),
                 _ => fail,
             },
         ),

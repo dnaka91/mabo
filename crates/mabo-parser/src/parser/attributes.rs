@@ -120,7 +120,7 @@ fn parse_multi_value<'i>(input: &mut Input<'i>) -> Result<Vec<Attribute<'i>>, Ca
 fn parse_single_value(input: &mut Input<'_>) -> Result<Literal, Cause> {
     preceded(
         (space0, token::Equal::parser(), space0),
-        literals::parse.map_err(Cause::from),
+        literals::parse.map_err2(Cause::from),
     )
     .parse_next(input)
 }

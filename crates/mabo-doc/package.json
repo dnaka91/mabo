@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
-    "tailwindcss": "^4.0.17"
+    "tailwindcss": "^4.1.7"
   }
 }

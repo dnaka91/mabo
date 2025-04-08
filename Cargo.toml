@@ -26,19 +26,19 @@ unnecessary_debug_formatting = "allow"
 [workspace.dependencies]
 anstream = "0.6.18"
 anstyle = "1.0.10"
-anyhow = "1.0.97"
-clap = { version = "4.5.34", features = ["derive", "wrap_help"] }
+anyhow = "1.0.98"
+clap = { version = "4.5.38", features = ["derive", "wrap_help"] }
 glob = "0.3.2"
 indoc = "2.0.6"
-insta = { version = "1.42.2", features = ["glob"] }
-miette = { version = "7.5.0", default-features = false }
-mimalloc = "0.1.44"
-proc-macro2 = { version = "1.0.94", default-features = false }
+insta = { version = "1.43.1", features = ["glob"] }
+miette = { version = "7.6.0", default-features = false }
+mimalloc = "0.1.46"
+proc-macro2 = { version = "1.0.95", default-features = false }
 quote = { version = "1.0.40", default-features = false }
 rustc-hash = "2.1.1"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
-syn = "2.0.100"
+syn = "2.0.101"
 thiserror = "2.0.12"
 
 [profile.release]

@@ -28,7 +28,7 @@ mabo-parser = { path = "../mabo-parser" }
 mimalloc.workspace = true
 
 [dev-dependencies]
-divan = "0.1.17"
+divan = "0.1.21"
 indoc.workspace = true
 
 [lints]

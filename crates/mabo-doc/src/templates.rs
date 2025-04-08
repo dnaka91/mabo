@@ -11,12 +11,12 @@ use mabo_compiler::simplify::{
 use mabo_meta::WireSize;
 
 mod filters {
-    #![expect(clippy::needless_pass_by_value, clippy::unnecessary_wraps)]
+    #![expect(clippy::unnecessary_wraps)]
 
     use askama::filters::Safe;
     use comrak::{ExtensionOptions, ParseOptions, RenderOptions};
 
-    pub fn markdown(s: String) -> askama::Result<Safe<String>> {
+    pub fn markdown(s: impl AsRef<str>, _: &dyn askama::Values) -> askama::Result<Safe<String>> {
         let extension = ExtensionOptions {
             strikethrough: true,
             tagfilter: true,
@@ -36,7 +36,7 @@ mod filters {
         };
 
         Ok(Safe(comrak::markdown_to_html(
-            &s,
+            s.as_ref(),
             &comrak::Options {
                 extension,
                 parse,

@@ -6,7 +6,7 @@ resolver = "3"
 version = "0.1.0"
 authors = ["Dominik Nakamura <dnaka91@gmail.com"]
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.87"
 readme = "README.md"
 homepage = "https://github.com/dnaka91/mabo"
 repository = "https://github.com/dnaka91/mabo"
@@ -21,6 +21,7 @@ missing_docs = "warn"
 all = { level = "deny", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 clone_on_ref_ptr = "warn"
+unnecessary_debug_formatting = "allow"
 
 [workspace.dependencies]
 anstream = "0.6.18"

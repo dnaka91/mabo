@@ -195,17 +195,14 @@ macro_rules! define_delimiters {
                 const OPEN: char = $token_open;
                 const CLOSE: char = $token_close;
 
-                #[must_use]
                 fn open(&self) -> Span {
                     self.open
                 }
 
-                #[must_use]
                 fn close(&self) -> Span {
                     self.close
                 }
 
-                #[must_use]
                 fn range(&self) -> Span {
                     Span{
                         start: self.open.start,

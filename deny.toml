@@ -23,3 +23,6 @@ skip = [
     "unicode-width@0.1",
     "wasi@0.11",
 ]
+skip-tree = [
+    { crate = "windows-sys@0.59", depth = 3 },
+]

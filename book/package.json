@@ -8,7 +8,11 @@
     "lint": "biome check --write .vitepress/config.mts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "vitepress": "^1.6.3"
+    "@biomejs/biome": "^2.1.3",
+    "oxc-minify": "^0.80.0",
+    "vitepress": "^2.0.0-alpha.9"
+  },
+  "overrides": {
+    "vite": "npm:rolldown-vite@latest"
   }
 }

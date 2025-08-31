@@ -168,17 +168,17 @@ fn compile_variant_fields(opts: &Opts, fields: &Fields<'_>) -> TokenStream {
 }
 
 fn compile_generics(types: &[&str]) -> (TokenStream, TokenStream) {
-    (!types.is_empty())
-        .then(|| {
-            let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
-            let types2 = types.clone();
+    if types.is_empty() {
+        Default::default()
+    } else {
+        let types = types.iter().map(|ty| Ident::new(ty, Span::call_site()));
+        let types2 = types.clone();
 
-            (
-                quote! { <#(#types,)*> },
-                quote! { where #(#types2: ::mabo::buf::Size,)* },
-            )
-        })
-        .unwrap_or_default()
+        (
+            quote! { <#(#types,)*> },
+            quote! { where #(#types2: ::mabo::buf::Size,)* },
+        )
+    }
 }
 
 #[expect(clippy::needless_pass_by_value)]

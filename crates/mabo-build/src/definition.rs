@@ -99,7 +99,7 @@ fn compile_struct(
     quote! {
         #comment
         #[derive(Clone, Debug, PartialEq)]
-        #[allow(clippy::module_name_repetitions, clippy::option_option)]
+        #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
         pub struct #name #generics #fields #semicolon
     }
 }
@@ -122,7 +122,7 @@ fn compile_enum(
     quote! {
         #comment
         #[derive(Clone, Debug, PartialEq)]
-        #[allow(clippy::module_name_repetitions, clippy::option_option)]
+        #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
         pub enum #name #generics {
             #(#variants,)*
         }

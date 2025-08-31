@@ -5,14 +5,14 @@ use thiserror::Error;
 macro_rules! zigzag {
     ($from:ty, $to:ty) => {
         paste::paste! {
-            #[doc = "Use the _ZigZag_ scheme to encode an `" $from "` as `" $to "`."]
+            #[doc = "Use the `ZigZag` scheme to encode an `" $from "` as `" $to "`."]
             #[expect(clippy::cast_sign_loss)]
             #[inline]
             const fn [<zigzag_encode_ $from>](value: $from) -> $to {
                 ((value << 1) ^ (value >> ($from::BITS - 1))) as $to
             }
 
-            #[doc = "Convert a _ZigZag_ encoded `" $from "` back to its original data."]
+            #[doc = "Convert a `ZigZag` encoded `" $from "` back to its original data."]
             #[expect(clippy::cast_possible_wrap)]
             #[inline]
             const fn [<zigzag_decode_ $from>](value: $to) -> $from {

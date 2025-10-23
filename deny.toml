@@ -8,7 +8,6 @@ ignore = ["RUSTSEC-2024-0436"]
 allow = [
     "Apache-2.0",
     "BSD-2-Clause",
-    "BSD-3-Clause",
     "ISC",
     "MIT",
     "MPL-2.0",
@@ -21,8 +20,8 @@ skip = [
     "getrandom@0.2",
     "heck@0.4",
     "unicode-width@0.1",
-    "wasi@0.11",
 ]
 skip-tree = [
     { crate = "windows-sys@0.59", depth = 3 },
+    { crate = "windows-sys@0.60", depth = 3 },
 ]

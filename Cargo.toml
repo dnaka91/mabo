@@ -6,7 +6,7 @@ resolver = "3"
 version = "0.1.0"
 authors = ["Dominik Nakamura <dnaka91@gmail.com"]
 edition = "2024"
-rust-version = "1.87"
+rust-version = "1.88"
 readme = "README.md"
 homepage = "https://github.com/dnaka91/mabo"
 repository = "https://github.com/dnaka91/mabo"
@@ -24,22 +24,22 @@ clone_on_ref_ptr = "warn"
 unnecessary_debug_formatting = "allow"
 
 [workspace.dependencies]
-anstream = "0.6.20"
-anstyle = "1.0.11"
-anyhow = "1.0.99"
-clap = { version = "4.5.46", features = ["derive", "wrap_help"] }
+anstream = "0.6.21"
+anstyle = "1.0.13"
+anyhow = "1.0.100"
+clap = { version = "4.5.54", features = ["derive", "wrap_help"] }
 glob = "0.3.3"
-indoc = "2.0.6"
-insta = { version = "1.43.1", features = ["glob"] }
+indoc = "2.0.7"
+insta = { version = "1.46.1", features = ["glob"] }
 miette = { version = "7.6.0", default-features = false }
 mimalloc = "0.1.48"
-proc-macro2 = { version = "1.0.101", default-features = false }
-quote = { version = "1.0.40", default-features = false }
+proc-macro2 = { version = "1.0.105", default-features = false }
+quote = { version = "1.0.43", default-features = false }
 rustc-hash = "2.1.1"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.143"
-syn = "2.0.106"
-thiserror = "2.0.16"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+syn = "2.0.114"
+thiserror = "2.0.17"
 
 [profile.release]
 lto = "thin"

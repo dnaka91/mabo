@@ -1,13 +1,4 @@
 {
   "name": "mabo",
-  "private": true,
-  "workspaces": [
-    "book",
-    "crates/mabo-doc",
-    "vscode-extension"
-  ],
-  "trustedDependencies": [
-    "@biomejs/biome",
-    "esbuild"
-  ]
+  "private": true
 }

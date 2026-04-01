@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "tailwind": "tailwindcss -i ./input.css -o ./assets/style.css",
-    "watch": "bun run tailwind --watch",
-    "build": "bun run tailwind --minify"
+    "watch": "pnpm run tailwind --watch",
+    "build": "pnpm run tailwind --minify"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",

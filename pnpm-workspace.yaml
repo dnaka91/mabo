@@ -1,0 +1,8 @@
+packages:
+  - book
+  - crates/mabo-doc
+  - vscode-extension
+allowBuilds:
+  '@vscode/vsce-sign': false
+  esbuild: true
+  keytar: false

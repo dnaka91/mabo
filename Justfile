@@ -4,9 +4,9 @@ _default:
 # Build all crates and other parts of the project
 build:
   cargo build --release
-  bun install
+  pnpm install
   cd book && just build
-  cd vscode-extension && bun run package
+  cd vscode-extension && pnpm run package
 
 # Run the benchmarks
 bench:
@@ -46,7 +46,7 @@ install-lsp:
 
 # Install the VSCode extension into VSCodium
 install-vscodium: install-lsp
-  bun install
+  pnpm install
   cd vscode-extension && \
-    bun run package && \
+    pnpm run package && \
     codium --install-extension mabo-*.vsix

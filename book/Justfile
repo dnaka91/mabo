@@ -61,7 +61,7 @@ format:
   black -q {{files}}
 
 dev:
-  bun run dev
+  pnpm run dev
 
 build:
-  bun run build
+  pnpm run build

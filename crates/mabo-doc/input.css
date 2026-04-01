@@ -1,6 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography" {
+    className: markdown;
+}
+
+@theme inline {
+    --font-sans: "Noto Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-serif: "Noto Serif", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    --color-main-50: var(--color-neutral-50);
+    --color-main-100: var(--color-neutral-100);
+    --color-main-200: var(--color-neutral-200);
+    --color-main-300: var(--color-neutral-300);
+    --color-main-400: var(--color-neutral-400);
+    --color-main-500: var(--color-neutral-500);
+    --color-main-600: var(--color-neutral-600);
+    --color-main-700: var(--color-neutral-700);
+    --color-main-800: var(--color-neutral-800);
+    --color-main-900: var(--color-neutral-900);
+    --color-main-950: var(--color-neutral-950);
+}
 
 @layer base {
     body {
@@ -36,64 +55,62 @@
     }
 }
 
-@layer components {
-    .markdown {
-        @apply markdown-neutral dark:markdown-invert max-w-none;
-    }
+@utility markdown {
+    @apply markdown-neutral dark:markdown-invert max-w-none;
+}
 
-    .name-module {
-        @apply text-black dark:text-white;
-    }
+@utility name-module {
+    @apply text-black dark:text-white;
+}
 
-    .name-struct {
-        @apply text-sky-600 dark:text-sky-400;
-    }
+@utility name-struct {
+    @apply text-sky-600 dark:text-sky-400;
+}
 
-    .name-enum {
-        @apply text-sky-600 dark:text-sky-400;
-    }
+@utility name-enum {
+    @apply text-sky-600 dark:text-sky-400;
+}
 
-    .name-variant {
-        @apply text-teal-600 dark:text-teal-400;
-    }
+@utility name-variant {
+    @apply text-teal-600 dark:text-teal-400;
+}
 
-    .name-alias {
-        @apply text-lime-600 dark:text-lime-400;
-    }
+@utility name-alias {
+    @apply text-lime-600 dark:text-lime-400;
+}
 
-    .name-const {
-        @apply text-orange-600 dark:text-orange-400;
-    }
+@utility name-const {
+    @apply text-orange-600 dark:text-orange-400;
+}
 
-    .variant-name {
-        @apply text-teal-600 dark:text-teal-400;
-    }
+@utility variant-name {
+    @apply text-teal-600 dark:text-teal-400;
+}
 
-    .variant-id {
-        @apply text-pink-600 dark:text-pink-400;
-    }
+@utility variant-id {
+    @apply text-pink-600 dark:text-pink-400;
+}
 
-    .field-definition {
-        @apply mt-2 p-2 bg-main-300/50 dark:bg-main-700/50 rounded-sm;
-    }
+@utility field-definition {
+    @apply mt-2 p-2 bg-main-300/50 dark:bg-main-700/50 rounded-sm;
+}
 
-    .field-name {
-        @apply text-red-600 dark:text-red-400;
-    }
+@utility field-name {
+    @apply text-red-600 dark:text-red-400;
+}
 
-    .field-type {
-        @apply text-purple-600 dark:text-purple-400;
-    }
+@utility field-type {
+    @apply text-purple-600 dark:text-purple-400;
+}
 
-    .field-id {
-        @apply text-amber-600 dark:text-amber-400;
-    }
+@utility field-id {
+    @apply text-amber-600 dark:text-amber-400;
+}
 
-    .section {
-        @apply rounded-sm bg-main-100/50 dark:bg-main-900/50 p-2 mt-2;
-    }
+@utility section {
+    @apply rounded-sm bg-main-100/50 dark:bg-main-900/50 p-2 mt-2;
+}
 
-    .item-definition {
-        @apply p-2 bg-main-300/50 dark:bg-main-700/50 rounded-sm overflow-x-auto;
-    }
+@utility item-definition {
+    @apply p-2 bg-main-300/50 dark:bg-main-700/50 rounded-sm overflow-x-auto;
 }

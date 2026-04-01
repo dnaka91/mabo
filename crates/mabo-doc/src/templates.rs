@@ -16,6 +16,7 @@ mod filters {
     use askama::filters::Safe;
     use comrak::{ExtensionOptions, ParseOptions, RenderOptions};
 
+    #[askama::filter_fn]
     pub fn markdown(s: impl AsRef<str>, _: &dyn askama::Values) -> askama::Result<Safe<String>> {
         let extension = ExtensionOptions {
             strikethrough: true,

@@ -7,7 +7,7 @@ input_file: crates/mabo-parser/tests/inputs/struct_many_ws.mabo
 use ::mabo::buf::{Decode, Encode, Size};
 /// Some comment
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample<T> {
     pub a: u32,
     pub b: bool,

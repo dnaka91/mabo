@@ -7,7 +7,7 @@ input_file: crates/mabo-parser/tests/inputs/struct_generics.mabo
 use ::mabo::buf::{Decode, Encode, Size};
 /// Generic key-value pair.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct KeyValue<K, V> {
     pub key: K,
     pub value: V,

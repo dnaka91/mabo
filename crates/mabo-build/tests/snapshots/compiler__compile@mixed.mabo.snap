@@ -10,7 +10,7 @@ use ::mabo::buf::{Decode, Encode, Size};
 /// Uses various other `structs` and `enums` to compose the information
 /// in a **type safe** way.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct User {
     pub name: FullName,
     /// Physical address, might not be specified by the user.
@@ -120,7 +120,7 @@ impl ::mabo::buf::Size for User {
 }
 /// Full name of a user.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct FullName {
     pub first: String,
     pub middle: Option<String>,
@@ -221,7 +221,7 @@ impl ::mabo::buf::Size for FullName {
 #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub type Name = FullName;
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct Address {
     /// Street name.
     pub street: String,
@@ -321,7 +321,7 @@ impl ::mabo::buf::Size for Address {
 ///
 /// More details can be found at [Wikipedia](https://en.wikipedia.org/wiki/House_numbering).
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub enum HouseNumber {
     /// Digit only number.
     Digit(u16),
@@ -444,7 +444,7 @@ pub mod birthday {
     use ::mabo::buf::{Decode, Encode, Size};
     /// As the name suggests, specifies details about birthdays.
     #[derive(Clone, Debug, PartialEq)]
-    #[allow(clippy::module_name_repetitions, clippy::option_option)]
+    #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
     pub enum DayOfBirth {
         Specific { year: u16, month: Month, day: u8 },
         /// The user didn't want to say.
@@ -601,7 +601,7 @@ pub mod birthday {
     pub const MAX_DAY: u8 = 31;
     /// The month of the year.
     #[derive(Clone, Debug, PartialEq)]
-    #[allow(clippy::module_name_repetitions, clippy::option_option)]
+    #[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
     pub enum Month {
         January,
         February,

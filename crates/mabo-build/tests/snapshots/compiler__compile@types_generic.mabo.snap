@@ -6,7 +6,7 @@ input_file: crates/mabo-parser/tests/inputs/types_generic.mabo
 #[allow(unused_imports)]
 use ::mabo::buf::{Decode, Encode, Size};
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample {
     pub f1: Vec<u32>,
     pub f2: ::std::collections::HashMap<u32, String>,
@@ -192,7 +192,7 @@ impl ::mabo::buf::Size for Sample {
     }
 }
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct SampleUnnamed(
     pub Vec<u32>,
     pub ::std::collections::HashMap<u32, String>,

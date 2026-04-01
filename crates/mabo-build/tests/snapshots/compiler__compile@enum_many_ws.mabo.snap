@@ -7,7 +7,7 @@ input_file: crates/mabo-parser/tests/inputs/enum_many_ws.mabo
 use ::mabo::buf::{Decode, Encode, Size};
 /// Sample enum.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub enum Sample {
     One,
     Two(u32, u64),

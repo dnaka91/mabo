@@ -219,7 +219,7 @@ pub mod bincode {
     #[must_use]
     pub fn decode_i16(buf: &[u8]) -> i16 {
         let value = decode_u16(buf);
-        if value % 2 == 0 {
+        if value.is_multiple_of(2) {
             (value / 2) as i16
         } else {
             !(value / 2) as i16
@@ -250,7 +250,7 @@ pub mod bincode {
     #[must_use]
     pub fn decode_i32(buf: &[u8]) -> i32 {
         let value = decode_u32(buf);
-        if value % 2 == 0 {
+        if value.is_multiple_of(2) {
             (value / 2) as i32
         } else {
             !(value / 2) as i32
@@ -286,7 +286,7 @@ pub mod bincode {
     #[must_use]
     pub fn decode_i64(buf: &[u8]) -> i64 {
         let value = decode_u64(buf);
-        if value % 2 == 0 {
+        if value.is_multiple_of(2) {
             (value / 2) as i64
         } else {
             !(value / 2) as i64
@@ -327,7 +327,7 @@ pub mod bincode {
     #[must_use]
     pub fn decode_i128(buf: &[u8]) -> i128 {
         let value = decode_u128(buf);
-        if value % 2 == 0 {
+        if value.is_multiple_of(2) {
             (value / 2) as i128
         } else {
             !(value / 2) as i128

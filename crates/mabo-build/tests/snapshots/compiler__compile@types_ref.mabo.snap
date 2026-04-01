@@ -6,7 +6,7 @@ input_file: crates/mabo-parser/tests/inputs/types_ref.mabo
 #[allow(unused_imports)]
 use ::mabo::buf::{Decode, Encode, Size};
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample {
     pub basic: Test123,
     pub with_generics: KeyValue<u32, bool>,
@@ -85,7 +85,7 @@ impl ::mabo::buf::Size for Sample {
     }
 }
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub enum Test123 {
     Value,
 }
@@ -130,7 +130,7 @@ impl ::mabo::buf::Size for Test123 {
     }
 }
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct KeyValue<K, V> {
     pub key: K,
     pub value: V,

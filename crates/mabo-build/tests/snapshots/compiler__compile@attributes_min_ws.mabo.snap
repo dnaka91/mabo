@@ -6,7 +6,7 @@ input_file: crates/mabo-parser/tests/inputs/attributes_min_ws.mabo
 #[allow(unused_imports)]
 use ::mabo::buf::{Decode, Encode, Size};
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample;
 #[automatically_derived]
 impl ::mabo::Encode for Sample {

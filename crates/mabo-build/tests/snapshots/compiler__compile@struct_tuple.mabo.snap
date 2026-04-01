@@ -7,7 +7,7 @@ input_file: crates/mabo-parser/tests/inputs/struct_tuple.mabo
 use ::mabo::buf::{Decode, Encode, Size};
 /// Basic struct.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct Sample(pub u32, pub bool);
 #[automatically_derived]
 impl ::mabo::Encode for Sample {

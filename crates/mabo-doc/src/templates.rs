@@ -14,11 +14,11 @@ mod filters {
     #![expect(clippy::unnecessary_wraps)]
 
     use askama::filters::Safe;
-    use comrak::{ExtensionOptions, ParseOptions, RenderOptions};
+    use comrak::options::{Extension, Parse, Render};
 
     #[askama::filter_fn]
     pub fn markdown(s: impl AsRef<str>, _: &dyn askama::Values) -> askama::Result<Safe<String>> {
-        let extension = ExtensionOptions {
+        let extension = Extension {
             strikethrough: true,
             tagfilter: true,
             table: true,
@@ -26,14 +26,14 @@ mod filters {
             tasklist: true,
             superscript: true,
             footnotes: true,
-            ..ExtensionOptions::default()
+            ..Extension::default()
         };
 
-        let parse = ParseOptions::default();
+        let parse = Parse::default();
 
-        let render = RenderOptions {
+        let render = Render {
             escape: true,
-            ..RenderOptions::default()
+            ..Render::default()
         };
 
         Ok(Safe(comrak::markdown_to_html(

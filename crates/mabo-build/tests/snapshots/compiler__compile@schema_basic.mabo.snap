@@ -7,7 +7,7 @@ input_file: crates/mabo-parser/tests/inputs/schema_basic.mabo
 use ::mabo::buf::{Decode, Encode, Size};
 /// Basic struct.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub struct SampleStruct {
     pub a: u32,
     pub b: bool,
@@ -87,7 +87,7 @@ impl ::mabo::buf::Size for SampleStruct {
 }
 /// Sample enum.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub enum SampleEnum {
     One,
     Two(u32, u64),

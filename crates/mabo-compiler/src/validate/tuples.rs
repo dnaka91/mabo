@@ -3,7 +3,7 @@ use std::ops::Range;
 use mabo_parser::{
     Const, DataType, Enum, Fields, Spanned, Struct, Type, TypeAlias, punctuated::ValuesIter,
 };
-use miette::{Diagnostic, diagnostic};
+use miette::Diagnostic;
 use thiserror::Error;
 
 use crate::highlight;

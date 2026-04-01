@@ -338,10 +338,10 @@ pub(crate) fn resolve_module_types<'a>(
         module: &Module<'_>,
     ) {
         visit_externals(ty, &mut |external| {
-            if !is_generic(external, generics) {
-                if let Err(e) = module.resolve_local(external) {
-                    missing.push(LocallyMissingType { external, error: e });
-                }
+            if !is_generic(external, generics)
+                && let Err(e) = module.resolve_local(external)
+            {
+                missing.push(LocallyMissingType { external, error: e });
             }
         });
     }

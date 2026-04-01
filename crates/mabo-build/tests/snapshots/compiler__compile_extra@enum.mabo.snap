@@ -7,7 +7,7 @@ input_file: crates/mabo-build/tests/inputs_extra/enum.mabo
 use ::mabo::buf::{Decode, Encode, Size};
 /// Hello world!
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::module_name_repetitions, clippy::option_option)]
+#[allow(dead_code, clippy::module_name_repetitions, clippy::option_option)]
 pub enum Sample {
     Variant1,
     Variant2(u32, u8),

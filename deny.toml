@@ -12,6 +12,7 @@ allow = [
     "MIT",
     "MPL-2.0",
     "Unicode-3.0",
+    "Unicode-DFS-2016",
 ]
 
 [bans]
@@ -20,8 +21,4 @@ skip = [
     "getrandom@0.2",
     "heck@0.4",
     "unicode-width@0.1",
-]
-skip-tree = [
-    { crate = "windows-sys@0.59", depth = 3 },
-    { crate = "windows-sys@0.60", depth = 3 },
 ]

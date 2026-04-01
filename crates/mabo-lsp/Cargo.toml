@@ -23,12 +23,12 @@ mabo-parser = { path = "../mabo-parser", features = ["simd"] }
 mabo-project = { path = "../mabo-project" }
 ouroboros = "0.18.5"
 parking_lot = "0.12.5"
-rand = "0.9.2"
+rand = "0.10.0"
 ropey = "1.6.1"
 rustc-hash.workspace = true
 serde_json.workspace = true
 serde.workspace = true
-time = { version = "0.3.45", features = ["formatting", "local-offset", "macros"] }
+time = { version = "0.3.47", features = ["formatting", "local-offset", "macros"] }
 
 [lints]
 workspace = true

@@ -11,7 +11,7 @@ use mabo_compiler::simplify::{
 use mabo_meta::WireSize;
 
 mod filters {
-    #![expect(clippy::unnecessary_wraps)]
+    #![expect(clippy::inline_always, clippy::unnecessary_wraps, clippy::unused_self)]
 
     use askama::filters::Safe;
     use comrak::options::{Extension, Parse, Render};
